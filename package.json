@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./app.js"
+    "start": "node ./app.js",
+    "install": "npm install"
   },
   "dependencies": {
     "async": "^2.0.0",

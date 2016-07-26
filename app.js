@@ -5,6 +5,7 @@ var schedule        = require('node-schedule');
 var async           = require('async');
 var spawn           = require('child_process').spawn;
 var fs 				      = require('fs');
+var crypto          = require('crypto');
 
 // LOGGER  ---------------------------------------------------------------------
 var logger = new (winston.Logger)({
@@ -89,10 +90,20 @@ class Event {
 
             switch (notification.type) {
               case 'mail':
-                notificationsPromises.push(new mailNotificator(notification.type, notification.title, notification.message, notification.recipients, notification.recipients_cc, notification.recipients_cco));
+                notificationsPromises.push(new mailNotificator(notification.type,
+                                                               notification.title,
+                                                               notification.message,
+                                                               notification.recipients,
+                                                               notification.recipients_cc,
+                                                               notification.recipients_cco));
                 break;
               case 'slack':
-                notificationsPromises.push(new slackNotificator(notification.type, notification.title, notification.message, notification.recipients, notification.recipients_cc, notification.recipients_cco));
+                notificationsPromises.push(new slackNotificator(notification.type,
+                                                                notification.title,
+                                                                notification.message,
+                                                                notification.recipients,
+                                                                notification.recipients_cc,
+                                                                notification.recipients_cco));
                 break;
             }
           }
@@ -116,7 +127,7 @@ class Event {
 }
 
 class Process {
-  constructor(id, name, depends_process, depends_process_alt, command, args, retries, retry_delay, limited_time_end, events){
+  constructor(id, name, depends_process, depends_process_alt, command, args, retries, retry_delay, limited_time_end, events, status, execute_return, execute_err_return, started_at, ended_at){
     this.id = id;
     this.name = name;
     this.depends_process = depends_process;
@@ -126,12 +137,12 @@ class Process {
     this.retries = retries;
     this.retry_delay = retry_delay;
     this.limited_time_end = limited_time_end;
+    this.status = status || "stop";
+    this.execute_return = execute_return;
+    this.execute_err_return = execute_err_return;
+    this.started_at = started_at;
+    this.ended_at = ended_at;
     this.events;
-    this.status = "stop";
-    this.execute_return;
-    this.execute_err_return;
-    this.started_at;
-    this.ended_at;
 
     return new Promise((resolve) => {
       this.loadEvents(events)
@@ -160,7 +171,9 @@ class Process {
             while (keysLength--) {
               var event = events[keys[keysLength]];
               if(event.hasOwnProperty('process') || event.hasOwnProperty('notifications')){
-                processEventsPromises.push(new Event(keys[keysLength], event.process, event.notifications));
+                processEventsPromises.push(new Event(keys[keysLength],
+                                                     event.process,
+                                                     event.notifications));
               }
             }
 
@@ -181,6 +194,7 @@ class Process {
   start(){
     var _this = this;
     logger.log('info','SE EJECUTA START DE '+this.id);
+
     return new Promise(function(resolve, reject) {
       var stdout = '';
       var stderr = '';
@@ -212,7 +226,7 @@ class Process {
 }
 
 class Chain {
-  constructor(id, name, start_date, end_date, schedule_interval, prevent_overlap, depends_chains, depends_chains_alt, events, processes) {
+  constructor(id, name, start_date, end_date, schedule_interval, prevent_overlap, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at) {
     this.id = id;
     this.name = name;
     this.start_date = start_date;
@@ -222,10 +236,10 @@ class Chain {
     this.depends_chains = depends_chains;
     this.depends_chains_alt = depends_chains_alt;
     this.events = events;
+    this.status = status || 'stop';
+    this.started_at = started_at;
+    this.ended_at = ended_at;
     this.processes;
-    this.status = 'stop';
-    this.started_at;
-    this.ended_at;
 
     return new Promise((resolve) => {
       this.loadProcesses(processes)
@@ -252,7 +266,21 @@ class Chain {
 
           while(processesLength--){
             var process = processes[processesLength];
-            chainProcessPromises.push(new Process(process.id, process.name, process.depends_process, process.depends_process_alt, process.command, process.args, process.retries, process.retry_delay, process.limited_time_end, process.events));
+            chainProcessPromises.push(new Process(process.id,
+                                                  process.name,
+                                                  process.depends_process,
+                                                  process.depends_process_alt,
+                                                  process.command,
+                                                  process.args,
+                                                  process.retries,
+                                                  process.retry_delay,
+                                                  process.limited_time_end,
+                                                  process.events,
+                                                  process.status,
+                                                  process.execute_return,
+                                                  process.execute_err_return,
+                                                  process.started_at,
+                                                  process.ended_at));
           }
 
           Promise.all(chainProcessPromises)
@@ -441,7 +469,7 @@ class Chain {
         })
         .catch(function(e){
           resolve();
-          logger.log('error','Error un refreshChainStatus: '+e);
+          logger.log('error','Error en refreshChainStatus: '+e);
         })
     });
 
@@ -519,7 +547,19 @@ class Plan{
 
           while(chainLength--){
             var chain = chains[chainLength];
-            planChainsPromesas.push(new Chain(chain.id, chain.name, chain.start_date, chain.end_date, chain.schedule_interval, chain.prevent_overlap, chain.depends_chains, chain.depends_chains_alt, chain.events, chain.processes));
+            planChainsPromesas.push(new Chain(chain.id,
+                                              chain.name,
+                                              chain.start_date,
+                                              chain.end_date,
+                                              chain.schedule_interval,
+                                              chain.prevent_overlap,
+                                              chain.depends_chains,
+                                              chain.depends_chains_alt,
+                                              chain.events,
+                                              chain.processes,
+                                              chain.status,
+                                              chain.started_at,
+                                              chain.ended_at));
           }
 
           Promise.all(planChainsPromesas)
@@ -547,68 +587,77 @@ class Plan{
 
       var chain = this.chains[planChainsLength];
 
-      if((chain.hasOwnProperty('end_date') && (new Date(chain.end_date)) < (new Date())) || (chain.status !== 'stop') || (chain.scheduleRepeater === 'undefined')){
-        console.log(`CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `,new Date(),'-  chain.status:'+chain.status);
-      }else{
+      // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
+      // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
+      if(chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined){
+        chain.status = 'stop';
+      };
 
-        if(chain.hasOwnProperty('start_date')){
+      //if((chain.hasOwnProperty('end_date') && (new Date(chain.end_date)) < (new Date())) || (chain.status !== 'stop') || (chain.scheduleRepeater === 'undefined')){
+        //(chain.status !== 'stop' && chain.schedule_interval === 'undefined') || (chain.schedule_interval !== 'undefined' && chain.scheduleRepeater !== 'undefined')
 
-          logger.log('debug', `PLANIFICADA CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
+          if ((!chain.hasOwnProperty('end_date') || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.status === 'stop'))
+          {
+            if(chain.hasOwnProperty('start_date')){
 
-          if ((new Date(chain.start_date)) <= (new Date())){
+              logger.log('debug', `PLANIFICADA CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
 
-           logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
+              if ((new Date(chain.start_date)) <= (new Date())){
+
+                logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
 
 
-            logger.log('debug', `INTENTANDO INICIAR CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
+                logger.log('debug', `INTENTANDO INICIAR CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
 
-            if(_this.hasChainDependecies(chain).length > 0){
-              //TODO: chain.event('on_waiting_dependencies');
-              logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
+                if(_this.hasChainDependecies(chain).length > 0){
+                  //TODO: chain.event('on_waiting_dependencies');
+                  logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
+                }else{
+                  logger.log('info', `**************** Ejecutar YA esta cadena ${chain.id} -> start`);
+                  chain.start()
+                    .then(function() {
+                      _this.planificateChains()
+                    })
+                    .catch(function(e){logger.log('error','Error '+e)});
+                }
+              }else{
+                // Will execute in start_date set
+                chain.schedule = schedule.scheduleJob(new Date(chain.start_date), function(chain){
+                  if(_this.hasChainDependecies(chain).length > 0){
+                    //TODO: chain.event('on_waiting_dependencies');
+                    logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> on_waiting_dependencies`);
+                  }else{
+                    logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
+                    chain.start()
+                      .then(function() {
+                        _this.planificateChains()
+                      })
+                      .catch(function(e){logger.log('error','Error '+e)});
+                  }
+                }.bind(null,chain));
+              }
+
+              // Remove Chain from pool
+              if(chain.hasOwnProperty('end_date')){
+
+                logger.log('debug',`PLANIFICADA CANCELACION DE CADENA ${chain.id} EN ${(new Date(chain.end_date))}`);
+
+                chain.scheduleCancel = schedule.scheduleJob(new Date(chain.end_date), function(chain){
+
+                  logger.log('debug',`CANCELANDO CADENA ${chain.id}`);
+
+                  chain.schedule.cancel();
+
+                }.bind(null,chain));
+              }
+
             }else{
-              logger.log('info', `**************** Ejecutar YA esta cadena ${chain.id} -> start`);
-              chain.start()
-                .then(function() {
-                  _this.planificateChains()
-                })
-                .catch(function(e){logger.log('error','Error '+e)});
+              logger.log('error',`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
+              throw new Error(`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
             }
           }else{
-            // Will execute in start_date set
-            chain.schedule = schedule.scheduleJob(new Date(chain.start_date), function(chain){
-              if(_this.hasChainDependecies(chain).length > 0){
-                //TODO: chain.event('on_waiting_dependencies');
-                logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> on_waiting_dependencies`);
-              }else{
-                logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
-                chain.start()
-                  .then(function() {
-                    _this.planificateChains()
-                  })
-                  .catch(function(e){logger.log('error','Error '+e)});
-              }
-            }.bind(null,chain));
+            console.log(`CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `,new Date(),'-  chain.status:'+chain.status);
           }
-
-          // Remove Chain from pool
-          if(chain.hasOwnProperty('end_date')){
-
-            logger.log('debug',`PLANIFICADA CANCELACION DE CADENA ${chain.id} EN ${(new Date(chain.end_date))}`);
-
-            chain.scheduleCancel = schedule.scheduleJob(new Date(chain.end_date), function(chain){
-
-              logger.log('debug',`CANCELANDO CADENA ${chain.id}`);
-
-              chain.schedule.cancel();
-
-            }.bind(null,chain));
-          }
-
-        }else{
-          logger.log('error',`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
-          throw new Error(`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
-        }
-      }
     }
   };
 
@@ -663,6 +712,7 @@ class FilePlan {
   constructor(filePath){
     this.filePath = filePath;
     this.fileContent;
+    this.lastHashPlan;
     this.plan;
 
     return new Promise((resolve) => {
@@ -678,8 +728,8 @@ class FilePlan {
   }
 
   loadFileContent(filePath){
+    var _this = this;
     return new Promise((resolve) => {
-      var _this = this;
       fs.stat(filePath, function(err, res){
         if(err){
           console.error('Plan file ',filePath, err);
@@ -736,10 +786,29 @@ class FilePlan {
         correctChains.push(chain);
       }
     }
-
     return correctChains;
+  }
 
-  };
+  refreshBinBackup(){
+    var _this = this;
+    var plan = _this.plan;
+
+    setTimeout(function(){
+
+      var objStr = JSON.stringify(plan);
+      var hashPlan = crypto.createHash('sha256').update(objStr).digest("hex");
+
+      if(_this.lastHashPlan !== hashPlan){
+        _this.lastHashPlan = hashPlan;
+        logger.log('info','> REFRESH hashPlan:',hashPlan);
+        fs.writeFileSync('./bin.json', objStr, null);
+      }
+
+      _this.refreshBinBackup();
+
+    }, config.refreshIntervalBinBackup);
+}
+
 };
 
 // CLASES ----- END ------
@@ -749,19 +818,33 @@ class FilePlan {
 
 logger.log('info',`RUNNERTY RUNNING - TIME...: ${new Date()}`);
 
-var planFileObject;
+var runtimePlan;
 
-new FilePlan(config.planFilePath)
-  .then(function(planFileObject){
+var fileLoad = config.binBackup;
+
+// CHECK ARGS APP:
+process.argv.forEach(function (val, index, array) {
+  if (index === 2 && val === 'reload'){
+    fileLoad = config.planFilePath;
+    logger.log('warn',`Reloading plan from ${fileLoad}`);
+  }
+});
+
+new FilePlan(fileLoad)
+  .then(function(plan){
+
+    runtimePlan = plan;
     //console.log('>',JSON.stringify(planFileObject.plan, null, 2));
 
     //console.log('>',JSON.stringify(planFileObject.plan.chains[0], null, 2));
     //console.log('>',JSON.stringify(planFileObject.plan.hasChainDependecies(planFileObject.plan.chains[0]), null, 2));
 
-    planFileObject.plan.planificateChains();
+    runtimePlan.plan.planificateChains();
+    runtimePlan.refreshBinBackup();
 
   })
   .catch(function(e){console.error(e)});
+
 
 
 //==================================================================

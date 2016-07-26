@@ -1,2 +1,3 @@
-sleep 71;
+#!/usr/bin/env bash
+sleep 5;
 echo di;
