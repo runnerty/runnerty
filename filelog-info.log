@@ -1,0 +1,57 @@
+{"level":"info","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:45:41.633Z"}
+{"level":"warn","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:45:41.634Z"}
+{"level":"error","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:45:41.635Z"}
+{"level":"info","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:47:51.482Z"}
+{"level":"warn","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:47:51.483Z"}
+{"level":"error","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:47:51.483Z"}
+{"level":"info","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:48:27.849Z"}
+{"level":"warn","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:48:27.851Z"}
+{"level":"error","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:48:27.851Z"}
+{"level":"info","message":"PLANIFICADA CADENA SAMPLE_CHAIN_ID_2 EN Wed Jul 20 2016 12:00:00 GMT+0200 (CEST)","timestamp":"2016-07-25T08:48:27.853Z"}
+{"level":"info","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:52:46.306Z"}
+{"level":"warn","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:52:46.307Z"}
+{"level":"error","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:52:46.307Z"}
+{"level":"info","message":"PLANIFICADA CADENA SAMPLE_CHAIN_ID_2 EN Wed Jul 20 2016 12:00:00 GMT+0200 (CEST)","timestamp":"2016-07-25T08:52:46.309Z"}
+{"level":"info","message":"PLANIFICADA CANCELACION DE CADENA SAMPLE_CHAIN_ID_2 EN Sun Jul 01 2018 12:00:00 GMT+0200 (CEST)","timestamp":"2016-07-25T08:52:46.314Z"}
+{"level":"info","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:56:15.403Z"}
+{"level":"warn","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:56:15.404Z"}
+{"level":"error","message":"127.0.0.1 - there's no place like home","timestamp":"2016-07-25T08:56:15.404Z"}
+{"level":"info","message":"PLANIFICADA CADENA SAMPLE_CHAIN_ID_2 EN Wed Jul 20 2016 12:00:00 GMT+0200 (CEST)","timestamp":"2016-07-25T08:56:15.406Z"}
+{"level":"info","message":"PLANIFICADA CANCELACION DE CADENA SAMPLE_CHAIN_ID_2 EN Sun Jul 01 2018 12:00:00 GMT+0200 (CEST)","timestamp":"2016-07-25T08:56:15.412Z"}
+{"level":"info","message":"PLANIFICADA CADENA SAMPLE_CHAIN_ID_2 EN Wed Jul 20 2016 12:00:00 GMT+0200 (CEST)","timestamp":"2016-07-25T08:56:42.169Z"}
+{"level":"info","message":"PLANIFICADA CANCELACION DE CADENA SAMPLE_CHAIN_ID_2 EN Sun Jul 01 2018 12:00:00 GMT+0200 (CEST)","timestamp":"2016-07-25T08:56:42.176Z"}
+{"level":"warn","message":"EJECUTARÍA TODOS LOS PROCESOS DE LA CADENA","timestamp":"2016-07-25T10:26:00.760Z"}
+{"level":"warn","message":"EJECUTARÍA TODOS LOS PROCESOS DE LA CADENA","timestamp":"2016-07-25T10:27:00.761Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_CHAIN_ID -> start","timestamp":"2016-07-25T11:00:17.005Z"}
+{"level":"warn","message":"Ejecutar YA SAMPLE_CHAIN_ID_2 -> on_waiting_dependencies","timestamp":"2016-07-25T11:00:17.009Z"}
+{"level":"warn","message":"EJECUTARÍA TODOS LOS PROCESOS DE LA CADENA","timestamp":"2016-07-25T11:01:00.016Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_PROCESS_ID_1 -> start","timestamp":"2016-07-25T11:01:00.016Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_PROCESS_ID_2 -> start","timestamp":"2016-07-25T11:01:00.022Z"}
+{"level":"error","message":"Error in process.start:ReferenceError: startProcesses is not defined","timestamp":"2016-07-25T11:01:00.028Z"}
+{"level":"error","message":"Error in process.start:ReferenceError: startProcesses is not defined","timestamp":"2016-07-25T11:01:00.028Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_CHAIN_ID -> start","timestamp":"2016-07-25T11:01:27.888Z"}
+{"level":"warn","message":"Ejecutar YA SAMPLE_CHAIN_ID_2 -> on_waiting_dependencies","timestamp":"2016-07-25T11:01:27.892Z"}
+{"level":"warn","message":"EJECUTARÍA TODOS LOS PROCESOS DE LA CADENA","timestamp":"2016-07-25T11:02:00.899Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_PROCESS_ID_1 -> start","timestamp":"2016-07-25T11:02:00.899Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_PROCESS_ID_2 -> start","timestamp":"2016-07-25T11:02:00.905Z"}
+{"level":"error","message":"Error in process.start:ReferenceError: startProcesses is not defined","timestamp":"2016-07-25T11:02:00.911Z"}
+{"level":"error","message":"Error in process.start:ReferenceError: startProcesses is not defined","timestamp":"2016-07-25T11:02:00.911Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_CHAIN_ID -> start","timestamp":"2016-07-25T11:03:28.990Z"}
+{"level":"warn","message":"Ejecutar YA SAMPLE_CHAIN_ID_2 -> on_waiting_dependencies","timestamp":"2016-07-25T11:03:28.994Z"}
+{"level":"warn","message":"EJECUTARÍA TODOS LOS PROCESOS DE LA CADENA","timestamp":"2016-07-25T11:04:01.001Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_PROCESS_ID_1 -> start","timestamp":"2016-07-25T11:04:01.002Z"}
+{"level":"info","message":">>>>>>>> Ejecutando SAMPLE_PROCESS_ID_1","timestamp":"2016-07-25T11:04:01.002Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_PROCESS_ID_2 -> start","timestamp":"2016-07-25T11:04:01.007Z"}
+{"level":"info","message":">>>>>>>> Ejecutando SAMPLE_PROCESS_ID_2","timestamp":"2016-07-25T11:04:01.008Z"}
+{"level":"info","message":">>> FIN EJECUCION SAMPLE_PROCESS_ID_1","timestamp":"2016-07-25T11:04:01.013Z"}
+{"level":"warn","message":"EJECUTARÍA TODOS LOS PROCESOS DE LA CADENA","timestamp":"2016-07-25T11:04:01.013Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_PROCESS_ID_1 -> start","timestamp":"2016-07-25T11:04:01.013Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_PROCESS_ID_2 -> start","timestamp":"2016-07-25T11:04:01.014Z"}
+{"level":"error","message":"Error in process.start:undefined","timestamp":"2016-07-25T11:04:01.014Z"}
+{"level":"error","message":"Error in process.start:undefined","timestamp":"2016-07-25T11:04:01.015Z"}
+{"level":"info","message":">>> FIN EJECUCION SAMPLE_PROCESS_ID_2","timestamp":"2016-07-25T11:04:01.015Z"}
+{"level":"warn","message":"EJECUTARÍA TODOS LOS PROCESOS DE LA CADENA","timestamp":"2016-07-25T11:04:01.015Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_PROCESS_ID_1 -> start","timestamp":"2016-07-25T11:04:01.016Z"}
+{"level":"info","message":"Ejecutar YA SAMPLE_PROCESS_ID_2 -> start","timestamp":"2016-07-25T11:04:01.016Z"}
+{"level":"error","message":"Error in process.start:undefined","timestamp":"2016-07-25T11:04:01.016Z"}
+{"level":"error","message":"Error in process.start:undefined","timestamp":"2016-07-25T11:04:01.016Z"}

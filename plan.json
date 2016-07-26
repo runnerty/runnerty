@@ -1,0 +1,307 @@
+{
+  "chains":[{
+    "id":"SAMPLE_CHAIN_ID",
+    "name":"Identificative name of chain",
+    "start_date":"2016-07-25T09:48:00",
+    "end_date":"2099-07-17T11:00:00",
+    "schedule_interval":"*/1 * * * *",
+    "prevent_overlap":"ignore",
+    "depends_chains":[],
+    "depends_chains_alt":[],
+    "events":{"on_start":{}, "on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
+    "processes":[{
+      "id":"SAMPLE_PROCESS_ID_1",
+      "name":"Identificative process name",
+      "depends_process":[],
+      "depends_process_alt":[],
+      "command":"sh",
+      "args":["./test/test.sh"],
+      "retries":0,
+      "retry_delay":10,
+      "limited_time_end":"15:00:00",
+      "events":{
+        "on_fail":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        },
+        "on_retry":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        },
+        "on_end":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        },
+        "on_waiting_dependencies":{},
+        "on_exceeded_limited_time_end":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id":"SAMPLE_PROCESS_ID_2",
+      "name":"Identificative process name",
+      "depends_process":["SAMPLE_PROCESS_ID_1"],
+      "depends_process_alt":[],
+      "command":"echo",
+      "args":["TEST","TEST2"],
+      "retries":0,
+      "retry_delay":10,
+      "limited_time_end":"15:00:00",
+      "events":{
+        "on_fail":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        },
+        "on_retry":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        },
+        "on_end":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        },
+        "on_waiting_dependencies":{},
+        "on_exceeded_limited_time_end":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        }
+      }
+      }
+    ]
+  },
+  {
+    "id":"SAMPLE_CHAIN_ID_2",
+    "name":"Identificative name of chain 2",
+    "start_date":"2016-07-20T10:00:00",
+    "end_date":"2018-07-01T10:00:00",
+    "prevent_overlap":"ignore",
+    "depends_chains":[{"id":"SAMPLE_CHAIN_ID","ignore_fail":true}],
+    "depends_chains_alt":[],
+    "events":{"on_start":{}, "on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
+    "processes":[{
+      "id":"SAMPLE_PROCESS_ID_2_1",
+      "name":"Identificative process name",
+      "depends_process":[],
+      "depends_process_alt":[],
+      "command":"echo",
+      "args":["HI","runnerty"],
+      "retries":0,
+      "retry_delay":10,
+      "limited_time_end":"15:00:00",
+      "events":{
+        "on_fail":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        },
+        "on_retry":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        },
+        "on_end":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        },
+        "on_waiting_dependencies":{},
+        "on_exceeded_limited_time_end":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
+              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
+              "recipients":["test@coderty.com"],
+              "recipients_cc":["testcc@coderty.com"],
+              "recipients_cco":["testcco@coderty.com"]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+            }
+          ]
+        }
+      }
+    }]
+  }
+  ]
+}
