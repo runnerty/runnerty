@@ -319,6 +319,21 @@ class Process {
     });
   }
 
+  notificate(event){
+    var _this = this;
+    if(_this.events.hasOwnProperty(event)){
+      if(_this.events[event].hasOwnProperty('notifications')){
+        if(_this.events[event].notifications instanceof Array){
+
+          var notificationsLength = _this.events[event].notifications.length;
+          while(notificationsLength--){
+            _this.events[event].notifications[notificationsLength].notificate(_this.values());
+          }
+        }
+      }
+    }
+  }
+
   stop(){
     this.status = 'stop';
   }
@@ -328,26 +343,13 @@ class Process {
     _this.status = 'end';
     _this.ended_at = new Date();
 
-    if(_this.events.hasOwnProperty('on_end')){
-      if(_this.events.on_end.hasOwnProperty('notifications')){
-        if(_this.events.on_end.notifications instanceof Array){
-
-          var notificationsLength = _this.events.on_end.notifications.length;
-          while(notificationsLength--){
-            _this.events.on_end.notifications[notificationsLength].notificate(_this.values());
-          }
-
-        }
-      }
-    }
-  }
-
-  running(){
-    this.status = 'running';
+    this.notificate('on_end');
   }
 
   error(){
-    this.status = 'error';
+    var _this = this;
+    _this.status = 'error';
+    _this.notificate('on_fail');
   }
 
   isStoped(){
@@ -368,7 +370,9 @@ class Process {
 
   start(){
     var _this = this;
+    _this.status = 'running';
     _this.started_at = new Date();
+    _this.notificate('on_start');
 
     logger.log('info','SE EJECUTA START DE '+this.id);
 
@@ -413,7 +417,7 @@ class Chain {
     this.prevent_overlap = prevent_overlap;
     this.depends_chains = depends_chains;
     this.depends_chains_alt = depends_chains_alt;
-    this.events = events;
+    this.events;
     this.status = status || "stop";
     this.started_at = started_at;
     this.ended_at = ended_at;
@@ -423,10 +427,23 @@ class Chain {
       this.loadProcesses(processes)
         .then((processes) => {
           this.processes = processes;
+
           resolve(this);
+    /*
+          this.loadEvents(events)
+            .then((events) => {
+            this.events = events;
+            console.log(this);
+            resolve(this);
         })
         .catch(function(e){
-          console.error(e);
+            logger.log('error',e);
+            resolve();
+          });
+*/
+        })
+        .catch(function(e){
+          logger.log('error',e);
           resolve();
         });
     });
@@ -441,7 +458,6 @@ class Chain {
       var processesLength = processes.length;
       if (processes instanceof Array) {
         if (processesLength > 0) {
-
 
           while(processesLength--){
             var process = processes[processesLength];
@@ -483,6 +499,48 @@ class Chain {
     });
   }
 
+  loadEvents(events){
+    return new Promise((resolve) => {
+    var processEventsPromises = [];
+
+    if (events instanceof Object) {
+      var keys = Object.keys(events);
+      var keysLength = keys.length;
+      if (keys instanceof Array) {
+        if (keysLength > 0) {
+          while (keysLength--) {
+            var event = events[keys[keysLength]];
+            if(event.hasOwnProperty('process') || event.hasOwnProperty('notifications')){
+              processEventsPromises.push(new Event(keys[keysLength],
+                event.process,
+                event.notifications
+              ));
+            }else{
+              logger.log('warn','Events without procces and notifications');
+            }
+          }
+
+          Promise.all(processEventsPromises)
+            .then(function (eventsArr) {
+              var events = {};
+              var eventsArrLength = eventsArr.length;
+              while (eventsArrLength--) {
+                var e = eventsArr[eventsArrLength];
+                var key = Object.keys(e);
+                events[key[0]] = e[key[0]];
+              }
+              resolve(events);
+            })
+            .catch(function(e){console.error(e)});
+        }
+      }
+    }else{
+      logger.log('error','Chain, events is not object', err);
+      resolve();
+    }
+  });
+  }
+
   values(){
     var _this = this;
 
@@ -493,21 +551,40 @@ class Chain {
     };
   }
 
+  notificate(event){
+    var _this = this;
+    if(_this.events.hasOwnProperty(event)){
+      if(_this.events[event].hasOwnProperty('notifications')){
+        if(_this.events[event].notifications instanceof Array){
+
+          var notificationsLength = _this.events[event].notifications.length;
+          while(notificationsLength--){
+            _this.events[event].notifications[notificationsLength].notificate(_this.values());
+          }
+        }
+      }
+    }
+  }
+
   stop(){
     this.status = 'stop';
   }
 
   end(){
-    this.status = 'end';
     this.ended_at = new Date();
+    this.status = 'end';
+    this.notificate('on_end');
   }
 
   running(){
+    this.started_at = new Date();
     this.status = 'running';
+    this.notificate('on_start');
   }
 
   error(){
     this.status = 'error';
+    this.notificate('on_fail');
   }
 
   isStoped(){
@@ -529,7 +606,6 @@ class Chain {
   //Start Chain
   start(){
     var chain = this;
-    chain.started_at = new Date();
 
     return new Promise((resolve) => {
 
@@ -785,6 +861,7 @@ class Plan{
 
           Promise.all(planChainsPromesas)
             .then(function(dataArr) {
+              console.log('dataArr:',dataArr);
               resolve(dataArr);
             })
             .catch(function(e){logger.log('error','Loading chains:'+e)});

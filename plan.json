@@ -8,7 +8,18 @@
     "prevent_overlap":"ignore",
     "depends_chains":[],
     "depends_chains_alt":[],
-    "events":{"on_start":{}, "on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
+    "events":{"on_start":{
+      "notifications":[
+        {
+          "type":"mail",
+          "title":"STARTING :CHAIN_NAME   (:CHAIN_ID )",
+          "message":"STARTTED CHAIN :CHAIN_ID:",
+          "recipients":["carlos@coderty.com"],
+          "recipients_cc":[],
+          "recipients_cco":[]
+        }
+      ]
+    }, "on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
     "processes":[{
       "id":"SAMPLE_PROCESS_ID_1",
       "name":"Identificative process name",
