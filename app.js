@@ -5,7 +5,73 @@ var schedule        = require('node-schedule');
 var async           = require('async');
 var spawn           = require('child_process').spawn;
 var fs 				      = require('fs');
+var path            = require('path');
 var crypto          = require('crypto');
+var nodemailer      = require('nodemailer');
+
+// UTILS
+
+function renderTemplate(text, objParams){
+  var keys = Object.keys(objParams);
+  var keysLength = keys.length;
+  while (keysLength--) {
+    text = text.replace(new RegExp('\\:' + keys[keysLength], 'gi'), objParams[keys[keysLength]]);
+  }
+  return text;
+}
+
+function sendMail(mail, callback){
+
+  var transport = nodemailer.createTransport(mail.transport);
+
+  console.log(mail);
+
+  var templateDir  = path.resolve(mail.templateDir, mail.template);
+  var htmlTemplate = path.resolve(templateDir, 'html.html');
+  var txtTemplate	 = path.resolve(templateDir, 'text.txt');
+
+  try{
+    fs.readFile(htmlTemplate, function(err, data) {
+      if(err){
+        logger.log('error','Error reading template html: '+htmlTemplate+' - ',err);
+        callback(err,null);
+      }else{
+        var html = renderTemplate(data.toString(), mail.params);
+
+        fs.readFile(txtTemplate, function(err, data) {
+          if(err){
+            logger.log('error','Error reading template txt: '+txtTemplate+' - ',err);
+            callback(err,null);
+          }else{
+            var text = renderTemplate(data.toString(), mail.params);
+
+            var mailOptions = {
+              from: mail.from,
+              to: mail.to,
+              subject: mail.params.subject,
+              text: text,
+              html: html
+            };
+
+            transport.sendMail(mailOptions,
+              function(err, res){
+                if(err) {
+                  logger.log('error','Error sending mail:',err);
+                  callback(err,null);
+                }else{
+                  callback(null,res);
+                }
+              });
+          }
+        });
+      }
+    });
+  }
+  catch(e){
+    logger.log('error','Send mail:'+e)
+  }
+
+};
 
 // LOGGER  ---------------------------------------------------------------------
 var logger = new (winston.Logger)({
@@ -42,9 +108,41 @@ class mailNotificator extends Notification{
     });
   }
 
-  notificate(){
-    //TODO: IMPLEMENTAR AQUI ENVIO VIA MAIL
-    logger.log('info','Enviaría mail');
+  notificate(values){
+    var mailOptions = config.mailOptions;
+    mailOptions.template = mailOptions.template || config.mailOptions.default_template;
+
+    for (var i = 0, len = this.recipients.length; i < len; i++) {
+      if (i){
+        mailOptions.to = mailOptions.to + this.recipients[i] + ((i < len-1) ? ', ' : '');
+      }
+      else{
+        mailOptions.to = this.recipients[i] + ((i < len-1) ? ', ' : '');
+      }
+    }
+
+    for (var i = 0, len = this.recipients_cc.length; i < len; i++) {
+      if (i){
+        mailOptions.cc = mailOptions.cc + this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
+      }
+      else{
+        mailOptions.cc = this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
+      }
+    }
+
+    for (var i = 0, len = this.recipients_cco.length; i < len; i++) {
+      if (i){
+        mailOptions.bcc = mailOptions.bcc + this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
+      }
+      else{
+        mailOptions.bcc = this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
+      }
+    }
+    mailOptions.params = values;
+    mailOptions.params.subject = renderTemplate(this.title, values);
+    mailOptions.params.message = renderTemplate(this.message, values);
+
+    sendMail(mailOptions, function(err, res){});
   }
 }
 
@@ -56,9 +154,9 @@ class slackNotificator extends Notification{
     });
   }
 
-  notificate(){
+  notificate(values){
     //TODO: IMPLEMENTAR AQUI ENVIO VIA SLACK
-    logger.log('info','ENVIARIA SLACK');
+    logger.log('info','ENVIARIA SLACK', values);
   }
 }
 
@@ -96,7 +194,8 @@ class Event {
                                                                notification.message,
                                                                notification.recipients,
                                                                notification.recipients_cc,
-                                                               notification.recipients_cco));
+                                                               notification.recipients_cco
+                                                               ));
                 break;
               case 'slack':
                 notificationsPromises.push(new slackNotificator(notification.type,
@@ -104,7 +203,8 @@ class Event {
                                                                 notification.message,
                                                                 notification.recipients,
                                                                 notification.recipients_cc,
-                                                                notification.recipients_cco));
+                                                                notification.recipients_cco
+                                                                ));
                 break;
             }
           }
@@ -129,7 +229,7 @@ class Event {
 }
 
 class Process {
-  constructor(id, name, depends_process, depends_process_alt, command, args, retries, retry_delay, limited_time_end, events, status, execute_return, execute_err_return, started_at, ended_at){
+  constructor(id, name, depends_process, depends_process_alt, command, args, retries, retry_delay, limited_time_end, events, status, execute_return, execute_err_return, started_at, ended_at, chain_values){
     this.id = id;
     this.name = name;
     this.depends_process = depends_process;
@@ -146,6 +246,8 @@ class Process {
     this.ended_at = ended_at;
     this.events;
 
+    this.chain_values = chain_values;
+
     return new Promise((resolve) => {
       this.loadEvents(events)
         .then((events) => {
@@ -155,6 +257,24 @@ class Process {
         .catch(function(e){console.error(e)});
     });
 
+  }
+
+  values(){
+    var _this = this;
+
+    return {
+      "CHAIN_ID":_this.chain_values.id,
+      "CHAIN_NAME":_this.chain_values.name,
+      "CHAIN_STARTED_AT":_this.chain_values.started_at,
+      "PROCESS_ID":_this.id,
+      "PROCESS_NAME":_this.name,
+      "PROCESS_COMMAND":_this.command,
+      "PROCESS_ARGS":_this.args,
+      "PROCESS_EXECUTE_RETURN":_this.execute_return,
+      "PROCESS_EXECUTE_ERR_RETURN":_this.execute_err_return,
+      "PROCESS_STARTED_AT":_this.started_at,
+      "PROCESS_ENDED_AT":_this.ended_at
+    };
   }
 
   loadEvents(events){
@@ -171,7 +291,8 @@ class Process {
               if(event.hasOwnProperty('process') || event.hasOwnProperty('notifications')){
                 processEventsPromises.push(new Event(keys[keysLength],
                                                      event.process,
-                                                     event.notifications));
+                                                     event.notifications
+                                                     ));
               }else{
                 logger.log('warn','Events without procces and notifications');
               }
@@ -203,7 +324,22 @@ class Process {
   }
 
   end(){
-    this.status = 'end';
+    var _this = this;
+    _this.status = 'end';
+    _this.ended_at = new Date();
+
+    if(_this.events.hasOwnProperty('on_end')){
+      if(_this.events.on_end.hasOwnProperty('notifications')){
+        if(_this.events.on_end.notifications instanceof Array){
+
+          var notificationsLength = _this.events.on_end.notifications.length;
+          while(notificationsLength--){
+            _this.events.on_end.notifications[notificationsLength].notificate(_this.values());
+          }
+
+        }
+      }
+    }
   }
 
   running(){
@@ -232,6 +368,8 @@ class Process {
 
   start(){
     var _this = this;
+    _this.started_at = new Date();
+
     logger.log('info','SE EJECUTA START DE '+this.id);
 
     return new Promise(function(resolve, reject) {
@@ -297,6 +435,7 @@ class Chain {
 
   // Executed in construction:
   loadProcesses(processes){
+    var _this = this;
     return new Promise((resolve) => {
       var chainProcessPromises = [];
       var processesLength = processes.length;
@@ -321,7 +460,8 @@ class Chain {
                                                   process.execute_return,
                                                   process.execute_err_return,
                                                   process.started_at,
-                                                  process.ended_at));
+                                                  process.ended_at,
+                                                  _this.values()));
           }
 
           Promise.all(chainProcessPromises)
@@ -343,12 +483,23 @@ class Chain {
     });
   }
 
+  values(){
+    var _this = this;
+
+    return {
+      "id":_this.id,
+      "name":_this.name,
+      "started_at":_this.started_at
+    };
+  }
+
   stop(){
     this.status = 'stop';
   }
 
   end(){
     this.status = 'end';
+    this.ended_at = new Date();
   }
 
   running(){
@@ -378,6 +529,7 @@ class Chain {
   //Start Chain
   start(){
     var chain = this;
+    chain.started_at = new Date();
 
     return new Promise((resolve) => {
 
@@ -895,6 +1047,7 @@ process.argv.forEach(function (val, index, array) {
   }
 });
 
+
 new FilePlan(fileLoad)
   .then(function(plan){
 
@@ -907,7 +1060,6 @@ new FilePlan(fileLoad)
 
   })
   .catch(function(e){console.error(e)});
-
 
 
 //==================================================================

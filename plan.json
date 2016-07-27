@@ -20,23 +20,43 @@
       "retry_delay":10,
       "limited_time_end":"15:00:00",
       "events":{
-        "on_fail":{
+        "on_start":{
           "process":{},
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"STARTING :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *STARTING*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
+            }
+          ]
+        },
+        "on_fail":{
+          "process":{},
+          "notifications":[
+            {
+              "type":"mail",
+              "title":"FAIL :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
+            },
+            {
+              "type":"slack",
+              "token":"slack_token",
+              "channels":["slack_channel"],
+              "recipients":["slack_user"],
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -45,18 +65,18 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"RETRYING :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -65,18 +85,18 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"END :PROCESS_NAME (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME  (:PROCESS_ID ) OF :CHAIN_NAME  (:CHAIN_ID ) FAIL! - :PROCESS_ERROR_CODE  :PROCESS_ERROR ",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -86,18 +106,18 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"EXCEEDED LIMIT :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         }
@@ -119,18 +139,18 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"FAIL :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -139,18 +159,18 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"RETYING :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -159,18 +179,18 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"END :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -180,18 +200,18 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"EXCEEDED LIMIT :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         }
@@ -224,18 +244,18 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"FAIL :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -244,18 +264,18 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"RETRYING :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -264,18 +284,18 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"END :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -285,18 +305,18 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"FAIL %PROCESS_NAME% (%PROCESS_ID%)",
-              "message":"Process %PROCESS_NAME% (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) FAIL! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%",
-              "recipients":["test@coderty.com"],
-              "recipients_cc":["testcc@coderty.com"],
-              "recipients_cco":["testcco@coderty.com"]
+              "title":"EXCEEDED LIMIT :PROCESS_NAME   (:PROCESS_ID )",
+              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "recipients":["carlos@coderty.com"],
+              "recipients_cc":[],
+              "recipients_cco":[]
             },
             {
               "type":"slack",
               "token":"slack_token",
               "channels":["slack_channel"],
               "recipients":["slack_user"],
-              "message":"Process *%PROCESS_NAME%* (%PROCESS_ID%) OF %CHAIN_NAME% (%CHAIN_ID%) *FAIL*! - %PROCESS_ERROR_CODE%: %PROCESS_ERROR%"
+              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         }
