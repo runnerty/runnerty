@@ -21,7 +21,7 @@ logger.level = 'debug';
 
 class Notification {
   constructor(type, title, message, recipients, recipients_cc, recipients_cco) {
-    this.title = type;
+    this.type = type;
     this.title = title;
     this.message = message;
     this.recipients = recipients;
@@ -37,7 +37,6 @@ class Notification {
 class mailNotificator extends Notification{
   constructor(type, title, message, recipients, recipients_cc, recipients_cco){
     super('mail', title, message, recipients, recipients_cc, recipients_cco);
-
     return new Promise((resolve) => {
       resolve(this);
     });
@@ -70,7 +69,7 @@ class Event {
         .then((events) => {
           resolve(events);
         })
-        .catch(function(e){console.error(e)});
+        .catch(function(e){logger.log('error',e)});
     });
   }
 
@@ -78,6 +77,9 @@ class Event {
     return new Promise((resolve) => {
       var objEvent = {};
       objEvent[name] = {};
+
+
+      //TODO: event/proccess
 
       var notificationsPromises = [];
 
@@ -87,7 +89,6 @@ class Event {
 
           while (notificationsLength--) {
             var notification = notifications[notificationsLength];
-
             switch (notification.type) {
               case 'mail':
                 notificationsPromises.push(new mailNotificator(notification.type,
@@ -107,9 +108,10 @@ class Event {
                 break;
             }
           }
+
           Promise.all(notificationsPromises)
             .then(function (dataArr) {
-              objEvent[name] = dataArr;
+              objEvent[name]['notifications'] = dataArr;
               resolve(objEvent);
             })
             .catch(function(e){console.error(e)});
@@ -157,38 +159,75 @@ class Process {
 
   loadEvents(events){
     return new Promise((resolve) => {
-
       var processEventsPromises = [];
 
       if (events instanceof Object) {
-
         var keys = Object.keys(events);
-
         var keysLength = keys.length;
         if (keys instanceof Array) {
           if (keysLength > 0) {
-
             while (keysLength--) {
               var event = events[keys[keysLength]];
               if(event.hasOwnProperty('process') || event.hasOwnProperty('notifications')){
                 processEventsPromises.push(new Event(keys[keysLength],
                                                      event.process,
                                                      event.notifications));
+              }else{
+                logger.log('warn','Events without procces and notifications');
               }
             }
 
             Promise.all(processEventsPromises)
-              .then(function (dataArr) {
-                resolve(dataArr);
+              .then(function (eventsArr) {
+                var events = {};
+                var eventsArrLength = eventsArr.length;
+                while (eventsArrLength--) {
+                  var e = eventsArr[eventsArrLength];
+                  var key = Object.keys(e);
+                  events[key[0]] = e[key[0]];
+                }
+                resolve(events);
               })
               .catch(function(e){console.error(e)});
           }
         }
       }else{
-        console.error('Process, events is not object', err);
+        logger.log('error','Process, events is not object', err);
         resolve();
       }
     });
+  }
+
+  stop(){
+    this.status = 'stop';
+  }
+
+  end(){
+    this.status = 'end';
+  }
+
+  running(){
+    this.status = 'running';
+  }
+
+  error(){
+    this.status = 'error';
+  }
+
+  isStoped(){
+    return (this.status === 'stop');
+  }
+
+  isEnded(){
+    return (this.status === 'end');
+  }
+
+  isRunning(){
+    return (this.status === 'running');
+  }
+
+  isErrored(){
+    return (this.status === 'error');
   }
 
   start(){
@@ -209,13 +248,13 @@ class Process {
         .on('close', function(code) {
           logger.log('info',_this.id+'FIN: ------------> '+code+' - '+stdout+' - '+stderr);
           if (code === 0) {
-            _this.status = 'end';
+            _this.end();
             _this.exec_return = stdout;
             _this.exec_err_return = stderr;
             resolve(stdout);
           } else {
             logger.log('error',_this.id+'FIN: '+code+' - '+stdout+' - '+stderr);
-            _this.status = 'error';
+            _this.error();
             _this.exec_return = stdout;
             _this.exec_err_return = stderr;
             reject(stderr);
@@ -223,6 +262,7 @@ class Process {
         });
     });
   }
+
 }
 
 class Chain {
@@ -236,7 +276,7 @@ class Chain {
     this.depends_chains = depends_chains;
     this.depends_chains_alt = depends_chains_alt;
     this.events = events;
-    this.status = status || 'stop';
+    this.status = status || "stop";
     this.started_at = started_at;
     this.ended_at = ended_at;
     this.processes;
@@ -258,14 +298,15 @@ class Chain {
   // Executed in construction:
   loadProcesses(processes){
     return new Promise((resolve) => {
-
       var chainProcessPromises = [];
       var processesLength = processes.length;
       if (processes instanceof Array) {
         if (processesLength > 0) {
 
+
           while(processesLength--){
             var process = processes[processesLength];
+
             chainProcessPromises.push(new Process(process.id,
                                                   process.name,
                                                   process.depends_process,
@@ -302,6 +343,38 @@ class Chain {
     });
   }
 
+  stop(){
+    this.status = 'stop';
+  }
+
+  end(){
+    this.status = 'end';
+  }
+
+  running(){
+    this.status = 'running';
+  }
+
+  error(){
+    this.status = 'error';
+  }
+
+  isStoped(){
+    return (this.status === 'stop');
+  }
+
+  isEnded(){
+    return (this.status === 'end');
+  }
+
+  isRunning(){
+    return (this.status === 'running');
+  }
+
+  isErrored(){
+    return (this.status === 'error');
+  }
+
   //Start Chain
   start(){
     var chain = this;
@@ -319,7 +392,7 @@ class Chain {
                 chain.scheduleRepeater.cancel();
               }
 
-              if(chain.status === 'stop' || chain.status === 'end'){
+              if(chain.isStoped() || chain.isEnded()){
                 chain.setChainToInitState()
                   .then(function(){
                     chain.startProcesses()
@@ -366,14 +439,14 @@ class Chain {
   setChainToInitState(){
     return new Promise((resolve) => {
       //Warning
-      if (this.status === 'running'){
+      if (this.isRunning()){
         logger.log('warn',`This chain ${this.id} is running yet and is being initialized`)
       }
       // Set All Process to stopped
-      this.status = 'running';
+      this.running();
       var processesLength = this.processes.length;
       while(processesLength--) {
-        this.processes[processesLength].status = 'stop';
+        this.processes[processesLength].stop();
       }
       resolve();
     });
@@ -422,8 +495,6 @@ class Chain {
 
     return new Promise(function(resolve, reject) {
 
-      logger.log('warn','EJECUTARÍA TODOS LOS PROCESOS DE LA CADENA');
-
       _this.refreshChainStatus()
         .then(function(chainStatus){
 
@@ -436,10 +507,10 @@ class Chain {
             while(chainProcessesLength--) {
               var process = _this.processes[chainProcessesLength];
 
-              if (process.status === 'stop'){
+              if (process.isStoped()){
                 logger.log('debug', `PLANIFICADO PROCESO ${process.id}`);
                 if(_this.hasProcessDependecies(process).length > 0){
-                  logger.log('warn', `Ejecutar PROCESO ${process.id} -> on_waiting_dependencies`);
+                  logger.log('warn', `Ejecutar PROCESO ${process.id} -> on_waiting_dependencies: `,_this.hasProcessDependecies(process));
                 }else{
                   logger.log('info', `Ejecutar YA ${process.id} -> start`);
 
@@ -494,7 +565,7 @@ class Chain {
           switch (typeof depends_process[auxDependsprocessLength]) {
             case 'string':
               if(depends_process[auxDependsprocessLength] === planProcess[planProcessLength].id){
-                if(planProcess[planProcessLength].status !== 'end'){
+                if(!planProcess[planProcessLength].isEnded()){
                   processesDependencies.push(planProcess[planProcessLength]);
                   hasDependencies = true;
                 }
@@ -503,7 +574,7 @@ class Chain {
               break;
             case 'object':
               if(depends_process[auxDependsprocessLength].id === planProcess[planProcessLength].id){
-                if(planProcess[planProcessLength].status === 'end' || (depends_process[auxDependsprocessLength].ignore_fail && planProcess[planProcessLength].status === 'error')){
+                if(planProcess[planProcessLength].isEnded() || (depends_process[auxDependsprocessLength].ignore_fail && planProcess[planProcessLength].isErrored())){
                 }else{
                   processesDependencies.push(planProcess[planProcessLength]);
                   hasDependencies = true;
@@ -525,7 +596,6 @@ class Plan{
   constructor(version, chains){
     this.version = version;
     this.chains;
-
     return new Promise((resolve) => {
       this.loadChains(chains)
         .then((chains) => {
@@ -538,15 +608,14 @@ class Plan{
 
   loadChains(chains){
     return new Promise((resolve) => {
-
       if (chains instanceof Array) {
         var chainLength = chains.length;
         if (chainLength > 0) {
-
           var planChainsPromesas = [];
 
           while(chainLength--){
             var chain = chains[chainLength];
+
             planChainsPromesas.push(new Chain(chain.id,
                                               chain.name,
                                               chain.start_date,
@@ -566,7 +635,7 @@ class Plan{
             .then(function(dataArr) {
               resolve(dataArr);
             })
-            .catch(function(e){console.error(e)});
+            .catch(function(e){logger.log('error','Loading chains:'+e)});
 
         }else{
           logger.log('error','Plan have not Chains');
@@ -582,87 +651,84 @@ class Plan{
     var _this = this;
     var planChainsLength = this.chains.length;
 
-
     while(planChainsLength--) {
 
       var chain = this.chains[planChainsLength];
 
       // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
       // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
+
       if(chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined){
-        chain.status = 'stop';
+        chain.stop();
       };
 
-      //if((chain.hasOwnProperty('end_date') && (new Date(chain.end_date)) < (new Date())) || (chain.status !== 'stop') || (chain.scheduleRepeater === 'undefined')){
-        //(chain.status !== 'stop' && chain.schedule_interval === 'undefined') || (chain.schedule_interval !== 'undefined' && chain.scheduleRepeater !== 'undefined')
+      if ((!chain.hasOwnProperty('end_date') || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStoped()))
+        {
+          if(chain.hasOwnProperty('start_date')){
 
-          if ((!chain.hasOwnProperty('end_date') || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.status === 'stop'))
-          {
-            if(chain.hasOwnProperty('start_date')){
+            logger.log('debug', `PLANIFICADA CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
 
-              logger.log('debug', `PLANIFICADA CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
+            if ((new Date(chain.start_date)) <= (new Date())){
 
-              if ((new Date(chain.start_date)) <= (new Date())){
-
-                logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
+              logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
 
 
-                logger.log('debug', `INTENTANDO INICIAR CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
+              logger.log('debug', `INTENTANDO INICIAR CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
 
-                if(_this.hasChainDependecies(chain).length > 0){
+              if(_this.hasDependenciesBlocking(chain)){
+                //TODO: chain.event('on_waiting_dependencies');
+                logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
+              }else{
+                logger.log('info', `**************** Ejecutar YA esta cadena ${chain.id} -> start`);
+                chain.start()
+                  .then(function() {
+                    _this.planificateChains()
+                  })
+                  .catch(function(e){logger.log('error','Error '+e)});
+              }
+            }else{
+              // Will execute in start_date set
+              chain.schedule = schedule.scheduleJob(new Date(chain.start_date), function(chain){
+                if(_this.hasDependenciesBlocking(chain)){
                   //TODO: chain.event('on_waiting_dependencies');
-                  logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
+                  logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> on_waiting_dependencies`);
                 }else{
-                  logger.log('info', `**************** Ejecutar YA esta cadena ${chain.id} -> start`);
+                  logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
                   chain.start()
                     .then(function() {
                       _this.planificateChains()
                     })
                     .catch(function(e){logger.log('error','Error '+e)});
                 }
-              }else{
-                // Will execute in start_date set
-                chain.schedule = schedule.scheduleJob(new Date(chain.start_date), function(chain){
-                  if(_this.hasChainDependecies(chain).length > 0){
-                    //TODO: chain.event('on_waiting_dependencies');
-                    logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> on_waiting_dependencies`);
-                  }else{
-                    logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
-                    chain.start()
-                      .then(function() {
-                        _this.planificateChains()
-                      })
-                      .catch(function(e){logger.log('error','Error '+e)});
-                  }
-                }.bind(null,chain));
-              }
-
-              // Remove Chain from pool
-              if(chain.hasOwnProperty('end_date')){
-
-                logger.log('debug',`PLANIFICADA CANCELACION DE CADENA ${chain.id} EN ${(new Date(chain.end_date))}`);
-
-                chain.scheduleCancel = schedule.scheduleJob(new Date(chain.end_date), function(chain){
-
-                  logger.log('debug',`CANCELANDO CADENA ${chain.id}`);
-
-                  chain.schedule.cancel();
-
-                }.bind(null,chain));
-              }
-
-            }else{
-              logger.log('error',`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
-              throw new Error(`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
+              }.bind(null,chain));
             }
+
+            // Remove Chain from pool
+            if(chain.hasOwnProperty('end_date')){
+
+              logger.log('debug',`PLANIFICADA CANCELACION DE CADENA ${chain.id} EN ${(new Date(chain.end_date))}`);
+
+              chain.scheduleCancel = schedule.scheduleJob(new Date(chain.end_date), function(chain){
+
+                logger.log('debug',`CANCELANDO CADENA ${chain.id}`);
+
+                chain.schedule.cancel();
+
+              }.bind(null,chain));
+            }
+
           }else{
-            console.log(`CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `,new Date(),'-  chain.status:'+chain.status);
+            logger.log('error',`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
+            throw new Error(`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
           }
+        }else{
+          logger.log('warn',`CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `,new Date(),'-  chain.status:'+chain.status,'- chain.schedule_interval:',chain.schedule_interval,'- chain.scheduleRepeater:',(chain.scheduleRepeater===undefined));
+        }
     }
   };
 
 
-  hasChainDependecies(chain){
+  dependenciesBlocking(chain){
 
     var hasDependencies = false;
     var chainsDependencies = [];
@@ -681,7 +747,7 @@ class Plan{
           switch (typeof depends_chains[auxDependsChainsLength]) {
             case 'string':
               if(depends_chains[auxDependsChainsLength] === planChains[planChainsLength].id){
-                if(planChains[planChainsLength].status !== 'end'){
+                if(!planChains[planChainsLength].isEnded()){
                   chainsDependencies.push(planChains[planChainsLength]);
                   hasDependencies = true;
                 }
@@ -689,7 +755,7 @@ class Plan{
               break;
             case 'object':
               if(depends_chains[auxDependsChainsLength].id === planChains[planChainsLength].id){
-                if(planChains[planChainsLength].status === 'end' || (depends_chains[auxDependsChainsLength].ignore_fail && planChains[planChainsLength].status === 'error')){
+                if(planChains[planChainsLength].isEnded() || (depends_chains[auxDependsChainsLength].ignore_fail && planChains[planChainsLength].isErrored())){
                 }else{
                   chainsDependencies.push(planChains[planChainsLength]);
                   hasDependencies = true;
@@ -705,6 +771,10 @@ class Plan{
     }
   }
 
+  hasDependenciesBlocking(chain){
+    return (this.dependenciesBlocking(chain).length > 0);
+  }
+
 };
 
 
@@ -716,15 +786,14 @@ class FilePlan {
     this.plan;
 
     return new Promise((resolve) => {
-
       this.loadFileContent(filePath)
         .then(() => {
+          this.plan.planificateChains();
+          this.refreshBinBackup();
           resolve(this);
         })
         .catch(function(e){console.error(e)});
-
     });
-
   }
 
   loadFileContent(filePath){
@@ -732,13 +801,11 @@ class FilePlan {
     return new Promise((resolve) => {
       fs.stat(filePath, function(err, res){
         if(err){
-          console.error('Plan file ',filePath, err);
+          logger.log('error','Plan file ',filePath, err);
         }else{
           try {
             fs.readFile(filePath, 'utf8', function(err, res){
-
               _this.fileContent = JSON.parse(res);
-
               _this.getChains()
                   .then((chains) => {
                     new Plan('', chains)
@@ -775,9 +842,7 @@ class FilePlan {
   };
 
   validateChains(){
-
     var correctChains = [];
-
     var chainsLength = this.fileContent.chains.length;
 
     for (var i = 0; i < chainsLength; ++i) {
@@ -786,6 +851,7 @@ class FilePlan {
         correctChains.push(chain);
       }
     }
+
     return correctChains;
   }
 
@@ -819,7 +885,6 @@ class FilePlan {
 logger.log('info',`RUNNERTY RUNNING - TIME...: ${new Date()}`);
 
 var runtimePlan;
-
 var fileLoad = config.binBackup;
 
 // CHECK ARGS APP:
@@ -834,13 +899,11 @@ new FilePlan(fileLoad)
   .then(function(plan){
 
     runtimePlan = plan;
-    //console.log('>',JSON.stringify(planFileObject.plan, null, 2));
+    //console.log('>',JSON.stringify(objStr, null, 2));
 
     //console.log('>',JSON.stringify(planFileObject.plan.chains[0], null, 2));
-    //console.log('>',JSON.stringify(planFileObject.plan.hasChainDependecies(planFileObject.plan.chains[0]), null, 2));
-
-    runtimePlan.plan.planificateChains();
-    runtimePlan.refreshBinBackup();
+    //runtimePlan.plan.planificateChains();
+    //runtimePlan.refreshBinBackup();
 
   })
   .catch(function(e){console.error(e)});
