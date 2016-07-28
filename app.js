@@ -351,7 +351,7 @@ class Process {
                                                      event.notifications
                                                      ));
               }else{
-                logger.log('warn','Events without procces and notifications');
+                logger.log('debug','Process Events without procces and notifications');
               }
             }
 
@@ -390,8 +390,12 @@ class Process {
             var notificationsLength = _this.events[event].notifications.length;
             while(notificationsLength--){
               _this.events[event].notifications[notificationsLength].notificate(_this.values())
-                .then(function(res){logger.log('info','Notification process sended: '+res)})
-                .catch(function(e){logger.log('error',e)})
+                .then(function(res){
+                  logger.log('debug','Notification process sended: '+res)
+                })
+                .catch(function(e){
+                  logger.log('error',`Notificating ${event} process ${_this.id}:`+e)
+                })
             }
           }
         }
@@ -582,7 +586,7 @@ class Chain {
                 event.notifications
               ));
             }else{
-              logger.log('warn','Events without procces and notifications');
+              logger.log('debug','Chain Events without procces and notifications');
             }
           }
 
@@ -789,7 +793,6 @@ class Chain {
       }
 
       this.status = statusChain;
-
       resolve(statusChain);
     });
   }
@@ -797,11 +800,9 @@ class Chain {
   startProcesses(){
 
     var _this = this;
-
     _this.running();
 
     return new Promise(function(resolve, reject) {
-
       _this.refreshChainStatus()
         .then(function(chainStatus){
 
@@ -818,26 +819,26 @@ class Chain {
                 logger.log('debug', `PLANIFICADO PROCESO ${process.id}`);
                 if(_this.hasProcessDependecies(process).length > 0){
                   _this.waiting_dependencies();
-                  logger.log('warn', `Ejecutar PROCESO ${process.id} -> on_waiting_dependencies: `,_this.hasProcessDependecies(process));
+                  logger.log('debug', `Ejecutar PROCESO ${process.id} -> on_waiting_dependencies: `,_this.hasProcessDependecies(process));
                 }else{
-                  logger.log('info', `Ejecutar YA ${process.id} -> start`);
+                  logger.log('debug', `Ejecutar YA ${process.id} -> start`);
 
                   process.start()
                     .then(function(){
-                      logger.log('info','[!!!] RE EJECUCIÓN DE STARTPROCCESES:');
+                      logger.log('debug','[!!!] RE EJECUCIÓN DE STARTPROCCESES:');
 
                       _this.startProcesses()
                         .then(function(res){
                           resolve();
                         })
                         .catch(function(e){
-                          resolve();
                           logger.log('error','Error in startProcesses:'+e);
+                          resolve();
                         })
                     })
                     .catch(function(e){
-                      resolve();
                       logger.log('error','Error in process.start:'+e);
+                      resolve();
                     })
                 }
               }
@@ -847,8 +848,8 @@ class Chain {
           }
         })
         .catch(function(e){
-          resolve();
           logger.log('error','Error en refreshChainStatus: '+e);
+          resolve();
         })
     });
 
