@@ -7,11 +7,11 @@
     "install": "npm install"
   },
   "dependencies": {
-    "@slack/client": "^3.5.3",
     "async": "^2.0.0",
     "debug": "~2.2.0",
     "node-schedule": "^1.1.1",
     "nodemailer": "^2.5.0",
+    "slack-node": "^0.2.0",
     "winston": "^2.2.0"
   }
 }

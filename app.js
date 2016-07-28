@@ -8,9 +8,9 @@ var fs 				      = require('fs');
 var path            = require('path');
 var crypto          = require('crypto');
 var nodemailer      = require('nodemailer');
+var Slack           = require('slack-node');
 
 // UTILS
-
 function renderTemplate(text, objParams){
   var keys = Object.keys(objParams);
   var keysLength = keys.length;
@@ -83,7 +83,10 @@ function sendMail(mail, callback){
         });
 
     })
-    .catch(function(e){console.error(e)});
+    .catch(function(e){
+      logger.log('error','Error sending mail:',e);
+      callback(e,null);
+    });
 };
 
 // LOGGER  ---------------------------------------------------------------------
@@ -174,17 +177,33 @@ notificate(values){
 }
 
 class slackNotificator extends Notification{
-  constructor(type, title, message, recipients, recipients_cc, recipients_cco){
-    super('slack', title, message, recipients, recipients_cc, recipients_cco);
+  constructor(type, token, bot_name, bot_emoji, message, channel, recipients){
+    super('slack', null, message, recipients, null, null);
+
+    this.token = token;
+    this.bot_name = bot_name;
+    this.bot_emoji = bot_emoji;
+    this.channel = channel;
+
     return new Promise((resolve) => {
       resolve(this);
     });
   }
 
   notificate(values){
-    //TODO: IMPLEMENTAR AQUI ENVIO VIA SLACK
-    logger.log('info','ENVIARIA SLACK', values);
     return new Promise((resolve) => {
+
+        var slack = new Slack(this.token);
+
+        slack.api('chat.postMessage', {
+          text: renderTemplate(this.message, values),
+          channel: this.channel,
+          username: this.bot_name,
+          icon_emoji: this.bot_emoji,
+        },function(err, response){
+          logger.log('info',response);
+        });
+
       resolve();
       });
   }
@@ -197,7 +216,10 @@ class Event {
         .then((events) => {
           resolve(events);
         })
-        .catch(function(e){logger.log('error',e)});
+        .catch(function(e){
+           logger.log('error','Event constructor '+e)
+           resolve();
+         });
     });
   }
 
@@ -205,7 +227,6 @@ class Event {
     return new Promise((resolve) => {
       var objEvent = {};
       objEvent[name] = {};
-
 
       //TODO: event/proccess
 
@@ -229,24 +250,29 @@ class Event {
                 break;
               case 'slack':
                 notificationsPromises.push(new slackNotificator(notification.type,
-                                                                notification.title,
+                                                                notification.token,
+                                                                notification.bot_name,
+                                                                notification.bot_emoji,
                                                                 notification.message,
-                                                                notification.recipients,
-                                                                notification.recipients_cc,
-                                                                notification.recipients_cco
+                                                                notification.channel,
+                                                                notification.recipients
                                                                 ));
                 break;
             }
           }
 
           Promise.all(notificationsPromises)
-            .then(function (dataArr) {
-              objEvent[name]['notifications'] = dataArr;
+            .then(function (res) {
+              objEvent[name]['notifications'] = res;
               resolve(objEvent);
             })
-            .catch(function(e){console.error(e)});
+            .catch(function(e){
+              logger.log('error','Event loadEventsObjects: '+e);
+              resolve(objEvent);
+            });
 
         } else {
+          logger.log('error','Event loadEventsObjects: '+e);
           resolve(objEvent);
         }
       } else {
@@ -284,7 +310,10 @@ class Process {
           this.events = events;
           resolve(this);
           })
-        .catch(function(e){console.error(e)});
+        .catch(function(e){
+          logger.log('error','Process constructor '+e);
+          resolve(this);
+        });
     });
   }
 
@@ -337,7 +366,10 @@ class Process {
                 }
                 resolve(events);
               })
-              .catch(function(e){console.error(e)});
+              .catch(function(e){
+                logger.log('error','Process loadEvents: '+e);
+                resolve();
+              });
           }
         }
       }else{
@@ -350,7 +382,7 @@ class Process {
   notificate(event){
     var _this = this;
 
-    if(_this.hasOwnProperty('events')){
+    if(_this.hasOwnProperty('events') && _this.events !== undefined){
       if(_this.events.hasOwnProperty(event)){
         if(_this.events[event].hasOwnProperty('notifications')){
           if(_this.events[event].notifications instanceof Array){
@@ -466,6 +498,7 @@ class Chain {
       _this.loadProcesses(processes)
         .then((processes) => {
         _this.processes = processes;
+
         _this.loadEvents(events)
             .then((events) => {
             _this.events = events;
@@ -519,7 +552,7 @@ class Chain {
               resolve(dataArr);
             })
             .catch(function(e){
-              console.error(e)
+              logger.log('error','Chain loadProcesses:'+e)
               resolve();
             });
 
@@ -550,7 +583,6 @@ class Chain {
               ));
             }else{
               logger.log('warn','Events without procces and notifications');
-              resolve();
             }
           }
 
@@ -878,7 +910,10 @@ class Plan{
           this.chains = chains;
           resolve(this);
         })
-        .catch(function(e){console.error(e)});
+        .catch(function(e){
+          logger.log('error','Plan constructor:'+e);
+          resolve(this);
+    });
     });
   }
 
@@ -1068,7 +1103,10 @@ class FilePlan {
           this.refreshBinBackup();
           resolve(this);
         })
-        .catch(function(e){console.error(e)});
+        .catch(function(e){
+          logger.log('error','File Plan, constructor:'+e)
+          resolve(this);
+        });
     });
   }
 
@@ -1078,23 +1116,36 @@ class FilePlan {
       fs.stat(filePath, function(err, res){
         if(err){
           logger.log('error','Plan file ',filePath, err);
+          resolve();
         }else{
           try {
             fs.readFile(filePath, 'utf8', function(err, res){
-              _this.fileContent = JSON.parse(res);
-              _this.getChains()
+              if(err){
+                logger.log('error','FilePlan loadFileContent readFile: '+err);
+                resolve();
+              }else{
+                _this.fileContent = JSON.parse(res);
+                _this.getChains()
                   .then((chains) => {
-                    new Plan('', chains)
-                      .then(function(plan){
-                        _this.plan = plan;
-                        resolve();
-                      })
-                    .catch(function(err){console.error(err);})
-                  })
-                  .catch(function(e){console.error(e)});
+                  new Plan('', chains)
+                    .then(function(plan){
+                      _this.plan = plan;
+                      resolve();
+                    })
+                    .catch(function(err){
+                      logger.log('error','FilePlan loadFileContent new Plan: '+err);
+                      resolve();
+                    })
+                })
+              .catch(function(err){
+                  logger.log('error','FilePlan loadFileContent getChains: '+err);
+                  resolve();
+                });
+              }
             });
-          } catch (e) {
+          } catch(e) {
             throw new Error('Invalid PlanFile, incorrect JSON format: '+e.message,e);
+            resolve();
           }
         }
       });
@@ -1109,9 +1160,11 @@ class FilePlan {
           resolve(this.validateChains());
         }else{
           throw new Error('Invalid PlanFile, chain is not an array.');
+          resolve();
         }
       }else{
         throw new Error('Invalid PlanFile, chain property not found.');
+        resolve();
       }
 
     });
@@ -1174,25 +1227,19 @@ process.argv.forEach(function (val, index, array) {
 
 new FilePlan(fileLoad)
   .then(function(plan){
-
     runtimePlan = plan;
-    //console.log('>',JSON.stringify(objStr, null, 2));
-
-    //console.log('>',JSON.stringify(planFileObject.plan.chains[0], null, 2));
-    //runtimePlan.plan.planificateChains();
-    //runtimePlan.refreshBinBackup();
-
   })
-  .catch(function(e){console.error(e)});
-
+  .catch(function(e){
+    logger.log('error','FilePlan: '+e);
+  });
 
 //==================================================================
 //
 process.on('uncaughtException', function (err) {
-  console.error(err.stack);
+  logger.log('error',err.stack);
 });
 
 process.on('exit', function (err) {
-  console.log('--> [N]oderty parado.', err);
+  logger.log('warn','--> [R]unnerty stoped.', err);
 });
 

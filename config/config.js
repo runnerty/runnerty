@@ -13,5 +13,6 @@ config.mailOptions = {
   default_template: 'alerts'
 };
 
+config.slackToken = process.env.SLACK_API_TOKEN || 'xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879';
 
 module.exports = config;

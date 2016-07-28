@@ -17,9 +17,19 @@
           "recipients":["carlos@coderty.com"],
           "recipients_cc":[],
           "recipients_cco":[]
+        },
+        {
+          "type":"slack",
+          "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
+          "bot_name": "misha",
+          "bot_emoji": ":metal:",
+          "channel": "mlm",
+          "recipients":[],
+          "message":"*CHAIN CHAIN_ID STARTED* BITCH!"
         }
       ]
-    }, "on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
+    },
+    "on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
     "processes":[{
       "id":"SAMPLE_PROCESS_ID_1",
       "name":"Identificative process name",
@@ -36,18 +46,20 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"STARTING :PROCESS_NAME   (:PROCESS_ID )",
-              "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
+              "title":"STARTING :PROCESS_NAME ( :PROCESS_ID )",
+              "message":"Process :PROCESS_NAME ( :PROCESS_ID ) OF :CHAIN_NAME ( :CHAIN_ID )",
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
             },
             {
               "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *STARTING*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
+              "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
+              "bot_name": "misha",
+              "bot_emoji": ":see_no_evil:",
+              "channel": "mlm",
+              "recipients":[],
+              "message":"*STARTING*! Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID) "
             }
           ]
         },
@@ -61,13 +73,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -81,13 +86,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -101,13 +99,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -122,13 +113,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         }
@@ -155,13 +139,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -175,13 +152,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -195,13 +165,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -216,13 +179,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         }
@@ -260,13 +216,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -280,13 +229,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -300,13 +242,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         },
@@ -321,13 +256,6 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
-            },
-            {
-              "type":"slack",
-              "token":"slack_token",
-              "channels":["slack_channel"],
-              "recipients":["slack_user"],
-              "message":"Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) *FAIL*! - :PROCESS_ERROR_CODE :PROCESS_ERROR:"
             }
           ]
         }
