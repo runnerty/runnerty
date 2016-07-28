@@ -20,57 +20,70 @@ function renderTemplate(text, objParams){
   return text;
 }
 
+function readFilePromise(type, file){
+  return new Promise(function(resolve, reject) {
+    fs.readFile(file, function(err, data){
+      var res = {};
+      if(err){
+        res[type] = err;
+        reject(res);
+      }else{
+        res[type] = data;
+        resolve(res);
+      }
+    });
+  });
+}
+
 function sendMail(mail, callback){
 
   var transport = nodemailer.createTransport(mail.transport);
-
-  console.log(mail);
+  var filesReads = [];
 
   var templateDir  = path.resolve(mail.templateDir, mail.template);
   var htmlTemplate = path.resolve(templateDir, 'html.html');
   var txtTemplate	 = path.resolve(templateDir, 'text.txt');
 
-  try{
-    fs.readFile(htmlTemplate, function(err, data) {
-      if(err){
-        logger.log('error','Error reading template html: '+htmlTemplate+' - ',err);
-        callback(err,null);
-      }else{
-        var html = renderTemplate(data.toString(), mail.params);
+  filesReads.push(readFilePromise('html',htmlTemplate));
+  filesReads.push(readFilePromise('text', txtTemplate));
 
-        fs.readFile(txtTemplate, function(err, data) {
-          if(err){
-            logger.log('error','Error reading template txt: '+txtTemplate+' - ',err);
+  Promise.all(filesReads)
+    .then(function (res) {
+
+      var html_data;
+      var text_data;
+
+      if(res[0].hasOwnProperty('html')){
+        html_data = res[0].html.toString();
+        text_data = res[1].text.toString();
+      }else{
+        html_data = res[1].html.toString();
+        text_data = res[0].text.toString();
+      }
+
+      var html = renderTemplate(html_data, mail.params);
+      var text = renderTemplate(text_data, mail.params);
+
+      var mailOptions = {
+        from: mail.from,
+        to: mail.to,
+        subject: mail.params.subject,
+        text: text,
+        html: html
+      };
+
+      transport.sendMail(mailOptions,
+        function(err, res){
+          if(err) {
+            logger.log('error','Error sending mail:',err);
             callback(err,null);
           }else{
-            var text = renderTemplate(data.toString(), mail.params);
-
-            var mailOptions = {
-              from: mail.from,
-              to: mail.to,
-              subject: mail.params.subject,
-              text: text,
-              html: html
-            };
-
-            transport.sendMail(mailOptions,
-              function(err, res){
-                if(err) {
-                  logger.log('error','Error sending mail:',err);
-                  callback(err,null);
-                }else{
-                  callback(null,res);
-                }
-              });
+            callback(null,res);
           }
         });
-      }
-    });
-  }
-  catch(e){
-    logger.log('error','Send mail:'+e)
-  }
 
+    })
+    .catch(function(e){console.error(e)});
 };
 
 // LOGGER  ---------------------------------------------------------------------
@@ -108,41 +121,55 @@ class mailNotificator extends Notification{
     });
   }
 
-  notificate(values){
-    var mailOptions = config.mailOptions;
-    mailOptions.template = mailOptions.template || config.mailOptions.default_template;
+notificate(values){
 
-    for (var i = 0, len = this.recipients.length; i < len; i++) {
-      if (i){
-        mailOptions.to = mailOptions.to + this.recipients[i] + ((i < len-1) ? ', ' : '');
-      }
-      else{
-        mailOptions.to = this.recipients[i] + ((i < len-1) ? ', ' : '');
-      }
-    }
+    return new Promise((resolve) => {
+      var mailOptions = {};
+      mailOptions.params = values;
+      mailOptions.from = config.mailOptions.from;
+      mailOptions.transport = config.mailOptions.transport;
+      mailOptions.templateDir = config.mailOptions.templateDir;
+      mailOptions.default_template = config.mailOptions.default_template;
+      mailOptions.template = config.mailOptions.default_template;
 
-    for (var i = 0, len = this.recipients_cc.length; i < len; i++) {
-      if (i){
-        mailOptions.cc = mailOptions.cc + this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
+      for (var i = 0, len = this.recipients.length; i < len; i++) {
+        if (i){
+          mailOptions.to = mailOptions.to + this.recipients[i] + ((i < len-1) ? ', ' : '');
+        }
+        else{
+          mailOptions.to = this.recipients[i] + ((i < len-1) ? ', ' : '');
+        }
       }
-      else{
-        mailOptions.cc = this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
-      }
-    }
 
-    for (var i = 0, len = this.recipients_cco.length; i < len; i++) {
-      if (i){
-        mailOptions.bcc = mailOptions.bcc + this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
+      for (var i = 0, len = this.recipients_cc.length; i < len; i++) {
+        if (i){
+          mailOptions.cc = mailOptions.cc + this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
+        }
+        else{
+          mailOptions.cc = this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
+        }
       }
-      else{
-        mailOptions.bcc = this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
-      }
-    }
-    mailOptions.params = values;
-    mailOptions.params.subject = renderTemplate(this.title, values);
-    mailOptions.params.message = renderTemplate(this.message, values);
 
-    sendMail(mailOptions, function(err, res){});
+      for (var i = 0, len = this.recipients_cco.length; i < len; i++) {
+        if (i){
+          mailOptions.bcc = mailOptions.bcc + this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
+        }
+        else{
+          mailOptions.bcc = this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
+        }
+      }
+
+      mailOptions.params.subject = renderTemplate(this.title, values);
+      mailOptions.params.message = renderTemplate(this.message, values);
+
+      sendMail(mailOptions, function(err, res){
+        if (err){
+          logger.log('error','Error sending mail:'+e,mailOptions,values);
+        }
+        resolve(res);
+      });
+
+    });
   }
 }
 
@@ -157,6 +184,9 @@ class slackNotificator extends Notification{
   notificate(values){
     //TODO: IMPLEMENTAR AQUI ENVIO VIA SLACK
     logger.log('info','ENVIARIA SLACK', values);
+    return new Promise((resolve) => {
+      resolve();
+      });
   }
 }
 
@@ -263,9 +293,9 @@ class Process {
     var _this = this;
 
     return {
-      "CHAIN_ID":_this.chain_values.id,
-      "CHAIN_NAME":_this.chain_values.name,
-      "CHAIN_STARTED_AT":_this.chain_values.started_at,
+      "CHAIN_ID":_this.chain_values.CHAIN_ID,
+      "CHAIN_NAME":_this.chain_values.CHAIN_NAME,
+      "CHAIN_STARTED_AT":_this.chain_values.CHAIN_STARTED_AT,
       "PROCESS_ID":_this.id,
       "PROCESS_NAME":_this.name,
       "PROCESS_COMMAND":_this.command,
@@ -321,13 +351,18 @@ class Process {
 
   notificate(event){
     var _this = this;
-    if(_this.events.hasOwnProperty(event)){
-      if(_this.events[event].hasOwnProperty('notifications')){
-        if(_this.events[event].notifications instanceof Array){
 
-          var notificationsLength = _this.events[event].notifications.length;
-          while(notificationsLength--){
-            _this.events[event].notifications[notificationsLength].notificate(_this.values());
+    if(_this.hasOwnProperty('events')){
+      if(_this.events.hasOwnProperty(event)){
+        if(_this.events[event].hasOwnProperty('notifications')){
+          if(_this.events[event].notifications instanceof Array){
+
+            var notificationsLength = _this.events[event].notifications.length;
+            while(notificationsLength--){
+              _this.events[event].notifications[notificationsLength].notificate(_this.values())
+                .then(function(res){logger.log('info','Notification process sended: '+res)})
+                .catch(function(e){logger.log('error',e)})
+            }
           }
         }
       }
@@ -424,23 +459,24 @@ class Chain {
     this.processes;
 
     return new Promise((resolve) => {
-      this.loadProcesses(processes)
-        .then((processes) => {
-          this.processes = processes;
+      var _this = this;
 
-          resolve(this);
-    /*
-          this.loadEvents(events)
+     _this.loadProcesses(processes)
+        .then((processes) => {
+        _this.processes = processes;
+
+          //resolve(this);
+
+        _this.loadEvents(events)
             .then((events) => {
-            this.events = events;
-            console.log(this);
-            resolve(this);
+            _this.events = events;
+            resolve(_this);
         })
         .catch(function(e){
             logger.log('error',e);
             resolve();
           });
-*/
+
         })
         .catch(function(e){
           logger.log('error',e);
@@ -545,21 +581,25 @@ class Chain {
     var _this = this;
 
     return {
-      "id":_this.id,
-      "name":_this.name,
-      "started_at":_this.started_at
+      "CHAIN_ID":_this.id,
+      "CHAIN_NAME":_this.name,
+      "CHAIN_STARTED_AT":_this.started_at
     };
   }
 
   notificate(event){
     var _this = this;
-    if(_this.events.hasOwnProperty(event)){
-      if(_this.events[event].hasOwnProperty('notifications')){
-        if(_this.events[event].notifications instanceof Array){
-
-          var notificationsLength = _this.events[event].notifications.length;
-          while(notificationsLength--){
-            _this.events[event].notifications[notificationsLength].notificate(_this.values());
+    logger.log('warn','LLAMADA A RUNNING CHAIN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!'+event);
+    if(_this.hasOwnProperty('events')){
+      if(_this.events.hasOwnProperty(event)){
+        if(_this.events[event].hasOwnProperty('notifications')){
+          if(_this.events[event].notifications instanceof Array){
+            var notificationsLength = _this.events[event].notifications.length;
+            while(notificationsLength--){
+              _this.events[event].notifications[notificationsLength].notificate(_this.values())
+                .then(function(res){logger.log('info','Notification chain sended: '+res)})
+                .catch(function(e){logger.log('error'+e)});
+            }
           }
         }
       }
@@ -578,7 +618,6 @@ class Chain {
 
   running(){
     this.started_at = new Date();
-    this.status = 'running';
     this.notificate('on_start');
   }
 
@@ -671,7 +710,6 @@ class Chain {
         logger.log('warn',`This chain ${this.id} is running yet and is being initialized`)
       }
       // Set All Process to stopped
-      this.running();
       var processesLength = this.processes.length;
       while(processesLength--) {
         this.processes[processesLength].stop();
@@ -720,6 +758,8 @@ class Chain {
   startProcesses(){
 
     var _this = this;
+
+    _this.running();
 
     return new Promise(function(resolve, reject) {
 
@@ -860,9 +900,8 @@ class Plan{
           }
 
           Promise.all(planChainsPromesas)
-            .then(function(dataArr) {
-              console.log('dataArr:',dataArr);
-              resolve(dataArr);
+            .then(function(res) {
+              resolve(res);
             })
             .catch(function(e){logger.log('error','Loading chains:'+e)});
 

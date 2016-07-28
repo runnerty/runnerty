@@ -97,7 +97,7 @@
             {
               "type":"mail",
               "title":"END :PROCESS_NAME (:PROCESS_ID )",
-              "message":"Process :PROCESS_NAME  (:PROCESS_ID ) OF :CHAIN_NAME  (:CHAIN_ID ) FAIL! - :PROCESS_ERROR_CODE  :PROCESS_ERROR ",
+              "message":"Process :PROCESS_NAME  (:PROCESS_ID ) OF :CHAIN_NAME  (:CHAIN_ID ). OUTPUT: :PROCESS_EXECUTE_RETURN ",
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]

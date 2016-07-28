@@ -8,7 +8,7 @@ config.refreshIntervalBinBackup = 2000;
 
 config.mailOptions = {
   from:'Runnerty <desawc@gmail.com>',
-  transport: 'smtps://desawc%40gmail.com:nesoca..gmail@smtp.gmail.com',
+  transport: 'smtps://desawc%40gmail.com:nesoca..gmail@smtp.gmail.com/?pool=true',
   templateDir: path.join(__dirname, '../templates'),
   default_template: 'alerts'
 };
