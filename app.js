@@ -1269,6 +1269,7 @@ process.argv.forEach(function (val, index, array) {
 new FilePlan(fileLoad)
   .then(function(plan){
     runtimePlan = plan;
+    require('./api/api.js')(config, logger, runtimePlan);
   })
   .catch(function(e){
     logger.log('error','FilePlan: '+e);

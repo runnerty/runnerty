@@ -16,4 +16,9 @@ config.mailOptions = {
 
 config.slackToken = process.env.SLACK_API_TOKEN || 'xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879';
 
+config.api = {};
+config.api.port = 3456;
+config.api.secret = 'RUNNERTY_BY_CODERTY';
+config.api.limite_req = '20mb';
+
 module.exports = config;
