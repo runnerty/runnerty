@@ -25,19 +25,19 @@
           "bot_emoji": ":metal:",
           "channel": "mlm",
           "recipients":[],
-          "message":"*CHAIN CHAIN_ID STARTED* BITCH!"
+          "message":"INICIO DE CADENA *CHAIN_ID* BITCH!"
         }
       ]
     },
     "on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
     "processes":[{
       "id":"SAMPLE_PROCESS_ID_1",
-      "name":"Identificative process name",
+      "name":"PROCESO UNO",
       "depends_process":[],
       "depends_process_alt":[],
       "command":"sh",
       "args":["./test/test.sh"],
-      "retries":0,
+      "retries":2,
       "retry_delay":10,
       "limited_time_end":"15:00:00",
       "events":{
@@ -56,10 +56,10 @@
               "type":"slack",
               "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
               "bot_name": "misha",
-              "bot_emoji": ":see_no_evil:",
+              "bot_emoji": ":rabbit2:",
               "channel": "mlm",
               "recipients":[],
-              "message":"*STARTING*! Process *:PROCESS_NAME  * (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID) "
+              "message":"INICIO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
             }
           ]
         },
@@ -73,6 +73,15 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
+            },
+            {
+              "type":"slack",
+              "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
+              "bot_name": "misha",
+              "bot_emoji": ":see_no_evil:",
+              "channel": "mlm",
+              "recipients":[],
+              "message":"ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
             }
           ]
         },
@@ -81,11 +90,20 @@
           "notifications":[
             {
               "type":"mail",
-              "title":"RETRYING :PROCESS_NAME   (:PROCESS_ID )",
+              "title":"RETRYING :PROCESS_NAME (:PROCESS_ID )",
               "message":"Process :PROCESS_NAME   (:PROCESS_ID ) OF :CHAIN_NAME (:CHAIN_ID:) FAIL! - :PROCESS_ERROR_CODE :PROCESS_ERROR:",
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
+            },
+            {
+              "type":"slack",
+              "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
+              "bot_name": "misha",
+              "bot_emoji": ":muscle:",
+              "channel": "mlm",
+              "recipients":[],
+              "message":"REINTENTO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - INTENTO :PROCESS_RETRIES_COUNT DE :PROCESS_RETRIES "
             }
           ]
         },
@@ -99,6 +117,15 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
+            },
+            {
+              "type":"slack",
+              "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
+              "bot_name": "misha",
+              "bot_emoji": ":v:",
+              "channel": "mlm",
+              "recipients":[],
+              "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_RETURN"
             }
           ]
         },

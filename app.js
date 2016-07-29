@@ -72,15 +72,20 @@ function sendMail(mail, callback){
         html: html
       };
 
-      transport.sendMail(mailOptions,
-        function(err, res){
-          if(err) {
-            logger.log('error','Error sending mail:',err);
-            callback(err,null);
-          }else{
-            callback(null,res);
-          }
-        });
+      if(mail.disable){
+        logger.log('warn','Mail sender is disable.');
+        callback();
+      }else{
+        transport.sendMail(mailOptions,
+          function(err, res){
+            if(err) {
+              logger.log('error','Error sending mail:',err);
+              callback(err,null);
+            }else{
+              callback(null,res);
+            }
+          });
+      }
 
     })
     .catch(function(e){
@@ -134,6 +139,7 @@ notificate(values){
       mailOptions.templateDir = config.mailOptions.templateDir;
       mailOptions.default_template = config.mailOptions.default_template;
       mailOptions.template = config.mailOptions.default_template;
+      mailOptions.disable = config.mailOptions.disable;
 
       for (var i = 0, len = this.recipients.length; i < len; i++) {
         if (i){
@@ -171,7 +177,6 @@ notificate(values){
         }
         resolve(res);
       });
-
     });
   }
 }
@@ -279,7 +284,6 @@ class Event {
         logger.log('error','Notifications, is not array', name, process, notifications);
         resolve(objEvent);
       }
-      //promisesProcessNotification.push(new Process(process.id, process.name, process.depends_process, process.depends_process_alt, process.command, process.args, process.retries, process.retry_delay, process.limited_time_end, process.events));
     });
   }
 }
@@ -330,7 +334,9 @@ class Process {
       "PROCESS_EXECUTE_RETURN":_this.execute_return,
       "PROCESS_EXECUTE_ERR_RETURN":_this.execute_err_return,
       "PROCESS_STARTED_AT":_this.started_at,
-      "PROCESS_ENDED_AT":_this.ended_at
+      "PROCESS_ENDED_AT":_this.ended_at,
+      "PROCESS_RETRIES_COUNT": _this.retries_count,
+      "PROCESS_RETRIES": _this.retries
     };
   }
 
@@ -428,7 +434,7 @@ class Process {
     _this.status = 'end';
     _this.ended_at = new Date();
 
-    this.notificate('on_end');
+    _this.notificate('on_end');
   }
 
   error(){
@@ -437,11 +443,14 @@ class Process {
     _this.notificate('on_fail');
   }
 
-  start(){
+  start(isRetry){
     var _this = this;
     _this.status = 'running';
     _this.started_at = new Date();
-    _this.notificate('on_start');
+
+    if(!isRetry || isRetry === undefined){
+      _this.notificate('on_start');
+    }
 
     logger.log('info','SE EJECUTA START DE '+this.id);
 
@@ -459,19 +468,45 @@ class Process {
         .on('close', function(code) {
           logger.log('info',_this.id+'FIN: ------------> '+code+' - '+stdout+' - '+stderr);
           if (code === 0) {
+            _this.execute_return = stdout;
+            _this.execute_err_return = stderr;
             _this.end();
-            _this.exec_return = stdout;
-            _this.exec_err_return = stderr;
             resolve(stdout);
           } else {
             logger.log('error',_this.id+'FIN: '+code+' - '+stdout+' - '+stderr);
+
+            _this.execute_return = stdout;
+            _this.execute_err_return = stderr;
+            _this.retries_count = _this.retries_count +1 || 1;
             _this.error();
-            _this.exec_return = stdout;
-            _this.exec_err_return = stderr;
-            reject(stderr);
+
+            if(_this.retries >= _this.retries_count){
+
+              _this.retry();
+
+              setTimeout(function(){
+                _this.start(true)
+                  .then(function(res) {
+                    _this.retries_count = 0;
+                    resolve(res);
+                  })
+                  .catch(function(e){
+                    logger.log('error','Retrying process:'+e)
+                    resolve(e);
+                  });
+              }, _this.retry_delay * 1000 || 0);
+
+            }else{
+              reject(stderr);
+            }
           }
         });
     });
+  }
+
+  retry(){
+    var _this = this;
+    _this.notificate('on_retry');
   }
 
   waiting_dependencies(){
@@ -800,15 +835,20 @@ class Chain {
   startProcesses(){
 
     var _this = this;
-    _this.running();
+
+    var runningBeforeRefresh = _this.isRunning();
 
     return new Promise(function(resolve, reject) {
       _this.refreshChainStatus()
         .then(function(chainStatus){
 
+          if(chainStatus === 'running' && !runningBeforeRefresh){
+            _this.running();
+          }
+
           logger.log('info',_this.id+' - chainStatus:'+chainStatus);
 
-          // If Chains si running:
+          // If Chains is running:
           if (chainStatus === 'running'){
             var chainProcessesLength = _this.processes.length;
 

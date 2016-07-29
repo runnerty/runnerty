@@ -7,6 +7,7 @@ config.binBackup = './bin.json';
 config.refreshIntervalBinBackup = 2000;
 
 config.mailOptions = {
+  disable: true,
   from:'Runnerty <desawc@gmail.com>',
   transport: 'smtps://desawc%40gmail.com:nesoca..gmail@smtp.gmail.com/?pool=true',
   templateDir: path.join(__dirname, '../templates'),
