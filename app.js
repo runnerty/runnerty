@@ -13,9 +13,22 @@ var Slack           = require('slack-node');
 // UTILS
 function renderTemplate(text, objParams){
   var keys = Object.keys(objParams);
+
+  function orderByLength(a, b) {
+    if (a.length > b.length) {
+      return 1;
+    }
+    if (a.length < b.length) {
+      return -1;
+    }
+    return 0;
+  }
+
+  keys.sort(orderByLength);
   var keysLength = keys.length;
+
   while (keysLength--) {
-    text = text.replace(new RegExp('\\:' + keys[keysLength], 'gi'), objParams[keys[keysLength]]);
+    text = text.replace(new RegExp('\\:' + keys[keysLength], 'gi'), objParams[keys[keysLength]] || '');
   }
   return text;
 }
@@ -443,13 +456,18 @@ class Process {
     _this.notificate('on_fail');
   }
 
-  start(isRetry){
+  start(isRetry, forceOnceInRetry){
     var _this = this;
     _this.status = 'running';
     _this.started_at = new Date();
 
     if(!isRetry || isRetry === undefined){
       _this.notificate('on_start');
+    }
+
+    // forceOnceInRetry: this indicates that only try once in retry
+    if(!forceOnceInRetry || forceOnceInRetry === undefined){
+      forceOnceInRetry = false;
     }
 
     logger.log('info','SE EJECUTA START DE '+this.id);
@@ -480,7 +498,7 @@ class Process {
             _this.retries_count = _this.retries_count +1 || 1;
             _this.error();
 
-            if(_this.retries >= _this.retries_count){
+            if(_this.retries >= _this.retries_count && !forceOnceInRetry){
 
               _this.retry();
 
@@ -671,7 +689,7 @@ class Chain {
             while(notificationsLength--){
               _this.events[event].notifications[notificationsLength].notificate(_this.values())
                 .then(function(res){logger.log('info','Notification chain sended: '+res)})
-                .catch(function(e){logger.log('error'+e)});
+                .catch(function(e){logger.log('error','Notification chain sended: '+e)});
             }
           }
         }

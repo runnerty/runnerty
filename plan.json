@@ -4,7 +4,7 @@
     "name":"Identificative name of chain",
     "start_date":"2016-07-26T16:31:00",
     "end_date":"2099-09-17T11:00:00",
-    "schedule_interval":"*/1 * * * *",
+    "schedule_interval":"*/3 * * * *",
     "prevent_overlap":"ignore",
     "depends_chains":[],
     "depends_chains_alt":[],
@@ -12,7 +12,7 @@
       "notifications":[
         {
           "type":"mail",
-          "title":"STARTING :CHAIN_NAME   (:CHAIN_ID )",
+          "title":"STARTING :CHAIN_NAME  (:CHAIN_ID )",
           "message":"STARTTED CHAIN :CHAIN_ID:",
           "recipients":["carlos@coderty.com"],
           "recipients_cc":[],
@@ -192,6 +192,15 @@
               "recipients":["carlos@coderty.com"],
               "recipients_cc":[],
               "recipients_cco":[]
+            },
+            {
+              "type":"slack",
+              "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
+              "bot_name": "misha",
+              "bot_emoji": ":v:",
+              "channel": "mlm",
+              "recipients":[],
+              "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_RETURN"
             }
           ]
         },

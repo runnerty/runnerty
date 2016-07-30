@@ -18,28 +18,7 @@ var helmet          = require('helmet');
 
 //============================================
 
-module.exports = function (config, logger, plan) {
-
-    //==================================================================
-    // Cookies
-    /*
-    app.use(cookieParser());
-    app.use(session({
-      name: config.COOKIE.NAME,
-      secret: config.COOKIE.SECRET,
-      store: sessionStore,
-      saveUninitialized: true, // don't create session until something stored,
-      resave: true, // don't save session if unmodified
-      proxy: true,
-      cookie: {
-        path: '/',
-        httpOnly: true,
-        secure: config.global.SESSION_SECURE_TOKEN,
-        maxAge: config.COOKIE.MAXAGEMIN * 60 * 1000
-      }
-    }));
-    */
-
+module.exports = function (config, logger, fp) {
     //==============================================
     // SERVER
 
@@ -55,7 +34,7 @@ module.exports = function (config, logger, plan) {
     //==============================================
     // SECURITY
     app.use(helmet());
-    app.disable( 'x-powered-by' );
+    app.disable('x-powered-by');
 /*
     app.use(lusca({
       csp: {},
@@ -175,11 +154,129 @@ module.exports = function (config, logger, plan) {
           res.json({ success: false, message: 'Authentication failed.' });
         }
       }
+    });
+
+
+    function locateIdPosition(items, id){
+      var itemsLength = items.length;
+      while(itemsLength--){
+        if(items[itemsLength].id === id){
+          return itemsLength;
+        }
+      }
+    }
+
+
+    // GET ALL CHAINS
+    router.get('/chains', function (req, res) {
+      res.json(fp.plan.chains);
+    });
+
+    // GET A CHAIN
+    router.get('/chain/:chainId', function (req, res) {
+      var chainId = req.params.chainId;
+
+      var chain = fp.plan.chains[locateIdPosition(fp.plan.chains,chainId)];
+
+      if(chain){
+        res.json(chain);
+      }else{
+        res.status(404).send(`Chain "${chainId}" not found`);
+      }
 
     });
 
-    router.get('/chains', function (req, res) {
-      res.json(plan.plan.chains);
+    //GET ALL PROCESSES OF CHAIN INDICATED IN PARAMETER chainId
+    router.get('/processes/:chainId', function (req, res) {
+      var chainId = req.params.chainId;
+      var processes;
+
+      processes = fp.plan.chains[locateIdPosition(fp.plan.chains,chainId)].processes;
+
+      if(processes){
+        res.json(processes);
+      }else{
+        res.status(404).send(`Chain "${chainId}" not found`);
+      }
+
+    });
+
+    //GET A PROCESS OF CHAIN INDICATED IN PARAMETER chainId AND processId
+    router.get('/process/:chainId/:processId', function (req, res) {
+      var chainId = req.params.chainId;
+      var processId = req.params.processId;
+
+      var chainPos = locateIdPosition(fp.plan.chains,chainId);
+      var processPos = locateIdPosition(fp.plan.chains[chainPos].processes,processId);
+
+      var process = fp.plan.chains[chainPos].processes[processPos];
+
+      if(process){
+        res.json(process);
+      }else{
+        res.status(404).send(`Process "${processId}" of chain "${chainId}" not found`);
+      }
+
+    });
+
+    // RETRY A PROCESS OF A CHAIN INDICATE: chainId, processId AND once (TRUE FOR ONCE RETRY FALSE FOR CONFIGURED RETRIES)
+    router.post('/process/retry', function (req, res) {
+
+      var chainId   = req.body.chainId;
+      var processId = req.body.processId;
+      var once      = req.body.once || false;
+
+      var chainPos = locateIdPosition(fp.plan.chains,chainId);
+      var processPos = locateIdPosition(fp.plan.chains[chainPos].processes,processId);
+
+      logger.log('info',`Retrying process "${processId}" of chain "${chainId}" by ${req.user}`);
+
+      if(fp.plan.chains[chainPos].processes[processPos].status === 'error'){
+        res.json();
+
+        fp.plan.chains[chainPos].processes[processPos].start(true, once)
+          .then(function(res) {
+          })
+          .catch(function(e){
+            logger.log('error','Retrying process:'+e)
+          });
+      }else{
+        res.status(423).send(`Process "${processId}" of chain "${chainId}" is not in errored status`);
+      }
+
+    });
+
+    // SET END A PROCESS OF A CHAIN INDICATE: chainId, processId
+    router.post('/process/end', function (req, res) {
+      var chainId   = req.body.chainId;
+      var processId = req.body.processId;
+      var continueChain = req.body.continueChain || false;
+
+      var chainPos = locateIdPosition(fp.plan.chains,chainId);
+      var processPos = locateIdPosition(fp.plan.chains[chainPos].processes,processId);
+      logger.log('info',`Set end process "${processId}" of chain "${chainId}" by ${req.user}`);
+
+      if(!fp.plan.chains[chainPos].processes[processPos].isEnded() && !fp.plan.chains[chainPos].processes[processPos].isRunning()){
+
+        res.json();
+
+        fp.plan.chains[chainPos].processes[processPos].execute_return = '';
+        fp.plan.chains[chainPos].processes[processPos].execute_err_return = '';
+        fp.plan.chains[chainPos].processes[processPos].end();
+
+        if(continueChain){
+          fp.plan.chains[chainPos].startProcesses()
+            .then(function(res){
+            })
+            .catch(function(e){
+              logger.log('error',`Error in startProcesses next to set end process "${processId}" of chain "${chainId}"  by ${req.user}:`+e);
+            })
+        }
+
+      }else{
+        res.status(423).send(`Is not posible set process "${processId}" of chain "${chainId}" to end because is ${fp.plan.chains[chainPos].processes[processPos].status}`);
+      }
+
     });
 
 };
