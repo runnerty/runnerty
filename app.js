@@ -972,7 +972,7 @@ class Plan{
         .catch(function(e){
           logger.log('error','Plan constructor:'+e);
           resolve(this);
-    });
+      });
     });
   }
 
@@ -1005,10 +1005,14 @@ class Plan{
             .then(function(res) {
               resolve(res);
             })
-            .catch(function(e){logger.log('error','Loading chains:'+e)});
+            .catch(function(e){
+              logger.log('error','Loading chains:'+e);
+              resolve();
+            });
 
         }else{
           logger.log('error','Plan have not Chains');
+          resolve();
         }
       }else{
         logger.log('error','Chain, processes is not array', err);
@@ -1017,86 +1021,113 @@ class Plan{
     });
   }
 
+  loadChain(chain){
+    return new Promise((resolve) => {
+
+      new Chain(chain.id,
+                chain.name,
+                chain.start_date,
+                chain.end_date,
+                chain.schedule_interval,
+                chain.prevent_overlap,
+                chain.depends_chains,
+                chain.depends_chains_alt,
+                chain.events,
+                chain.processes,
+                chain.status,
+                chain.started_at,
+                chain.ended_at)
+          .then(function(res) {
+            resolve(res);
+          })
+          .catch(function(e){
+            logger.log('error','Loading chain:'+e);
+            resolve(res);
+          });
+    });
+  }
+
   planificateChains(){
     var _this = this;
     var planChainsLength = this.chains.length;
-
     while(planChainsLength--) {
-
       var chain = this.chains[planChainsLength];
-
-      // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
-      // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
-
-      if(chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined){
-        chain.stop();
-      };
-
-      if ((!chain.hasOwnProperty('end_date') || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStoped()))
-        {
-          if(chain.hasOwnProperty('start_date')){
-
-            logger.log('debug', `PLANIFICADA CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
-
-            if ((new Date(chain.start_date)) <= (new Date())){
-
-              logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
-
-
-              logger.log('debug', `INTENTANDO INICIAR CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
-
-              if(_this.hasDependenciesBlocking(chain)){
-                chain.waiting_dependencies();
-                logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
-              }else{
-                logger.log('info', `**************** Ejecutar YA esta cadena ${chain.id} -> start`);
-                chain.start()
-                  .then(function() {
-                    _this.planificateChains()
-                  })
-                  .catch(function(e){logger.log('error','Error '+e)});
-              }
-            }else{
-              // Will execute in start_date set
-              chain.schedule = schedule.scheduleJob(new Date(chain.start_date), function(chain){
-                if(_this.hasDependenciesBlocking(chain)){
-                  chain.waiting_dependencies();
-                  logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> on_waiting_dependencies`);
-                }else{
-                  logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
-                  chain.start()
-                    .then(function() {
-                      _this.planificateChains()
-                    })
-                    .catch(function(e){logger.log('error','Error '+e)});
-                }
-              }.bind(null,chain));
-            }
-
-            // Remove Chain from pool
-            if(chain.hasOwnProperty('end_date')){
-
-              logger.log('debug',`PLANIFICADA CANCELACION DE CADENA ${chain.id} EN ${(new Date(chain.end_date))}`);
-
-              chain.scheduleCancel = schedule.scheduleJob(new Date(chain.end_date), function(chain){
-
-                logger.log('debug',`CANCELANDO CADENA ${chain.id}`);
-
-                chain.schedule.cancel();
-
-              }.bind(null,chain));
-            }
-
-          }else{
-            logger.log('error',`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
-            throw new Error(`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
-          }
-        }else{
-          logger.log('warn',`CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `,new Date(),'-  chain.status:'+chain.status,'- chain.schedule_interval:',chain.schedule_interval,'- chain.scheduleRepeater:',(chain.scheduleRepeater===undefined));
-        }
+      _this.planificateChain(chain);
     }
   };
 
+  planificateChain(chain){
+    var _this = this;
+    // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
+    // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
+
+    if(chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined){
+      chain.stop();
+    };
+
+    if ((!chain.hasOwnProperty('end_date') || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStoped()))
+    {
+      if(chain.hasOwnProperty('start_date')){
+
+        logger.log('debug', `PLANIFICADA CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
+
+        if ((new Date(chain.start_date)) <= (new Date())){
+
+          logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
+
+
+          logger.log('debug', `INTENTANDO INICIAR CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
+
+          if(_this.hasDependenciesBlocking(chain)){
+            chain.waiting_dependencies();
+            logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
+          }else{
+            logger.log('info', `**************** Ejecutar YA esta cadena ${chain.id} -> start`);
+            chain.start()
+              .then(function() {
+                _this.planificateChains()
+              })
+              .catch(function(e){logger.log('error','Error '+e)});
+          }
+        }else{
+          // Will execute in start_date set
+          chain.schedule = schedule.scheduleJob(new Date(chain.start_date), function(chain){
+            if(_this.hasDependenciesBlocking(chain)){
+              chain.waiting_dependencies();
+              logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> on_waiting_dependencies`);
+            }else{
+              logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
+              chain.start()
+                .then(function() {
+                  _this.planificateChains()
+                })
+                .catch(function(e){logger.log('error','Error '+e)});
+            }
+          }.bind(null,chain));
+        }
+
+        // Remove Chain from pool
+        if(chain.hasOwnProperty('end_date')){
+
+          logger.log('debug',`PLANIFICADA CANCELACION DE CADENA ${chain.id} EN ${(new Date(chain.end_date))}`);
+
+          chain.scheduleCancel = schedule.scheduleJob(new Date(chain.end_date), function(chain){
+
+            logger.log('debug',`CANCELANDO CADENA ${chain.id}`);
+
+            chain.schedule.cancel();
+
+          }.bind(null,chain));
+        }
+
+      }else{
+        logger.log('error',`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
+        throw new Error(`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
+      }
+    }else{
+      logger.log('warn',`CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `,new Date(),'-  chain.status:'+chain.status,'- chain.schedule_interval:',chain.schedule_interval,'- chain.scheduleRepeater:',(chain.scheduleRepeater===undefined));
+    }
+  };
 
   dependenciesBlocking(chain){
 
@@ -1156,11 +1187,28 @@ class FilePlan {
     this.plan;
 
     return new Promise((resolve) => {
+      var _this = this;
       this.loadFileContent(filePath)
-        .then(() => {
-          this.plan.planificateChains();
-          this.refreshBinBackup();
-          resolve(this);
+        .then((res) => {
+        _this.fileContent = res;
+        _this.getChains(res)
+          .then((chains) => {
+          new Plan('', chains)
+            .then(function(plan){
+              _this.plan = plan;
+              _this.plan.planificateChains();
+              _this.refreshBinBackup();
+              resolve(_this);
+            })
+            .catch(function(err){
+              logger.log('error','FilePlan new Plan: '+err);
+              resolve();
+            })
+        })
+        .catch(function(err){
+            logger.log('error','FilePlan loadFileContent getChains: '+err);
+            resolve();
+          });
         })
         .catch(function(e){
           logger.log('error','File Plan, constructor:'+e)
@@ -1183,23 +1231,7 @@ class FilePlan {
                 logger.log('error','FilePlan loadFileContent readFile: '+err);
                 resolve();
               }else{
-                _this.fileContent = JSON.parse(res);
-                _this.getChains()
-                  .then((chains) => {
-                  new Plan('', chains)
-                    .then(function(plan){
-                      _this.plan = plan;
-                      resolve();
-                    })
-                    .catch(function(err){
-                      logger.log('error','FilePlan loadFileContent new Plan: '+err);
-                      resolve();
-                    })
-                })
-              .catch(function(err){
-                  logger.log('error','FilePlan loadFileContent getChains: '+err);
-                  resolve();
-                });
+                resolve(JSON.parse(res));
               }
             });
           } catch(e) {
@@ -1211,12 +1243,12 @@ class FilePlan {
     });
   }
 
-  getChains(){
+  getChains(json){
     return new Promise((resolve) => {
 
-      if(this.fileContent.hasOwnProperty('chains')){
-        if(this.fileContent.chains instanceof Array){
-          resolve(this.validateChains());
+      if(json.hasOwnProperty('chains')){
+        if(json.chains instanceof Array){
+          resolve(this.validateChains(json));
         }else{
           throw new Error('Invalid PlanFile, chain is not an array.');
           resolve();
@@ -1229,12 +1261,12 @@ class FilePlan {
     });
   };
 
-  validateChains(){
+  validateChains(json){
     var correctChains = [];
-    var chainsLength = this.fileContent.chains.length;
+    var chainsLength = json.chains.length;
 
     for (var i = 0; i < chainsLength; ++i) {
-      var chain = this.fileContent.chains[i];
+      var chain = json.chains[i];
       if(chain.hasOwnProperty('id')){
         correctChains.push(chain);
       }

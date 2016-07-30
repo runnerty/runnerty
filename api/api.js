@@ -159,13 +159,15 @@ module.exports = function (config, logger, fp) {
 
     function locateIdPosition(items, id){
       var itemsLength = items.length;
+      var posLocation = -1;
       while(itemsLength--){
         if(items[itemsLength].id === id){
-          return itemsLength;
+          posLocation = itemsLength;
+          itemsLength = 0;
         }
       }
+      return posLocation;
     }
-
 
     // GET ALL CHAINS
     router.get('/chains', function (req, res) {
@@ -278,5 +280,104 @@ module.exports = function (config, logger, fp) {
       }
 
     });
+
+    // LOAD NEW CHAIN
+    router.post('/chain/load', function (req, res) {
+
+      var chainId   = req.body.chainId;
+      var planFile  = req.body.planFile || config.planFilePath;
+      var forceLoad = req.body.forceLoad || false;
+
+      fp.loadFileContent(planFile)
+        .then((fileRes) => {
+          fp.getChains(fileRes)
+          .then((chains) => {
+            var cp = locateIdPosition(chains,chainId);
+            if(cp === -1){
+              res.status(404).send(`Chain "${chainId}" not found in file`);
+            }else{
+              var chain = chains[cp];
+              fp.plan.loadChain(chain)
+                .then(function(chainObj){
+                  fp.plan.chains.push(chainObj);
+                  var cp = locateIdPosition(fp.plan.chains,chainId);
+                  if(cp === -1){
+                    res.status(404).send(`Chain "${chainId}" not found in plan`);
+                  }else{
+                    res.json();
+                    fp.plan.planificateChain(fp.plan.chains[cp]);
+                    fp.refreshBinBackup();
+                  }
+                })
+                .catch(function(err){
+                  res.status(500).send(`Error loading "${chainId}" (creating plan):`+err);
+                  logger.log('error','FilePlan new Plan: '+err);
+                })
+            }
+          })
+          .catch(function(err){
+            res.status(500).send(`Error loading "${chainId}" (loading chain):`+err);
+            logger.log('error','FilePlan loadFileContent getChains: '+err);
+          });
+        })
+        .catch(function(e){
+          res.status(500).send(`Error loading "${chainId}" (loading file):`+err);
+          logger.log('error','File Plan, constructor:'+e)
+        });
+    });
+
+  // RELOAD CHAIN
+  router.post('/chain/reload', function (req, res) {
+
+    var chainId   = req.body.chainId;
+    var planFile  = req.body.planFile || config.planFilePath;
+
+    var posChain = locateIdPosition(fp.plan.chains,chainId);
+    if(posChain === -1){
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }else{
+      var chain = fp.plan.chains[posChain];
+
+      if(chain.isRunning()){
+        res.status(423).send(`Is not posible reload chain "${chainId}" because is ${chain.status}`);
+      }else{
+        fp.loadFileContent(planFile)
+          .then((fileRes) => {
+          fp.getChains(fileRes)
+          .then((chains) => {
+          var cp = locateIdPosition(chains,chainId);
+          if(cp === -1){
+            res.status(404).send(`Chain "${chainId}" not found in file`);
+          }else{
+            var chain = chains[cp];
+            fp.plan.loadChain(chain)
+              .then(function(chainObj){
+
+                res.json();
+                fp.plan.chains[posChain] = chainObj;
+                fp.plan.planificateChain(fp.plan.chains[posChain]);
+                fp.refreshBinBackup();
+
+              })
+              .catch(function(err){
+                res.status(500).send(`Error reloading "${chainId}" (creating plan):`+err);
+                logger.log('error','FilePlan new Plan: '+err);
+              })
+          }
+          })
+          .catch(function(err){
+              res.status(500).send(`Error reloading "${chainId}" (loading chain):`+err);
+              logger.log('error','FilePlan loadFileContent getChains: '+err);
+            });
+          })
+          .catch(function(e){
+              res.status(500).send(`Error reloading "${chainId}" (loading file):`+err);
+              logger.log('error','File Plan, constructor:'+e)
+            });
+          }
+          }
+        });
+
+    //TODO RELOAD PROCESS OF CHAIN
 
 };
