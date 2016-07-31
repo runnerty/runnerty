@@ -156,19 +156,6 @@ module.exports = function (config, logger, fp) {
       }
     });
 
-
-    function locateIdPosition(items, id){
-      var itemsLength = items.length;
-      var posLocation = -1;
-      while(itemsLength--){
-        if(items[itemsLength].id === id){
-          posLocation = itemsLength;
-          itemsLength = 0;
-        }
-      }
-      return posLocation;
-    }
-
     // GET ALL CHAINS
     router.get('/chains', function (req, res) {
       res.json(fp.plan.chains);
