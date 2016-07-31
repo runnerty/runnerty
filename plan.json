@@ -330,7 +330,7 @@
       },
         "on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
       "processes":[{
-        "id":"SAMPLE_PROCESS_ID_1_NUEVO",
+        "id":"PROCESO_NUEVO",
         "name":"PROCESO UNO",
         "depends_process":[],
         "depends_process_alt":[],
@@ -445,7 +445,7 @@
         }
       },
         {
-          "id":"SAMPLE_PROCESS_ID_2_NUEVO",
+          "id":"PROCESO_NUEVO_DOS",
           "name":"Identificative process name",
           "depends_process":["SAMPLE_PROCESS_ID_1_NUEVO"],
           "depends_process_alt":[],

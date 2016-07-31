@@ -571,7 +571,6 @@ class Chain {
           resolve();
         });
     });
-
   }
 
   // Executed in construction:
@@ -668,6 +667,16 @@ class Chain {
       resolve();
     }
   });
+  }
+
+  getProcessById(processId){
+    var _this = this;
+
+    function byId(process){
+      return process.id === processId;
+    }
+
+    return _this.processes.find(byId);
   }
 
   values(){
@@ -1128,6 +1137,43 @@ class Plan{
       logger.log('warn',`CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `,new Date(),'-  chain.status:'+chain.status,'- chain.schedule_interval:',chain.schedule_interval,'- chain.scheduleRepeater:',(chain.scheduleRepeater===undefined));
     }
   };
+
+  getChainById(chainId){
+    var _this = this;
+
+    function byId(chain){
+      return chain.id === chainId;
+    }
+
+    return _this.chains.find(byId);
+  }
+
+  getIndexChainById(chainId){
+    var _this = this;
+
+    function byId(chain){
+      return chain.id === chainId;
+    }
+
+    return _this.chains.findIndex(byId);
+  }
+
+  // Load a Chain. If exists replace and If not exists add the chain:
+  loadChainToPlan(newChain){
+
+    var _this = this;
+    var chainId = newChain.id;
+    var indexChain = _this.getIndexChainById(chainId);
+
+    if(indexChain > -1){
+      _this.chains[indexChain] = newChain;
+    }else{
+      _this.chains.push(newChain);
+    }
+    // Planificate load/reload chain
+    _this.planificateChain(_this.getChainById(chainId));
+
+  }
 
   dependenciesBlocking(chain){
 
