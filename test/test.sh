@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #set -e;
-sleep 10;
+sleep 40;
 #echo di;
 
 if [ -f "./test/fileflag.txt" ]

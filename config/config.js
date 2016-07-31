@@ -21,4 +21,6 @@ config.api.port = 3456;
 config.api.secret = 'RUNNERTY_BY_CODERTY';
 config.api.limite_req = '20mb';
 
+config.api.propertiesExcludesInResponse = ["proc","scheduleCancel","scheduleRepeater","token"];
+
 module.exports = config;

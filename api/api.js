@@ -12,6 +12,7 @@ var express         = require('express');
 var app             = express();
 var server          = require('http').Server(app);
 var helmet          = require('helmet');
+var util            = require('util');
 /*
  var lusca           = require('lusca');
 */
@@ -26,6 +27,20 @@ module.exports = function (config, logger, fp) {
       //TODO CATCH ERRORS:
       logger.log('info','Listening on port '+config.api.port);
     });
+
+    app.use(function (req, res, next) {
+      res.header("Content-Type",'application/json');
+      next();
+    });
+
+    function excluder(key, value) {
+      if (config.api.propertiesExcludesInResponse.indexOf(key) !== -1) {
+        return undefined;
+      }
+      return value;
+    };
+
+    app.set('json replacer', excluder);
 
 
     app.use(bodyParser.urlencoded({extended: true}));
@@ -195,6 +210,8 @@ module.exports = function (config, logger, fp) {
         var process = chain.getProcessById(processId);
         if(process){
           res.json(process);
+          //var j = JSON.parse(JSON.stringify(process, cleaner));
+          //res.send(JSON.stringify(process, cleaner));
         }else{
           res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
         }
@@ -278,6 +295,36 @@ module.exports = function (config, logger, fp) {
 
     });
 
+    // KILL A PROCESS OF A CHAIN INDICATE: chainId, processId
+    router.post('/process/kill', function (req, res) {
+      var chainId   = req.body.chainId;
+      var processId = req.body.processId;
+
+      logger.log('info',`Kill process "${processId}" of chain "${chainId}" by ${req.user}`);
+
+      var chain = fp.plan.getChainById(chainId);
+
+      if(chain){
+        var process = chain.getProcessById(processId);
+        if(process){
+          if(process.isRunning()){
+            res.json();
+
+            process.proc.kill('SIGINT');
+            process.stop();
+
+          }else{
+            res.status(423).send(`Is not posible kill process "${processId}" of chain "${chainId}" to end because is ${process.status}`);
+          }
+        }else{
+          res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
+        }
+      }else{
+        res.status(404).send(`Chain "${chainId}" not found`);
+      }
+
+    });
+
     // LOAD/REALOAD CHAIN
     router.post('/chain/load', function (req, res) {
 
@@ -320,5 +367,22 @@ module.exports = function (config, logger, fp) {
         logger.log('error','File Plan, constructor:'+e)
       });
     });
+
+  // REMOVE CHAIN
+  router.post('/chain/remove', function (req, res) {
+    var chainId = req.body.chainId;
+    var chain = fp.plan.getChainById(chainId);
+    if(chain){
+      if(!chain.isEnded() && !chain.isRunning()){
+        res.json();
+        fp.plan.chains.splice(fp.plan.getIndexChainById(chainId), 1);
+      }else{
+        res.status(423).send(`Is not posible remove chain "${chainId}" because is ${chain.status}`);
+      }
+    }else{
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }
+  });
+
 
 };

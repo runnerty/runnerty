@@ -439,7 +439,9 @@ class Process {
   }
 
   stop(){
-    this.status = 'stop';
+    var _this = this;
+    _this.status = 'stop';
+    _this.ended_at = new Date();
   }
 
   end(){
@@ -475,14 +477,16 @@ class Process {
     return new Promise(function(resolve, reject) {
       var stdout = '';
       var stderr = '';
-      var cp = spawn(_this.command, _this.args);
-      cp.stdout.on('data', function(chunk) {
+
+      _this.proc = spawn(_this.command, _this.args);
+      //var cp = spawn(_this.command, _this.args);
+      _this.proc.stdout.on('data', function(chunk) {
         stdout += chunk;
       });
-      cp.stderr.on('data', function(chunk) {
+      _this.proc.stderr.on('data', function(chunk) {
         stderr += chunk;
       });
-      cp.on('error', reject)
+      _this.proc.on('error', reject)
         .on('close', function(code) {
           logger.log('info',_this.id+'FIN: ------------> '+code+' - '+stdout+' - '+stderr);
           if (code === 0) {
@@ -919,7 +923,6 @@ class Chain {
           resolve();
         })
     });
-
   }
 
   hasProcessDependecies(process){
@@ -965,7 +968,6 @@ class Chain {
       return processesDependencies;
     }
   }
-
 }
 
 class Plan{
@@ -1172,7 +1174,6 @@ class Plan{
     }
     // Planificate load/reload chain
     _this.planificateChain(_this.getChainById(chainId));
-
   }
 
   dependenciesBlocking(chain){
@@ -1243,7 +1244,7 @@ class FilePlan {
             .then(function(plan){
               _this.plan = plan;
               _this.plan.planificateChains();
-              _this.refreshBinBackup();
+              _this.startAutoRefreshBinBackup();
               resolve(_this);
             })
             .catch(function(err){
@@ -1325,8 +1326,6 @@ class FilePlan {
     var _this = this;
     var plan = _this.plan;
 
-    setTimeout(function(){
-
       var objStr = JSON.stringify(plan);
       var hashPlan = crypto.createHash('sha256').update(objStr).digest("hex");
 
@@ -1335,11 +1334,14 @@ class FilePlan {
         logger.log('info','> REFRESH hashPlan:',hashPlan);
         fs.writeFileSync('./bin.json', objStr, null);
       }
+  }
 
+  startAutoRefreshBinBackup(){
+    var _this = this;
+    setTimeout(function(){
       _this.refreshBinBackup();
-
     }, config.refreshIntervalBinBackup);
-}
+  }
 
 };
 
