@@ -153,7 +153,12 @@ module.exports = function (config, logger, fp) {
         res.json({ success: false, message: 'Authentication failed. User not found.' });
       } else if (user) {
         console.log('user:',user,'password:',password);
-        if(user === 'coderty' && password === 'runnerty'){
+
+        function checkAcces(up){
+          return (up.user === user && up.password === password);
+        }
+
+        if(config.api.users.findIndex(checkAcces) !== -1){
 
           var token = jwt.sign(user, config.api.secret, {
            // expiresIn: "10h" // 8 hours
