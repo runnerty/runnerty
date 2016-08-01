@@ -11,7 +11,17 @@ var nodemailer      = require('nodemailer');
 var Slack           = require('slack-node');
 
 // UTILS
-function renderTemplate(text, objParams){
+function replaceWith(text, objParams){
+
+  var currentTime = new Date();
+  objParams.DD = currentTime.getDay();
+  objParams.MM = currentTime.getMonth();
+  objParams.YY = currentTime.getYear();
+  objParams.YYYY = currentTime.getFullYear();
+  objParams.HH = currentTime.getHours();
+  objParams.mm = currentTime.getMinutes();
+  objParams.ss = currentTime.getSeconds();
+
   var keys = Object.keys(objParams);
 
   function orderByLength(a, b) {
@@ -24,11 +34,13 @@ function renderTemplate(text, objParams){
     return 0;
   }
 
+  //console.log('keys:',keys);
+
   keys.sort(orderByLength);
   var keysLength = keys.length;
 
   while (keysLength--) {
-    text = text.replace(new RegExp('\\:' + keys[keysLength], 'gi'), objParams[keys[keysLength]] || '');
+    text = text.replace(new RegExp('\\:' + keys[keysLength], 'g'), objParams[keys[keysLength]] || '');
   }
   return text;
 }
@@ -74,8 +86,8 @@ function sendMail(mail, callback){
         text_data = res[0].text.toString();
       }
 
-      var html = renderTemplate(html_data, mail.params);
-      var text = renderTemplate(text_data, mail.params);
+      var html = replaceWith(html_data, mail.params);
+      var text = replaceWith(text_data, mail.params);
 
       var mailOptions = {
         from: mail.from,
@@ -181,8 +193,8 @@ notificate(values){
         }
       }
 
-      mailOptions.params.subject = renderTemplate(this.title, values);
-      mailOptions.params.message = renderTemplate(this.message, values);
+      mailOptions.params.subject = replaceWith(this.title, values);
+      mailOptions.params.message = replaceWith(this.message, values);
 
       sendMail(mailOptions, function(err, res){
         if (err){
@@ -214,7 +226,7 @@ class slackNotificator extends Notification{
         var slack = new Slack(this.token);
 
         slack.api('chat.postMessage', {
-          text: renderTemplate(this.message, values),
+          text: replaceWith(this.message, values),
           channel: this.channel,
           username: this.bot_name,
           icon_emoji: this.bot_emoji,
@@ -344,6 +356,7 @@ class Process {
       "PROCESS_NAME":_this.name,
       "PROCESS_COMMAND":_this.command,
       "PROCESS_ARGS":_this.args,
+      "PROCESS_EXECURTE_ARGS":_this.execute_args,
       "PROCESS_EXECUTE_RETURN":_this.execute_return,
       "PROCESS_EXECUTE_ERR_RETURN":_this.execute_err_return,
       "PROCESS_STARTED_AT":_this.started_at,
@@ -478,8 +491,13 @@ class Process {
       var stdout = '';
       var stderr = '';
 
-      _this.proc = spawn(_this.command, _this.args);
-      //var cp = spawn(_this.command, _this.args);
+      function repArg(arg){
+        return replaceWith(arg, _this.values());
+      }
+      _this.execute_args = _this.args.map(repArg);
+
+      _this.proc = spawn(_this.command, _this.execute_args);
+
       _this.proc.stdout.on('data', function(chunk) {
         stdout += chunk;
       });

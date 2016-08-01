@@ -151,7 +151,7 @@
       "depends_process":["SAMPLE_PROCESS_ID_1"],
       "depends_process_alt":[],
       "command":"echo",
-      "args":["TEST","TEST2"],
+      "args":[":DD/:MM/:YYYY :HH::mm::ss",":SAMPLE_PROCESS_ID_1[PROCESS_EXECUTE_RETURN]"],
       "retries":0,
       "retry_delay":10,
       "limited_time_end":"15:00:00",
