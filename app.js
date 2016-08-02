@@ -231,7 +231,7 @@ class slackNotificator extends Notification{
           username: this.bot_name,
           icon_emoji: this.bot_emoji,
         },function(err, response){
-          logger.log('info',response);
+          //logger.log('info',response);
         });
 
       resolve();
@@ -485,8 +485,6 @@ class Process {
       forceOnceInRetry = false;
     }
 
-    logger.log('info','SE EJECUTA START DE '+this.id);
-
     return new Promise(function(resolve, reject) {
       var stdout = '';
       var stderr = '';
@@ -506,7 +504,6 @@ class Process {
       });
       _this.proc.on('error', reject)
         .on('close', function(code) {
-          logger.log('info',_this.id+'FIN: ------------> '+code+' - '+stdout+' - '+stderr);
           if (code === 0) {
             _this.execute_return = stdout;
             _this.execute_err_return = stderr;
@@ -719,8 +716,12 @@ class Chain {
             var notificationsLength = _this.events[event].notifications.length;
             while(notificationsLength--){
               _this.events[event].notifications[notificationsLength].notificate(_this.values())
-                .then(function(res){logger.log('info','Notification chain sended: '+res)})
-                .catch(function(e){logger.log('error','Notification chain sended: '+e)});
+                .then(function(res){
+                  logger.log('debug','Notification chain sended: '+res)
+                })
+                .catch(function(e){
+                  logger.log('error','Notification chain sended: '+e)
+                });
             }
           }
         }
@@ -894,8 +895,6 @@ class Chain {
           if(chainStatus === 'running' && !runningBeforeRefresh){
             _this.running();
           }
-
-          logger.log('info',_this.id+' - chainStatus:'+chainStatus);
 
           // If Chains is running:
           if (chainStatus === 'running'){
@@ -1111,7 +1110,6 @@ class Plan{
             chain.waiting_dependencies();
             logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
           }else{
-            logger.log('info', `**************** Ejecutar YA esta cadena ${chain.id} -> start`);
             chain.start()
               .then(function() {
                 _this.planificateChains()
@@ -1287,7 +1285,8 @@ class FilePlan {
     return new Promise((resolve) => {
       fs.stat(filePath, function(err, res){
         if(err){
-          logger.log('error','Plan file ',filePath, err);
+          logger.log('error',`Plan file ${filePath} not exists.`, err);
+          throw new Error(`PlanFile ${filePath} not found.`);
           resolve();
         }else{
           try {
@@ -1349,7 +1348,7 @@ class FilePlan {
 
       if(_this.lastHashPlan !== hashPlan){
         _this.lastHashPlan = hashPlan;
-        logger.log('info','> REFRESH hashPlan:',hashPlan);
+        logger.log('debug','> REFRESING hashPlan:',hashPlan);
         fs.writeFileSync('./bin.json', objStr, null);
       }
   }
