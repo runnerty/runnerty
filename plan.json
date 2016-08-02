@@ -6,7 +6,7 @@
     "end_date":"2099-09-17T11:00:00",
     "schedule_interval":"*/3 * * * *",
     "prevent_overlap":"ignore",
-    "depends_chains":[],
+    "depends_chains":[{"file_name":"test/flag.txt","condition":"add"}],
     "depends_chains_alt":[],
     "events":{"on_start":{
       "notifications":[
@@ -33,7 +33,7 @@
     "processes":[{
       "id":"SAMPLE_PROCESS_ID_1",
       "name":"PROCESO UNO",
-      "depends_process":[],
+      "depends_process":[{"file_name":"test/flag.txt","condition":"add"},{"file_name":"test/flag2.txt","condition":"add"}],
       "depends_process_alt":[],
       "command":"sh",
       "args":["./test/test.sh"],

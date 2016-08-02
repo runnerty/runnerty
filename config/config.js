@@ -21,7 +21,7 @@ config.api.port = 3456;
 config.api.secret = 'RUNNERTY_BY_CODERTY';
 config.api.limite_req = '20mb';
 
-config.api.propertiesExcludesInResponse = ["proc","scheduleCancel","scheduleRepeater"];
+config.api.propertiesExcludesInResponse = ["proc","scheduleCancel","scheduleRepeater","file_watchers","depends_files_ready"];
 
 config.api.users = [{"user":"coderty", "password":"runnerty"},{"user":"usr_test", "password":"pass_test"}];
 

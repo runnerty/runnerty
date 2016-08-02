@@ -1,10 +1,11 @@
 "use strict";
-var config 			    = require('./config/config.js');
+var config          = require('./config/config.js');
 var winston         = require('winston');
 var schedule        = require('node-schedule');
 var async           = require('async');
 var spawn           = require('child_process').spawn;
-var fs 				      = require('fs');
+var fs              = require('fs');
+var chokidar        = require('chokidar');
 var path            = require('path');
 var crypto          = require('crypto');
 var nodemailer      = require('nodemailer');
@@ -33,8 +34,6 @@ function replaceWith(text, objParams){
     }
     return 0;
   }
-
-  //console.log('keys:',keys);
 
   keys.sort(orderByLength);
   var keysLength = keys.length;
@@ -111,7 +110,6 @@ function sendMail(mail, callback){
             }
           });
       }
-
     })
     .catch(function(e){
       logger.log('error','Error sending mail:',e);
@@ -340,10 +338,11 @@ class Process {
           resolve(this);
           })
         .catch(function(e){
-          logger.log('error','Process constructor '+e);
+          logger.log('error','Process constructor loadEvents:'+e);
           resolve(this);
         });
     });
+
   }
 
   values(){
@@ -603,28 +602,34 @@ class Chain {
 
           while(processesLength--){
             var process = processes[processesLength];
-
-            chainProcessPromises.push(new Process(process.id,
-                                                  process.name,
-                                                  process.depends_process,
-                                                  process.depends_process_alt,
-                                                  process.command,
-                                                  process.args,
-                                                  process.retries,
-                                                  process.retry_delay,
-                                                  process.limited_time_end,
-                                                  process.events,
-                                                  process.status,
-                                                  process.execute_return,
-                                                  process.execute_err_return,
-                                                  process.started_at,
-                                                  process.ended_at,
-                                                  _this.values()));
+/*
+            var objProcess = new Process(process.id,
+                                         process.name,
+                                         process.depends_process,
+                                         process.depends_process_alt,
+                                         process.command,
+                                         process.args,
+                                         process.retries,
+                                         process.retry_delay,
+                                         process.limited_time_end,
+                                         process.events,
+                                         process.status,
+                                         process.execute_return,
+                                         process.execute_err_return,
+                                         process.started_at,
+                                         process.ended_at,
+                                         _this.values());
+*/
+            chainProcessPromises.push(_this.loadProcess(process));
           }
 
           Promise.all(chainProcessPromises)
-            .then(function(dataArr) {
-              resolve(dataArr);
+            .then(function(processes) {
+              var processesLength = processes.length;
+              while(processesLength--){
+                _this.loadProcessFileDependencies(processes[processesLength]);
+              }
+              resolve(processes);
             })
             .catch(function(e){
               logger.log('error','Chain loadProcesses:'+e)
@@ -639,6 +644,35 @@ class Chain {
         resolve();
       }
     });
+  }
+
+  loadProcess(process){
+    var _this = this;
+    return new Promise((resolve) => {
+        new Process(process.id,
+          process.name,
+          process.depends_process,
+          process.depends_process_alt,
+          process.command,
+          process.args,
+          process.retries,
+          process.retry_delay,
+          process.limited_time_end,
+          process.events,
+          process.status,
+          process.execute_return,
+          process.execute_err_return,
+          process.started_at,
+          process.ended_at,
+          _this.values())
+          .then(function(res) {
+            resolve(res);
+          })
+          .catch(function(e){
+            logger.log('error','Loading process:'+e);
+            resolve();
+          });
+      });
   }
 
   loadEvents(events){
@@ -686,6 +720,55 @@ class Chain {
       resolve();
     }
   });
+  }
+
+  loadProcessFileDependencies(process){
+      var _this = this;
+
+      var depends_process = process.depends_process;
+      var dependsProcessLength = depends_process.length;
+
+      if (dependsProcessLength > 0) {
+        while (dependsProcessLength--) {
+          var dependence = depends_process[dependsProcessLength];
+
+          if(dependence instanceof Object){
+            if(dependence.hasOwnProperty('file_name') && dependence.hasOwnProperty('condition')){
+
+              //TODO: VALIDATE CONDITIONS VALUES
+
+              var watcher = chokidar.watch(dependence.file_name, { ignored: /[\/\\](\.|\~)/,
+                persistent: true,
+                usePolling: true,
+                awaitWriteFinish: {
+                  stabilityThreshold: 2000,
+                  pollInterval: 150
+                }
+              });
+
+              watcher.on(dependence.condition, function(pathfile) {
+                if(process.depends_files_ready){
+                  process.depends_files_ready.push(pathfile);
+                }else{
+                  process.depends_files_ready = [pathfile];
+                }
+
+                // If chain is running try execute processes:
+                if(_this.isRunning()){
+                  _this.startProcesses();
+                }
+              })
+
+              if(process.file_watchers){
+                process.file_watchers.push(watcher);
+              }else{
+                process.file_watchers = [watcher];
+              }
+
+            }
+          }
+        }
+      }
   }
 
   getProcessById(processId){
@@ -913,8 +996,6 @@ class Chain {
 
                   process.start()
                     .then(function(){
-                      logger.log('debug','[!!!] RE EJECUCIÓN DE STARTPROCCESES:');
-
                       _this.startProcesses()
                         .then(function(res){
                           resolve();
@@ -943,7 +1024,7 @@ class Chain {
   }
 
   hasProcessDependecies(process){
-
+    var _this = this;
     var hasDependencies = false;
     var processesDependencies = [];
 
@@ -954,6 +1035,26 @@ class Chain {
       var planProcessLength = this.processes.length;
       var dependsprocessLength = depends_process.length;
 
+      //File dependences:
+      while(dependsprocessLength--) {
+        if (typeof depends_process[dependsprocessLength]) {
+          if(depends_process[dependsprocessLength].hasOwnProperty('file_name')){
+            if(process.depends_files_ready){
+              if(process.depends_files_ready.indexOf(depends_process[dependsprocessLength].file_name) > -1){
+              }else{
+                processesDependencies.push(depends_process[dependsprocessLength]);
+                hasDependencies = true;
+              }
+            }else{
+              processesDependencies.push(depends_process);
+              hasDependencies = true;
+            }
+          }
+        }
+      }
+
+      //Process dependences:
+      dependsprocessLength = depends_process.length;
       while(planProcessLength--){
         var auxDependsprocessLength = dependsprocessLength;
 
@@ -969,11 +1070,15 @@ class Chain {
 
               break;
             case 'object':
-              if(depends_process[auxDependsprocessLength].id === planProcess[planProcessLength].id){
-                if(planProcess[planProcessLength].isEnded() || (depends_process[auxDependsprocessLength].ignore_fail && planProcess[planProcessLength].isErrored())){
-                }else{
-                  processesDependencies.push(planProcess[planProcessLength]);
-                  hasDependencies = true;
+              if(depends_process[auxDependsprocessLength].hasOwnProperty('file_name')){
+
+              }else{
+                if(depends_process[auxDependsprocessLength].id === planProcess[planProcessLength].id){
+                  if(planProcess[planProcessLength].isEnded() || (depends_process[auxDependsprocessLength].ignore_fail && planProcess[planProcessLength].isErrored())){
+                  }else{
+                    processesDependencies.push(planProcess[planProcessLength]);
+                    hasDependencies = true;
+                  }
                 }
               }
               break;
@@ -1005,15 +1110,19 @@ class Plan{
   }
 
   loadChains(chains){
+    var _this = this;
     return new Promise((resolve) => {
       if (chains instanceof Array) {
         var chainLength = chains.length;
         if (chainLength > 0) {
-          var planChainsPromesas = [];
+          var planChainsPromises = [];
 
           while(chainLength--){
             var chain = chains[chainLength];
 
+            planChainsPromises.push(_this.loadChain(chain));
+
+            /*
             planChainsPromesas.push(new Chain(chain.id,
                                               chain.name,
                                               chain.start_date,
@@ -1027,11 +1136,17 @@ class Plan{
                                               chain.status,
                                               chain.started_at,
                                               chain.ended_at));
+            */
           }
 
-          Promise.all(planChainsPromesas)
-            .then(function(res) {
-              resolve(res);
+          Promise.all(planChainsPromises)
+            .then(function(chains) {
+
+              var chainsLength = chains.length;
+              while(chainsLength--){
+                _this.loadChainFileDependencies(chains[chainsLength]);
+              }
+              resolve(chains);
             })
             .catch(function(e){
               logger.log('error','Loading chains:'+e);
@@ -1043,7 +1158,7 @@ class Plan{
           resolve();
         }
       }else{
-        logger.log('error','Chain, processes is not array', err);
+        logger.log('error','Chain, processes is not array');
         resolve();
       }
     });
@@ -1070,9 +1185,58 @@ class Plan{
           })
           .catch(function(e){
             logger.log('error','Loading chain:'+e);
-            resolve(res);
+            resolve();
           });
     });
+  }
+
+  loadChainFileDependencies(chain){
+    var _this = this;
+
+    var depends_chain = chain.depends_chains;
+    var dependsChainLength = depends_chain.length;
+
+    if (dependsChainLength > 0) {
+      while (dependsChainLength--) {
+        var dependence = depends_chain[dependsChainLength];
+
+        if(dependence instanceof Object){
+          if(dependence.hasOwnProperty('file_name') && dependence.hasOwnProperty('condition')){
+
+            //TODO: VALIDATE CONDITIONS VALUES
+
+            var watcher = chokidar.watch(dependence.file_name, { ignored: /[\/\\](\.|\~)/,
+              persistent: true,
+              usePolling: true,
+              awaitWriteFinish: {
+                stabilityThreshold: 2000,
+                pollInterval: 150
+              }
+            });
+
+            watcher.on(dependence.condition, function(pathfile) {
+              if(chain.depends_files_ready){
+                chain.depends_files_ready.push(pathfile);
+              }else{
+                chain.depends_files_ready = [pathfile];
+              }
+
+              if(!chain.isRunning() && !chain.isErrored()){
+               _this.planificateChain(chain);
+              }
+
+            })
+
+            if(process.file_watchers){
+              process.file_watchers.push(watcher);
+            }else{
+              process.file_watchers = [watcher];
+            }
+
+          }
+        }
+      }
+    }
   }
 
   planificateChains(){
@@ -1203,6 +1367,27 @@ class Plan{
 
       var planChainsLength = this.chains.length;
       var dependsChainsLength = depends_chains.length;
+
+      //File dependences:
+      while(dependsChainsLength--) {
+        if (typeof depends_chains[dependsChainsLength]) {
+          if(depends_chains[dependsChainsLength].hasOwnProperty('file_name')){
+            if(chain.depends_files_ready){
+              if(chain.depends_files_ready.indexOf(depends_chains[dependsChainsLength].file_name) > -1){
+              }else{
+                chainsDependencies.push(depends_chains[dependsChainsLength]);
+                hasDependencies = true;
+              }
+            }else{
+              chainsDependencies.push(depends_chains);
+              hasDependencies = true;
+            }
+          }
+        }
+      }
+
+      //Chains dependences:
+      dependsChainsLength = depends_chains.length;
 
       while(planChainsLength--){
         var auxDependsChainsLength = dependsChainsLength;
@@ -1364,22 +1549,27 @@ class FilePlan {
 
 // CLASES ----- END ------
 
-
-
-
 logger.log('info',`RUNNERTY RUNNING - TIME...: ${new Date()}`);
 
 var runtimePlan;
 var fileLoad = config.binBackup;
+var reloadMode = false;
 
 // CHECK ARGS APP:
 process.argv.forEach(function (val, index, array) {
   if (index === 2 && val === 'reload'){
-    fileLoad = config.planFilePath;
-    logger.log('warn',`Reloading plan from ${fileLoad}`);
+    reloadMode = true;
+  }else{
+    if (index === 3 && val !== ''){
+      fileLoad = val;
+    }
   }
 });
 
+if(reloadMode){
+  fileLoad = config.planFilePath;
+  logger.log('warn',`Reloading plan from ${fileLoad}`);
+}
 
 new FilePlan(fileLoad)
   .then(function(plan){
