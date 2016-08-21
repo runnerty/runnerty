@@ -1516,9 +1516,13 @@ class FilePlan {
 
     for (var i = 0; i < chainsLength; ++i) {
       var chain = json.chains[i];
-      if(chain.hasOwnProperty('id')){
+
+      if(chain.hasOwnProperty('id') && chain.hasOwnProperty('name') && chain.hasOwnProperty('start_date')){
         correctChains.push(chain);
+      }else{
+        logger.log('error','Chain ignored, id, name or start_date is not set: ', chain);
       }
+
     }
 
     return correctChains;
@@ -1590,3 +1594,9 @@ process.on('exit', function (err) {
   logger.log('warn','--> [R]unnerty stoped.', err);
 });
 
+
+// TODO -->
+// LOGS EN S3
+// CONFIGURACIONES GENERALES DE: BD, SLACK, MAIL, S3 (ya ejemplos en plan.json)
+// EJECUCIÓN DE SENTENCIAS SIMPLES SQL A BDS (MYSQL Y POSTGRES?)
+//

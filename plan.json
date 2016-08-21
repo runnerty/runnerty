@@ -521,5 +521,37 @@
         }
       ]
     }
-  ]
+  ],
+  "config":{
+    "db_connections":[{"id":"mysql_default",
+                       "type":"mysql",
+                       "user":"myname",
+                       "password":"mypass",
+                       "database":"mydb",
+                       "host":"localhost",
+                       "port":"3306",
+                       "protocol":"TPC"
+                      },
+                      {"id":"postgres_default",
+                       "type":"postgres",
+                       "user":"myname",
+                       "password":"mypass",
+                       "database":"mydb",
+                       "host":"localhost",
+                       "port":"5432",
+                       "protocol":"TPC"
+                      }],
+    "notificators_connections":[{"id":"slack_default",
+                                 "type":"slack",
+                                 "token":"?",
+                                 "bot_name":"",
+                                 "bot_emoji": ":v:",
+                                 "channel": "mlm"
+                                },
+                                {"id":"mail_default",
+                                  "type":"mail",
+                                  "transport":"smtps://mail%sample.com:mailpass@smtp.sample.com/?pool=true",
+                                  "from":"Runnerty <mail@sample.com>",
+                                  "template": "alert"}
+                                ]}
 }
