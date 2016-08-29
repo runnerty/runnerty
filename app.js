@@ -10,6 +10,7 @@ var path            = require('path');
 var crypto          = require('crypto');
 var nodemailer      = require('nodemailer');
 var Slack           = require('slack-node');
+var anymatch        = require('anymatch');
 
 // UTILS
 function replaceWith(text, objParams){
@@ -130,8 +131,9 @@ logger.level = 'debug';
 // CLASSES ---------------------------------------------------------------------
 
 class Notification {
-  constructor(type, title, message, recipients, recipients_cc, recipients_cco) {
+  constructor(type, id, title, message, recipients, recipients_cc, recipients_cco) {
     this.type = type;
+    this.id = id;
     this.title = title;
     this.message = message;
     this.recipients = recipients;
@@ -142,11 +144,69 @@ class Notification {
   notificate(){
     logger.log('warn','Este método debería de haber sido reescrito en la clase child');
   }
+
+  loadConfig(){
+    var _this = this;
+    return new Promise((resolve) => {
+
+        var filePath = config.configFilePath;
+
+        if(_this.id){
+          fs.stat(filePath, function(err, res){
+          if(err){
+            logger.log('error',`Conf file ${filePath} not exists.`, err);
+            throw new Error(`Conf file ${filePath} not found.`);
+            resolve();
+          }else {
+            try {
+              fs.readFile(filePath, 'utf8', function (err, res) {
+                if (err) {
+                  logger.log('error', 'Conf loadConfig readFile: ' + err);
+                  resolve();
+                } else {
+                  var objConf = JSON.parse(res).config;
+
+                  if (objConf.hasOwnProperty('notificators_connections')) {
+                    var notificationsConnLength = objConf.notificators_connections.length;
+                    var config;
+                    while (notificationsConnLength--) {
+                      if (objConf.notificators_connections[notificationsConnLength].id === _this.id) {
+                        notificationsConnLength = 0;
+                        config = objConf.notificators_connections[notificationsConnLength];
+                      }
+                    }
+
+                    if (config) {
+                      resolve(config);
+                    } else {
+                      throw new Error(`Config for ${_this.id} not found`);
+                      resolve();
+                    }
+
+                  } else {
+                    throw new Error('Invalid Config file, notificators_connections not found.', objConf);
+                    resolve();
+                  }
+
+                }
+              });
+            } catch (e) {
+              throw new Error('Invalid Config file, incorrect JSON format: ' + e.message, e);
+              resolve();
+            }
+          }
+          });
+        }else{
+            resolve();
+          }
+  });
+  }
+
 }
 
 class mailNotificator extends Notification{
-  constructor(type, title, message, recipients, recipients_cc, recipients_cco){
-    super('mail', title, message, recipients, recipients_cc, recipients_cco);
+  constructor(type, id, title, message, recipients, recipients_cc, recipients_cco){
+    super('mail', id, title, message, recipients, recipients_cc, recipients_cco);
     return new Promise((resolve) => {
       resolve(this);
     });
@@ -205,8 +265,8 @@ notificate(values){
 }
 
 class slackNotificator extends Notification{
-  constructor(type, token, bot_name, bot_emoji, message, channel, recipients){
-    super('slack', null, message, recipients, null, null);
+  constructor(type, id, token, bot_name, bot_emoji, message, channel, recipients){
+    super('slack', id, null, message, recipients, null, null);
 
     this.token = token;
     this.bot_name = bot_name;
@@ -221,18 +281,37 @@ class slackNotificator extends Notification{
   notificate(values){
     return new Promise((resolve) => {
 
-        var slack = new Slack(this.token);
+        this.loadConfig()
+        .then((config) => {
+            if (config){
+              if (!this.token && config.token) this.token = config.token;
+              if (!this.bot_name && config.bot_name) this.bot_name = config.bot_name;
+              if (!this.bot_emoji && config.bot_emoji) this.bot_emoji = config.bot_emoji;
+              if (!this.channel && config.channel) this.channel = config.channel;
+            }
 
-        slack.api('chat.postMessage', {
-          text: replaceWith(this.message, values),
-          channel: this.channel,
-          username: this.bot_name,
-          icon_emoji: this.bot_emoji,
-        },function(err, response){
-          //logger.log('info',response);
-        });
 
-      resolve();
+
+            var slack = new Slack(this.token);
+            var msg = replaceWith(this.message, values);
+
+            slack.api('chat.postMessage', {
+              text: msg,
+              channel: this.channel,
+              username: this.bot_name,
+              icon_emoji: this.bot_emoji,
+            },function(err, response){
+              if(err){
+                logger.log('error','Slack notification: '+err);
+                logger.log('error','Slack notification: '+msg);
+              }
+            });
+            resolve();
+         })
+        .catch(function(e){
+            logger.log('error','Slack notificate loadConfig '+e)
+            resolve();
+          });
       });
   }
 }
@@ -245,7 +324,7 @@ class Event {
           resolve(events);
         })
         .catch(function(e){
-           logger.log('error','Event constructor '+e)
+           logger.log('error','Event constructor '+e);
            resolve();
          });
     });
@@ -269,6 +348,7 @@ class Event {
             switch (notification.type) {
               case 'mail':
                 notificationsPromises.push(new mailNotificator(notification.type,
+                                                               notification.id,
                                                                notification.title,
                                                                notification.message,
                                                                notification.recipients,
@@ -278,6 +358,7 @@ class Event {
                 break;
               case 'slack':
                 notificationsPromises.push(new slackNotificator(notification.type,
+                                                                notification.id,
                                                                 notification.token,
                                                                 notification.bot_name,
                                                                 notification.bot_emoji,
@@ -361,7 +442,10 @@ class Process {
       "PROCESS_STARTED_AT":_this.started_at,
       "PROCESS_ENDED_AT":_this.ended_at,
       "PROCESS_RETRIES_COUNT": _this.retries_count,
-      "PROCESS_RETRIES": _this.retries
+      "PROCESS_RETRIES": _this.retries,
+      "PROCESS_DEPENDS_FILES_READY": _this.depends_files_ready,
+      "PROCESS_FIRST_DEPEND_FILE_READY": _this.depends_files_ready[0],
+      "PROCESS_LAST_DEPEND_FILE_READY": _this.depends_files_ready[_this.depends_files_ready.length - 1]
     };
   }
 
@@ -460,6 +544,9 @@ class Process {
     var _this = this;
     _this.status = 'end';
     _this.ended_at = new Date();
+
+    //Clear depends_files_ready for re-check:
+    _this.depends_files_ready = [];
 
     _this.notificate('on_end');
   }
@@ -1032,16 +1119,28 @@ class Chain {
       var depends_process = process.depends_process;
       var planProcess = this.processes;
 
-      var planProcessLength = this.processes.length;
       var dependsprocessLength = depends_process.length;
 
       //File dependences:
+      // Check process dependencies
       while(dependsprocessLength--) {
         if (typeof depends_process[dependsprocessLength]) {
           if(depends_process[dependsprocessLength].hasOwnProperty('file_name')){
+            // If any depends files is ready
             if(process.depends_files_ready){
-              if(process.depends_files_ready.indexOf(depends_process[dependsprocessLength].file_name) > -1){
-              }else{
+
+              // Check if all process depends files is ready
+              var depends_files_ready_length = process.depends_files_ready.length;
+              var dependenceFound = false;
+
+              while(depends_files_ready_length--){
+                // Using anumatch to check regular expression glob:
+               if (anymatch([depends_process[dependsprocessLength].file_name], process.depends_files_ready[depends_files_ready_length])){
+                 dependenceFound = true;
+               }
+              }
+
+              if (!dependenceFound){
                 processesDependencies.push(depends_process[dependsprocessLength]);
                 hasDependencies = true;
               }
@@ -1054,6 +1153,7 @@ class Chain {
       }
 
       //Process dependences:
+      var planProcessLength = this.processes.length;
       dependsprocessLength = depends_process.length;
       while(planProcessLength--){
         var auxDependsprocessLength = dependsprocessLength;
@@ -1373,6 +1473,10 @@ class Plan{
         if (typeof depends_chains[dependsChainsLength]) {
           if(depends_chains[dependsChainsLength].hasOwnProperty('file_name')){
             if(chain.depends_files_ready){
+
+              console.log('> chain.depends_files_ready:',chain.depends_files_ready);
+              console.log('> depends_chains[dependsChainsLength].file_name:',depends_chains[dependsChainsLength].file_name);
+
               if(chain.depends_files_ready.indexOf(depends_chains[dependsChainsLength].file_name) > -1){
               }else{
                 chainsDependencies.push(depends_chains[dependsChainsLength]);

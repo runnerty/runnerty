@@ -3,6 +3,7 @@ var path            = require('path');
 var config = {};
 config.planFilePath = path.join(__dirname, '../plan.json');
 config.binBackup = path.join(__dirname, '../bin.json');
+config.configFilePath = path.join(__dirname, '../conf.json');
 
 config.refreshIntervalBinBackup = 2000;
 

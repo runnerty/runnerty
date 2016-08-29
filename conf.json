@@ -1,0 +1,29 @@
+{"config":{
+  "db_connections":[{"id":"mysql_default",
+    "type":"mysql",
+    "user":"myname",
+    "password":"mypass",
+    "database":"mydb",
+    "host":"localhost",
+    "port":"3306",
+    "protocol":"TPC"
+  },
+    {"id":"postgres_default",
+      "type":"postgres",
+      "user":"myname",
+      "password":"mypass",
+      "database":"mydb",
+      "host":"localhost",
+      "port":"5432",
+      "protocol":"TPC"
+    }],
+  "notificators_connections":[
+    {"id":"slack_default",
+    "type":"slack",
+    "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
+    "bot_name":"runnerta",
+    "bot_emoji": ":v:",
+    "channel": "mlm"
+  }]
+ }
+}
