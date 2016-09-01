@@ -12,8 +12,66 @@
       "id":"MAGMI_REFRESH_STOCK",
       "name":"Refresco de Stock via Magmi",
       "depends_process":[{"file_name":"test/*.csv","condition":"add"}],
-      "command":"echo",
+      "command":"echotroll",
       "args":["/mnt/efskyeroo/www/kyeroo.com/magmi/cli/magmi.cli.php -profile=kyeroo -mode=create -CSV:filename=':PROCESS_DEPENDS_FILES_READY'"],
+      "retries":0,
+      "retry_delay":10,
+      "limited_time_end":"",
+      "events":{
+        "on_start":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":rabbit2:",
+              "channel": "mlm",
+              "message":"INICIO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - FICHERO: :PROCESS_LAST_DEPEND_FILE_READY"
+            }
+          ]
+        },
+        "on_fail":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":see_no_evil:",
+              "channel": "mlm",
+              "message":"ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+            }
+          ]
+        },
+        "on_retry":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":muscle:",
+              "channel": "mlm",
+              "message":"REINTENTO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - INTENTO :PROCESS_RETRIES_COUNT DE :PROCESS_RETRIES "
+            }
+          ]
+        },
+        "on_end":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":v:",
+              "channel": "mlm",
+              "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_RETURN"
+            }
+          ]
+        },
+        "on_waiting_dependencies":{},
+        "on_exceeded_limited_time_end":{}
+      }
+    },
+    {
+      "id":"ECHO_ON_FAIL",
+      "name":"Prueba a ver si hace echo cuando falla",
+      "depends_process":[{"id":"MAGMI_REFRESH_STOCK","on_fail":true}],
+      "command":"echo",
+      "args":["ejecucion despues de fallo"],
       "retries":0,
       "retry_delay":10,
       "limited_time_end":"",

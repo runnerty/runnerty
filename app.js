@@ -121,12 +121,11 @@ function sendMail(mail, callback){
 // LOGGER  ---------------------------------------------------------------------
 var logger = new (winston.Logger)({
   transports: [
-    new (winston.transports.Console)({colorize: 'all', level: 'info'}),
+    new (winston.transports.Console)({colorize: 'all', level: 'debug'}),
    // new (winston.transports.File)({name: 'info-file', filename: 'filelog-info.log', level: 'info'}),
    // new (winston.transports.File)({name: 'error-file',filename: 'filelog-error.log',level: 'error'}),
   ]
 });
-logger.level = 'debug';
 
 // CLASSES ---------------------------------------------------------------------
 
@@ -444,8 +443,8 @@ class Process {
       "PROCESS_RETRIES_COUNT": _this.retries_count,
       "PROCESS_RETRIES": _this.retries,
       "PROCESS_DEPENDS_FILES_READY": _this.depends_files_ready,
-      "PROCESS_FIRST_DEPEND_FILE_READY": _this.depends_files_ready[0],
-      "PROCESS_LAST_DEPEND_FILE_READY": _this.depends_files_ready[_this.depends_files_ready.length - 1]
+      "PROCESS_FIRST_DEPEND_FILE_READY": (_this.depends_files_ready && _this.depends_files_ready.length > 0) ? _this.depends_files_ready[0] : [],
+      "PROCESS_LAST_DEPEND_FILE_READY": (_this.depends_files_ready && _this.depends_files_ready.length > 0) ? _this.depends_files_ready[_this.depends_files_ready.length - 1] : []
     };
   }
 
@@ -540,7 +539,10 @@ class Process {
     _this.ended_at = new Date();
   }
 
-  end(){
+  end(noRunned){
+
+    noRunned = noRunned || false; // If process has not been executed but we need set to end
+
     var _this = this;
     _this.status = 'end';
     _this.ended_at = new Date();
@@ -548,7 +550,9 @@ class Process {
     //Clear depends_files_ready for re-check:
     _this.depends_files_ready = [];
 
-    _this.notificate('on_end');
+    if(!noRunned){
+      _this.notificate('on_end');
+    }
   }
 
   error(){
@@ -1073,11 +1077,13 @@ class Chain {
             while(chainProcessesLength--) {
               var process = _this.processes[chainProcessesLength];
 
-              if (process.isStoped()){
+              if (process.isStoped() || process.isErrored()){
                 logger.log('debug', `PLANIFICADO PROCESO ${process.id}`);
+
+  /*
                 if(_this.hasProcessDependecies(process).length > 0){
-                  _this.waiting_dependencies();
                   logger.log('debug', `Ejecutar PROCESO ${process.id} -> on_waiting_dependencies: `,_this.hasProcessDependecies(process));
+                  _this.waiting_dependencies();
                 }else{
                   logger.log('debug', `Ejecutar YA ${process.id} -> start`);
 
@@ -1097,6 +1103,57 @@ class Chain {
                       resolve();
                     })
                 }
+*/
+
+                var processMustDo = _this.checkProcessActionToDo(process);
+
+                switch(processMustDo){
+                  case 'run':
+
+                    logger.log('debug', `Ejecutar YA ${process.id} -> start`);
+
+                    process.start()
+                      .then(function(){
+                        _this.startProcesses()
+                          .then(function(res){
+                            resolve();
+                          })
+                          .catch(function(e){
+                            logger.log('error','Error in startProcesses:'+e);
+                            resolve();
+                          })
+                      })
+                      .catch(function(e){
+                        logger.log('error','Error in process.start:'+e);
+
+                        // Aun cuando hay error puede que haya procesos que tengan que ejecutarse:
+                        _this.startProcesses()
+                          .then(function(res){
+                            resolve();
+                          })
+                          .catch(function(e){
+                            logger.log('error','Error in startProcesses:'+e);
+                            resolve();
+                          })
+
+
+                        resolve();
+                      })
+
+                    break;
+                  case 'wait':
+
+                    logger.log('debug', `Ejecutar PROCESO ${process.id} -> on_waiting_dependencies `);
+                    _this.waiting_dependencies();
+
+                    break;
+                  case 'end':
+                    logger.log('debug', `No se ejecuta el PROCESO ${process.id} -> solo on_fail `);
+                    _this.end(true);
+                    break;
+                }
+
+
               }
             }
           }else{
@@ -1110,6 +1167,112 @@ class Chain {
     });
   }
 
+
+  checkProcessActionToDo(process){
+
+    var _this = this;
+    var action = 'run';
+
+    if(process.hasOwnProperty('depends_process') && process.depends_process.length > 0){
+      var depends_process = process.depends_process;
+      var planProcess = this.processes;
+
+      var dependsprocessLength = depends_process.length;
+
+      //File dependences:
+      // Check process dependencies
+      while(dependsprocessLength--) {
+        if (typeof depends_process[dependsprocessLength]) {
+          if(depends_process[dependsprocessLength].hasOwnProperty('file_name')){
+            // If any depends files is ready
+            if(process.depends_files_ready){
+
+              // Check if all process depends files is ready
+              var depends_files_ready_length = process.depends_files_ready.length;
+              var dependenceFound = false;
+
+              while(depends_files_ready_length--){
+                // Using anumatch to check regular expression glob:
+                if (anymatch([depends_process[dependsprocessLength].file_name], process.depends_files_ready[depends_files_ready_length])){
+                  dependenceFound = true;
+                }
+              }
+
+              if (!dependenceFound){
+                action = 'wait';
+              }
+
+            }else{
+              action = 'run';
+            }
+          }
+        }
+      }
+
+      //Process dependences:
+      var planProcessLength = this.processes.length;
+      dependsprocessLength = depends_process.length;
+
+      while(planProcessLength--){
+        var auxDependsprocessLength = dependsprocessLength;
+
+        while(auxDependsprocessLength--){
+          switch (typeof depends_process[auxDependsprocessLength]) {
+            case 'string':
+
+              if(depends_process[auxDependsprocessLength] === planProcess[planProcessLength].id){
+                if(!planProcess[planProcessLength].isEnded()){
+                  action = 'wait';
+                }else{
+                  if(planProcess[planProcessLength].isErrored()){
+                    action = 'wait';
+                  }else{
+                    action = 'run';
+                  }
+                }
+              }
+
+              break;
+            case 'object':
+              if(!depends_process[auxDependsprocessLength].hasOwnProperty('file_name')){
+
+                if(depends_process[auxDependsprocessLength].id === planProcess[planProcessLength].id){
+
+                  if(!planProcess[planProcessLength].isEnded()){
+                    action = 'wait';
+                  }else{
+                    var on_fail = false;
+                    if(depends_process[auxDependsprocessLength].hasOwnProperty('on_fail')){
+                      on_fail = depends_process[auxDependsprocessLength].on_fail;
+                    }
+
+                    if(planProcess[planProcessLength].isErrored()){
+                      if(on_fail){
+                        action = 'run';
+                      }else{
+                        action = 'wait';
+                      }
+                    }else{
+                      if(on_fail){
+                        action = 'end';
+                      }else{
+                        action = 'run';
+                      }
+                    }
+                  }
+                }
+              }
+              break;
+          }
+        }
+      }
+      return action;
+    }else{
+      return action;
+    }
+  }
+
+/*
   hasProcessDependecies(process){
     var _this = this;
     var hasDependencies = false;
@@ -1190,6 +1353,7 @@ class Chain {
       return processesDependencies;
     }
   }
+  */
 }
 
 class Plan{
