@@ -592,12 +592,16 @@ class Process {
       _this.proc.stderr.on('data', function(chunk) {
         stderr += chunk;
       });
-      _this.proc.on('error', reject)
+      _this.proc
+        .on('error', function(){
+          //reject();
+        })
         .on('close', function(code) {
           if (code === 0) {
             _this.execute_return = stdout;
             _this.execute_err_return = stderr;
             _this.end();
+            _this.depends_files_ready = [];
             resolve(stdout);
           } else {
             logger.log('error',_this.id+'FIN: '+code+' - '+stdout+' - '+stderr);
@@ -667,16 +671,16 @@ class Chain {
 
         _this.loadEvents(events)
             .then((events) => {
-            _this.events = events;
-            resolve(_this);
+              _this.events = events;
+              resolve(_this);
             })
             .catch(function(e){
-                logger.log('error','Chain loadEvents: '+e);
+                logger.log('error',`Chain ${_this.id} loadEvents: `+e);
                 resolve();
               });
         })
         .catch(function(e){
-          logger.log('error','Chain loadProcesses: '+e);
+          logger.log('error',`Chain ${_this.id} loadProcesses: `+e);
           resolve();
         });
     });
@@ -693,24 +697,6 @@ class Chain {
 
           while(processesLength--){
             var process = processes[processesLength];
-/*
-            var objProcess = new Process(process.id,
-                                         process.name,
-                                         process.depends_process,
-                                         process.depends_process_alt,
-                                         process.command,
-                                         process.args,
-                                         process.retries,
-                                         process.retry_delay,
-                                         process.limited_time_end,
-                                         process.events,
-                                         process.status,
-                                         process.execute_return,
-                                         process.execute_err_return,
-                                         process.started_at,
-                                         process.ended_at,
-                                         _this.values());
-*/
             chainProcessPromises.push(_this.loadProcess(process));
           }
 
@@ -723,7 +709,7 @@ class Chain {
               resolve(processes);
             })
             .catch(function(e){
-              logger.log('error','Chain loadProcesses:'+e)
+              logger.log('error',`Chain ${_this.id} loadProcesses:`+e)
               resolve();
             });
 
@@ -731,7 +717,7 @@ class Chain {
           resolve();
         }
       }else{
-        logger.log('error','Chain, processes is not array', err);
+        logger.log('error',`Chain ${_this.id} processes is not array`);
         resolve();
       }
     });
@@ -741,32 +727,33 @@ class Chain {
     var _this = this;
     return new Promise((resolve) => {
         new Process(process.id,
-          process.name,
-          process.depends_process,
-          process.depends_process_alt,
-          process.command,
-          process.args,
-          process.retries,
-          process.retry_delay,
-          process.limited_time_end,
-          process.events,
-          process.status,
-          process.execute_return,
-          process.execute_err_return,
-          process.started_at,
-          process.ended_at,
-          _this.values())
-          .then(function(res) {
-            resolve(res);
-          })
-          .catch(function(e){
-            logger.log('error','Loading process:'+e);
-            resolve();
-          });
+                    process.name,
+                    process.depends_process,
+                    process.depends_process_alt,
+                    process.command,
+                    process.args,
+                    process.retries,
+                    process.retry_delay,
+                    process.limited_time_end,
+                    process.events,
+                    process.status,
+                    process.execute_return,
+                    process.execute_err_return,
+                    process.started_at,
+                    process.ended_at,
+                    _this.values())
+                    .then(function(res) {
+                      resolve(res);
+                    })
+                    .catch(function(e){
+                      logger.log('error','Loading process:'+e);
+                      resolve();
+                    });
       });
   }
 
   loadEvents(events){
+    var _this = this;
     return new Promise((resolve) => {
     var processEventsPromises = [];
 
@@ -782,7 +769,7 @@ class Chain {
                 event.notifications
               ));
             }else{
-              logger.log('debug','Chain Events without procces and notifications');
+              logger.log('debug',`Chain ${_this.id} Events without procces and notifications`);
             }
           }
 
@@ -798,16 +785,16 @@ class Chain {
               resolve(events);
             })
             .catch(function(e){
-              logger.log('error','Chain events: '+e);
+              logger.log('error',`Chain ${_this.id} events: `+e);
               resolve();
             });
 
         }else{
-          logger.log('warn','Chain, events is empty');
+          logger.log('warn',`Chain ${_this.id} events is empty`);
           resolve();
         }
     }else{
-      logger.log('warn','Chain, events is not object');
+      logger.log('warn',`Chain ${_this.id} events is not object`);
       resolve();
     }
   });
@@ -1006,13 +993,17 @@ class Chain {
   }
 
   setChainToInitState(){
+    var _this = this;
     return new Promise((resolve) => {
+      // Clear depends_files_ready
+      // TODO: REVISAR ESTO - PROBLEMAS SI EXISTEN FICHEROS Y NO SE VUELVE A METER EN depends_files_ready
+      _this.depends_files_ready = [];
       //Warning
       if (this.isRunning()){
-        logger.log('warn',`This chain ${this.id} is running yet and is being initialized`)
+        logger.log('warn',`This chain ${_this.id} is running yet and is being initialized`)
       }
       // Set All Process to stopped
-      var processesLength = this.processes.length;
+      var processesLength = _this.processes.length;
       while(processesLength--) {
         this.processes[processesLength].stop();
       }
@@ -1077,7 +1068,7 @@ class Chain {
             while(chainProcessesLength--) {
               var process = _this.processes[chainProcessesLength];
 
-              if (process.isStoped() || process.isErrored()){
+              if (process.isStoped()){
                 logger.log('debug', `PLANIFICADO PROCESO ${process.id}`);
 
   /*
@@ -1124,7 +1115,7 @@ class Chain {
                           })
                       })
                       .catch(function(e){
-                        logger.log('error','Error in process.start:'+e);
+                        logger.log('error','Error in process.start: '+e);
 
                         // Aun cuando hay error puede que haya procesos que tengan que ejecutarse:
                         _this.startProcesses()
@@ -1132,27 +1123,33 @@ class Chain {
                             resolve();
                           })
                           .catch(function(e){
-                            logger.log('error','Error in startProcesses:'+e);
+                            logger.log('error','Error in startProcesses (prev errored):'+e);
                             resolve();
                           })
-
-
-                        resolve();
                       })
 
                     break;
                   case 'wait':
 
                     logger.log('debug', `Ejecutar PROCESO ${process.id} -> on_waiting_dependencies `);
-                    _this.waiting_dependencies();
+                    process.waiting_dependencies();
 
                     break;
                   case 'end':
                     logger.log('debug', `No se ejecuta el PROCESO ${process.id} -> solo on_fail `);
-                    _this.end(true);
+                    process.end(true);
+
+                    _this.startProcesses()
+                      .then(function(res){
+                        resolve();
+                      })
+                      .catch(function(e){
+                        logger.log('error','Error in startProcesses (end errored):'+e);
+                        resolve();
+                      })
+
                     break;
                 }
-
 
               }
             }
@@ -1203,14 +1200,14 @@ class Chain {
               }
 
             }else{
-              action = 'run';
+              action = 'wait';
             }
           }
         }
       }
 
       //Process dependences:
-      var planProcessLength = this.processes.length;
+      var planProcessLength = _this.processes.length;
       dependsprocessLength = depends_process.length;
 
       while(planProcessLength--){
@@ -1238,7 +1235,7 @@ class Chain {
 
                 if(depends_process[auxDependsprocessLength].id === planProcess[planProcessLength].id){
 
-                  if(!planProcess[planProcessLength].isEnded()){
+                  if(!planProcess[planProcessLength].isEnded() && !planProcess[planProcessLength].isErrored()){
                     action = 'wait';
                   }else{
                     var on_fail = false;
@@ -1385,22 +1382,6 @@ class Plan{
             var chain = chains[chainLength];
 
             planChainsPromises.push(_this.loadChain(chain));
-
-            /*
-            planChainsPromesas.push(new Chain(chain.id,
-                                              chain.name,
-                                              chain.start_date,
-                                              chain.end_date,
-                                              chain.schedule_interval,
-                                              chain.prevent_overlap,
-                                              chain.depends_chains,
-                                              chain.depends_chains_alt,
-                                              chain.events,
-                                              chain.processes,
-                                              chain.status,
-                                              chain.started_at,
-                                              chain.ended_at));
-            */
           }
 
           Promise.all(planChainsPromises)
@@ -1806,7 +1787,7 @@ class FilePlan {
       if(_this.lastHashPlan !== hashPlan){
         _this.lastHashPlan = hashPlan;
         logger.log('debug','> REFRESING hashPlan:',hashPlan);
-        fs.writeFileSync('./bin.json', objStr, null);
+        fs.writeFileSync(config.binBackup, objStr, null);
       }
   }
 

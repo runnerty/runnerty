@@ -11,8 +11,8 @@
     "processes":[{
       "id":"MAGMI_REFRESH_STOCK",
       "name":"Refresco de Stock via Magmi",
-      "depends_process":[{"file_name":"test/*.csv","condition":"add"}],
-      "command":"echotroll",
+      "depends_process":[{"file_name":"test/pepe.csv","condition":"add"}],
+      "command":"echo",
       "args":["/mnt/efskyeroo/www/kyeroo.com/magmi/cli/magmi.cli.php -profile=kyeroo -mode=create -CSV:filename=':PROCESS_DEPENDS_FILES_READY'"],
       "retries":0,
       "retry_delay":10,
