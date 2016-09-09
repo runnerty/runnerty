@@ -289,8 +289,6 @@ class slackNotificator extends Notification{
               if (!this.channel && config.channel) this.channel = config.channel;
             }
 
-
-
             var slack = new Slack(this.token);
             var msg = replaceWith(this.message, values);
 
@@ -647,13 +645,12 @@ class Process {
 }
 
 class Chain {
-  constructor(id, name, start_date, end_date, schedule_interval, prevent_overlap, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at) {
+  constructor(id, name, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at) {
     this.id = id;
     this.name = name;
     this.start_date = start_date;
     this.end_date = end_date;
     this.schedule_interval = schedule_interval;
-    this.prevent_overlap = prevent_overlap;
     this.depends_chains = depends_chains;
     this.depends_chains_alt = depends_chains_alt;
     this.events;
@@ -1417,7 +1414,6 @@ class Plan{
                 chain.start_date,
                 chain.end_date,
                 chain.schedule_interval,
-                chain.prevent_overlap,
                 chain.depends_chains,
                 chain.depends_chains_alt,
                 chain.events,

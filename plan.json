@@ -5,17 +5,16 @@
     "start_date":"2016-08-01T00:00:00",
     "end_date":"2099-11-01T00:00:00",
     "schedule_interval":"*/1 * * * *",
-    "prevent_overlap":"ignore",
     "depends_chains":[],
     "events":{"on_start":{},"on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
     "processes":[{
-      "id":"MAGMI_REFRESH_STOCK",
-      "name":"Refresco de Stock via Magmi",
-      "depends_process":[{"file_name":"test/pepe.csv","condition":"add"}],
-      "command":"echo",
-      "args":["/mnt/efskyeroo/www/kyeroo.com/magmi/cli/magmi.cli.php -profile=kyeroo -mode=create -CSV:filename=':PROCESS_DEPENDS_FILES_READY'"],
+      "id":"CONCAT_MAGMI_CSVS",
+      "name":"Concatenador de CSVs",
+      "depends_process":[],
+      "command":"CSVCONCAT.sh",
+      "args":[],
       "retries":0,
-      "retry_delay":10,
+      "retry_delay":0,
       "limited_time_end":"",
       "events":{
         "on_start":{
@@ -25,7 +24,7 @@
               "id":"slack_default",
               "bot_emoji": ":rabbit2:",
               "channel": "mlm",
-              "message":"INICIO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - FICHERO: :PROCESS_LAST_DEPEND_FILE_READY"
+              "message":"INICIO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
             }
           ]
         },
@@ -40,17 +39,44 @@
             }
           ]
         },
-        "on_retry":{
+        "on_retry":{},
+        "on_end":{},
+        "on_waiting_dependencies":{},
+        "on_exceeded_limited_time_end":{}
+      }
+    },{
+      "id":"MAGMI_REFRESH_STOCK",
+      "name":"Refresco de Stock via Magmi",
+      "depends_process":[{"id":"CONCAT_MAGMI_CSVS"}],
+      "command":"magmi",
+      "args":["/mnt/efskyeroo/www/kyeroo.com/magmi/cli/magmi.cli.php -profile=kyeroo -mode=create -CSV:filename='/mnt/efskyeroo/www/kyeroo.com/magmi/csvs/res/final.csv'"],
+      "retries":0,
+      "retry_delay":0,
+      "limited_time_end":"",
+      "events":{
+        "on_start":{
           "notifications":[
             {
               "type":"slack",
               "id":"slack_default",
-              "bot_emoji": ":muscle:",
+              "bot_emoji": ":rabbit2:",
               "channel": "mlm",
-              "message":"REINTENTO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - INTENTO :PROCESS_RETRIES_COUNT DE :PROCESS_RETRIES "
+              "message":"INICIO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
             }
           ]
         },
+        "on_fail":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":see_no_evil:",
+              "channel": "mlm",
+              "message":"ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+            }
+          ]
+        },
+        "on_retry":{},
         "on_end":{
           "notifications":[
             {
@@ -67,13 +93,13 @@
       }
     },
     {
-      "id":"ECHO_ON_FAIL",
-      "name":"Prueba a ver si hace echo cuando falla",
-      "depends_process":[{"id":"MAGMI_REFRESH_STOCK","on_fail":true}],
-      "command":"echo",
-      "args":["ejecucion despues de fallo"],
+      "id":"BACKUP_REMOVE_CSV_LOADED",
+      "name":"Backup de cargas y eliminacion",
+      "depends_process":[{"id":"MAGMI_REFRESH_STOCK"}],
+      "command":"RMCSVMAGMILOAD.sh",
+      "args":[],
       "retries":0,
-      "retry_delay":10,
+      "retry_delay":0,
       "limited_time_end":"",
       "events":{
         "on_start":{
@@ -98,17 +124,7 @@
             }
           ]
         },
-        "on_retry":{
-          "notifications":[
-            {
-              "type":"slack",
-              "id":"slack_default",
-              "bot_emoji": ":muscle:",
-              "channel": "mlm",
-              "message":"REINTENTO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - INTENTO :PROCESS_RETRIES_COUNT DE :PROCESS_RETRIES "
-            }
-          ]
-        },
+        "on_retry":{},
         "on_end":{
           "notifications":[
             {
