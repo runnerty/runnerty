@@ -50,7 +50,7 @@
       "name":"Refresco de Stock via Magmi",
       "depends_process":[{"id":"CONCAT_MAGMI_CSVS"}],
       "command":"php",
-      "args":["/mnt/efskyeroo/www/kyeroo.com/magmi/cli/magmi.cli.php", "-profile=kyeroo_stock", "-mode=update", "-CSV:filename='/mnt/efskyeroo/www/kyeroo.com/var/import/final.csv'"],
+      "args":["/mnt/efskyeroo/www/kyeroo.com/magmi/cli/magmi.cli.php", "-profile=kyeroo_stock", "-mode=update", "-CSV:filename=/mnt/efskyeroo/www/kyeroo.com/var/import/final.csv"],
       "retries":0,
       "retry_delay":0,
       "limited_time_end":"",
