@@ -1125,7 +1125,15 @@ class Chain {
 
                         if (proc.end_chain_on_fail){
 
-                          _this.setChainToInitState();
+                          _this.setChainToInitState()
+                            .then(function(){
+                              logger.log('debug','setChainToInitState end_chain_on_fail');
+                              resolve();
+                            })
+                            .catch(function(e){
+                              logger.log('error','Error setChainToInitState on end_chain_on_fail: '+e);
+                              resolve();
+                            });
 
                         }else{
 
