@@ -16,7 +16,7 @@
       "retries":0,
       "retry_delay":0,
       "limited_time_end":"",
-      "end_on_fail":true,
+      "end_chain_on_fail":true,
       "events":{
         "on_start":{
           "notifications":[

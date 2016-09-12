@@ -390,7 +390,7 @@ class Event {
 }
 
 class Process {
-  constructor(id, name, depends_process, depends_process_alt, command, args, retries, retry_delay, limited_time_end, end_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, chain_values){
+  constructor(id, name, depends_process, depends_process_alt, command, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, chain_values){
     this.id = id;
     this.name = name;
     this.depends_process = depends_process;
@@ -400,7 +400,8 @@ class Process {
     this.retries = retries;
     this.retry_delay = retry_delay;
     this.limited_time_end = limited_time_end;
-    this.end_on_fail = end_on_fail;
+    this.end_on_fail = end_on_fail || false;
+    this.end_chain_on_fail = end_chain_on_fail || false;
 
     //Runtime attributes:
     this.status = status || "stop";
@@ -632,7 +633,7 @@ class Process {
               if (_this.end_on_fail){
                 _this.end();
               }
-              reject(stderr);
+              reject(_this, stderr);
             }
           }
         });
@@ -739,6 +740,7 @@ class Chain {
                     process.retry_delay,
                     process.limited_time_end,
                     process.end_on_fail,
+                    process.end_chain_on_fail,
                     process.events,
                     process.status,
                     process.execute_return,
@@ -1118,18 +1120,25 @@ class Chain {
                             resolve();
                           })
                       })
-                      .catch(function(e){
+                      .catch(function(proc, e){
                         logger.log('error','Error in process.start: '+e);
 
-                        // Aun cuando hay error puede que haya procesos que tengan que ejecutarse:
-                        _this.startProcesses()
-                          .then(function(res){
-                            resolve();
-                          })
-                          .catch(function(e){
-                            logger.log('error','Error in startProcesses (prev errored):'+e);
-                            resolve();
-                          })
+                        if (proc.end_chain_on_fail){
+
+                          _this.setChainToInitState();
+
+                        }else{
+
+                          // Aun cuando hay error puede que haya procesos que tengan que ejecutarse:
+                          _this.startProcesses()
+                            .then(function(res){
+                              resolve();
+                            })
+                            .catch(function(e){
+                              logger.log('error','Error in startProcesses (prev errored):'+e);
+                              resolve();
+                            })
+                        }
                       })
 
                     break;
