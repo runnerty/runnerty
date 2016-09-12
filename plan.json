@@ -11,11 +11,12 @@
       "id":"CONCAT_MAGMI_CSVS",
       "name":"Concatenador de CSVs",
       "depends_process":[],
-      "command":"CSVCONCAT.sh",
+      "command":"/var/batch/CSVCONCAT.sh",
       "args":[],
       "retries":0,
       "retry_delay":0,
       "limited_time_end":"",
+      "end_on_fail":true,
       "events":{
         "on_start":{
           "notifications":[
@@ -96,7 +97,7 @@
       "id":"BACKUP_REMOVE_CSV_LOADED",
       "name":"Backup de cargas y eliminacion",
       "depends_process":[{"id":"MAGMI_REFRESH_STOCK"}],
-      "command":"RMCSVMAGMILOAD.sh",
+      "command":"/var/batch/RMCSVMAGMILOAD.sh",
       "args":[],
       "retries":0,
       "retry_delay":0,

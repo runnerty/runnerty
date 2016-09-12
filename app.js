@@ -390,7 +390,7 @@ class Event {
 }
 
 class Process {
-  constructor(id, name, depends_process, depends_process_alt, command, args, retries, retry_delay, limited_time_end, events, status, execute_return, execute_err_return, started_at, ended_at, chain_values){
+  constructor(id, name, depends_process, depends_process_alt, command, args, retries, retry_delay, limited_time_end, end_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, chain_values){
     this.id = id;
     this.name = name;
     this.depends_process = depends_process;
@@ -400,6 +400,9 @@ class Process {
     this.retries = retries;
     this.retry_delay = retry_delay;
     this.limited_time_end = limited_time_end;
+    this.end_on_fail = end_on_fail;
+
+    //Runtime attributes:
     this.status = status || "stop";
     this.execute_return = execute_return;
     this.execute_err_return = execute_err_return;
@@ -626,6 +629,9 @@ class Process {
               }, _this.retry_delay * 1000 || 0);
 
             }else{
+              if (_this.end_on_fail){
+                _this.end();
+              }
               reject(stderr);
             }
           }
@@ -732,6 +738,7 @@ class Chain {
                     process.retries,
                     process.retry_delay,
                     process.limited_time_end,
+                    process.end_on_fail,
                     process.events,
                     process.status,
                     process.execute_return,
