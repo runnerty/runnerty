@@ -1000,6 +1000,11 @@ class Chain {
 
   setChainToInitState(){
     var _this = this;
+
+    if(_this.isRunning() || _this.isErrored()){
+      _this.end();
+    }
+
     return new Promise((resolve) => {
       // Clear depends_files_ready
       // TODO: REVISAR ESTO - PROBLEMAS SI EXISTEN FICHEROS Y NO SE VUELVE A METER EN depends_files_ready
