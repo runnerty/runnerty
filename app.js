@@ -189,8 +189,6 @@ class Notification {
     var _this = this;
     return new Promise((resolve) => {
 
-      console.log('loadConfig:',config.hasOwnProperty('notificators_connections'),config);
-
       if (config.hasOwnProperty('notificators_connections')) {
         var notificationsConnLength = config.notificators_connections.length;
         var cnf = undefined;
@@ -414,7 +412,7 @@ class Event {
 }
 
 class Process {
-  constructor(id, name, depends_process, depends_process_alt, command, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, chain_values){
+  constructor(id, name, depends_process, depends_process_alt, command, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, chain_values){
     this.id = id;
     this.name = name;
     this.depends_process = depends_process;
@@ -426,6 +424,7 @@ class Process {
     this.limited_time_end = limited_time_end;
     this.end_on_fail = end_on_fail || false;
     this.end_chain_on_fail = end_chain_on_fail || false;
+    this.output = output;
 
     //Runtime attributes:
     this.status = status || "stop";
@@ -627,6 +626,7 @@ class Process {
             _this.execute_return = stdout;
             _this.execute_err_return = stderr;
             _this.end();
+            _this.write_output();
             _this.depends_files_ready = [];
             resolve(stdout);
           } else {
@@ -636,6 +636,7 @@ class Process {
             _this.execute_err_return = stderr;
             _this.retries_count = _this.retries_count +1 || 1;
             _this.error();
+            _this.write_output();
 
             if(_this.retries >= _this.retries_count && !forceOnceInRetry){
 
@@ -656,6 +657,7 @@ class Process {
             }else{
               if (_this.end_on_fail){
                 _this.end();
+                _this.write_output();
               }
               reject(_this, stderr);
             }
@@ -672,6 +674,37 @@ class Process {
   waiting_dependencies(){
     var _this = this;
     _this.notificate('on_waiting_dependencies');
+  }
+
+  write_output(){
+    var _this = this;
+
+    if(_this.output && _this.output.file_name && _this.output.write.length > 0){
+
+      var filePath = _this.output.file_name;
+
+      var mode = 'a+';
+      if(_this.output.concat){
+        mode = 'a+';
+      }else{
+        mode = 'w+';
+      }
+
+      function repArg(arg){
+        return replaceWith(arg, _this.values());
+      }
+
+      var output_stream = _this.output.write.map(repArg);
+
+      fs.open(filePath, mode, (err, fd) => {
+        fs.write(fd, string, null, 'utf8', function(){
+          fs.close(id, function(){
+            console.log('file closed');
+          });
+        });
+      });
+    }
+
   }
 }
 
