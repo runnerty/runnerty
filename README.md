@@ -56,6 +56,6 @@ Example:
     }
   }
  }]
- 
 ```
 
+* [chain_path], External chain files, set object {"chain_path":"chain_file.json"} instead of chain object for load chain object from external file.

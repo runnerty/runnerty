@@ -2,7 +2,7 @@
 var config          = require('./config/config.js');
 var winston         = require('winston');
 var schedule        = require('node-schedule');
-var async           = require('async');
+//var async           = require('async');
 var spawn           = require('child_process').spawn;
 var fs              = require('fs');
 var chokidar        = require('chokidar');
@@ -461,13 +461,13 @@ class Process {
           if (keysLength > 0) {
             while (keysLength--) {
               var event = events[keys[keysLength]];
-              if(event.hasOwnProperty('process') || event.hasOwnProperty('notifications')){
+              if(event.hasOwnProperty('notifications')){
                 processEventsPromises.push(new Event(keys[keysLength],
                                                      event.process,
                                                      event.notifications
                                                      ));
               }else{
-                logger.log('debug','Process Events without procces and notifications');
+                logger.log('debug','Process Events without notifications');
               }
             }
 
@@ -1644,9 +1644,6 @@ class Plan{
           if(depends_chains[dependsChainsLength].hasOwnProperty('file_name')){
             if(chain.depends_files_ready){
 
-              console.log('> chain.depends_files_ready:',chain.depends_files_ready);
-              console.log('> depends_chains[dependsChainsLength].file_name:',depends_chains[dependsChainsLength].file_name);
-
               if(chain.depends_files_ready.indexOf(depends_chains[dependsChainsLength].file_name) > -1){
               }else{
                 chainsDependencies.push(depends_chains[dependsChainsLength]);
@@ -1744,21 +1741,21 @@ class FilePlan {
     return new Promise((resolve) => {
       fs.stat(filePath, function(err, res){
         if(err){
-          logger.log('error',`Plan file ${filePath} not exists.`, err);
-          throw new Error(`PlanFile ${filePath} not found.`);
+          logger.log('error',`File ${filePath} not exists.`, err);
+          throw new Error(`File ${filePath} not found.`);
           resolve();
         }else{
           try {
             fs.readFile(filePath, 'utf8', function(err, res){
               if(err){
-                logger.log('error','FilePlan loadFileContent readFile: '+err);
+                logger.log('error',`File loadFileContent (${filePath}) readFile: `+err);
                 resolve();
               }else{
                 resolve(JSON.parse(res));
               }
             });
           } catch(e) {
-            throw new Error('Invalid PlanFile, incorrect JSON format: '+e.message,e);
+            throw new Error(`Invalid file (${filePath}), incorrect JSON format: `+e.message,e);
             resolve();
           }
         }
@@ -1767,11 +1764,30 @@ class FilePlan {
   }
 
   getChains(json){
+    var _this = this;
+
     return new Promise((resolve) => {
 
       if(json.hasOwnProperty('chains')){
         if(json.chains instanceof Array){
-          resolve(this.validateChains(json));
+
+          var loadChains = [];
+
+          function getAllChains(chain){
+            loadChains.push(_this.getChain(chain));
+          }
+
+          json.chains.map(getAllChains);
+
+          Promise.all(loadChains)
+            .then(function (res) {
+              resolve(res);
+            })
+            .catch(function(e){
+              logger.log('error', 'getChains error: ', e);
+              reject();
+            });
+
         }else{
           throw new Error('Invalid PlanFile, chain is not an array.');
           resolve();
@@ -1784,6 +1800,49 @@ class FilePlan {
     });
   };
 
+  getChain(chain){
+    var _this = this;
+    return new Promise(function(resolve, reject) {
+
+      if (_this.chainIsValid(chain)) {
+        resolve(chain);
+      } else {
+        if (chain.hasOwnProperty('chain_path')) {
+
+          _this.loadFileContent(chain.chain_path)
+            .then((res) => {
+              _this.getChain(res)
+                  .then((res) => {
+                    resolve(res);
+                  })
+                  .catch(function(err){
+                    logger.log('error', 'External chain error: ', err, chain);
+                    reject();
+                  })
+            })
+            .catch(function(err){
+              logger.log('error', 'External chain file error: ', err, chain);
+              reject();
+            });
+
+        } else {
+          logger.log('error', 'Chain ignored, id, name or start_date is not set: ', chain);
+          reject();
+        }
+      }
+    });
+}
+
+  chainIsValid(chain){
+
+    if(chain.hasOwnProperty('id') && chain.hasOwnProperty('name') && chain.hasOwnProperty('start_date')){
+      return true;
+    }else{
+      return false;
+    }
+
+  };
+/*
   validateChains(json){
     var correctChains = [];
     var chainsLength = json.chains.length;
@@ -1794,6 +1853,13 @@ class FilePlan {
       if(chain.hasOwnProperty('id') && chain.hasOwnProperty('name') && chain.hasOwnProperty('start_date')){
         correctChains.push(chain);
       }else{
+
+        if(chain.hasOwnProperty('chain_path')){
+          this.loadFileContent(chain.chain_path)
+        }else{
+
+        }
+
         logger.log('error','Chain ignored, id, name or start_date is not set: ', chain);
       }
 
@@ -1801,6 +1867,7 @@ class FilePlan {
 
     return correctChains;
   }
+  */
 
   refreshBinBackup(){
     var _this = this;
