@@ -1783,8 +1783,6 @@ class FilePlan {
 };
 
 // CLASES ----- END ------
-
-logger.log('info',`RUNNERTY RUNNING - TIME...: ${new Date()}`);
 var runtimePlan;
 var reloadPlan = false;
 
@@ -1799,6 +1797,8 @@ program
   })
 
 program.parse(process.argv);
+
+logger.log('info',`RUNNERTY RUNNING - TIME...: ${new Date()}`);
 
 //LOAD GENERAL CONFIG:
 loadGeneralConfig(configFilePath)
