@@ -696,11 +696,10 @@ class Process {
 
       var output_stream = _this.output.write.map(repArg);
 
+      //TODO HACER QUE ESCRIBA SIN COMAS
       fs.open(filePath, mode, (err, fd) => {
-        fs.write(fd, string, null, 'utf8', function(){
-          fs.close(id, function(){
-            console.log('file closed');
-          });
+        fs.write(fd, output_stream, null, 'utf8', function(){
+          fs.close(fd, function(){});
         });
       });
     }
@@ -804,6 +803,7 @@ class Chain {
                     process.execute_err_return,
                     process.started_at,
                     process.ended_at,
+                    process.output,
                     _this.values())
                     .then(function(res) {
                       resolve(res);

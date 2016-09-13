@@ -17,7 +17,7 @@
       "retry_delay":0,
       "limited_time_end":"",
       "end_chain_on_fail":true,
-      "output":{"file_name":"/var/log/runnerty/:CHAIN_ID_:PROCESS_ID_:DD:MM:YY_:HH:mm:ss.log", "write":[":PROCESS_EXECUTE_ERR_RETURN",":PROCESS_EXECUTE_RETURN"], "concat":false},
+      "output":{"file_name":"/etc/runnerty/:CHAIN_ID_:PROCESS_ID_:DD:MM:YY_:HH:mm:ss.log", "write":[":PROCESS_EXECUTE_ERR_RETURN",":PROCESS_EXECUTE_RETURN"], "concat":false},
       "events":{
         "on_start":{
           "notifications":[
