@@ -6,8 +6,8 @@ var config = {};
 //config.configFilePath = path.join(__dirname, '../conf.json');
 
 config.planFilePath   = path.join('/etc/runnerty/plan.json');
-config.binBackup      = path.join('/etc/runnerty/bin.json');
 config.configFilePath = path.join('/etc/runnerty/conf.json');
+config.binBackup      = path.join('/tmp/bin.json');
 
 config.refreshIntervalBinBackup = 2000;
 
