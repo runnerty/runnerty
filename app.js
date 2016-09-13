@@ -2,7 +2,6 @@
 var config          = require('./config/config.js');
 var winston         = require('winston');
 var schedule        = require('node-schedule');
-//var async           = require('async');
 var spawn           = require('child_process').spawn;
 var fs              = require('fs');
 var chokidar        = require('chokidar');

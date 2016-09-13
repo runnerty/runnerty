@@ -1,9 +1,13 @@
 var path            = require('path');
 
 var config = {};
-config.planFilePath = path.join(__dirname, '../plan.json');
-config.binBackup = path.join(__dirname, '../bin.json');
-config.configFilePath = path.join(__dirname, '../conf.json');
+//config.planFilePath = path.join(__dirname, '../plan.json');
+//config.binBackup = path.join(__dirname, '../bin.json');
+//config.configFilePath = path.join(__dirname, '../conf.json');
+
+config.planFilePath   = path.join('/etc/runnerty/plan.json');
+config.binBackup      = path.join('/etc/runnerty/bin.json');
+config.configFilePath = path.join('/etc/runnerty/conf.json');
 
 config.refreshIntervalBinBackup = 2000;
 
