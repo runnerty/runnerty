@@ -86,6 +86,13 @@
               "bot_emoji": ":v:",
               "channel": "mlm",
               "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_RETURN"
+            },
+            {
+              "type":"mail",
+              "id":"mail_default",
+              "bot_emoji": ":v:",
+              "channel": "mlm",
+              "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_RETURN"
             }
           ]
         },

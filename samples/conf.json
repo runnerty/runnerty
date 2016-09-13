@@ -1,4 +1,14 @@
 {"config":{
+  "general":{ "binBackup":"/tmp/bin.json",
+              "planFilePath":"/etc/runnerty/plan.json",
+              "refreshIntervalBinBackup":2000,
+              "api":{"port":3456,
+                      "users":[{"user":"coderty", "password":"runnerty"},{"user":"usr_test", "password":"pass_test"}],
+                      "secret":"RUNNERTY_BY_CODERTY",
+                      "limite_req":"20mb",
+                      "propertiesExcludesInResponse":["proc","scheduleCancel","scheduleRepeater","file_watchers","depends_files_ready"]
+                    }
+  },
   "db_connections":[{"id":"mysql_default",
     "type":"mysql",
     "user":"myname",
@@ -19,11 +29,18 @@
     }],
   "notificators_connections":[
     {"id":"slack_default",
-    "type":"slack",
-    "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
-    "bot_name":"runnerta",
-    "bot_emoji": ":v:",
-    "channel": "mlm"
-  }]
+     "type":"slack",
+     "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
+     "bot_name":"runnerta",
+     "bot_emoji": ":v:",
+     "channel": "mlm"},
+    {"id":"mail_default",
+     "type":"mail",
+     "disable":false,
+     "from":"Runnerty <desawc@gmail.com>",
+     "transport": "smtps://desawc%40gmail.com:nesoca..gmail@smtp.gmail.com/?pool=true",
+     "templateDir": "/etc/runnerty/templates",
+     "template": "alerts"}
+  ]
  }
 }
