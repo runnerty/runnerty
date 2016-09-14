@@ -16,7 +16,7 @@
     "database":"mydb",
     "host":"localhost",
     "port":"3306",
-    "protocol":"TPC"
+    "socketPath":""
   },
     {"id":"postgres_default",
       "type":"postgres",

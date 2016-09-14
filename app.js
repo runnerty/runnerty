@@ -11,6 +11,8 @@ var nodemailer      = require('nodemailer');
 var Slack           = require('slack-node');
 var anymatch        = require('anymatch');
 var bytes           = require('bytes');
+var mysql           = require('mysql');
+
 
 var configFilePath = '/etc/runnerty/conf.json';
 var config;
@@ -167,8 +169,34 @@ function loadGeneralConfig(){
         }
       }
     });
+  });
+};
+
+function loadConfigSection(section, id_config){
+  return new Promise(function(resolve, reject) {
+
+    if (config.hasOwnProperty(section)) {
+      var sectionLength = config[section].length;
+      var cnf = undefined;
+      while (sectionLength--) {
+        if (config[section][sectionLength].id === id_config) {
+          cnf = config[section][sectionLength];
+        }
+      }
+
+    if (cnf){
+      resolve(cnf);
+    }else{
+      throw new Error(`Config for ${id_config} not found in section ${section}`);
+      reject();
+    }
+
+  }else{
+    throw new Error(`Section ${section} not found in config file.`, config);
+    reject();
+  }
 });
-}
+};
 
 
 // LOGGER  ---------------------------------------------------------------------
@@ -199,30 +227,9 @@ class Notification {
 
   loadConfig(){
     var _this = this;
-    return new Promise((resolve) => {
-
-      if (config.hasOwnProperty('notificators_connections')) {
-        var notificationsConnLength = config.notificators_connections.length;
-        var cnf = undefined;
-        while (notificationsConnLength--) {
-          if (config.notificators_connections[notificationsConnLength].id === _this.id) {
-            cnf = config.notificators_connections[notificationsConnLength];
-          }
-        }
-
-        if (cnf){
-          resolve(cnf);
-        }else{
-          throw new Error(`Config for ${_this.id} not found`);
-          resolve();
-        }
-
-      } else {
-        throw new Error('Invalid Config file, notificators_connections not found.', config);
-        resolve();
-      }
-  });
+    return loadConfigSection('notificators_connections', _this.id);
   }
+
 
 }
 
@@ -424,12 +431,12 @@ class Event {
 }
 
 class Process {
-  constructor(id, name, depends_process, depends_process_alt, command, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, chain_values){
+  constructor(id, name, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, chain_values){
     this.id = id;
     this.name = name;
     this.depends_process = depends_process;
     this.depends_process_alt = depends_process_alt;
-    this.command = command;
+    this.exec = exec;
     this.args = args;
     this.retries = retries;
     this.retry_delay = retry_delay;
@@ -470,7 +477,7 @@ class Process {
       "CHAIN_STARTED_AT":_this.chain_values.CHAIN_STARTED_AT,
       "PROCESS_ID":_this.id,
       "PROCESS_NAME":_this.name,
-      "PROCESS_COMMAND":_this.command,
+      "PROCESS_EXEC":_this.exec,
       "PROCESS_ARGS":_this.args,
       "PROCESS_EXECURTE_ARGS":_this.execute_args,
       "PROCESS_EXECUTE_RETURN":_this.execute_return,
@@ -528,6 +535,11 @@ class Process {
         resolve();
       }
     });
+  }
+
+  loadDbConfig(){
+    var _this = this;
+    return loadConfigSection('db_connections', _this.exec.db_connection_id);
   }
 
   notificate(event){
@@ -612,6 +624,25 @@ class Process {
       forceOnceInRetry = false;
     }
 
+    if(typeof _this.exec === 'string'){
+      return _this.executeCommand(_this.exec);
+    }else {
+      switch (_this.exec.type) {
+        case 'command':
+          return _this.executeCommand(_this.exec.command);
+          break;
+        case 'mysql':
+          return _this.executeMysql();
+          break;
+        default:
+          logger.log('error', `Exec type is not valid ${_this.exec.type} for ${_this.id}`);
+          break;
+      }
+    }
+  }
+
+  executeCommand(cmd){
+    var _this = this;
     return new Promise(function(resolve, reject) {
       var stdout = '';
       var stderr = '';
@@ -621,7 +652,7 @@ class Process {
       }
       _this.execute_args = _this.args.map(repArg);
 
-      _this.proc = spawn(_this.command, _this.execute_args);
+      _this.proc = spawn(cmd, _this.execute_args);
 
       _this.proc.stdout.on('data', function(chunk) {
         stdout += chunk;
@@ -642,7 +673,7 @@ class Process {
             _this.depends_files_ready = [];
             resolve(stdout);
           } else {
-            logger.log('error',_this.id+'FIN: '+code+' - '+stdout+' - '+stderr);
+            logger.log('error',_this.id+' FIN: '+code+' - '+stdout+' - '+stderr);
 
             _this.execute_return = stdout;
             _this.execute_err_return = stderr;
@@ -675,6 +706,69 @@ class Process {
             }
           }
         });
+    });
+  }
+
+  executeMysql(){
+    var _this = this;
+
+    return new Promise(function(resolve, reject) {
+
+      if(_this.exec.db_connection_id){
+        _this.loadDbConfig()
+          .then((configValues) => {
+
+            _this.execute_arg = _this.args
+
+            var connection = mysql.createConnection({
+              host       : configValues.host,
+              user       : configValues.user,
+              password   : configValues.password,
+              database   : configValues.database,
+              socketPath : configValues.socketPath,
+              ssl        : configValues.ssl,
+              queryFormat:
+                function (query, values) {
+                  if (!values) return query.replace(/(\:\/)/g,':');
+                  else {
+                    var _query = query.replace(/\:(\w+)/g, function (txt, key) {
+                    return values && key && values.hasOwnProperty(key)
+                      ? this.escape(replaceWith(values[key],_this.values()))
+                      : null;
+                    }.bind(this)).replace(/(\:\/)/g,':');
+                  }
+                  return _query;
+                }
+            });
+
+            connection.connect(function(err) {
+              if (err) {
+                logger.log('error','Error connecting Mysql: '+err)
+                reject(err);
+              }else{
+
+                connection.query(_this.exec.command, _this.execute_arg, function(err, rows, fields) {
+                  if (err){
+                    logger.log('error',`executeMysql query ${_this.exec.command}: `+err);
+                    reject(err);
+                  }else{
+                    console.log('The solution is: ', rows);
+                    resolve(rows);
+                  }
+                });
+                connection.end();
+              }
+            });
+          })
+          .catch(function(e){
+            logger.log('error','executeMysql loadDbConfig: '+e);
+            reject(e);
+          });
+
+      }else{
+        logger.log('error',`db_connection_id not set for ${_this.id}`);
+        reject();
+      }
     });
   }
 
@@ -856,7 +950,7 @@ class Chain {
                     process.name,
                     process.depends_process,
                     process.depends_process_alt,
-                    process.command,
+                    process.exec,
                     process.args,
                     process.retries,
                     process.retry_delay,
