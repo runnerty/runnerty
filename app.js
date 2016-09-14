@@ -10,6 +10,7 @@ var crypto          = require('crypto');
 var nodemailer      = require('nodemailer');
 var Slack           = require('slack-node');
 var anymatch        = require('anymatch');
+var bytes           = require('bytes');
 
 var configFilePath = '/etc/runnerty/conf.json';
 var config;
@@ -17,14 +18,25 @@ var config;
 // UTILS
 function replaceWith(text, objParams){
 
+  function pad(pad, str, padLeft) {
+    if(!padLeft) padLeft = true;
+    if (typeof str === 'undefined')
+      return pad;
+    if (padLeft) {
+      return (pad + str).slice(-pad.length);
+    } else {
+      return (str + pad).substring(0, pad.length);
+    }
+  }
+
   var currentTime = new Date();
-  objParams.DD = currentTime.getDay();
-  objParams.MM = currentTime.getMonth();
-  objParams.YY = currentTime.getYear();
-  objParams.YYYY = currentTime.getFullYear();
-  objParams.HH = currentTime.getHours();
-  objParams.mm = currentTime.getMinutes();
-  objParams.ss = currentTime.getSeconds();
+  objParams.DD   = pad('00',currentTime.getDate());
+  objParams.MM   = pad('00',currentTime.getMonth() + 1);
+  objParams.YY   = pad('00',currentTime.getFullYear().toString().substr(2,2));
+  objParams.YYYY = pad('00',currentTime.getFullYear());
+  objParams.HH   = pad('00',currentTime.getHours());
+  objParams.mm   = pad('00',currentTime.getMinutes());
+  objParams.ss   = pad('00',currentTime.getSeconds());
 
   var keys = Object.keys(objParams);
 
@@ -679,31 +691,85 @@ class Process {
   write_output(){
     var _this = this;
 
-    if(_this.output && _this.output.file_name && _this.output.write.length > 0){
+    function repArg(arg){
+      return replaceWith(arg, _this.values());
+    }
 
-      var filePath = _this.output.file_name;
-
-      var mode = 'a+';
-      if(_this.output.concat){
-        mode = 'a+';
-      }else{
-        mode = 'w+';
-      }
-
-      function repArg(arg){
-        return replaceWith(arg, _this.values());
-      }
-
-      var output_stream = _this.output.write.map(repArg);
-
-      //TODO HACER QUE ESCRIBA SIN COMAS
+    function writeFile(filePath, mode, os){
       fs.open(filePath, mode, (err, fd) => {
-        fs.write(fd, output_stream, null, 'utf8', function(){
-          fs.close(fd, function(){});
+        fs.write(fd, os, null, 'utf8', function(){
+          fs.close(fd, function(err){
+            if(err){
+              logger.log('error',`Closing file ${filePath} in writeFile in ${_this.id}: `,err);
+            }
+          });
         });
       });
     }
 
+    if(_this.output && _this.output.file_name && _this.output.write.length > 0){
+
+      var filePath = replaceWith(_this.output.file_name, _this.values());
+      var output_stream = _this.output.write.map(repArg).filter(Boolean).join("\n");
+
+      if(_this.output.maxsize) {
+        var maxSizeBytes = bytes(_this.output.maxsize);
+        var output_stream_length = output_stream.length;
+
+        if(output_stream_length > maxSizeBytes){
+          output_stream = output_stream.slice(output_stream_length - maxSizeBytes,output_stream_length);
+          output_stream_length = maxSizeBytes;
+          logger.log('debug',`output_stream truncated output_stream_length (${output_stream_length}) > maxSizeBytes (${maxSizeBytes})`);
+        }
+      }
+
+      if(_this.output.concat){
+        if(_this.output.maxsize){
+          fs.stat(filePath, function(error, stats) {
+
+            var fileSizeInBytes = 0;
+            if(!error){
+              fileSizeInBytes = stats.size;
+            }
+            //SI LA SUMA DEL TAMAÑO DEL FICHERO Y EL OUTPUT A ESCRIBIR DEL PROCESO SUPERAN EL MAXIMO PERMITIDO
+            var totalSizeToWrite = fileSizeInBytes + output_stream_length;
+
+            if(totalSizeToWrite > maxSizeBytes){
+              //SE OBTIENE LA PARTE DEL FICHERO QUE JUNTO CON EL OUTPUT SUMAN EL TOTAL PERMITIDO PARA ESCRIBIRLO (SUSTIUYENDO EL FICHERO)
+              var positionFileRead   =  (totalSizeToWrite) - maxSizeBytes;
+              var lengthFileRead =  (fileSizeInBytes) - positionFileRead;
+
+              fs.open(filePath, 'r', function(error, fd) {
+                if(lengthFileRead > 0){
+                  var buffer = new Buffer(lengthFileRead);
+
+                  fs.read(fd, buffer, 0, buffer.length, positionFileRead, function(error, bytesRead, buffer) {
+                    var data = buffer.toString("utf8", 0, buffer.length);
+                    data = data.concat("\n",output_stream);
+                    fs.close(fd, function(err){
+                      if(err){
+                        logger.log('error',`Closing file ${filePath} in ${_this.id}: `,err);
+                      }
+                      writeFile(filePath, 'w', data);
+                    });
+                  });
+                }else{
+                  //SI NO SE VA A ESCRIBIR NADA DEL FICHERO ACTUAL
+                  writeFile(filePath, 'w', output_stream);
+                }
+              });
+            }else{
+              writeFile(filePath, 'a+', output_stream);
+            }
+          });
+        }else{
+          writeFile(filePath, 'a+', output_stream);
+        }
+
+      }else{
+        writeFile(filePath, 'w+', output_stream);
+      }
+    }
   }
 }
 
