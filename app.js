@@ -1,140 +1,25 @@
 "use strict";
 var program         = require('commander');
-var winston         = require('winston');
 var schedule        = require('node-schedule');
 var spawn           = require('child_process').spawn;
 var fs              = require('fs');
 var chokidar        = require('chokidar');
 var path            = require('path');
 var crypto          = require('crypto');
-var nodemailer      = require('nodemailer');
-var Slack           = require('slack-node');
 var anymatch        = require('anymatch');
 var bytes           = require('bytes');
 var mysql           = require('mysql');
 var csv             = require("fast-csv");
+var logger          = require("./libs/utils.js").logger;
+var replaceWith     = require("./libs/utils.js").replaceWith;
+
+
+var slackNotificator= require("./classes/slack_notificator.js");
+var mailNotificator = require("./classes/mail_notificator.js");
 
 
 var configFilePath = '/etc/runnerty/conf.json';
 var config;
-
-// UTILS
-function replaceWith(text, objParams){
-
-  function pad(pad, str, padLeft) {
-    if(!padLeft) padLeft = true;
-    if (typeof str === 'undefined')
-      return pad;
-    if (padLeft) {
-      return (pad + str).slice(-pad.length);
-    } else {
-      return (str + pad).substring(0, pad.length);
-    }
-  }
-
-  var currentTime = new Date();
-  objParams.DD   = pad('00',currentTime.getDate());
-  objParams.MM   = pad('00',currentTime.getMonth() + 1);
-  objParams.YY   = pad('00',currentTime.getFullYear().toString().substr(2,2));
-  objParams.YYYY = pad('00',currentTime.getFullYear());
-  objParams.HH   = pad('00',currentTime.getHours());
-  objParams.mm   = pad('00',currentTime.getMinutes());
-  objParams.ss   = pad('00',currentTime.getSeconds());
-
-  var keys = Object.keys(objParams);
-
-  function orderByLength(a, b) {
-    if (a.length > b.length) {
-      return 1;
-    }
-    if (a.length < b.length) {
-      return -1;
-    }
-    return 0;
-  }
-
-  keys.sort(orderByLength);
-  var keysLength = keys.length;
-
-  while (keysLength--) {
-    text = text.replace(new RegExp('\\:' + keys[keysLength], 'g'), objParams[keys[keysLength]] || '');
-  }
-  return text;
-}
-
-function readFilePromise(type, file){
-  return new Promise(function(resolve, reject) {
-    fs.readFile(file, function(err, data){
-      var res = {};
-      if(err){
-        res[type] = err;
-        reject(res);
-      }else{
-        res[type] = data;
-        resolve(res);
-      }
-    });
-  });
-}
-
-function sendMail(mail, callback){
-
-  var transport = nodemailer.createTransport(mail.transport);
-  var filesReads = [];
-
-  var templateDir  = path.resolve(mail.templateDir, mail.template);
-  var htmlTemplate = path.resolve(templateDir, 'html.html');
-  var txtTemplate	 = path.resolve(templateDir, 'text.txt');
-
-  filesReads.push(readFilePromise('html',htmlTemplate));
-  filesReads.push(readFilePromise('text', txtTemplate));
-
-  Promise.all(filesReads)
-    .then(function (res) {
-
-      var html_data;
-      var text_data;
-
-      if(res[0].hasOwnProperty('html')){
-        html_data = res[0].html.toString();
-        text_data = res[1].text.toString();
-      }else{
-        html_data = res[1].html.toString();
-        text_data = res[0].text.toString();
-      }
-
-      var html = replaceWith(html_data, mail.params);
-      var text = replaceWith(text_data, mail.params);
-
-      var mailOptions = {
-        from: mail.from,
-        to: mail.to,
-        subject: mail.params.subject,
-        text: text,
-        html: html
-      };
-
-      if(mail.disable){
-        logger.log('warn','Mail sender is disable.');
-        callback();
-      }else{
-        transport.sendMail(mailOptions,
-          function(err, res){
-            if(err) {
-              logger.log('error','Error sending mail:',err);
-              callback(err,null);
-            }else{
-              callback(null,res);
-            }
-          });
-      }
-    })
-    .catch(function(e){
-      logger.log('error','Error sending mail:',e);
-      callback(e,null);
-    });
-};
-
 
 function loadGeneralConfig(){
   return new Promise((resolve) => {
@@ -173,15 +58,15 @@ function loadGeneralConfig(){
   });
 };
 
-function loadConfigSection(section, id_config){
+function loadConfigSection(_config, section, id_config){
   return new Promise(function(resolve, reject) {
 
-    if (config.hasOwnProperty(section)) {
-      var sectionLength = config[section].length;
+    if (_config.hasOwnProperty(section)) {
+      var sectionLength = _config[section].length;
       var cnf = undefined;
       while (sectionLength--) {
-        if (config[section][sectionLength].id === id_config) {
-          cnf = config[section][sectionLength];
+        if (_config[section][sectionLength].id === id_config) {
+          cnf = _config[section][sectionLength];
         }
       }
 
@@ -193,167 +78,11 @@ function loadConfigSection(section, id_config){
     }
 
   }else{
-    throw new Error(`Section ${section} not found in config file.`, config);
+    throw new Error(`Section ${section} not found in config file.`, _config);
     reject();
   }
 });
 };
-
-
-// LOGGER  ---------------------------------------------------------------------
-var logger = new (winston.Logger)({
-  transports: [
-    new (winston.transports.Console)({colorize: 'all', level: 'debug'}),
-   // new (winston.transports.File)({name: 'info-file', filename: 'filelog-info.log', level: 'info'}),
-   // new (winston.transports.File)({name: 'error-file',filename: 'filelog-error.log',level: 'error'}),
-  ]
-});
-
-// CLASSES ---------------------------------------------------------------------
-
-class Notification {
-  constructor(type, id, title, message, recipients, recipients_cc, recipients_cco) {
-    this.type = type;
-    this.id = id;
-    this.title = title;
-    this.message = message;
-    this.recipients = recipients;
-    this.recipients_cc = recipients_cc;
-    this.recipients_cco = recipients_cco;
-  }
-
-  notificate(){
-    logger.log('warn','This method must be rewrite in child class');
-  }
-
-  loadConfig(){
-    var _this = this;
-    return loadConfigSection('notificators_connections', _this.id);
-  }
-
-
-}
-
-class mailNotificator extends Notification{
-  constructor(type, id, title, message, recipients, recipients_cc, recipients_cco){
-    super('mail', id, title, message, recipients, recipients_cc, recipients_cco);
-
-    return new Promise((resolve) => {
-      resolve(this);
-    });
-  }
-
-notificate(values){
-
-  return new Promise((resolve) => {
-
-        this.loadConfig()
-        .then((configValues) => {
-          if (configValues){
-            if (!this.from && configValues.from)               this.from        = configValues.from;
-            if (!this.transport && configValues.transport)     this.transport   = configValues.transport;
-            if (!this.templateDir && configValues.templateDir) this.templateDir = configValues.templateDir;
-            if (!this.template && configValues.template)       this.template    = configValues.template;
-            if (!this.disable && configValues.disable)         this.disable     = configValues.disable;
-          }
-
-          this.params = values;
-
-          for (var i = 0, len = this.recipients.length; i < len; i++) {
-            if (i){
-              this.to = this.to + this.recipients[i] + ((i < len-1) ? ', ' : '');
-            }
-            else{
-              this.to = this.recipients[i] + ((i < len-1) ? ', ' : '');
-            }
-          }
-
-          for (var i = 0, len = this.recipients_cc.length; i < len; i++) {
-            if (i){
-              this.cc = this.cc + this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
-            }
-            else{
-              this.cc = this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
-            }
-          }
-
-          for (var i = 0, len = this.recipients_cco.length; i < len; i++) {
-            if (i){
-              this.bcc = this.bcc + this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
-            }
-            else{
-              this.bcc = this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
-            }
-          }
-
-          this.params.subject = replaceWith(this.title, values);
-          this.params.message = replaceWith(this.message, values);
-
-          sendMail(this, function(err, res){
-            if (err){
-              logger.log('error','Error sending mail:'+e,this,values);
-            }
-            resolve(res);
-          });
-
-        })
-        .catch(function(e){
-            logger.log('error','Mail notificate loadConfig '+e)
-            resolve();
-          });
-        });
-  }
-}
-
-class slackNotificator extends Notification{
-  constructor(type, id, token, bot_name, bot_emoji, message, channel, recipients){
-    super('slack', id, null, message, recipients, null, null);
-
-    this.token = token;
-    this.bot_name = bot_name;
-    this.bot_emoji = bot_emoji;
-    this.channel = channel;
-
-    return new Promise((resolve) => {
-      resolve(this);
-    });
-  }
-
-  notificate(values){
-    return new Promise((resolve) => {
-
-        this.loadConfig()
-        .then((configValues) => {
-            if (configValues){
-              if (!this.token && configValues.token)         this.token     = configValues.token;
-              if (!this.bot_name && configValues.bot_name)   this.bot_name  = configValues.bot_name;
-              if (!this.bot_emoji && configValues.bot_emoji) this.bot_emoji = configValues.bot_emoji;
-              if (!this.channel && configValues.channel)     this.channel   = configValues.channel;
-            }
-
-            var slack = new Slack(this.token);
-            var msg = replaceWith(this.message, values);
-
-            slack.api('chat.postMessage', {
-              text: msg,
-              channel: this.channel,
-              username: this.bot_name,
-              icon_emoji: this.bot_emoji,
-            },function(err, response){
-              if(err){
-                logger.log('error','Slack notification: '+err);
-                logger.log('error','Slack notification: '+msg);
-              }
-            });
-            resolve();
-         })
-        .catch(function(e){
-            logger.log('error','Slack notificate loadConfig '+e)
-            resolve();
-          });
-      });
-  }
-}
 
 class Event {
   constructor(name, process, notifications){
@@ -490,14 +219,14 @@ class Process {
       "PROCESS_DEPENDS_FILES_READY": _this.depends_files_ready,
       "PROCESS_FIRST_DEPEND_FILE_READY": (_this.depends_files_ready && _this.depends_files_ready.length > 0) ? _this.depends_files_ready[0] : [],
       "PROCESS_LAST_DEPEND_FILE_READY": (_this.depends_files_ready && _this.depends_files_ready.length > 0) ? _this.depends_files_ready[_this.depends_files_ready.length - 1] : [],
-      "PROCESS_EXEC_MYSQL_RESULTS":_this.execute_mysql_results,
-      "PROCESS_EXEC_MYSQL_RESULTS_CSV":_this.execute_mysql_results_csv,
-      "PROCESS_EXEC_MYSQL_FIELDCOUNT":_this.execute_mysql_fieldCount,
-      "PROCESS_EXEC_MYSQL_AFFECTEDROWS":_this.execute_mysql_affectedRows,
-      "PROCESS_EXEC_MYSQL_CHANGEDROWS":_this.execute_mysql_changedRows,
-      "PROCESS_EXEC_MYSQL_INSERTID":_this.execute_mysql_insertId,
-      "PROCESS_EXEC_MYSQL_WARNINGCOUNT":_this.execute_mysql_warningCount,
-      "PROCESS_EXEC_MYSQL_MESSAGE":_this.execute_mysql_message
+      "PROCESS_EXEC_DB_RESULTS":_this.execute_db_results,
+      "PROCESS_EXEC_DB_RESULTS_CSV":_this.execute_db_results_csv,
+      "PROCESS_EXEC_DB_FIELDCOUNT":_this.execute_db_fieldCount,
+      "PROCESS_EXEC_DB_AFFECTEDROWS":_this.execute_db_affectedRows,
+      "PROCESS_EXEC_DB_CHANGEDROWS":_this.execute_db_changedRows,
+      "PROCESS_EXEC_DB_INSERTID":_this.execute_db_insertId,
+      "PROCESS_EXEC_DB_WARNINGCOUNT":_this.execute_db_warningCount,
+      "PROCESS_EXEC_DB_MESSAGE":_this.execute_db_message
   };
   }
 
@@ -546,9 +275,9 @@ class Process {
     });
   }
 
-  loadDbConfig(){
+  loadDbConfig(_config){
     var _this = this;
-    return loadConfigSection('db_connections', _this.exec.db_connection_id);
+    return loadConfigSection(_config, 'db_connections', _this.exec.db_connection_id);
   }
 
   notificate(event){
@@ -561,7 +290,7 @@ class Process {
 
             var notificationsLength = _this.events[event].notifications.length;
             while(notificationsLength--){
-              _this.events[event].notifications[notificationsLength].notificate(_this.values())
+              _this.events[event].notifications[notificationsLength].notificate(config, _this.values())
                 .then(function(res){
                   logger.log('debug','Notification process sended: '+res)
                 })
@@ -723,7 +452,7 @@ class Process {
     return new Promise(function(resolve, reject) {
 
       if(_this.exec.db_connection_id){
-        _this.loadDbConfig()
+        _this.loadDbConfig(config)
           .then((configValues) => {
 
             _this.execute_arg = _this.args
@@ -767,12 +496,12 @@ class Process {
 
                     if(results instanceof Array){
 
-                      _this.execute_mysql_results = JSON.stringify(results);
+                      _this.execute_db_results = JSON.stringify(results);
                       csv.writeToString(results, {headers: true}, function(err, data){
                         if(err){
-                          logger.log('error',`Generating csv output for execute_mysql_results_csv. id: ${_this.id}: ${err}. Results: ${results}`);
+                          logger.log('error',`Generating csv output for execute_db_results_csv. id: ${_this.id}: ${err}. Results: ${results}`);
                         }else{
-                          _this.execute_mysql_results_csv = data;
+                          _this.execute_db_results_csv = data;
                         }
                         _this.execute_return = '';
                         _this.execute_err_return = '';
@@ -784,14 +513,14 @@ class Process {
                     }else{
 
                       if(results instanceof Object){
-                        _this.execute_mysql_results      = '';
-                        _this.execute_mysql_results_csv  = '';
-                        _this.execute_mysql_fieldCount   = results.fieldCount;
-                        _this.execute_mysql_affectedRows = results.affectedRows;
-                        _this.execute_mysql_changedRows  = results.changedRows;
-                        _this.execute_mysql_insertId     = results.insertId;
-                        _this.execute_mysql_warningCount = results.warningCount;
-                        _this.execute_mysql_message      = results.message;
+                        _this.execute_db_results      = '';
+                        _this.execute_db_results_csv  = '';
+                        _this.execute_db_fieldCount   = results.fieldCount;
+                        _this.execute_db_affectedRows = results.affectedRows;
+                        _this.execute_db_changedRows  = results.changedRows;
+                        _this.execute_db_insertId     = results.insertId;
+                        _this.execute_db_warningCount = results.warningCount;
+                        _this.execute_db_message      = results.message;
                       }
 
                       _this.execute_return = '';
@@ -1168,7 +897,7 @@ class Chain {
           if(_this.events[event].notifications instanceof Array){
             var notificationsLength = _this.events[event].notifications.length;
             while(notificationsLength--){
-              _this.events[event].notifications[notificationsLength].notificate(_this.values())
+              _this.events[event].notifications[notificationsLength].notificate(config, _this.values())
                 .then(function(res){
                   logger.log('debug','Notification chain sended: '+res)
                 })
@@ -2105,4 +1834,3 @@ process.on('exit', function (err) {
 // TODO -->
 // LOGS EN S3
 // CONFIGURACIONES GENERALES DE: BD, SLACK, MAIL, S3 (ya ejemplos en plan.json)
-// EJECUCIÓN DE SENTENCIAS SIMPLES SQL A BDS (MYSQL Y POSTGRES?)
