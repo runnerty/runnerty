@@ -6,6 +6,3 @@ Pasar la configuración de mails a conf.json
 4.- COMPROBAR QUE CUANDO UN PROCESO TIENE REINTENTOS NO SE PONE A ERROR Y SALTA EL PROCESO QUE DEBE DE EJECUARSE CUANDO EL PROCESO PREVIO FALLA. ESTO DEBE DE PASAR CUANDO YA NO VA A HABER MAS REINTENTOS.
 
 5.- Incluir condición exists en depends_process para cuando sea un objeto file. Esto no iría por chokidar sino simplemente una comprobación en dependencias de si existe o no el fichero.
-
-
-1.- MULTI OUTPUT: En logar de un object en output poner un array para poder generar más de un fichero de salida.
