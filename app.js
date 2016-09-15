@@ -12,6 +12,7 @@ var Slack           = require('slack-node');
 var anymatch        = require('anymatch');
 var bytes           = require('bytes');
 var mysql           = require('mysql');
+var csv             = require("fast-csv");
 
 
 var configFilePath = '/etc/runnerty/conf.json';
@@ -488,8 +489,16 @@ class Process {
       "PROCESS_RETRIES": _this.retries,
       "PROCESS_DEPENDS_FILES_READY": _this.depends_files_ready,
       "PROCESS_FIRST_DEPEND_FILE_READY": (_this.depends_files_ready && _this.depends_files_ready.length > 0) ? _this.depends_files_ready[0] : [],
-      "PROCESS_LAST_DEPEND_FILE_READY": (_this.depends_files_ready && _this.depends_files_ready.length > 0) ? _this.depends_files_ready[_this.depends_files_ready.length - 1] : []
-    };
+      "PROCESS_LAST_DEPEND_FILE_READY": (_this.depends_files_ready && _this.depends_files_ready.length > 0) ? _this.depends_files_ready[_this.depends_files_ready.length - 1] : [],
+      "PROCESS_EXEC_MYSQL_RESULTS":_this.execute_mysql_results,
+      "PROCESS_EXEC_MYSQL_RESULTS_CSV":_this.execute_mysql_results_csv,
+      "PROCESS_EXEC_MYSQL_FIELDCOUNT":_this.execute_mysql_fieldCount,
+      "PROCESS_EXEC_MYSQL_AFFECTEDROWS":_this.execute_mysql_affectedRows,
+      "PROCESS_EXEC_MYSQL_CHANGEDROWS":_this.execute_mysql_changedRows,
+      "PROCESS_EXEC_MYSQL_INSERTID":_this.execute_mysql_insertId,
+      "PROCESS_EXEC_MYSQL_WARNINGCOUNT":_this.execute_mysql_warningCount,
+      "PROCESS_EXEC_MYSQL_MESSAGE":_this.execute_mysql_message
+  };
   }
 
   loadEvents(events){
@@ -499,7 +508,7 @@ class Process {
       if (events instanceof Object) {
         var keys = Object.keys(events);
         var keysLength = keys.length;
-        if (keys instanceof Array) {
+        if (keys  instanceof Array) {
           if (keysLength > 0) {
             while (keysLength--) {
               var event = events[keys[keysLength]];
@@ -670,7 +679,6 @@ class Process {
             _this.execute_err_return = stderr;
             _this.end();
             _this.write_output();
-            _this.depends_files_ready = [];
             resolve(stdout);
           } else {
             logger.log('error',_this.id+' FIN: '+code+' - '+stdout+' - '+stderr);
@@ -747,26 +755,73 @@ class Process {
                 reject(err);
               }else{
 
-                connection.query(_this.exec.command, _this.execute_arg, function(err, rows, fields) {
+                connection.query(_this.exec.command, _this.execute_arg, function(err, results) {
                   if (err){
-                    logger.log('error',`executeMysql query ${_this.exec.command}: `+err);
+                    logger.log('error',`executeMysql query ${_this.exec.command}: ${err}`);
+                    _this.execute_err_return = err;
+                    _this.execute_return = '';
+                    _this.error();
+                    _this.write_output();
                     reject(err);
                   }else{
-                    console.log('The solution is: ', rows);
-                    resolve(rows);
+
+                    if(results instanceof Array){
+
+                      _this.execute_mysql_results = JSON.stringify(results);
+                      csv.writeToString(results, {headers: true}, function(err, data){
+                        if(err){
+                          logger.log('error',`Generating csv output for execute_mysql_results_csv. id: ${_this.id}: ${err}. Results: ${results}`);
+                        }else{
+                          _this.execute_mysql_results_csv = data;
+                        }
+                        _this.execute_return = '';
+                        _this.execute_err_return = '';
+                        _this.end();
+                        _this.write_output();
+                        resolve();
+                      });
+
+                    }else{
+
+                      if(results instanceof Object){
+                        _this.execute_mysql_results      = '';
+                        _this.execute_mysql_results_csv  = '';
+                        _this.execute_mysql_fieldCount   = results.fieldCount;
+                        _this.execute_mysql_affectedRows = results.affectedRows;
+                        _this.execute_mysql_changedRows  = results.changedRows;
+                        _this.execute_mysql_insertId     = results.insertId;
+                        _this.execute_mysql_warningCount = results.warningCount;
+                        _this.execute_mysql_message      = results.message;
+                      }
+
+                      _this.execute_return = '';
+                      _this.execute_err_return = '';
+                      _this.end();
+                      _this.write_output();
+                      resolve();
+
+                    }
                   }
                 });
                 connection.end();
               }
             });
           })
-          .catch(function(e){
-            logger.log('error','executeMysql loadDbConfig: '+e);
-            reject(e);
+          .catch(function(err){
+            logger.log('error',`executeMysql loadDbConfig: ${err}`);
+            _this.execute_err_return = `executeMysql loadDbConfig: ${err}`;
+            _this.execute_return = '';
+            _this.error();
+            _this.write_output();
+            reject(err);
           });
 
       }else{
         logger.log('error',`db_connection_id not set for ${_this.id}`);
+        _this.execute_err_return = `db_connection_id not set for ${_this.id}`;
+        _this.execute_return = '';
+        _this.error();
+        _this.write_output();
         reject();
       }
     });
@@ -801,69 +856,83 @@ class Process {
       });
     }
 
-    if(_this.output && _this.output.file_name && _this.output.write.length > 0){
+    function generateOutput(output){
 
-      var filePath = replaceWith(_this.output.file_name, _this.values());
-      var output_stream = _this.output.write.map(repArg).filter(Boolean).join("\n");
+      if(output && output.file_name && output.write.length > 0){
 
-      if(_this.output.maxsize) {
-        var maxSizeBytes = bytes(_this.output.maxsize);
-        var output_stream_length = output_stream.length;
+        var filePath = replaceWith(output.file_name, _this.values());
+        var output_stream = output.write.map(repArg).filter(Boolean).join("\n");
 
-        if(output_stream_length > maxSizeBytes){
-          output_stream = output_stream.slice(output_stream_length - maxSizeBytes,output_stream_length);
-          output_stream_length = maxSizeBytes;
-          logger.log('debug',`output_stream truncated output_stream_length (${output_stream_length}) > maxSizeBytes (${maxSizeBytes})`);
+        if(output.maxsize) {
+          var maxSizeBytes = bytes(output.maxsize);
+          var output_stream_length = output_stream.length;
+
+          if(output_stream_length > maxSizeBytes){
+            output_stream = output_stream.slice(output_stream_length - maxSizeBytes,output_stream_length);
+            output_stream_length = maxSizeBytes;
+            logger.log('debug',`output_stream truncated output_stream_length (${output_stream_length}) > maxSizeBytes (${maxSizeBytes})`);
+          }
         }
-      }
 
-      if(_this.output.concat){
-        if(_this.output.maxsize){
-          fs.stat(filePath, function(error, stats) {
+        if(output.concat){
+          if(output.maxsize){
+            fs.stat(filePath, function(error, stats) {
 
-            var fileSizeInBytes = 0;
-            if(!error){
-              fileSizeInBytes = stats.size;
-            }
-            //SI LA SUMA DEL TAMAÑO DEL FICHERO Y EL OUTPUT A ESCRIBIR DEL PROCESO SUPERAN EL MAXIMO PERMITIDO
-            var totalSizeToWrite = fileSizeInBytes + output_stream_length;
+              var fileSizeInBytes = 0;
+              if(!error){
+                fileSizeInBytes = stats.size;
+              }
+              //SI LA SUMA DEL TAMAÑO DEL FICHERO Y EL OUTPUT A ESCRIBIR DEL PROCESO SUPERAN EL MAXIMO PERMITIDO
+              var totalSizeToWrite = fileSizeInBytes + output_stream_length;
 
-            if(totalSizeToWrite > maxSizeBytes){
-              //SE OBTIENE LA PARTE DEL FICHERO QUE JUNTO CON EL OUTPUT SUMAN EL TOTAL PERMITIDO PARA ESCRIBIRLO (SUSTIUYENDO EL FICHERO)
-              var positionFileRead   =  (totalSizeToWrite) - maxSizeBytes;
-              var lengthFileRead =  (fileSizeInBytes) - positionFileRead;
+              if(totalSizeToWrite > maxSizeBytes){
+                //SE OBTIENE LA PARTE DEL FICHERO QUE JUNTO CON EL OUTPUT SUMAN EL TOTAL PERMITIDO PARA ESCRIBIRLO (SUSTIUYENDO EL FICHERO)
+                var positionFileRead   =  (totalSizeToWrite) - maxSizeBytes;
+                var lengthFileRead =  (fileSizeInBytes) - positionFileRead;
 
-              fs.open(filePath, 'r', function(error, fd) {
-                if(lengthFileRead > 0){
-                  var buffer = new Buffer(lengthFileRead);
+                fs.open(filePath, 'r', function(error, fd) {
+                  if(lengthFileRead > 0){
+                    var buffer = new Buffer(lengthFileRead);
 
-                  fs.read(fd, buffer, 0, buffer.length, positionFileRead, function(error, bytesRead, buffer) {
-                    var data = buffer.toString("utf8", 0, buffer.length);
-                    data = data.concat("\n",output_stream);
-                    fs.close(fd, function(err){
-                      if(err){
-                        logger.log('error',`Closing file ${filePath} in ${_this.id}: `,err);
-                      }
-                      writeFile(filePath, 'w', data);
+                    fs.read(fd, buffer, 0, buffer.length, positionFileRead, function(error, bytesRead, buffer) {
+                      var data = buffer.toString("utf8", 0, buffer.length);
+                      data = data.concat("\n",output_stream);
+                      fs.close(fd, function(err){
+                        if(err){
+                          logger.log('error',`Closing file ${filePath} in ${_this.id}: `,err);
+                        }
+                        writeFile(filePath, 'w', data);
+                      });
                     });
-                  });
-                }else{
-                  //SI NO SE VA A ESCRIBIR NADA DEL FICHERO ACTUAL
-                  writeFile(filePath, 'w', output_stream);
-                }
-              });
-            }else{
-              writeFile(filePath, 'a+', output_stream);
-            }
-          });
-        }else{
-          writeFile(filePath, 'a+', output_stream);
-        }
+                  }else{
+                    //SI NO SE VA A ESCRIBIR NADA DEL FICHERO ACTUAL
+                    writeFile(filePath, 'w', output_stream);
+                  }
+                });
+              }else{
+                writeFile(filePath, 'a+', output_stream);
+              }
+            });
+          }else{
+            writeFile(filePath, 'a+', output_stream);
+          }
 
-      }else{
-        writeFile(filePath, 'w+', output_stream);
+        }else{
+          writeFile(filePath, 'w+', output_stream);
+        }
       }
     }
+
+    if(_this.output instanceof Array){
+      var outputCountItems = _this.output.length;
+
+      while(outputCountItems--){
+        generateOutput(_this.output[outputCountItems]);
+      }
+    }else{
+      generateOutput(_this.output);
+    }
+
   }
 }
 
@@ -2020,6 +2089,7 @@ loadGeneralConfig(configFilePath)
   .catch(function(e){
     logger.log('error',`Config file ${configFilePath}: `+e);
   });
+
 
 //==================================================================
 //
