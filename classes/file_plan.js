@@ -144,7 +144,7 @@ class FilePlan {
 
   chainIsValid(chain){
 
-    if(chain.hasOwnProperty('id') && chain.hasOwnProperty('name') && chain.hasOwnProperty('start_date')){
+    if(chain.hasOwnProperty('id') && chain.hasOwnProperty('name') && (chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') && chain.iterable) )){
       return true;
     }else{
       return false;

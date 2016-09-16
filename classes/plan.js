@@ -68,6 +68,8 @@ class Plan{
 
         new Chain(chain.id,
           chain.name,
+          chain.iterable,
+          chain.input,
           chain.start_date,
           chain.end_date,
           chain.schedule_interval,
@@ -155,13 +157,13 @@ class Plan{
       chain.stop();
     };
 
-    if ((!chain.hasOwnProperty('end_date') || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStoped()))
+    if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStoped()))
     {
-      if(chain.hasOwnProperty('start_date')){
+      if(chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') || chain.iterable)){
 
         logger.log('debug', `PLANIFICADA CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
 
-        if ((new Date(chain.start_date)) <= (new Date())){
+        if ((new Date(chain.start_date)) <= (new Date()) || (chain.hasOwnProperty('iterable') || chain.iterable)){
 
           logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
 
@@ -172,11 +174,62 @@ class Plan{
             chain.waiting_dependencies();
             logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
           }else{
-            chain.start()
-              .then(function() {
-                _this.planificateChains()
-              })
-              .catch(function(e){logger.log('error','Error '+e)});
+
+            if(chain.hasOwnProperty('iterable') && chain.iterable){
+
+              var execsChains = [];
+
+              var inputIterable = JSON.parse(_this.getValuesInputIterable(chain));
+              if(inputIterable.length){
+
+                inputIterable.reduce((previous, current, index, array) => {
+                  return previous                                    // initiates the promise chain
+                    .then(()=>{return chain.start(array[index])
+                                      .then(function() {
+                                         chain.stop();
+                                         //_this.planificateChains()
+                                      })
+                                      .catch(function(e){
+                                        logger.log('error','Error '+e)
+                                      });
+                               })      //adds .then() promise for each item
+              }, Promise.resolve())
+
+              }
+
+
+
+              /*
+              if(inputIterable.length){
+                inputIterable.map(function(iter){
+                  execsChains.push(
+                    chain.start(iter)
+                      .then(function() {
+                        _this.planificateChains()
+                      })
+                      .catch(function(e){logger.log('error','Error '+e)})
+                  )
+                });
+
+                Promise.all(execsChains)
+                  .then(function (res) {
+                    console.log('fin de las ejecuciones');
+                    //resolve(res);
+                  })
+                  .catch(function(e){
+                    logger.log('error', 'getChains error: ', e);
+                    //reject();
+                  });
+              }
+              */
+
+            }else{
+              chain.start()
+                .then(function() {
+                  _this.planificateChains()
+                })
+                .catch(function(e){logger.log('error','Error '+e)});
+            }
           }
         }else{
           // Will execute in start_date set
@@ -196,7 +249,7 @@ class Plan{
         }
 
         // Remove Chain from pool
-        if(chain.hasOwnProperty('end_date')){
+        if(chain.end_date){
 
           logger.log('debug',`PLANIFICADA CANCELACION DE CADENA ${chain.id} EN ${(new Date(chain.end_date))}`);
 
@@ -256,7 +309,7 @@ class Plan{
 
   dependenciesBlocking(chain){
 
-    var hasDependencies = false;
+    //var hasDependencies = false;
     var chainsDependencies = [];
 
     if(chain.hasOwnProperty('depends_chains') && chain.depends_chains.length > 0){
@@ -275,11 +328,11 @@ class Plan{
               if(chain.depends_files_ready.indexOf(depends_chains[dependsChainsLength].file_name) > -1){
               }else{
                 chainsDependencies.push(depends_chains[dependsChainsLength]);
-                hasDependencies = true;
+                //hasDependencies = true;
               }
             }else{
               chainsDependencies.push(depends_chains);
-              hasDependencies = true;
+              //hasDependencies = true;
             }
           }
         }
@@ -297,16 +350,31 @@ class Plan{
               if(depends_chains[auxDependsChainsLength] === planChains[planChainsLength].id){
                 if(!planChains[planChainsLength].isEnded()){
                   chainsDependencies.push(planChains[planChainsLength]);
-                  hasDependencies = true;
+                  //hasDependencies = true;
                 }
               }
               break;
             case 'object':
-              if(depends_chains[auxDependsChainsLength].id === planChains[planChainsLength].id){
-                if(planChains[planChainsLength].isEnded() || (depends_chains[auxDependsChainsLength].ignore_fail && planChains[planChainsLength].isErrored())){
+              if(depends_chains[auxDependsChainsLength].chain_id === planChains[planChainsLength].id){
+
+                if(planChains[planChainsLength].isEnded() || (depends_chains[auxDependsChainsLength].ignore_fail && planChains[planChainsLength].isErrored() && !depends_chains[auxDependsChainsLength].hasOwnProperty('process_id'))){
                 }else{
-                  chainsDependencies.push(planChains[planChainsLength]);
-                  hasDependencies = true;
+                  if(depends_chains[auxDependsChainsLength].hasOwnProperty('process_id')){
+                    var planProccessLength = planChains[planChainsLength].processes.length;
+
+                    //EN LA VALIDACION DE DEPENDENCIES_CHAIN comprobar que tanto el chain ID como el proccess_id existen
+                    while(planProccessLength--){
+                      if(planChains[planChainsLength].processes[planProccessLength].id === depends_chains[auxDependsChainsLength].process_id){
+                        if(planChains[planChainsLength].processes[planProccessLength].isEnded()){
+                        }else{
+                          chainsDependencies.push(planChains[planChainsLength]);
+                        }
+                      }
+                    }
+                  }else{
+                    chainsDependencies.push(planChains[planChainsLength]);
+                    //hasDependencies = true;
+                  }
                 }
               }
               break;
@@ -323,7 +391,45 @@ class Plan{
     return (this.dependenciesBlocking(chain).length > 0);
   }
 
-};
 
+  getValuesInputIterable(chain){
+
+    var input = [];
+
+    if(chain.hasOwnProperty('depends_chains') && chain.depends_chains.length > 0){
+      var depends_chains = chain.depends_chains;
+      var planChains = this.chains;
+
+      var planChainsLength = this.chains.length;
+      var dependsChainsLength = depends_chains.length;
+
+      //Chains dependences:
+
+      while(planChainsLength--){
+        var auxDependsChainsLength = dependsChainsLength;
+        while(auxDependsChainsLength--){
+          if(typeof depends_chains[auxDependsChainsLength] === 'object'){
+            if(depends_chains[auxDependsChainsLength].chain_id === planChains[planChainsLength].id){
+             if (depends_chains[auxDependsChainsLength].hasOwnProperty('process_id')){
+               var planProccessLength = planChains[planChainsLength].processes.length;
+               while(planProccessLength--){
+                 if(planChains[planChainsLength].processes[planProccessLength].id === depends_chains[auxDependsChainsLength].process_id){
+                   var dep_process = planChains[planChainsLength].processes[planProccessLength];
+                   var dep_process_values = dep_process.values();
+                   input = dep_process_values[dep_process.output_iterable];
+                 }
+               }
+             }
+            }
+          }
+        }
+      }
+      return input;
+    }else{
+      return input;
+    }
+  }
+
+};
 
 module.exports = Plan;

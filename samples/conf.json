@@ -1,46 +1,43 @@
 {"config":{
   "general":{ "binBackup":"/tmp/bin.json",
-              "planFilePath":"/etc/runnerty/plan.json",
-              "refreshIntervalBinBackup":2000,
-              "api":{"port":3456,
-                      "users":[{"user":"coderty", "password":"runnerty"},{"user":"usr_test", "password":"pass_test"}],
-                      "secret":"RUNNERTY_BY_CODERTY",
-                      "limite_req":"20mb",
-                      "propertiesExcludesInResponse":["proc","scheduleCancel","scheduleRepeater","file_watchers","depends_files_ready"]
-                    }
+    "planFilePath":"/etc/runnerty/plan.json",
+    "refreshIntervalBinBackup":2000,
+    "api":{"port":3456,
+      "users":[{"user":"coderty", "password":"runnerty"},{"user":"usr_test", "password":"pass_test"}],
+      "secret":"RUNNERTY_BY_CODERTY",
+      "limite_req":"20mb",
+      "propertiesExcludesInResponse":["proc","scheduleCancel","scheduleRepeater","file_watchers","depends_files_ready"]
+    }
   },
   "db_connections":[{"id":"mysql_default",
-    "type":"mysql",
-    "user":"myname",
-    "password":"mypass",
-    "database":"mydb",
-    "host":"localhost",
-    "port":"3306",
-    "socketPath":""
+    "user":"root",
+    "password":"nesoca..mysql",
+    "database":"CORE",
+    "host":"devintranetdb.c47prwzsptxu.eu-west-1.rds.amazonaws.com",
+    "port":"3306"
   },
     {"id":"postgres_default",
-      "type":"postgres",
-      "user":"myname",
-      "password":"mypass",
-      "database":"mydb",
+      "user":"postgres",
+      "password":"test",
+      "database":"postgres",
       "host":"localhost",
       "port":"5432",
       "protocol":"TPC"
     }],
   "notificators_connections":[
     {"id":"slack_default",
-     "type":"slack",
-     "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
-     "bot_name":"runnerta",
-     "bot_emoji": ":v:",
-     "channel": "mlm"},
+      "type":"slack",
+      "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
+      "bot_name":"runnerta",
+      "bot_emoji": ":v:",
+      "channel": "mlm"},
     {"id":"mail_default",
-     "type":"mail",
-     "disable":false,
-     "from":"Runnerty <desawc@gmail.com>",
-     "transport": "smtps://desawc%40gmail.com:nesoca..gmail@smtp.gmail.com/?pool=true",
-     "templateDir": "/etc/runnerty/templates",
-     "template": "alerts"}
+      "type":"mail",
+      "disable":false,
+      "from":"Runnerty <desawc@gmail.com>",
+      "transport": "smtps://desawc%40gmail.com:nesoca..gmail@smtp.gmail.com/?pool=true",
+      "templateDir": "/etc/runnerty/templates",
+      "template": "alerts"}
   ]
- }
+}
 }

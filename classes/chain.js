@@ -7,9 +7,11 @@ var logger   = require("../libs/utils.js").logger;
 var Process  = require("./process.js");
 
 class Chain {
-  constructor(id, name, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at, config) {
+  constructor(id, name, iterable, input, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at, config) {
     this.id = id;
     this.name = name;
+    this.iterable = iterable;
+    this.input = input;
     this.start_date = start_date;
     this.end_date = end_date;
     this.schedule_interval = schedule_interval;
@@ -105,6 +107,7 @@ class Chain {
           process.started_at,
           process.ended_at,
           process.output,
+          process.output_iterable,
           _this.config,
           _this.values())
           .then(function(res) {
@@ -120,7 +123,7 @@ class Chain {
   loadEvents(events){
     var _this = this;
     return new Promise((resolve) => {
-        var processEventsPromises = [];
+    var processEventsPromises = [];
 
     if (events instanceof Object) {
       var keys = Object.keys(events);
@@ -226,11 +229,18 @@ class Chain {
 
   values(){
     var _this = this;
-    return {
+
+    var chain_values = {
       "CHAIN_ID":_this.id,
       "CHAIN_NAME":_this.name,
       "CHAIN_STARTED_AT":_this.started_at
-    };
+    }
+
+    var values = Object.assign(chain_values, _this.execute_input);
+
+    console.log('CHAIN VALUES:',values);
+
+    return values;
   }
 
   notificate(event){
@@ -292,41 +302,56 @@ class Chain {
   }
 
   //Start Chain
-  start(){
+  start(inputIteration){
     var chain = this;
+
+    if (inputIteration){
+
+      var inputLength = chain.input.length;
+      chain.execute_input = {};
+
+      while(inputLength--){
+        var key = Object.keys(chain.input[inputLength])[0];
+        var value = chain.input[inputLength][key];
+        chain.execute_input[key] = inputIteration[value];
+      }
+    }
+
+    console.log(`---------------------------------------------- [ ${chain.id} ] ----------------------------------------------> `,chain.execute_input);
 
     return new Promise((resolve) => {
 
-        if(chain.hasOwnProperty('processes')){
-      if(chain.processes instanceof Array && chain.processes.length > 0){
+      if(chain.hasOwnProperty('processes')){
+        if(chain.processes instanceof Array && chain.processes.length > 0){
         // Initialize Chain
-        if(chain.schedule_interval){
+          if(chain.schedule_interval){
 
-          chain.scheduleRepeater = schedule.scheduleJob(chain.schedule_interval, function(chain){
+            chain.scheduleRepeater = schedule.scheduleJob(chain.schedule_interval, function(chain){
 
-            if((new Date(chain.end_date)) < (new Date())){
-              chain.scheduleRepeater.cancel();
-            }
+              if((new Date(chain.end_date)) < (new Date())){
+                chain.scheduleRepeater.cancel();
+              }
 
-            if(chain.isStoped() || chain.isEnded()){
-              chain.setChainToInitState()
-                .then(function(){
-                  chain.startProcesses()
-                    .then(function(res){
-                      resolve();
-                    })
-                    .catch(function(e){
-                      logger.log('error','Error in startProcesses:'+e);
-                      resolve();
-                    });
-                })
-                .catch(function(e){
-                  logger.log('error','Error setChainToInitState: '+e);
-                  resolve();
-                })
-            }else{
-              logger.log('warn',`Trying start processes of ${chain.id} but this is running`);
-            }
+              if(chain.isStoped() || chain.isEnded()){
+                chain.setChainToInitState()
+                  .then(function(){
+                    console.log('LLEGA ------>');
+                    chain.startProcesses()
+                      .then(function(res){
+                        resolve();
+                      })
+                      .catch(function(e){
+                        logger.log('error','Error in startProcesses:'+e);
+                        resolve();
+                      });
+                  })
+                  .catch(function(e){
+                    logger.log('error','Error setChainToInitState: '+e);
+                    resolve();
+                  })
+              }else{
+                logger.log('warn',`Trying start processes of ${chain.id} but this is running`);
+              }
           }.bind(null,chain))
 
         }else{
@@ -437,6 +462,8 @@ class Chain {
 
             while(chainProcessesLength--) {
               var process = _this.processes[chainProcessesLength];
+
+              process.execute_input =  _this.execute_input;
 
               if (process.isStoped()){
                 logger.log('debug', `PLANIFICADO PROCESO ${process.id}`);

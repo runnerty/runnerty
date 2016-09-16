@@ -13,7 +13,7 @@ var fs                = require('fs');
 var Event = require("./event.js");
 
 class Process {
-  constructor(id, name, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, config, chain_values){
+  constructor(id, name, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, config, chain_values){
     this.id = id;
     this.name = name;
     this.depends_process = depends_process;
@@ -26,6 +26,7 @@ class Process {
     this.end_on_fail = end_on_fail || false;
     this.end_chain_on_fail = end_chain_on_fail || false;
     this.output = output;
+    this.output_iterable = output_iterable;
 
     //Runtime attributes:
     this.config = config;
@@ -54,7 +55,7 @@ class Process {
 
   values(){
     var _this = this;
-    return {
+    var process_values = {
       "CHAIN_ID":_this.chain_values.CHAIN_ID,
       "CHAIN_NAME":_this.chain_values.CHAIN_NAME,
       "CHAIN_STARTED_AT":_this.chain_values.CHAIN_STARTED_AT,
@@ -81,6 +82,9 @@ class Process {
       "PROCESS_EXEC_DB_WARNINGCOUNT":_this.execute_db_warningCount,
       "PROCESS_EXEC_DB_MESSAGE":_this.execute_db_message
     };
+
+    var values = Object.assign(process_values, _this.execute_input);
+    return values;
   }
 
   loadEvents(events){

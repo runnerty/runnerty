@@ -63,8 +63,3 @@ process.on('uncaughtException', function (err) {
 process.on('exit', function (err) {
   logger.log('warn','--> [R]unnerty stoped.', err);
 });
-
-
-// TODO -->
-// LOGS EN S3
-// CONFIGURACIONES GENERALES DE: BD, SLACK, MAIL, S3 (ya ejemplos en plan.json)
