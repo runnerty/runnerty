@@ -30,23 +30,23 @@ class Chain {
 
     _this.loadProcesses(processes)
       .then((processes) => {
-      _this.processes = processes;
+        _this.processes = processes;
 
-    _this.loadEvents(events)
-      .then((events) => {
-      _this.events = events;
-    resolve(_this);
-  })
-  .catch(function(e){
-      logger.log('error',`Chain ${_this.id} loadEvents: `+e);
-      resolve();
-    });
-  })
-  .catch(function(e){
-      logger.log('error',`Chain ${_this.id} loadProcesses: `+e);
-      resolve();
-    });
-  });
+        _this.loadEvents(events)
+          .then((events) => {
+            _this.events = events;
+            resolve(_this);
+          })
+          .catch(function(e){
+              logger.log('error',`Chain ${_this.id} loadEvents: `+e);
+              resolve();
+            });
+          })
+      .catch(function(e){
+          logger.log('error',`Chain ${_this.id} loadProcesses: `+e);
+          resolve();
+        });
+      });
   }
 
   // Executed in construction:
@@ -317,8 +317,6 @@ class Chain {
       }
     }
 
-    console.log(`---------------------------------------------- [ ${chain.id} ] ----------------------------------------------> `,chain.execute_input);
-
     return new Promise((resolve) => {
 
       if(chain.hasOwnProperty('processes')){
@@ -355,6 +353,7 @@ class Chain {
           }.bind(null,chain))
 
         }else{
+          console.log(`EN CHAIN ${chain.id} startProcesses: ${JSON.stringify(chain.execute_input)}`);
           chain.startProcesses()
             .then(function(res){
               resolve();
@@ -408,37 +407,36 @@ class Chain {
 
   refreshChainStatus(){
     return new Promise((resolve) => {
+      var processesLength = this.processes.length;
+      var statusChain = 'end';
 
-        var processesLength = this.processes.length;
-    var statusChain = 'end';
+      var processesError   = 0;
+      var processesEnd     = 0;
+      var processesRunning = 0;
+      var processesStop    = 0;
 
-    var processesError   = 0;
-    var processesEnd     = 0;
-    var processesRunning = 0;
-    var processesStop    = 0;
-
-    while(processesLength--) {
-      switch (this.processes[processesLength].status)
-      {
-        case 'stop'   : processesStop += 1;    break;
-        case 'end'    : processesEnd += 1;     break;
-        case 'running': processesRunning += 1; break;
-        case 'error'  : processesError += 1;   break;
+      while(processesLength--) {
+        switch (this.processes[processesLength].status)
+        {
+          case 'stop'   : processesStop += 1;    break;
+          case 'end'    : processesEnd += 1;     break;
+          case 'running': processesRunning += 1; break;
+          case 'error'  : processesError += 1;   break;
+        }
       }
-    }
-    //Set Chain Status
-    if (processesRunning > 0 || processesStop > 0){
-      statusChain = 'running';
-    }else{
-      if (processesError > 0){
-        statusChain = 'error';
+      //Set Chain Status
+      if (processesRunning > 0 || processesStop > 0){
+        statusChain = 'running';
       }else{
-        statusChain = 'end';
+        if (processesError > 0){
+          statusChain = 'error';
+        }else{
+          statusChain = 'end';
+        }
       }
-    }
 
-    this.status = statusChain;
-    resolve(statusChain);
+      this.status = statusChain;
+      resolve(statusChain);
   });
   }
 

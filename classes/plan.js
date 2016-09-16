@@ -186,7 +186,7 @@ class Plan{
                   return previous                                    // initiates the promise chain
                     .then(()=>{return chain.start(array[index])
                                       .then(function() {
-                                         chain.stop();
+                                         chain.setChainToInitState();
                                          //_this.planificateChains()
                                       })
                                       .catch(function(e){
