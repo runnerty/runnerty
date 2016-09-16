@@ -23,6 +23,7 @@
     "node-schedule": "^1.1.1",
     "nodemailer": "^2.5.0",
     "passport": "^0.3.2",
+    "pg": "^6.1.0",
     "slack-node": "^0.2.0",
     "winston": "^2.2.0"
   }

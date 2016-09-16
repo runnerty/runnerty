@@ -5,6 +5,7 @@ var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var replaceWith       = require("../libs/utils.js").replaceWith;
 var spawn             = require("child_process").spawn;
 var mysql             = require("mysql");
+var pg                = require('pg'); //PostgreSQL
 var bytes             = require("bytes");
 var csv               = require("fast-csv");
 var fs                = require('fs');
@@ -131,6 +132,7 @@ class Process {
 
   loadDbConfig(){
     var _this = this;
+
     return loadConfigSection(_this.config, 'db_connections', _this.exec.db_connection_id);
   }
 
@@ -202,6 +204,16 @@ class Process {
     _this.notificate('on_fail');
   }
 
+  retry(){
+    var _this = this;
+    _this.notificate('on_retry');
+  }
+
+  waiting_dependencies(){
+    var _this = this;
+    _this.notificate('on_waiting_dependencies');
+  }
+
   start(isRetry, forceOnceInRetry){
     var _this = this;
     _this.status = 'running';
@@ -225,6 +237,9 @@ class Process {
           break;
         case 'mysql':
           return _this.executeMysql();
+          break;
+        case 'postgre':
+          return _this.executePostgre();
           break;
         default:
           logger.log('error', `Exec type is not valid ${_this.exec.type} for ${_this.id}`);
@@ -317,6 +332,7 @@ class Process {
           password   : configValues.password,
           database   : configValues.database,
           socketPath : configValues.socketPath,
+          port       : configValues.port,
           ssl        : configValues.ssl,
           queryFormat:
             function (query, values) {
@@ -410,14 +426,117 @@ class Process {
     });
   }
 
-  retry(){
+  executePostgre(){
     var _this = this;
-    _this.notificate('on_retry');
-  }
 
-  waiting_dependencies(){
-    var _this = this;
-    _this.notificate('on_waiting_dependencies');
+    function queryFormat(query, values) {
+      if (!values) return query.replace(/(\:\/)/g,':');
+      else {
+        var _query = query.replace(/\:(\w+)/g, function (txt, key) {
+          return values && key && values.hasOwnProperty(key)
+            ? escape(replaceWith(values[key],_this.values()))
+            : null;
+        }.bind(this)).replace(/(\:\/)/g,':');
+      }
+      return _query;
+    }
+
+    return new Promise(function(resolve, reject) {
+
+      if(_this.exec.db_connection_id){
+        _this.loadDbConfig()
+          .then((configValues) => {
+
+            _this.execute_arg = _this.args
+
+            var client = new pg.Client({
+              user     : configValues.user,
+              password : configValues.password,
+              database : configValues.database,
+              host     : configValues.host || configValues.socketPath,
+              port     : configValues.port
+            });
+            client.connect(function(err) {
+              if(err) {
+                logger.log('error',`Could not connect to Postgre: `+err);
+                _this.execute_err_return = err;
+                _this.execute_return = '';
+                _this.error();
+                _this.write_output();
+                reject(err);
+              }else{
+                var finalQuery = queryFormat(_this.exec.command, _this.execute_arg);
+
+                client.query(finalQuery, null, function(err, results){
+                  if(err){
+                    logger.log('error',`Error query Postgre (${finalQuery}): `+err);
+                    _this.execute_err_return = err;
+                    _this.execute_return = '';
+                    _this.error();
+                    _this.write_output();
+                    reject(`Error query Postgre (${finalQuery}): `+err);
+                  }else{
+                    if(results.hasOwnProperty('rows') && results.rows.length > 0){
+
+                      _this.execute_db_results = JSON.stringify(results.rows);
+                      csv.writeToString(results.rows, {headers: true}, function(err, data){
+                        if(err){
+                          logger.log('error',`Generating csv output for execute_db_results_csv. id: ${_this.id}: ${err}. Results: ${results}`);
+                        }else{
+                          _this.execute_db_results_csv = data;
+                        }
+                        _this.execute_return = '';
+                        _this.execute_err_return = '';
+                        _this.end();
+                        _this.write_output();
+                        resolve();
+                      });
+
+                    }else{
+
+                      if(results instanceof Object){
+                        _this.execute_db_results      = '';
+                        _this.execute_db_results_csv  = '';
+                        _this.execute_db_fieldCount   = results.rowCount;
+                        _this.execute_db_affectedRows = '';
+                        _this.execute_db_changedRows  = '';
+                        _this.execute_db_insertId     = results.oid;
+                        _this.execute_db_warningCount = '';
+                        _this.execute_db_message      = '';
+                      }
+
+                      _this.execute_return = '';
+                      _this.execute_err_return = '';
+                      _this.end();
+                      _this.write_output();
+                      resolve();
+                    }
+
+                  }
+                  client.end();
+                })
+              }
+            });
+      })
+      .catch(function(err){
+          logger.log('error',`executePostgre loadDbConfig: ${err}`);
+          _this.execute_err_return = `executePostgre loadDbConfig: ${err}`;
+          _this.execute_return = '';
+          _this.error();
+          _this.write_output();
+          reject(err);
+        });
+
+      }else{
+        logger.log('error',`executePostgre: db_connection_id not set for ${_this.id}`);
+        _this.execute_err_return = `executePostgre: db_connection_id not set for ${_this.id}`;
+        _this.execute_return = '';
+        _this.error();
+        _this.write_output();
+        reject();
+      }
+    });
+
   }
 
   write_output(){

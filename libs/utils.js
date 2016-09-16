@@ -1,6 +1,44 @@
 "use strict";
 
 var winston         = require('winston');
+var fs              = require('fs');
+
+module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath){
+  return new Promise((resolve) => {
+      var filePath = configFilePath;
+
+  fs.stat(filePath, function(err, res){
+    if(err){
+      logger.log('error',`Load General conf file ${filePath} not exists.`, err);
+      throw new Error(`Load General conf file ${filePath} not found.`);
+      resolve();
+    }else {
+      try {
+        fs.readFile(filePath, 'utf8', function (err, res) {
+          if (err) {
+            logger.log('error', 'Load General conf loadConfig readFile: ' + err);
+            resolve();
+          } else {
+            var objConf = JSON.parse(res).config;
+
+            //TODO: INCLUIR TODOS LOS PARAMTEROS OBLIGATORIOS DE CONFIG EN ESTA VALIDACIÓN:
+            if (objConf.hasOwnProperty('general')) {
+              resolve(objConf);
+            } else {
+              throw new Error('Invalid Config file, general not found.', objConf);
+              resolve();
+            }
+
+          }
+        });
+      } catch (e) {
+        throw new Error('Invalid Config file, incorrect JSON format: ' + e.message, e);
+        resolve();
+      }
+    }
+  });
+});
+};
 
 module.exports.loadConfigSection = function loadConfigSection(config, section, id_config){
   return new Promise(function(resolve, reject) {
