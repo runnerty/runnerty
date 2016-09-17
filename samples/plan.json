@@ -28,7 +28,7 @@
               "id":"slack_default",
               "bot_emoji": ":rabbit2:",
               "channel": "mlm",
-              "message":"INICIO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
+              "message":"[X] INICIO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
             }
           ]
         },
@@ -51,7 +51,7 @@
               "id":"slack_default",
               "bot_emoji": ":see_no_evil:",
               "channel": "mlm",
-              "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+              "message":"[X] FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
             }
           ]
         },
@@ -64,10 +64,10 @@
     {
       "id":"CHAIN_TEST_ITERABLE_OBJECT",
       "name":"CADENA DE PRUEBA ITERABLE",
-      "iterable":true,
+      "iterable":"parallels",
       "depends_chains":[{"chain_id":"CHAIN_UNO","process_id":"PROC_LAUNCHER"}],
       "input":[{"MY_VAR_ID":"id"},{"MY_VAR_NAME":"text"}],
-      "events":{
+      "events_iterations":{
         "on_start":{
           "notifications":[
             {
@@ -75,7 +75,7 @@
               "id":"slack_default",
               "bot_emoji": ":rabbit2:",
               "channel": "mlm",
-              "message":"-(I)- INICIO DE LA CADENA ITERABLE :CHAIN_ID CON :MY_VAR_ID Y :MY_VAR_NAME"
+              "message":" ----> [ITER-I] INICIO DE LA CADENA ITERADA :CHAIN_ID CON :MY_VAR_ID Y :MY_VAR_NAME"
             }
           ]
         },"on_end":{
@@ -85,7 +85,30 @@
               "id":"slack_default",
               "bot_emoji": ":rabbit2:",
               "channel": "mlm",
-              "message":"-(F)- FIN DE LA CADENA ITERABLE :CHAIN_ID CON :MY_VAR_ID Y :MY_VAR_NAME"
+              "message":" ----> [ITER-F] FIN DE LA CADENA ITERADA :CHAIN_ID CON :MY_VAR_ID Y :MY_VAR_NAME"
+            }
+          ]
+        }
+      },
+      "events":{
+        "on_start":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":rabbit2:",
+              "channel": "mlm",
+              "message":"[INICIO] INICIO DE LAS ITERACIONES :CHAIN_ID CON :MY_VAR_ID Y :MY_VAR_NAME"
+            }
+          ]
+        },"on_end":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":rabbit2:",
+              "channel": "mlm",
+              "message":"[FIN] FIN DE LAS ITERACIONES :CHAIN_ID CON :MY_VAR_ID Y :MY_VAR_NAME"
             }
           ]
         }
@@ -110,7 +133,7 @@
                 "id":"slack_default",
                 "bot_emoji": ":rabbit2:",
                 "channel": "mlm",
-                "message":"INICIO DEL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID CON :MY_VAR_ID Y :MY_VAR_NAME"
+                "message":"  ------> [PROC-I] INICIO DEL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID CON :MY_VAR_ID Y :MY_VAR_NAME"
               }
             ]
           },
@@ -121,7 +144,7 @@
                 "id":"slack_default",
                 "bot_emoji": ":see_no_evil:",
                 "channel": "mlm",
-                "message":"ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+                "message":"  ------> [PROC-E] ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
               }
             ]
           },
@@ -133,7 +156,7 @@
                 "id":"slack_default",
                 "bot_emoji": ":rabbit2:",
                 "channel": "mlm",
-                "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID"
+                "message":"  ------> [PROC-F] FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID"
               }
             ]
           },

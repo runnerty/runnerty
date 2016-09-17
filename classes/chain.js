@@ -8,7 +8,7 @@ var Process  = require("./process.js");
 var Event    = require("./event.js");
 
 class Chain {
-  constructor(id, name, iterable, input, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at, config) {
+  constructor(id, name, iterable, input, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, events_iterations, processes, status, started_at, ended_at, config) {
     this.id = id;
     this.name = name;
     this.iterable = iterable;
@@ -19,6 +19,7 @@ class Chain {
     this.depends_chains = depends_chains;
     this.depends_chains_alt = depends_chains_alt;
     this.events;
+    this.events_iterations;
     this.config = config;
 
     this.status = status || "stop";
@@ -27,27 +28,35 @@ class Chain {
     this.processes;
 
     return new Promise((resolve) => {
-        var _this = this;
+      var _this = this;
 
-    _this.loadProcesses(processes)
-      .then((processes) => {
-        _this.processes = processes;
+      _this.loadProcesses(processes)
+        .then((processes) => {
+          _this.processes = processes;
 
-        _this.loadEvents(events)
-          .then((events) => {
-            _this.events = events;
-            resolve(_this);
-          })
-          .catch(function(e){
-              logger.log('error',`Chain ${_this.id} loadEvents: `+e);
-              resolve();
-            });
-          })
-      .catch(function(e){
-          logger.log('error',`Chain ${_this.id} loadProcesses: `+e);
-          resolve();
+          var e = {};
+
+          if(iterable && iterable !== ''){
+            e = events_iterations;
+          }else{
+            e = events;
+          }
+
+          _this.loadEvents(e)
+            .then((ev) => {
+              _this.events = ev;
+              resolve(_this);
+            })
+            .catch(function(err){
+                logger.log('error',`Chain ${_this.id} loadEvents: `+err);
+                resolve();
+              });
+            })
+        .catch(function(err){
+            logger.log('error',`Chain ${_this.id} loadProcesses: `+err);
+            resolve();
+          });
         });
-      });
   }
 
   // Executed in construction:
@@ -239,8 +248,6 @@ class Chain {
     }
 
     var values = Object.assign(chain_values, _this.execute_input);
-
-    console.log('CHAIN VALUES:',values);
 
     return values;
   }

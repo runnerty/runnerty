@@ -63,9 +63,7 @@ class Plan{
   });
   }
 
-  loadChain(chain, ignoreEvents){
-
-    console.log('chain.events:',chain.events);
+  loadChain(chain){
 
     return new Promise((resolve) => {
 
@@ -79,6 +77,7 @@ class Plan{
           chain.depends_chains,
           chain.depends_chains_alt,
           chain.events,
+          chain.events_iterations,
           chain.processes,
           chain.status,
           chain.started_at,
@@ -179,25 +178,23 @@ class Plan{
             logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
           }else{
 
-            if(chain.hasOwnProperty('iterable') && chain.iterable){
+            if(chain.hasOwnProperty('iterable') && chain.iterable && chain.iterable !== ''){
 
               var inputIterable = JSON.parse(_this.getValuesInputIterable(chain));
               var inputIterableLength = inputIterable.length;
 
-              if(inputIterable.length){
-                var execMode = 'parallel';
+              if(inputIterableLength){
+                var execMode = chain.iterable;
 
                 if (execMode === 'parallel'){
 
                   var newChains = [];
 
-
                   function createChainSerie(inputIterable) {
                     var sequence = Promise.resolve();
                     inputIterable.forEach(function(item) {
                       sequence = sequence.then(function() {
-                        var ignoreEvents = true;
-                        return _this.loadChain(chain, ignoreEvents)
+                        return _this.loadChain(chain)
                           .then(function(res) {
                             newChains.push(res);
                           })
@@ -237,6 +234,7 @@ class Plan{
 
                     });
                 }else{
+                  chain.running();
                   //Serie by default:
                   function execSerie(input) {
                     var sequence = Promise.resolve();
@@ -256,6 +254,7 @@ class Plan{
 
                   execSerie(inputIterable)
                     .then(function() {
+                      chain.end();
                       console.log('>> FIN DE execSerie !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
                     });
 
