@@ -5,6 +5,7 @@ var anymatch = require('anymatch');
 var logger   = require("../libs/utils.js").logger;
 
 var Process  = require("./process.js");
+var Event    = require("./event.js");
 
 class Chain {
   constructor(id, name, iterable, input, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at, config) {
@@ -53,7 +54,7 @@ class Chain {
   loadProcesses(processes){
     var _this = this;
     return new Promise((resolve) => {
-        var chainProcessPromises = [];
+    var chainProcessPromises = [];
     var processesLength = processes.length;
     if (processes instanceof Array) {
       if (processesLength > 0) {
@@ -131,10 +132,11 @@ class Chain {
       if (keysLength > 0) {
         while (keysLength--) {
           var event = events[keys[keysLength]];
-          if(event.hasOwnProperty('process') || event.hasOwnProperty('notifications')){
+          if(event.hasOwnProperty('notifications')){
             processEventsPromises.push(new Event(keys[keysLength],
               event.process,
-              event.notifications
+              event.notifications,
+              _this.config
             ));
           }else{
             logger.log('debug',`Chain ${_this.id} Events without procces and notifications`);
@@ -333,7 +335,6 @@ class Chain {
               if(chain.isStoped() || chain.isEnded()){
                 chain.setChainToInitState()
                   .then(function(){
-                    console.log('LLEGA ------>');
                     chain.startProcesses()
                       .then(function(res){
                         resolve();

@@ -1,123 +1,476 @@
-{
-  "chains":[{
-  "id":"CHAIN_UNO",
-  "name":"Actualizacion de stock via Magmi",
-  "start_date":"2016-08-01T00:00:00",
-  "end_date":"2099-11-01T00:00:00",
-  "schedule_interval":"*/1 * * * *",
-  "depends_chains":[],
-  "events":{"on_start":{},"on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
-  "processes":[{
-    "id":"PROC_LAUNCHER",
-    "name":"Concatenador de CSVs",
-    "depends_process":[],
-    "exec":{"command":"SELECT * FROM test", "type":"postgre", "db_connection_id":"postgres_default"},
-    "args": {"idg":"3", "pop":":PROCESS_ID"},
-    "retries":0,
-    "retry_delay":0,
-    "end_chain_on_fail":true,
-    "output":[{"file_name":"/etc/runnerty/test.log", "write":["[!] EJECUCIÓN :DD-:MM-:YY :HH::mm::ss -","PROCESS_EXEC_DB_RESULTS\n :PROCESS_EXEC_DB_RESULTS","PROCESS_EXEC_DB_AFFECTEDROWS:\n :PROCESS_EXEC_DB_AFFECTEDROWS"], "concat":true, "maxsize":"1mb"},
-      {"file_name":"/etc/runnerty/RES_MYSQL.log", "write":[":PROCESS_EXEC_DB_RESULTS"], "concat":false, "maxsize":"1mb"},
-      {"file_name":"/etc/runnerty/RES_MYSQL.csv", "write":[":PROCESS_EXEC_DB_RESULTS_CSV"], "concat":false, "maxsize":"1mb"}],
-    "output_iterable":"PROCESS_EXEC_DB_RESULTS",
-    "events":{
-      "on_start":{
-        "notifications":[
-          {
-            "type":"slack",
-            "id":"slack_default",
-            "bot_emoji": ":rabbit2:",
-            "channel": "mlm",
-            "message":"INICIO DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
-          }
-        ]
-      },
-      "on_fail":{
-        "notifications":[
-          {
-            "type":"slack",
-            "id":"slack_default",
-            "bot_emoji": ":see_no_evil:",
-            "channel": "mlm",
-            "message":"ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
-          }
-        ]
-      },
-      "on_retry":{},
-      "on_end":{
-        "notifications":[
-          {
-            "type":"slack",
-            "id":"slack_default",
-            "bot_emoji": ":see_no_evil:",
-            "channel": "mlm",
-            "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
-          }
-        ]
-      },
-      "on_waiting_dependencies":{},
-      "on_exceeded_limited_time_end":{}
-    }
+"use strict";
+
+var schedule = require('node-schedule');
+var chokidar = require('chokidar');
+var logger   = require("../libs/utils.js").logger;
+var Chain    = require("./chain.js");
+
+
+class Plan{
+  constructor(version, chains, config){
+    this.version = version;
+    this.config = config;
+    this.chains;
+    return new Promise((resolve) => {
+      this.loadChains(chains)
+      .then((chains) => {
+      this.chains = chains;
+    resolve(this);
+  })
+  .catch(function(e){
+      logger.log('error','Plan constructor:'+e);
+      resolve(this);
+    });
+  });
   }
-  ]
-},
-  {
-    "id":"CHAIN_TEST_ITERABLE_OBJECT",
-    "name":"CADENA DE PRUEBA ITERABLE",
-    "iterable":true,
-    "depends_chains":[{"chain_id":"CHAIN_UNO","process_id":"PROC_LAUNCHER"}],
-    "input":[{"MY_VAR_ID":"id"},{"MY_VAR_NAME":"text"}],
-    "events":{"on_start":{},"on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
-    "processes":[{
-      "id":"PROCCESS_ITERABLE",
-      "name":"Concatenador de CSVs",
-      "depends_process":[],
-      "exec":{"command":"echo", "type":"command"},
-      "args": ["EL ID ES :MY_VAR_ID", " Y EL NOMBRE :MY_VAR_NAME"],
-      "retries":0,
-      "retry_delay":0,
-      "end_chain_on_fail":false,
-      "output":[{"file_name":"/etc/runnerty/ITERABLE.log", "write":["SALIDA :PROCESS_EXECUTE_RETURN"], "concat":true, "maxsize":"1mb"}],
-      "events":{
-        "on_start":{
-          "notifications":[
-            {
-              "type":"slack",
-              "id":"slack_default",
-              "bot_emoji": ":rabbit2:",
-              "channel": "mlm",
-              "message":"INICIO DEL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID CON :MY_VAR_ID Y :MY_VAR_NAME"
+
+  loadChains(chains){
+    var _this = this;
+    return new Promise((resolve) => {
+        if (chains instanceof Array) {
+      var chainLength = chains.length;
+      if (chainLength > 0) {
+        var planChainsPromises = [];
+
+        while(chainLength--){
+          var chain = chains[chainLength];
+
+          planChainsPromises.push(_this.loadChain(chain));
+        }
+
+        Promise.all(planChainsPromises)
+          .then(function(chains) {
+
+            var chainsLength = chains.length;
+            while(chainsLength--){
+              _this.loadChainFileDependencies(chains[chainsLength]);
             }
-          ]
-        },
-        "on_fail":{
-          "notifications":[
-            {
-              "type":"slack",
-              "id":"slack_default",
-              "bot_emoji": ":see_no_evil:",
-              "channel": "mlm",
-              "message":"ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+            resolve(chains);
+          })
+          .catch(function(e){
+            logger.log('error','Loading chains:'+e);
+            resolve();
+          });
+
+      }else{
+        logger.log('error','Plan have not Chains');
+        resolve();
+      }
+    }else{
+      logger.log('error','Chain, processes is not array');
+      resolve();
+    }
+  });
+  }
+
+  loadChain(chain, ignoreEvents){
+
+    console.log('chain.events:',chain.events);
+
+    return new Promise((resolve) => {
+
+        new Chain(chain.id,
+          chain.name,
+          chain.iterable,
+          chain.input,
+          chain.start_date,
+          chain.end_date,
+          chain.schedule_interval,
+          chain.depends_chains,
+          chain.depends_chains_alt,
+          chain.events,
+          chain.processes,
+          chain.status,
+          chain.started_at,
+          chain.ended_at,
+          this.config)
+          .then(function(res) {
+            // console.log(res);
+            resolve(res);
+          })
+          .catch(function(e){
+            logger.log('error','Loading chain:'+e);
+            resolve();
+          });
+  });
+  }
+
+  loadChainFileDependencies(chain){
+    var _this = this;
+
+    var depends_chain = chain.depends_chains;
+    var dependsChainLength = depends_chain.length;
+
+    if (dependsChainLength > 0) {
+      while (dependsChainLength--) {
+        var dependence = depends_chain[dependsChainLength];
+
+        if(dependence instanceof Object){
+          if(dependence.hasOwnProperty('file_name') && dependence.hasOwnProperty('condition')){
+
+            //TODO: VALIDATE CONDITIONS VALUES
+
+            var watcher = chokidar.watch(dependence.file_name, { ignored: /[\/\\](\.|\~)/,
+              persistent: true,
+              usePolling: true,
+              awaitWriteFinish: {
+                stabilityThreshold: 2000,
+                pollInterval: 150
+              }
+            });
+
+            watcher.on(dependence.condition, function(pathfile) {
+              if(chain.depends_files_ready){
+                chain.depends_files_ready.push(pathfile);
+              }else{
+                chain.depends_files_ready = [pathfile];
+              }
+
+              if(!chain.isRunning() && !chain.isErrored()){
+                _this.planificateChain(chain);
+              }
+
+            })
+
+            if(process.file_watchers){
+              process.file_watchers.push(watcher);
+            }else{
+              process.file_watchers = [watcher];
             }
-          ]
-        },
-        "on_retry":{},
-        "on_end":{
-          "notifications":[
-            {
-              "type":"slack",
-              "id":"slack_default",
-              "bot_emoji": ":rabbit2:",
-              "channel": "mlm",
-              "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID"
-            }
-          ]
-        },
-        "on_waiting_dependencies":{},
-        "on_exceeded_limited_time_end":{}
+
+          }
+        }
       }
     }
-    ]
   }
-]
-}
+
+  planificateChains(){
+    var _this = this;
+    var planChainsLength = this.chains.length;
+    while(planChainsLength--) {
+      var chain = this.chains[planChainsLength];
+      _this.planificateChain(chain);
+    }
+  };
+
+  planificateChain(chain){
+    var _this = this;
+    // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
+    // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
+    if(chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined){
+      chain.stop();
+    };
+
+    if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStoped()))
+    {
+      if(chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') || chain.iterable)){
+
+        logger.log('debug', `PLANIFICADA CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
+
+        if ((new Date(chain.start_date)) <= (new Date()) || (chain.hasOwnProperty('iterable') || chain.iterable)){
+
+          logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
+
+
+          logger.log('debug', `INTENTANDO INICIAR CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
+
+          if(_this.hasDependenciesBlocking(chain)){
+            chain.waiting_dependencies();
+            logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
+          }else{
+
+            if(chain.hasOwnProperty('iterable') && chain.iterable){
+
+              var inputIterable = JSON.parse(_this.getValuesInputIterable(chain));
+              var inputIterableLength = inputIterable.length;
+
+              if(inputIterable.length){
+                var execMode = 'parallel';
+
+                if (execMode === 'parallel'){
+
+                  var newChains = [];
+
+
+                  function createChainSerie(inputIterable) {
+                    var sequence = Promise.resolve();
+                    inputIterable.forEach(function(item) {
+                      sequence = sequence.then(function() {
+                        var ignoreEvents = true;
+                        return _this.loadChain(chain, ignoreEvents)
+                          .then(function(res) {
+                            newChains.push(res);
+                          })
+                          .catch(function(e){
+                            logger.log('error','Error '+e)
+                          });
+                      });
+                    });
+                    return sequence;
+                  }
+
+                  chain.running();
+
+                  createChainSerie(inputIterable)
+                    .then(function() {
+                      console.log('>> FIN DE CREACION DE CHAINS  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+
+                      var chainsToExec = [];
+
+                      var chainsToExecLength = newChains.length;
+
+                      while(chainsToExecLength--){
+                        chainsToExec.push(newChains[chainsToExecLength].start(inputIterable[chainsToExecLength]));
+                      }
+
+                      Promise.all(chainsToExec)
+                        .then(function (res) {
+                          console.log('>> FIN DE EJECUCIONES DE CHAINS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                          chain.end();
+                          chain.setChainToInitState();
+                        })
+                        .catch(function(e){
+                          logger.log('error', 'getChains error: ', e);
+                          chain.error();
+                          chain.setChainToInitState();
+                        });
+
+                    });
+                }else{
+                  //Serie by default:
+                  function execSerie(input) {
+                    var sequence = Promise.resolve();
+                    input.forEach(function(item) {
+                      sequence = sequence.then(function() {
+                        return chain.start(item)
+                          .then(function() {
+                            chain.setChainToInitState();
+                          })
+                          .catch(function(e){
+                            logger.log('error','Error '+e)
+                          });
+                      });
+                    });
+                    return sequence;
+                  }
+
+                  execSerie(inputIterable)
+                    .then(function() {
+                      console.log('>> FIN DE execSerie !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+                    });
+
+                }
+              }else{
+                logger.log('error','Error input not found for iterable process'+e);
+              }
+
+            }else{
+              chain.start()
+                .then(function() {
+                  _this.planificateChains()
+                })
+                .catch(function(e){logger.log('error','Error '+e)});
+            }
+          }
+        }else{
+          // Will execute in start_date set
+          chain.schedule = schedule.scheduleJob(new Date(chain.start_date), function(chain){
+            if(_this.hasDependenciesBlocking(chain)){
+              chain.waiting_dependencies();
+              logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> on_waiting_dependencies`);
+            }else{
+              logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
+              chain.start()
+                .then(function() {
+                  _this.planificateChains()
+                })
+                .catch(function(e){logger.log('error','Error '+e)});
+            }
+          }.bind(null,chain));
+        }
+
+        // Remove Chain from pool
+        if(chain.end_date){
+
+          logger.log('debug',`PLANIFICADA CANCELACION DE CADENA ${chain.id} EN ${(new Date(chain.end_date))}`);
+
+          chain.scheduleCancel = schedule.scheduleJob(new Date(chain.end_date), function(chain){
+
+            logger.log('debug',`CANCELANDO CADENA ${chain.id}`);
+
+            chain.schedule.cancel();
+
+          }.bind(null,chain));
+        }
+
+      }else{
+        logger.log('error',`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
+        throw new Error(`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
+      }
+    }else{
+      logger.log('warn',`CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `,new Date(),'-  chain.status:'+chain.status,'- chain.schedule_interval:',chain.schedule_interval,'- chain.scheduleRepeater:',(chain.scheduleRepeater===undefined));
+    }
+  };
+
+  getChainById(chainId){
+    var _this = this;
+
+    function byId(chain){
+      return chain.id === chainId;
+    }
+
+    return _this.chains.find(byId);
+  }
+
+  getIndexChainById(chainId){
+    var _this = this;
+
+    function byId(chain){
+      return chain.id === chainId;
+    }
+
+    return _this.chains.findIndex(byId);
+  }
+
+  // Load a Chain. If exists replace and If not exists add the chain:
+  loadChainToPlan(newChain){
+
+    var _this = this;
+    var chainId = newChain.id;
+    var indexChain = _this.getIndexChainById(chainId);
+
+    if(indexChain > -1){
+      _this.chains[indexChain] = newChain;
+    }else{
+      _this.chains.push(newChain);
+    }
+    // Planificate load/reload chain
+    _this.planificateChain(_this.getChainById(chainId));
+  }
+
+  dependenciesBlocking(chain){
+
+    //var hasDependencies = false;
+    var chainsDependencies = [];
+
+    if(chain.hasOwnProperty('depends_chains') && chain.depends_chains.length > 0){
+      var depends_chains = chain.depends_chains;
+      var planChains = this.chains;
+
+      var planChainsLength = this.chains.length;
+      var dependsChainsLength = depends_chains.length;
+
+      //File dependences:
+      while(dependsChainsLength--) {
+        if (typeof depends_chains[dependsChainsLength]) {
+          if(depends_chains[dependsChainsLength].hasOwnProperty('file_name')){
+            if(chain.depends_files_ready){
+
+              if(chain.depends_files_ready.indexOf(depends_chains[dependsChainsLength].file_name) > -1){
+              }else{
+                chainsDependencies.push(depends_chains[dependsChainsLength]);
+                //hasDependencies = true;
+              }
+            }else{
+              chainsDependencies.push(depends_chains);
+              //hasDependencies = true;
+            }
+          }
+        }
+      }
+
+      //Chains dependences:
+      dependsChainsLength = depends_chains.length;
+
+      while(planChainsLength--){
+        var auxDependsChainsLength = dependsChainsLength;
+
+        while(auxDependsChainsLength--){
+          switch (typeof depends_chains[auxDependsChainsLength]) {
+            case 'string':
+              if(depends_chains[auxDependsChainsLength] === planChains[planChainsLength].id){
+                if(!planChains[planChainsLength].isEnded()){
+                  chainsDependencies.push(planChains[planChainsLength]);
+                  //hasDependencies = true;
+                }
+              }
+              break;
+            case 'object':
+              if(depends_chains[auxDependsChainsLength].chain_id === planChains[planChainsLength].id){
+
+                if(planChains[planChainsLength].isEnded() || (depends_chains[auxDependsChainsLength].ignore_fail && planChains[planChainsLength].isErrored() && !depends_chains[auxDependsChainsLength].hasOwnProperty('process_id'))){
+                }else{
+                  if(depends_chains[auxDependsChainsLength].hasOwnProperty('process_id')){
+                    var planProccessLength = planChains[planChainsLength].processes.length;
+
+                    //EN LA VALIDACION DE DEPENDENCIES_CHAIN comprobar que tanto el chain ID como el proccess_id existen
+                    while(planProccessLength--){
+                      if(planChains[planChainsLength].processes[planProccessLength].id === depends_chains[auxDependsChainsLength].process_id){
+                        if(planChains[planChainsLength].processes[planProccessLength].isEnded()){
+                        }else{
+                          chainsDependencies.push(planChains[planChainsLength]);
+                        }
+                      }
+                    }
+                  }else{
+                    chainsDependencies.push(planChains[planChainsLength]);
+                    //hasDependencies = true;
+                  }
+                }
+              }
+              break;
+          }
+        }
+      }
+      return chainsDependencies;
+    }else{
+      return chainsDependencies;
+    }
+  }
+
+  hasDependenciesBlocking(chain){
+    return (this.dependenciesBlocking(chain).length > 0);
+  }
+
+
+  getValuesInputIterable(chain){
+
+    var input = [];
+
+    if(chain.hasOwnProperty('depends_chains') && chain.depends_chains.length > 0){
+      var depends_chains = chain.depends_chains;
+      var planChains = this.chains;
+
+      var planChainsLength = this.chains.length;
+      var dependsChainsLength = depends_chains.length;
+
+      //Chains dependences:
+
+      while(planChainsLength--){
+        var auxDependsChainsLength = dependsChainsLength;
+        while(auxDependsChainsLength--){
+          if(typeof depends_chains[auxDependsChainsLength] === 'object'){
+            if(depends_chains[auxDependsChainsLength].chain_id === planChains[planChainsLength].id){
+              if (depends_chains[auxDependsChainsLength].hasOwnProperty('process_id')){
+                var planProccessLength = planChains[planChainsLength].processes.length;
+                while(planProccessLength--){
+                  if(planChains[planChainsLength].processes[planProccessLength].id === depends_chains[auxDependsChainsLength].process_id){
+                    var dep_process = planChains[planChainsLength].processes[planProccessLength];
+                    var dep_process_values = dep_process.values();
+                    input = dep_process_values[dep_process.output_iterable];
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      return input;
+    }else{
+      return input;
+    }
+  }
+
+};
+
+module.exports = Plan;

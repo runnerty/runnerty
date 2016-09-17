@@ -1,7 +1,7 @@
 {
   "chains":[{
     "id":"CHAIN_UNO",
-    "name":"Actualizacion de stock via Magmi",
+    "name":"Cadena uno",
     "start_date":"2016-08-01T00:00:00",
     "end_date":"2099-11-01T00:00:00",
     "schedule_interval":"*/1 * * * *",
@@ -67,12 +67,34 @@
       "iterable":true,
       "depends_chains":[{"chain_id":"CHAIN_UNO","process_id":"PROC_LAUNCHER"}],
       "input":[{"MY_VAR_ID":"id"},{"MY_VAR_NAME":"text"}],
-      "events":{"on_start":{},"on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
+      "events":{
+        "on_start":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":rabbit2:",
+              "channel": "mlm",
+              "message":"-(I)- INICIO DE LA CADENA ITERABLE :CHAIN_ID CON :MY_VAR_ID Y :MY_VAR_NAME"
+            }
+          ]
+        },"on_end":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":rabbit2:",
+              "channel": "mlm",
+              "message":"-(F)- FIN DE LA CADENA ITERABLE :CHAIN_ID CON :MY_VAR_ID Y :MY_VAR_NAME"
+            }
+          ]
+        }
+      },
       "processes":[{
         "id":"PROCCESS_ITERABLE",
         "name":"Concatenador de CSVs",
         "depends_process":[],
-        "exec":{"command":"echo", "type":"command"},
+        "exec":{"command":"/etc/runnerty/prueba.sh", "type":"command"},
         "args": ["EL ID ES :MY_VAR_ID", " Y EL NOMBRE :MY_VAR_NAME"],
         "retries":0,
         "retry_delay":0,
