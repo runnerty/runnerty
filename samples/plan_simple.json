@@ -1,0 +1,136 @@
+{
+  "chains":[{
+    "id":"CHAIN_UNO",
+    "name":"Cadena uno",
+    "start_date":"2016-08-01T00:00:00",
+    "end_date":"2099-11-01T00:00:00",
+    "schedule_interval":"*/1 * * * *",
+    "depends_chains":[],
+    "events":{"on_start":{
+              "notifications":[
+              {
+                "type":"slack",
+                "id":"slack_default",
+                "bot_emoji": ":rabbit2:",
+                "channel": "mlm",
+                "message":"> *INICIO* DE LA CADENA *:CHAIN_NAME*"
+              }
+            ]
+      },"on_end":{
+               "notifications":[
+              {
+                "type":"slack",
+                "id":"slack_default",
+                "bot_emoji": ":rabbit2:",
+                "channel": "mlm",
+                "message":"> *FIN* DE LA CADENA *:CHAIN_NAME*"
+              }
+            ]
+        }, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
+    "processes":[
+       {"id":"PROCESS_ONE",
+        "name":"Process ONE",
+        "depends_process":[],
+        "exec":{"command":"/etc/runnerty/sleeper.sh", "type":"command"},
+        "args": ["HELLO FROM :PROCESS_NAME"],
+        "retries":0,
+        "retry_delay":0,
+        "end_chain_on_fail":true,
+        "output":[{"file_name":"/etc/runnerty/test.log", "write":["[!] EJECUCIÓN :DD-:MM-:YY :HH::mm::ss -","PROCESS_EXEC_DB_RESULTS\n :PROCESS_EXEC_DB_RESULTS","PROCESS_EXEC_DB_AFFECTEDROWS:\n :PROCESS_EXEC_DB_AFFECTEDROWS"], "concat":true, "maxsize":"1mb"},
+          {"file_name":"/etc/runnerty/RES_MYSQL.log", "write":[":PROCESS_EXEC_DB_RESULTS"], "concat":false, "maxsize":"1mb"},
+          {"file_name":"/etc/runnerty/RES_MYSQL.csv", "write":[":PROCESS_EXEC_DB_RESULTS_CSV"], "concat":false, "maxsize":"1mb"}],
+        "events":{
+          "on_start":{
+            "notifications":[
+              {
+                "type":"slack",
+                "id":"slack_default",
+                "bot_emoji": ":rabbit2:",
+                "channel": "mlm",
+                "message":">> *INICIO* DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
+              }
+            ]
+          },
+          "on_fail":{
+            "notifications":[
+              {
+                "type":"slack",
+                "id":"slack_default",
+                "bot_emoji": ":see_no_evil:",
+                "channel": "mlm",
+                "message":"  ------> [PROC-E] ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+              }
+            ]
+          },
+          "on_retry":{},
+          "on_end":{
+            "notifications":[
+              {
+                "type":"slack",
+                "id":"slack_default",
+                "bot_emoji": ":rabbit2:",
+                "channel": "mlm",
+                "message":"<< *FIN* DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
+              }
+            ]
+          },
+          "on_waiting_dependencies":{},
+          "on_exceeded_limited_time_end":{}
+        }
+      },
+    {
+      "id":"PROCESS_TWO",
+      "name":"Concatenador de CSVs",
+      "depends_process":["PROCESS_ONE"],
+      "exec":{"command":"SELECT * FROM test", "type":"postgre", "db_connection_id":"postgres_default"},
+      "args": {"idg":"3", "pop":":PROCESS_ID"},
+      "retries":0,
+      "retry_delay":0,
+      "end_chain_on_fail":true,
+      "output":[{"file_name":"/etc/runnerty/test.log", "write":["[!] EJECUCIÓN :DD-:MM-:YY :HH::mm::ss -","PROCESS_EXEC_DB_RESULTS\n :PROCESS_EXEC_DB_RESULTS","PROCESS_EXEC_DB_AFFECTEDROWS:\n :PROCESS_EXEC_DB_AFFECTEDROWS"], "concat":true, "maxsize":"1mb"},
+        {"file_name":"/etc/runnerty/RES_MYSQL.log", "write":[":PROCESS_EXEC_DB_RESULTS"], "concat":false, "maxsize":"1mb"},
+        {"file_name":"/etc/runnerty/RES_MYSQL.csv", "write":[":PROCESS_EXEC_DB_RESULTS_CSV"], "concat":false, "maxsize":"1mb"}],
+      "output_iterable":"PROCESS_EXEC_DB_RESULTS",
+      "events":{
+        "on_start":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":rabbit2:",
+              "channel": "mlm",
+              "message":">> *INICIO* DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
+            }
+          ]
+        },
+        "on_fail":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":see_no_evil:",
+              "channel": "mlm",
+              "message":"ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+            }
+          ]
+        },
+        "on_retry":{},
+        "on_end":{
+          "notifications":[
+            {
+              "type":"slack",
+              "id":"slack_default",
+              "bot_emoji": ":see_no_evil:",
+              "channel": "mlm",
+              "message":"<< *FIN* DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+            }
+          ]
+        },
+        "on_waiting_dependencies":{},
+        "on_exceeded_limited_time_end":{}
+      }
+    }
+    ]
+  }
+  ]
+}
