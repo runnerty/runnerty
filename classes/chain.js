@@ -19,7 +19,7 @@ class Chain {
     this.depends_chains = depends_chains;
     this.depends_chains_alt = depends_chains_alt;
     this.events;
-    this.events_iterations;
+    this.events_iterations = events_iterations;
     this.config = config;
 
     this.status = status || "stop";
@@ -34,17 +34,9 @@ class Chain {
         .then((processes) => {
           _this.processes = processes;
 
-          var e = {};
-
-          if(iterable && iterable !== ''){
-            e = events_iterations;
-          }else{
-            e = events;
-          }
-
-          _this.loadEvents(e)
-            .then((ev) => {
-              _this.events = ev;
+          _this.loadEvents(events)
+            .then((events) => {
+              _this.events = events;
               resolve(_this);
             })
             .catch(function(err){
@@ -361,9 +353,9 @@ class Chain {
           }.bind(null,chain))
 
         }else{
-          console.log(`EN CHAIN ${chain.id} startProcesses: ${JSON.stringify(chain.execute_input)}`);
           chain.startProcesses()
             .then(function(res){
+              if (inputIteration) chain.end();
               resolve();
             })
             .catch(function(e){
@@ -400,6 +392,7 @@ class Chain {
       // Clear depends_files_ready
       // TODO: REVISAR ESTO - PROBLEMAS SI EXISTEN FICHEROS Y NO SE VUELVE A METER EN depends_files_ready
       _this.depends_files_ready = [];
+      _this.execute_input = {};
     //Warning
     if (this.isRunning()){
       logger.log('warn',`This chain ${_this.id} is running yet and is being initialized`)
@@ -464,6 +457,87 @@ class Chain {
 
           // If Chains is running:
           if (chainStatus === 'running'){
+
+            _this.processes.forEach(function (process) {
+              process.execute_input =  _this.execute_input;
+
+              if (process.isStoped()){
+                logger.log('debug', `PLANIFICADO PROCESO ${process.id}`);
+
+                var processMustDo = _this.checkProcessActionToDo(process);
+
+                switch(processMustDo){
+                  case 'run':
+
+                    logger.log('debug', `Ejecutar YA ${process.id} -> start`);
+
+                    process.start()
+                      .then(function(){
+                        _this.startProcesses()
+                          .then(function(res){
+                            resolve();
+                          })
+                          .catch(function(e){
+                            logger.log('error','Error in startProcesses:'+e);
+                            resolve();
+                          })
+                      })
+                      .catch(function(proc, e){
+                        logger.log('error','Error in process.start: '+e);
+
+                        if (proc.end_chain_on_fail){
+
+                          _this.setChainToInitState()
+                            .then(function(){
+                              logger.log('debug','setChainToInitState end_chain_on_fail');
+                              resolve();
+                            })
+                            .catch(function(e){
+                              logger.log('error','Error setChainToInitState on end_chain_on_fail: '+e);
+                              resolve();
+                            });
+
+                        }else{
+
+                          // Aun cuando hay error puede que haya procesos que tengan que ejecutarse:
+                          _this.startProcesses()
+                            .then(function(res){
+                              resolve();
+                            })
+                            .catch(function(e){
+                              logger.log('error','Error in startProcesses (prev errored):'+e);
+                              resolve();
+                            })
+                        }
+                      })
+
+                    break;
+                  case 'wait':
+
+                    logger.log('debug', `Ejecutar PROCESO ${process.id} -> on_waiting_dependencies `);
+                    process.waiting_dependencies();
+
+                    break;
+                  case 'end':
+                    logger.log('debug', `No se ejecuta el PROCESO ${process.id} -> solo on_fail `);
+                    process.end(true);
+
+                    _this.startProcesses()
+                      .then(function(res){
+                        resolve();
+                      })
+                      .catch(function(e){
+                        logger.log('error','Error in startProcesses (end errored):'+e);
+                        resolve();
+                      })
+
+                    break;
+                }
+
+              }
+            })
+
+            /*
             var chainProcessesLength = _this.processes.length;
 
             while(chainProcessesLength--) {
@@ -546,6 +620,7 @@ class Chain {
 
               }
             }
+            */
           }else{
             resolve();
           }

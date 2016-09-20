@@ -63,10 +63,9 @@ class Plan{
   });
   }
 
-  loadChain(chain){
+  loadChain(chain, isIteration){
 
     return new Promise((resolve) => {
-
         new Chain(chain.id,
           chain.name,
           chain.iterable,
@@ -76,7 +75,7 @@ class Plan{
           chain.schedule_interval,
           chain.depends_chains,
           chain.depends_chains_alt,
-          chain.events,
+          (isIteration)?chain.events_iterations:chain.events,
           chain.events_iterations,
           chain.processes,
           chain.status,
@@ -145,11 +144,18 @@ class Plan{
 
   planificateChains(){
     var _this = this;
+
+    _this.chains.forEach(function (chain) {
+      _this.planificateChain(chain);
+    });
+
+    /*
     var planChainsLength = this.chains.length;
     while(planChainsLength--) {
       var chain = this.chains[planChainsLength];
       _this.planificateChain(chain);
     }
+    */
   };
 
   planificateChain(chain){
@@ -194,7 +200,7 @@ class Plan{
                     var sequence = Promise.resolve();
                     inputIterable.forEach(function(item) {
                       sequence = sequence.then(function() {
-                        return _this.loadChain(chain)
+                        return _this.loadChain(chain, true)
                           .then(function(res) {
                             newChains.push(res);
                           })
@@ -210,19 +216,14 @@ class Plan{
 
                   createChainSerie(inputIterable)
                     .then(function() {
-                      console.log('>> FIN DE CREACION DE CHAINS  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-
                       var chainsToExec = [];
-
                       var chainsToExecLength = newChains.length;
-
                       while(chainsToExecLength--){
                         chainsToExec.push(newChains[chainsToExecLength].start(inputIterable[chainsToExecLength]));
                       }
 
                       Promise.all(chainsToExec)
                         .then(function (res) {
-                          console.log('>> FIN DE EJECUCIONES DE CHAINS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
                           chain.end();
                           chain.setChainToInitState();
                         })
@@ -234,14 +235,65 @@ class Plan{
 
                     });
                 }else{
+                  //SERIE:
                   chain.running();
-                  //Serie by default:
+
+                  var newChains = [];
+
+                  function createChainSerie(inputIterable) {
+                    var sequence = Promise.resolve();
+                    inputIterable.forEach(function(item) {
+                      sequence = sequence.then(function() {
+                        return _this.loadChain(chain, true)
+                          .then(function(res) {
+                            newChains.push(res);
+                          })
+                          .catch(function(e){
+                            logger.log('error','Error '+e)
+                          });
+                      });
+                    });
+                    return sequence;
+                  }
+
+                  function execSerie(chains) {
+                    var sequence = Promise.resolve();
+                    var i = 0;
+                    chains.forEach(function(chain) {
+                      sequence = sequence.then(function() {
+
+                        return chain.start(inputIterable[i])
+                          .then(function(res) {
+                            i = i+1;
+                          })
+                          .catch(function(e){
+                            i = i+1;
+                            logger.log('error','Error '+e)
+                          });
+                      });
+                    });
+                    return sequence;
+                  }
+
+                  createChainSerie(inputIterable)
+                    .then(function() {
+                      execSerie(newChains)
+                        .then(function() {
+                          chain.setChainToInitState();
+                          chain.end();
+                        });
+
+                    });
+
+                  //Serie:
+                  /*
                   function execSerie(input) {
                     var sequence = Promise.resolve();
                     input.forEach(function(item) {
                       sequence = sequence.then(function() {
                         return chain.start(item)
                           .then(function() {
+                            chain.end();
                             chain.setChainToInitState();
                           })
                           .catch(function(e){
@@ -252,11 +304,14 @@ class Plan{
                     return sequence;
                   }
 
+
                   execSerie(inputIterable)
                     .then(function() {
+                      chain.setChainToInitState();
                       chain.end();
                       console.log('>> FIN DE execSerie !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
                     });
+                  */
 
                 }
               }else{
