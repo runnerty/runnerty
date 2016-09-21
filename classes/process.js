@@ -615,13 +615,17 @@ class Process {
 
     function writeFile(filePath, mode, os){
       fs.open(filePath, mode, (err, fd) => {
-        fs.write(fd, os, null, 'utf8', function(){
-        fs.close(fd, function(err){
-          if(err){
-            logger.log('error',`Closing file ${filePath} in writeFile in ${_this.id}: `,err);
-          }
+        if(err){
+          logger.log('error',`Writing output, open file ${filePath} in ${_this.id}: `,err);
+        }else{
+          fs.write(fd, os, null, 'utf8', function(){
+          fs.close(fd, function(err){
+            if(err){
+              logger.log('error',`Closing file ${filePath} in writeFile in ${_this.id}: `,err);
+            }
+          });
         });
-      });
+        }
     });
     }
 
