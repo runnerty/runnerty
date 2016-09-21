@@ -66,6 +66,28 @@ module.exports.loadConfigSection = function loadConfigSection(config, section, i
   });
 };
 
+module.exports.loadSQLFile = function loadSQLFile(filePath){
+  return new Promise((resolve) => {
+
+  fs.stat(filePath, function(err, res){
+    if(err){
+      logger.log('error',`Load SQL file ${filePath} not exists.`, err);
+      throw new Error(`Load SQL file ${filePath} not found.`);
+      resolve();
+    }else {
+        fs.readFile(filePath, 'utf8', function (err, res) {
+          if (err) {
+            logger.log('error', 'Load SQL file readFile: ' + err);
+            resolve();
+          } else {
+            resolve(res);
+          }
+        });
+    }
+  });
+});
+};
+
 module.exports.replaceWith = function replaceWith(text, objParams){
 
   function pad(pad, str, padLeft) {
