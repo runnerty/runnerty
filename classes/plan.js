@@ -35,7 +35,12 @@ class Plan{
         while(chainLength--){
           var chain = chains[chainLength];
 
-          planChainsPromises.push(_this.loadChain(chain));
+          if(chain.disable){
+            logger.log('warn',`Chain ${chain.id} ignored: is setted to disable.`);
+          }else{
+            planChainsPromises.push(_this.loadChain(chain));
+          }
+
         }
 
         Promise.all(planChainsPromises)
