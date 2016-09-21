@@ -353,13 +353,18 @@ class Process {
         connection.connect(function (err) {
           if (err) {
             logger.log('error', 'Error connecting Mysql: ' + err)
+            _this.execute_return = '';
+            _this.execute_err_return = 'Error connecting Mysql: ' + err;
+            _this.retries_count = _this.retries_count +1 || 1;
+            _this.error();
+            _this.write_output();
             reject(err);
           } else {
 
             connection.query(_this.exec.command, _this.execute_arg, function (err, results) {
               if (err) {
                 logger.log('error', `executeMysql query ${_this.exec.command}: ${err}`);
-                _this.execute_err_return = err;
+                _this.execute_err_return = `executeMysql query ${_this.exec.command}: ${err}`;
                 _this.execute_return = '';
                 _this.error();
                 _this.write_output();
@@ -492,7 +497,7 @@ class Process {
         client.connect(function(err) {
           if(err) {
             logger.log('error',`Could not connect to Postgre: `+err);
-            _this.execute_err_return = err;
+            _this.execute_err_return = `Could not connect to Postgre: `+err;
             _this.execute_return = '';
             _this.error();
             _this.write_output();
@@ -503,7 +508,7 @@ class Process {
             client.query(finalQuery, null, function(err, results){
               if(err){
                 logger.log('error',`Error query Postgre (${finalQuery}): `+err);
-                _this.execute_err_return = err;
+                _this.execute_err_return = `Error query Postgre (${finalQuery}): `+err;
                 _this.execute_return = '';
                 _this.error();
                 _this.write_output();
