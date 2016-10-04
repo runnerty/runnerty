@@ -38,6 +38,8 @@
       "transport": "smtps://desawc%40gmail.com:nesoca..gmail@smtp.gmail.com/?pool=true",
       "templateDir": "/etc/runnerty/templates",
       "template": "alerts"}
-  ]
+  ],
+  "global_values":[{"myparams":{"host":"coderty.com","port":"5123"}},
+                   {"myothersparams":{"host":"google.com"}}]
 }
 }

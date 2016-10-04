@@ -29,6 +29,7 @@ logger.log('info',`RUNNERTY RUNNING - TIME...: ${new Date()}`);
 loadGeneralConfig(configFilePath)
   .then(function(fileConfig){
     config = fileConfig;
+    global.config = config;
 
     var fileLoad;
     if(reloadPlan){

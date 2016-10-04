@@ -19,14 +19,14 @@ class FilePlan {
     this.loadFileContent(filePath)
       .then((res) => {
       _this.fileContent = res;
-    _this.getChains(res)
-      .then((chains) => {
-      new Plan('', chains, _this.config)
-        .then(function(plan){
-          _this.plan = plan;
-          _this.plan.planificateChains();
-          _this.startAutoRefreshBinBackup();
-          resolve(_this);
+      _this.getChains(res)
+        .then((chains) => {
+        new Plan('', chains, _this.config)
+          .then(function(plan){
+            _this.plan = plan;
+            _this.plan.planificateChains();
+            _this.startAutoRefreshBinBackup();
+            resolve(_this);
         })
         .catch(function(err){
           logger.log('error','FilePlan new Plan: '+err);

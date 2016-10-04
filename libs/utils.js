@@ -90,6 +90,25 @@ module.exports.loadSQLFile = function loadSQLFile(filePath){
 
 module.exports.replaceWith = function replaceWith(text, objParams){
 
+  if(global.config.global_values){
+
+    var gvl =  global.config.global_values.length;
+    var gv = {};
+
+    while(gvl--){
+      var keymaster = Object.keys(global.config.global_values[gvl])[0];
+      var valueObjects = global.config.global_values[gvl][keymaster];
+      var keysValueObjects = Object.keys(valueObjects);
+      var keysValueObjectsLength = keysValueObjects.length;
+
+      while(keysValueObjectsLength--){
+        var valueKey = keysValueObjects[keysValueObjectsLength];
+        gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = global.config.global_values[gvl][keymaster][valueKey];
+      }
+    }
+    objParams = Object.assign(objParams, gv);
+  }
+
   function pad(pad, str, padLeft) {
     if(!padLeft) padLeft = true;
     if (typeof str === 'undefined')
