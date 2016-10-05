@@ -283,7 +283,7 @@ class Process {
       }
       _this.execute_args = _this.args.map(repArg);
 
-      _this.proc = spawn(cmd, _this.execute_args);
+      _this.proc = spawn(cmd, _this.execute_args, { shell:true });
 
       _this.proc.stdout.on('data', function(chunk) {
         stdout += chunk;
