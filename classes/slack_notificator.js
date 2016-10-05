@@ -36,6 +36,8 @@ class slackNotificator extends Notification{
       var slack = new Slack(this.token);
       var msg = replaceWith(this.message, values);
 
+      logger.log('debug','[SLACK NOTIFICATION] > '+msg);
+
       slack.api('chat.postMessage', {
         text: msg,
         channel: this.channel,

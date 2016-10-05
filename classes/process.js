@@ -233,24 +233,43 @@ class Process {
       forceOnceInRetry = false;
     }
 
-    if(typeof _this.exec === 'string'){
-      return _this.executeCommand(_this.exec);
-    }else {
-      switch (_this.exec.type) {
-        case 'command':
-          return _this.executeCommand(_this.exec.command);
-          break;
-        case 'mysql':
-          return _this.executeMysql();
-          break;
-        case 'postgre':
-          return _this.executePostgre();
-          break;
-        default:
-          logger.log('error', `Exec type is not valid ${_this.exec.type} for ${_this.id}`);
-          break;
+    return new Promise(function(resolve, reject) {
+
+      if(typeof _this.exec === 'string' || !_this.exec.db_connection_id){
+        resolve(_this.executeCommand(_this.exec.command));
+      }else {
+
+        _this.loadDbConfig()
+            .then((configValues) => {
+            if(configValues.type){
+              switch (configValues.type) {
+                case 'mysql':
+                  resolve(_this.executeMysql());
+                  break;
+                case 'postgres':
+                  resolve(_this.executePostgre());
+                  break;
+                default:
+                  logger.log('error',`DBConnection ${_this.exec.db_connection_id} type is not valid`);
+                  _this.execute_err_return = `DBConnection ${_this.exec.db_connection_id} type is not valid`;
+                  _this.execute_return = '';
+                  _this.error();
+                  _this.write_output();
+                  reject(_this, `DBConnection ${_this.exec.db_connection_id} type is not valid`);
+                  break;
+              }
+            }else{
+              logger.log('error',`DBConnection ${_this.exec.db_connection_id} doesn't have type`);
+              _this.execute_err_return = `DBConnection ${_this.exec.db_connection_id} doesn't have type`;
+              _this.execute_return = '';
+              _this.error();
+              _this.write_output();
+              reject(_this, `DBConnection ${_this.exec.db_connection_id} doesn't have type`);
+            }
+      })
       }
-    }
+
+    });
   }
 
   executeCommand(cmd){
@@ -356,8 +375,6 @@ class Process {
             _this.execute_return = '';
             _this.execute_err_return = 'Error connecting Mysql: ' + err;
             _this.retries_count = _this.retries_count +1 || 1;
-            _this.error();
-            _this.write_output();
             reject(err);
           } else {
 
@@ -365,9 +382,6 @@ class Process {
               if (err) {
                 logger.log('error', `executeMysql query ${_this.exec.command}: ${err}`);
                 _this.execute_err_return = `executeMysql query ${_this.exec.command}: ${err}`;
-                _this.execute_return = '';
-                _this.error();
-                _this.write_output();
                 reject(err);
               } else {
 
@@ -380,10 +394,6 @@ class Process {
                     } else {
                       _this.execute_db_results_csv = data;
                     }
-                    _this.execute_return = '';
-                    _this.execute_err_return = '';
-                    _this.end();
-                    _this.write_output();
                     resolve();
                   });
 
@@ -399,13 +409,7 @@ class Process {
                     _this.execute_db_warningCount = results.warningCount;
                     _this.execute_db_message = results.message;
                   }
-
-                  _this.execute_return = '';
-                  _this.execute_err_return = '';
-                  _this.end();
-                  _this.write_output();
                   resolve();
-
                 }
               }
             });
@@ -432,7 +436,22 @@ class Process {
                 loadSQLFile(_this.exec.file_name)
                   .then((fileContent) => {
                     _this.exec.command = fileContent;
-                    executeQuery(_this, configValues);
+                    executeQuery(_this, configValues)
+                      .then((res) => {
+                      _this.execute_return = '';
+                      _this.execute_err_return = '';
+                      _this.end();
+                      _this.write_output();
+                      resolve();
+                    })
+                    .catch(function(err){
+                        logger.log('error',`executeMysql executeQuery from file: ${err}`);
+                        _this.execute_err_return = `executeMysql executeQuery from file: ${err}`;
+                        _this.execute_return = '';
+                        _this.error();
+                        _this.write_output();
+                        reject(_this, err);
+                      });
                   })
                   .catch(function(err){
                     logger.log('error',`executeMysql loadSQLFile: ${err}`);
@@ -440,11 +459,26 @@ class Process {
                     _this.execute_return = '';
                     _this.error();
                     _this.write_output();
-                    reject(err);
+                    reject(_this, err);
                    });
               }
             }else{
-              executeQuery(_this, configValues);
+              executeQuery(_this, configValues)
+                .then((res) => {
+                _this.execute_return = '';
+                _this.execute_err_return = '';
+                _this.end();
+                _this.write_output();
+                resolve();
+              })
+              .catch(function(err){
+                  logger.log('error',`executeMysql executeQuery: ${err}`);
+                  _this.execute_err_return = `executeMysql executeQuery: ${err}`;
+                  _this.execute_return = '';
+                  _this.error();
+                  _this.write_output();
+                  reject(_this, err);
+                });
             }
       })
       .catch(function(err){
@@ -453,7 +487,7 @@ class Process {
           _this.execute_return = '';
           _this.error();
           _this.write_output();
-          reject(err);
+          reject(_this, err);
         });
 
       }else{
@@ -462,7 +496,7 @@ class Process {
         _this.execute_return = '';
         _this.error();
         _this.write_output();
-        reject();
+        reject(_this);
       }
     });
   }
@@ -497,10 +531,7 @@ class Process {
         client.connect(function(err) {
           if(err) {
             logger.log('error',`Could not connect to Postgre: `+err);
-            _this.execute_err_return = `Could not connect to Postgre: `+err;
-            _this.execute_return = '';
-            _this.error();
-            _this.write_output();
+
             reject(err);
           }else{
             var finalQuery = queryFormat(_this.exec.command, _this.execute_arg);
@@ -508,10 +539,7 @@ class Process {
             client.query(finalQuery, null, function(err, results){
               if(err){
                 logger.log('error',`Error query Postgre (${finalQuery}): `+err);
-                _this.execute_err_return = `Error query Postgre (${finalQuery}): `+err;
-                _this.execute_return = '';
-                _this.error();
-                _this.write_output();
+
                 reject(`Error query Postgre (${finalQuery}): `+err);
               }else{
                 if(results.hasOwnProperty('rows') && results.rows.length > 0){
@@ -523,10 +551,7 @@ class Process {
                     }else{
                       _this.execute_db_results_csv = data;
                     }
-                    _this.execute_return = '';
-                    _this.execute_err_return = '';
-                    _this.end();
-                    _this.write_output();
+
                     resolve();
                   });
 
@@ -543,13 +568,8 @@ class Process {
                     _this.execute_db_message      = '';
                   }
 
-                  _this.execute_return = '';
-                  _this.execute_err_return = '';
-                  _this.end();
-                  _this.write_output();
                   resolve();
                 }
-
               }
               client.end();
             })
@@ -570,24 +590,54 @@ class Process {
               _this.execute_return = '';
               _this.error();
               _this.write_output();
-              reject(`executePostgre dont have command or file_name`);
+              reject(_this, `executePostgre dont have command or file_name`);
             }else{
               loadSQLFile(_this.exec.file_name)
                 .then((fileContent) => {
-                _this.exec.command = fileContent;
-              executeQuery(_this, configValues);
-            })
-            .catch(function(err){
-                logger.log('error',`executePostgre loadSQLFile: ${err}`);
-                _this.execute_err_return = `executePostgre loadSQLFile: ${err}`;
-                _this.execute_return = '';
-                _this.error();
-                _this.write_output();
-                reject(err);
-              });
+                  _this.exec.command = fileContent;
+                  executeQuery(_this, configValues)
+                    .then((res) => {
+                      _this.execute_return = '';
+                      _this.execute_err_return = '';
+                      _this.end();
+                      _this.write_output();
+                      resolve();
+                    })
+                    .catch(function(err){
+                        logger.log('error',`executePostgre executeQuery from file: ${err}`);
+                        _this.execute_err_return = `executePostgre executeQuery from file: ${err}`;
+                        _this.execute_return = '';
+                        _this.error();
+                        _this.write_output();
+                        reject(_this, err);
+                      });
+                })
+                .catch(function(err){
+                    logger.log('error',`executePostgre loadSQLFile: ${err}`);
+                    _this.execute_err_return = `executePostgre loadSQLFile: ${err}`;
+                    _this.execute_return = '';
+                    _this.error();
+                    _this.write_output();
+                    reject(_this, err);
+                  });
             }
         }else{
-          executeQuery(_this, configValues);
+          executeQuery(_this, configValues)
+            .then((res) => {
+            _this.execute_return = '';
+            _this.execute_err_return = '';
+            _this.end();
+            _this.write_output();
+            resolve();
+          })
+          .catch(function(err){
+              logger.log('error',`executePostgre executeQuery: ${err}`);
+              _this.execute_err_return = `executePostgre executeQuery: ${err}`;
+              _this.execute_return = '';
+              _this.error();
+              _this.write_output();
+              reject(_this, err);
+            });
         }
       })
       .catch(function(err){
@@ -596,7 +646,7 @@ class Process {
           _this.execute_return = '';
           _this.error();
           _this.write_output();
-          reject(err);
+          reject(_this, err);
         });
 
       }else{
@@ -605,7 +655,7 @@ class Process {
         _this.execute_return = '';
         _this.error();
         _this.write_output();
-        reject();
+        reject(_this, `executePostgre: db_connection_id not set for ${_this.id}`);
       }
     });
 

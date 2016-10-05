@@ -55,13 +55,10 @@ module.exports.loadConfigSection = function loadConfigSection(config, section, i
       if (cnf){
         resolve(cnf);
       }else{
-        throw new Error(`Config for ${id_config} not found in section ${section}`);
-        reject();
+        reject(`Config for ${id_config} not found in section ${section}`);
       }
-
     }else{
-      throw new Error(`Section ${section} not found in config file.`, config);
-      reject();
+      reject(`Section ${section} not found in config file.`, config);
     }
   });
 };

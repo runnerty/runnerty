@@ -10,6 +10,7 @@
     }
   },
   "db_connections":[{"id":"mysql_default",
+    "type":"mysql",
     "user":"root",
     "password":"nesoca..mysql",
     "database":"CORE",
@@ -17,6 +18,7 @@
     "port":"3306"
   },
     {"id":"postgres_default",
+      "type":"postgres",
       "user":"postgres",
       "password":"test",
       "database":"postgres",

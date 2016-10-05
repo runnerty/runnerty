@@ -15,28 +15,28 @@ class FilePlan {
     this.config = config;
 
     return new Promise((resolve) => {
-        var _this = this;
-    this.loadFileContent(filePath)
-      .then((res) => {
-      _this.fileContent = res;
-      _this.getChains(res)
-        .then((chains) => {
-        new Plan('', chains, _this.config)
-          .then(function(plan){
-            _this.plan = plan;
-            _this.plan.planificateChains();
-            _this.startAutoRefreshBinBackup();
-            resolve(_this);
-        })
-        .catch(function(err){
-          logger.log('error','FilePlan new Plan: '+err);
-          resolve();
-        })
-    })
-  .catch(function(err){
-      logger.log('error','FilePlan loadFileContent getChains: '+err);
-      resolve();
-    });
+      var _this = this;
+      this.loadFileContent(filePath)
+        .then((res) => {
+        _this.fileContent = res;
+        _this.getChains(res)
+          .then((chains) => {
+          new Plan('', chains, _this.config)
+            .then(function(plan){
+              _this.plan = plan;
+              _this.plan.planificateChains();
+              _this.startAutoRefreshBinBackup();
+              resolve(_this);
+          })
+          .catch(function(err){
+            logger.log('error','FilePlan new Plan: '+err);
+            resolve();
+          })
+      })
+    .catch(function(err){
+        logger.log('error','FilePlan loadFileContent getChains: '+err);
+        resolve();
+      });
   })
   .catch(function(e){
       logger.log('error','File Plan, constructor:'+e)
@@ -156,7 +156,28 @@ class FilePlan {
     var _this = this;
     var plan = _this.plan;
 
-    var objStr = JSON.stringify(plan);
+    var objStr = {};//JSON.stringify(plan);
+
+    try {
+      objStr = JSON.stringify(plan);
+    } catch (e) {
+      if (e.message.indexOf('circular') !== -1) {
+        logger.log('warn',e);
+        logger.log('warn','Retrying stringify plan.');
+        try {
+          objStr = JSON.stringify(plan);
+        } catch (e) {
+          if (e.message.indexOf('circular') !== -1) {
+            logger.log('error',e);
+            logger.log('error',plan);
+            throw e;
+          }
+        }
+      }else{
+        throw e;
+      }
+    }
+
     var hashPlan = crypto.createHash('sha256').update(objStr).digest("hex");
 
     if(_this.lastHashPlan !== hashPlan){

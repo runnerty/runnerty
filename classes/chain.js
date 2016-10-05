@@ -336,6 +336,7 @@ class Chain {
                   .then(function(){
                     chain.startProcesses()
                       .then(function(res){
+                        //chain.end();
                         resolve();
                       })
                       .catch(function(e){
@@ -478,7 +479,7 @@ class Chain {
                             resolve();
                           })
                           .catch(function(e){
-                            logger.log('error','Error in startProcesses:'+e);
+                            logger.log('error','Error in startProcess:'+e);
                             resolve();
                           })
                       })
@@ -486,6 +487,8 @@ class Chain {
                         logger.log('error','Error in process.start: '+e);
 
                         if (proc.end_chain_on_fail){
+
+                          _this.end();
 
                           _this.setChainToInitState()
                             .then(function(){
@@ -622,7 +625,15 @@ class Chain {
             }
             */
           }else{
-            resolve();
+            if (chainStatus === 'end'){
+              _this.end();
+              resolve();
+            }else{
+              if (chainStatus === 'error'){
+                _this.error();
+                resolve();
+              }
+            }
           }
         })
         .catch(function(e){
