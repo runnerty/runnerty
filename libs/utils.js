@@ -3,6 +3,17 @@
 var winston         = require('winston');
 var fs              = require('fs');
 
+
+var logger = new (winston.Logger)({
+  transports: [
+    new (winston.transports.Console)({colorize: 'all', level: 'debug'}),
+    // new (winston.transports.File)({name: 'info-file', filename: 'filelog-info.log', level: 'info'}),
+    // new (winston.transports.File)({name: 'error-file',filename: 'filelog-error.log',level: 'error'}),
+  ]
+});
+
+module.exports.logger = logger;
+
 module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath){
   return new Promise((resolve) => {
       var filePath = configFilePath;
@@ -147,11 +158,3 @@ module.exports.replaceWith = function replaceWith(text, objParams, ignoreGlobalV
   }
   return text;
 }
-
-module.exports.logger = new (winston.Logger)({
-  transports: [
-    new (winston.transports.Console)({colorize: 'all', level: 'debug'}),
-    // new (winston.transports.File)({name: 'info-file', filename: 'filelog-info.log', level: 'info'}),
-    // new (winston.transports.File)({name: 'error-file',filename: 'filelog-error.log',level: 'error'}),
-  ]
-});
