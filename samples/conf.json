@@ -29,8 +29,8 @@
   "notificators_connections":[
     {"id":"slack_default",
       "type":"slack",
-      "token":"xoxb-4640839314-gTegKMTv7ZtWJdnFB8BIK879",
-      "bot_name":"runnerta",
+      "webhookurl":"https://hooks.slack.com/services/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",
+      "bot_name":"Runnerty-Sentinel",
       "bot_emoji": ":v:",
       "channel": "mlm"},
     {"id":"mail_default",
