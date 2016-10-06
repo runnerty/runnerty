@@ -7,6 +7,7 @@ var replaceWith       = require("../libs/utils.js").replaceWith;
 var spawn             = require("child_process").spawn;
 var mysql             = require("mysql");
 var pg                = require('pg'); //PostgreSQL
+var redis             = require('redis');
 var bytes             = require("bytes");
 var csv               = require("fast-csv");
 var fs                = require('fs');
@@ -245,6 +246,9 @@ class Process {
                   break;
                 case 'postgres':
                   resolve(_this.executePostgre());
+                  break;
+                case 'redis':
+                  resolve(_this.executeRedis());
                   break;
                 default:
                   logger.log('error',`DBConnection ${_this.exec.db_connection_id} type is not valid`);
@@ -621,13 +625,13 @@ class Process {
         }else{
           executeQuery(_this, configValues)
             .then((res) => {
-            _this.execute_return = '';
-            _this.execute_err_return = '';
-            _this.end();
-            _this.write_output();
-            resolve();
-          })
-          .catch(function(err){
+              _this.execute_return = '';
+              _this.execute_err_return = '';
+              _this.end();
+              _this.write_output();
+              resolve();
+            })
+            .catch(function(err){
               logger.log('error',`executePostgre executeQuery: ${err}`);
               _this.execute_err_return = `executePostgre executeQuery: ${err}`;
               _this.execute_return = '';
@@ -657,6 +661,120 @@ class Process {
     });
 
   }
+
+  executeRedis() {
+    var _this = this;
+
+    function commandFormat(query, values) {
+      if (!values) return query.replace(/(\:\/)/g,':');
+      else {
+        var _query = query.replace(/\:(\w+)/g, function (txt, key) {
+          return values && key && values.hasOwnProperty(key)
+            ? escape(replaceWith(values[key],_this.values()))
+            : null;
+        }.bind(this)).replace(/(\:\/)/g,':');
+      }
+      return _query;
+    };
+
+    function commandsFormat(commandsArr, args) {
+      var commands       = commandsArr[0];
+      var commandsLength = commands.length;
+      var result = [];
+
+      while(commandsLength--){
+        var cmd = commands[commandsLength];
+        var cmdLength = cmd.length;
+
+        var cmdFormat = [];
+        for(i = 0; i < cmdLength; i++){
+          var cmdItem = cmd[i];
+          cmdFormat.push(commandFormat(cmdItem, args));
+        }
+        result.push(cmdFormat);
+      }
+      return result;
+    };
+
+    function executeCommand(_this, configValues) {
+      return new Promise(function (resolve, reject) {
+
+        _this.execute_arg = _this.args;
+
+        var redisClient = redis.createClient(configValues.port, configValues.host, configValues.options), multi;
+        redisClient.auth(configValues.password);
+
+        redisClient.on("error", function (err) {
+          logger.log('error', `Could not connect to Redis: ` + err);
+          reject(err);
+        });
+
+        redisClient.on("ready", function () {
+
+          var finalCommands = commandsFormat(_this.exec.command, _this.execute_arg);
+          var commands = finalCommands;
+          console.log('[] REDIS - commands:',commands);
+
+          redisClient
+            .multi(commands)
+            .exec(function (err, replies) {
+              if (err) {
+                logger.log('error', `Error query Redis (${finalCommands}): ` + err);
+                reject(`Error query Redis (${finalCommands}): ` + err);
+              } else {
+                console.log('replies:',replies);
+                resolve(replies);
+              }
+            });
+
+        });
+
+      });
+    };
+
+    return new Promise(function(resolve, reject) {
+
+      if(_this.exec.db_connection_id){
+        _this.loadDbConfig()
+          .then((configValues) => {
+            if(_this.exec.command){
+
+              executeCommand(_this, configValues)
+                .then((res) => {
+                  _this.execute_return = '';
+                  _this.execute_err_return = '';
+                  _this.end();
+                  _this.write_output();
+                  resolve();
+                })
+                .catch(function(err){
+                  logger.log('error',`executeRedis executeCommand: ${err}`);
+                  _this.execute_err_return = `executeRedis executeCommand: ${err}`;
+                  _this.execute_return = '';
+                  _this.error();
+                  _this.write_output();
+                  reject(_this, err);
+                });
+
+            }else{
+              logger.log('error',`executeRedis: command not set for ${_this.id}`);
+              _this.execute_err_return = `executeRedis: command not set for ${_this.id}`;
+              _this.execute_return = '';
+              _this.error();
+              _this.write_output();
+              reject(_this, `executeRedis: command not set for ${_this.id}`);
+            }
+          });
+      }else{
+        logger.log('error',`executeRedis: db_connection_id not set for ${_this.id}`);
+        _this.execute_err_return = `executeRedis: db_connection_id not set for ${_this.id}`;
+        _this.execute_return = '';
+        _this.error();
+        _this.write_output();
+        reject(_this, `executeRedis: db_connection_id not set for ${_this.id}`);
+      }
+    });
+  };
 
   write_output(){
     var _this = this;
