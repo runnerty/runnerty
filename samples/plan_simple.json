@@ -43,7 +43,6 @@
           "on_start":{
             "notifications":[
               {
-                "type":"slack",
                 "id":"slack_default",
                 "bot_emoji": ":rabbit2:",
                 "channel": "mlm",
@@ -54,7 +53,6 @@
           "on_fail":{
             "notifications":[
               {
-                "type":"slack",
                 "id":"slack_default",
                 "bot_emoji": ":see_no_evil:",
                 "channel": "mlm",
@@ -66,7 +64,6 @@
           "on_end":{
             "notifications":[
               {
-                "type":"slack",
                 "id":"slack_default",
                 "bot_emoji": ":rabbit2:",
                 "channel": "mlm",
@@ -95,7 +92,6 @@
         "on_start":{
           "notifications":[
             {
-              "type":"slack",
               "id":"slack_default",
               "bot_emoji": ":rabbit2:",
               "channel": "mlm",
@@ -106,7 +102,6 @@
         "on_fail":{
           "notifications":[
             {
-              "type":"slack",
               "id":"slack_default",
               "bot_emoji": ":see_no_evil:",
               "channel": "mlm",
@@ -118,7 +113,6 @@
         "on_end":{
           "notifications":[
             {
-              "type":"slack",
               "id":"slack_default",
               "bot_emoji": ":see_no_evil:",
               "channel": "mlm",
