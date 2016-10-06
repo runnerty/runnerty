@@ -33,12 +33,14 @@ function slackSender(){
         resolve();
       });
   }else{
+    //If not exists on pendings array try every second:
     setTimeout(function(){
       slackSender();
     },1000)
   }
 };
 
+//Init try send slack messages if exists on pendings array
 slackSender();
 
 class slackNotificator extends Notification{
