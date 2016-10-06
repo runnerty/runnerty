@@ -84,9 +84,9 @@ module.exports.loadSQLFile = function loadSQLFile(filePath){
 });
 };
 
-module.exports.replaceWith = function replaceWith(text, objParams){
+module.exports.replaceWith = function replaceWith(text, objParams, ignoreGlobalValues){
 
-  if(global.config.global_values){
+  if(global.config.global_values && !ignoreGlobalValues){
 
     var gvl =  global.config.global_values.length;
     var gv = {};
@@ -99,7 +99,9 @@ module.exports.replaceWith = function replaceWith(text, objParams){
 
       while(keysValueObjectsLength--){
         var valueKey = keysValueObjects[keysValueObjectsLength];
-        gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = global.config.global_values[gvl][keymaster][valueKey];
+        var value = global.config.global_values[gvl][keymaster][valueKey];
+        value = replaceWith(value, objParams, true);
+        gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
       }
     }
     objParams = Object.assign(objParams, gv);

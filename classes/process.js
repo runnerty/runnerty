@@ -151,7 +151,6 @@ class Process {
             while(notificationsLength--){
               _this.events[event].notifications[notificationsLength].notificate(_this.values())
                 .then(function(res){
-                  logger.log('debug','Notification process sended: '+res)
                 })
                 .catch(function(e){
                   logger.log('error',`Notificating ${event} process ${_this.id}:`+e)
