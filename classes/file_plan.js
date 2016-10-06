@@ -7,12 +7,11 @@ var Plan   = require("./plan.js");
 
 
 class FilePlan {
-  constructor(filePath, config){
+  constructor(filePath){
     this.filePath = filePath;
     this.fileContent;
     this.lastHashPlan;
     this.plan;
-    this.config = config;
 
     return new Promise((resolve) => {
       var _this = this;
@@ -21,7 +20,7 @@ class FilePlan {
         _this.fileContent = res;
         _this.getChains(res)
           .then((chains) => {
-          new Plan('', chains, _this.config)
+          new Plan('', chains)
             .then(function(plan){
               _this.plan = plan;
               _this.plan.planificateChains();
@@ -183,7 +182,7 @@ class FilePlan {
     if(_this.lastHashPlan !== hashPlan){
       _this.lastHashPlan = hashPlan;
       logger.log('debug','> REFRESING hashPlan:',hashPlan);
-      fs.writeFileSync(_this.config.general.binBackup, objStr, null);
+      fs.writeFileSync(global.config.general.binBackup, objStr, null);
     }
   }
 
@@ -191,7 +190,7 @@ class FilePlan {
     var _this = this;
     setTimeout(function(){
       _this.refreshBinBackup();
-    }, _this.config.general.refreshIntervalBinBackup);
+    }, global.config.general.refreshIntervalBinBackup);
   }
 
 };

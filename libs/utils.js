@@ -28,7 +28,6 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath){
               throw new Error('Invalid Config file, general not found.', objConf);
               resolve();
             }
-
           }
         });
       } catch (e) {

@@ -8,7 +8,7 @@ var Process  = require("./process.js");
 var Event    = require("./event.js");
 
 class Chain {
-  constructor(id, name, iterable, input, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, events_iterations, processes, status, started_at, ended_at, config) {
+  constructor(id, name, iterable, input, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, events_iterations, processes, status, started_at, ended_at) {
     this.id = id;
     this.name = name;
     this.iterable = iterable;
@@ -20,7 +20,6 @@ class Chain {
     this.depends_chains_alt = depends_chains_alt;
     this.events;
     this.events_iterations = events_iterations;
-    this.config = config;
 
     this.status = status || "stop";
     this.started_at = started_at;
@@ -110,7 +109,6 @@ class Chain {
           process.ended_at,
           process.output,
           process.output_iterable,
-          _this.config,
           _this.values())
           .then(function(res) {
             resolve(res);
@@ -136,8 +134,7 @@ class Chain {
           if(event.hasOwnProperty('notifications')){
             processEventsPromises.push(new Event(keys[keysLength],
               event.process,
-              event.notifications,
-              _this.config
+              event.notifications
             ));
           }else{
             logger.log('debug',`Chain ${_this.id} Events without procces and notifications`);
@@ -254,7 +251,6 @@ class Chain {
             while(notificationsLength--){
               _this.events[event].notifications[notificationsLength].notificate(_this.values())
                 .then(function(res){
-                  logger.log('debug','Notification chain sended: '+res)
                 })
                 .catch(function(e){
                   logger.log('error','Notification chain sended: '+e)

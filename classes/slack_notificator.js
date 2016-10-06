@@ -7,14 +7,13 @@ var Notification    = require("./notification.js");
 
 
 class slackNotificator extends Notification{
-  constructor(type, id, token, bot_name, bot_emoji, message, channel, recipients, config){
-    super('slack', id, null, message, recipients, null, null, config);
+  constructor(type, id, token, bot_name, bot_emoji, message, channel, recipients){
+    super('slack', id, null, message, recipients, null, null);
 
     this.token = token;
     this.bot_name = bot_name;
     this.bot_emoji = bot_emoji;
     this.channel = channel;
-    this.config = config;
 
     return new Promise((resolve) => {
         resolve(this);

@@ -80,10 +80,8 @@ function sendMail(mail, callback){
 };
 
 class mailNotificator extends Notification{
-  constructor(type, id, title, message, recipients, recipients_cc, recipients_cco, config){
-    super('mail', id, title, message, recipients, recipients_cc, recipients_cco, config);
-
-    this.config = config;
+  constructor(type, id, title, message, recipients, recipients_cc, recipients_cco){
+    super('mail', id, title, message, recipients, recipients_cc, recipients_cco);
 
     return new Promise((resolve) => {
         resolve(this);

@@ -4,7 +4,7 @@ var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var logger            = require("../libs/utils.js").logger;
 
 class Notification {
-  constructor(type, id, title, message, recipients, recipients_cc, recipients_cco, config) {
+  constructor(type, id, title, message, recipients, recipients_cc, recipients_cco) {
     this.type = type;
     this.id = id;
     this.title = title;
@@ -12,7 +12,6 @@ class Notification {
     this.recipients = recipients;
     this.recipients_cc = recipients_cc;
     this.recipients_cco = recipients_cco;
-    this.config         = config;
   }
 
   notificate(){
@@ -21,7 +20,7 @@ class Notification {
 
   loadConfig(){
     var _this = this;
-    return loadConfigSection(_this.config, 'notificators_connections', _this.id);
+    return loadConfigSection(global.config, 'notificators_connections', _this.id);
   }
 
 

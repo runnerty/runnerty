@@ -7,9 +7,8 @@ var Chain    = require("./chain.js");
 
 
 class Plan{
-  constructor(version, chains, config){
+  constructor(version, chains){
     this.version = version;
-    this.config = config;
     this.chains;
     return new Promise((resolve) => {
       this.loadChains(chains)
@@ -85,8 +84,7 @@ class Plan{
           chain.processes,
           chain.status,
           chain.started_at,
-          chain.ended_at,
-          this.config)
+          chain.ended_at)
           .then(function(res) {
             // console.log(res);
             resolve(res);

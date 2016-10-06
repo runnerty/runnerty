@@ -14,7 +14,7 @@ var fs                = require('fs');
 var Event = require("./event.js");
 
 class Process {
-  constructor(id, name, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, config, chain_values){
+  constructor(id, name, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, chain_values){
     this.id = id;
     this.name = name;
     this.depends_process = depends_process;
@@ -30,7 +30,6 @@ class Process {
     this.output_iterable = output_iterable;
 
     //Runtime attributes:
-    this.config = config;
     this.status = status || "stop";
     this.execute_return = execute_return;
     this.execute_err_return = execute_err_return;
@@ -103,8 +102,7 @@ class Process {
             if(event.hasOwnProperty('notifications')){
               processEventsPromises.push(new Event(keys[keysLength],
                 event.process,
-                event.notifications,
-                _this.config
+                event.notifications
               ));
             }else{
               logger.log('debug','Process Events without notifications');
@@ -138,7 +136,7 @@ class Process {
   loadDbConfig(){
     var _this = this;
 
-    return loadConfigSection(_this.config, 'db_connections', _this.exec.db_connection_id);
+    return loadConfigSection(global.config, 'db_connections', _this.exec.db_connection_id);
   }
 
   notificate(event){
