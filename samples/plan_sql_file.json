@@ -30,7 +30,7 @@
       "id":"PROCESS_SQL_FILE",
       "name":"Concatenador de CSVs",
       "depends_process":[],
-      "exec":{"command":"SELECT * FROM TABLA WHERE ID= :pop", "db_connection_id":"mysql_default"},
+      "exec":{"file_name":"/etc/runnerty/query.sql", "db_connection_id":"mysql_default"},
       "args": {"idg":"3", "pop":":PROCESS_ID"},
       "retries":0,
       "retry_delay":0,
