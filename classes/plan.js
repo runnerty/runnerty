@@ -285,37 +285,7 @@ class Plan{
                           chain.setChainToInitState();
                           chain.end();
                         });
-
                     });
-
-                  //Serie:
-                  /*
-                  function execSerie(input) {
-                    var sequence = Promise.resolve();
-                    input.forEach(function(item) {
-                      sequence = sequence.then(function() {
-                        return chain.start(item)
-                          .then(function() {
-                            chain.end();
-                            chain.setChainToInitState();
-                          })
-                          .catch(function(e){
-                            logger.log('error','Error '+e)
-                          });
-                      });
-                    });
-                    return sequence;
-                  }
-
-
-                  execSerie(inputIterable)
-                    .then(function() {
-                      chain.setChainToInitState();
-                      chain.end();
-                      console.log('>> FIN DE execSerie !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-                    });
-                  */
-
                 }
               }else{
                 logger.log('error','Error input not found for iterable process'+e);
