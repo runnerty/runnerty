@@ -3,8 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./app.js",
-    "install": "npm install"
+    "start": "node ./app.js"
   },
   "dependencies": {
     "anymatch": "^1.3.0",
