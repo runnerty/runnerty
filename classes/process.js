@@ -2,14 +2,14 @@
 
 var logger            = require("../libs/utils.js").logger;
 var loadConfigSection = require("../libs/utils.js").loadConfigSection;
-var loadSQLFile       = require("../libs/utils.js").loadSQLFile;
 var replaceWith       = require("../libs/utils.js").replaceWith;
-var spawn             = require("child_process").spawn;
-var mysql             = require("mysql");
-var pg                = require('pg'); //PostgreSQL
-var redis             = require('redis');
+
+var mysqlExecutor     = require("../libs/mysqlExecutor.js");
+var postgresExecutor  = require("../libs/postgresExecutor.js");
+var redisExecutor     = require("../libs/redisExecutor.js");
+var shellExecutor     = require("../libs/shellExecutor.js");
+
 var bytes             = require("bytes");
-var csv               = require("fast-csv");
 var fs                = require('fs');
 
 var Event = require("./event.js");
@@ -43,14 +43,14 @@ class Process {
     return new Promise((resolve) => {
       this.loadEvents(events)
       .then((events) => {
-      this.events = events;
-    resolve(this);
-  })
-  .catch(function(e){
-      logger.log('error','Process constructor loadEvents:'+e);
-      resolve(this);
+        this.events = events;
+        resolve(this);
+      })
+      .catch(function(e){
+        logger.log('error','Process constructor loadEvents:'+e);
+        resolve(this);
+      });
     });
-  });
 
   }
 
@@ -234,7 +234,7 @@ class Process {
     return new Promise(function(resolve, reject) {
 
       if(typeof _this.exec === 'string' || !_this.exec.db_connection_id){
-        resolve(_this.executeCommand(_this.exec.command));
+        resolve(shellExecutor.exec(_this));
       }else {
 
         _this.loadDbConfig()
@@ -242,13 +242,13 @@ class Process {
             if(configValues.type){
               switch (configValues.type) {
                 case 'mysql':
-                  resolve(_this.executeMysql());
+                  resolve(mysqlExecutor.exec(_this));
                   break;
                 case 'postgres':
-                  resolve(_this.executePostgre());
+                  resolve(postgresExecutor.exec(_this));
                   break;
                 case 'redis':
-                  resolve(_this.executeRedis());
+                  resolve(redisExecutor.exec(_this));
                   break;
                 default:
                   logger.log('error',`DBConnection ${_this.exec.db_connection_id} type is not valid`);
@@ -268,513 +268,17 @@ class Process {
               reject(_this, `DBConnection ${_this.exec.db_connection_id} doesn't have type`);
             }
       })
-      }
-
-    });
-  }
-
-  executeCommand(cmd){
-    var _this = this;
-    return new Promise(function(resolve, reject) {
-      var stdout = '';
-      var stderr = '';
-
-      function repArg(arg){
-        return replaceWith(arg, _this.values());
-      }
-      _this.execute_args = _this.args.map(repArg);
-
-      _this.proc = spawn(cmd, _this.execute_args, { shell:true });
-
-      _this.proc.stdout.on('data', function(chunk) {
-        stdout += chunk;
-      });
-      _this.proc.stderr.on('data', function(chunk) {
-        stderr += chunk;
-      });
-      _this.proc
-        .on('error', function(){
-          //reject();
-        })
-        .on('close', function(code) {
-          if (code === 0) {
-            _this.execute_return = stdout;
-            _this.execute_err_return = stderr;
-            _this.end();
-            _this.write_output();
-            resolve(stdout);
-          } else {
-            logger.log('error',_this.id+' FIN: '+code+' - '+stdout+' - '+stderr);
-
-            _this.execute_return = stdout;
-            _this.execute_err_return = stderr;
-            _this.retries_count = _this.retries_count +1 || 1;
-            _this.error();
-            _this.write_output();
-
-            if(_this.retries >= _this.retries_count && !forceOnceInRetry){
-
-              _this.retry();
-
-              setTimeout(function(){
-                _this.start(true)
-                  .then(function(res) {
-                    _this.retries_count = 0;
-                    resolve(res);
-                  })
-                  .catch(function(e){
-                    logger.log('error','Retrying process:'+e)
-                    resolve(e);
-                  });
-              }, _this.retry_delay * 1000 || 0);
-
-            }else{
-              if (_this.end_on_fail){
-                _this.end();
-                _this.write_output();
-              }
-              reject(_this, stderr);
-            }
-          }
-        });
-    });
-  }
-
-  executeMysql(){
-    var _this = this;
-
-    function executeQuery(_this, configValues){
-
-      return new Promise(function(resolve, reject) {
-
-        _this.execute_arg = _this.args
-
-        var connection = mysql.createConnection({
-          host: configValues.host,
-          user: configValues.user,
-          password: configValues.password,
-          database: configValues.database,
-          socketPath: configValues.socketPath,
-          port: configValues.port,
-          ssl: configValues.ssl,
-          queryFormat: function (query, values) {
-            if (!values) return query.replace(/(\:\/)/g, ':');
-            else {
-              var _query = query.replace(/\:(\w+)/g, function (txt, key) {
-                return values && key && values.hasOwnProperty(key)
-                  ? this.escape(replaceWith(values[key], _this.values()))
-                  : null;
-              }.bind(this)).replace(/(\:\/)/g, ':');
-            }
-            return _query;
-          }
-        });
-
-        connection.connect(function (err) {
-          if (err) {
-            logger.log('error', 'Error connecting Mysql: ' + err)
-            _this.execute_return = '';
-            _this.execute_err_return = 'Error connecting Mysql: ' + err;
-            _this.retries_count = _this.retries_count +1 || 1;
-            reject(err);
-          } else {
-
-            connection.query(_this.exec.command, _this.execute_arg, function (err, results) {
-              if (err) {
-                logger.log('error', `executeMysql query ${_this.exec.command}: ${err}`);
-                _this.execute_err_return = `executeMysql query ${_this.exec.command}: ${err}`;
-                reject(err);
-              } else {
-
-                if (results instanceof Array) {
-
-                  _this.execute_db_results = JSON.stringify(results);
-                  csv.writeToString(results, {headers: true}, function (err, data) {
-                    if (err) {
-                      logger.log('error', `Generating csv output for execute_db_results_csv. id: ${_this.id}: ${err}. Results: ${results}`);
-                    } else {
-                      _this.execute_db_results_csv = data;
-                    }
-                    resolve();
-                  });
-
-                } else {
-
-                  if (results instanceof Object) {
-                    _this.execute_db_results = '';
-                    _this.execute_db_results_csv = '';
-                    _this.execute_db_fieldCount = results.fieldCount;
-                    _this.execute_db_affectedRows = results.affectedRows;
-                    _this.execute_db_changedRows = results.changedRows;
-                    _this.execute_db_insertId = results.insertId;
-                    _this.execute_db_warningCount = results.warningCount;
-                    _this.execute_db_message = results.message;
-                  }
-                  resolve();
-                }
-              }
-            });
-            connection.end();
-          }
-        });
-      });
-    }
-
-    return new Promise(function(resolve, reject) {
-
-      if(_this.exec.db_connection_id){
-        _this.loadDbConfig()
-          .then((configValues) => {
-            if(!_this.exec.command){
-              if(!_this.exec.file_name){
-                logger.log('error',`executeMysql dont have command or file_name`);
-                _this.execute_err_return = `executeMysql dont have command or file_name`;
-                _this.execute_return = '';
-                _this.error();
-                _this.write_output();
-                reject(`executeMysql dont have command or file_name`);
-              }else{
-                loadSQLFile(_this.exec.file_name)
-                  .then((fileContent) => {
-                    _this.exec.command = fileContent;
-                    executeQuery(_this, configValues)
-                      .then((res) => {
-                      _this.execute_return = '';
-                      _this.execute_err_return = '';
-                      _this.end();
-                      _this.write_output();
-                      resolve();
-                    })
-                    .catch(function(err){
-                        logger.log('error',`executeMysql executeQuery from file: ${err}`);
-                        _this.execute_err_return = `executeMysql executeQuery from file: ${err}`;
-                        _this.execute_return = '';
-                        _this.error();
-                        _this.write_output();
-                        reject(_this, err);
-                      });
-                  })
-                  .catch(function(err){
-                    logger.log('error',`executeMysql loadSQLFile: ${err}`);
-                    _this.execute_err_return = `executeMysql loadSQLFile: ${err}`;
-                    _this.execute_return = '';
-                    _this.error();
-                    _this.write_output();
-                    reject(_this, err);
-                   });
-              }
-            }else{
-              executeQuery(_this, configValues)
-                .then((res) => {
-                _this.execute_return = '';
-                _this.execute_err_return = '';
-                _this.end();
-                _this.write_output();
-                resolve();
-              })
-              .catch(function(err){
-                  logger.log('error',`executeMysql executeQuery: ${err}`);
-                  _this.execute_err_return = `executeMysql executeQuery: ${err}`;
-                  _this.execute_return = '';
-                  _this.error();
-                  _this.write_output();
-                  reject(_this, err);
-                });
-            }
-      })
       .catch(function(err){
-          logger.log('error',`executeMysql loadDbConfig: ${err}`);
-          _this.execute_err_return = `executeMysql loadDbConfig: ${err}`;
+          logger.log('error',`Procces start loadDbConfig: ${err}`);
+          _this.execute_err_return = `Procces start loadDbConfig: ${err}`;
           _this.execute_return = '';
           _this.error();
           _this.write_output();
           reject(_this, err);
         });
-
-      }else{
-        logger.log('error',`db_connection_id not set for ${_this.id}`);
-        _this.execute_err_return = `db_connection_id not set for ${_this.id}`;
-        _this.execute_return = '';
-        _this.error();
-        _this.write_output();
-        reject(_this);
       }
     });
   }
-
-  executePostgre(){
-    var _this = this;
-
-    function queryFormat(query, values) {
-      if (!values) return query.replace(/(\:\/)/g,':');
-      else {
-        var _query = query.replace(/\:(\w+)/g, function (txt, key) {
-          return values && key && values.hasOwnProperty(key)
-            ? escape(replaceWith(values[key],_this.values()))
-            : null;
-        }.bind(this)).replace(/(\:\/)/g,':');
-      }
-      return _query;
-    }
-
-    function executeQuery(_this, configValues){
-      return new Promise(function(resolve, reject) {
-
-        _this.execute_arg = _this.args
-
-        var client = new pg.Client({
-          user     : configValues.user,
-          password : configValues.password,
-          database : configValues.database,
-          host     : configValues.host || configValues.socketPath,
-          port     : configValues.port
-        });
-        client.connect(function(err) {
-          if(err) {
-            logger.log('error',`Could not connect to Postgre: `+err);
-
-            reject(err);
-          }else{
-            var finalQuery = queryFormat(_this.exec.command, _this.execute_arg);
-
-            client.query(finalQuery, null, function(err, results){
-              if(err){
-                logger.log('error',`Error query Postgre (${finalQuery}): `+err);
-
-                reject(`Error query Postgre (${finalQuery}): `+err);
-              }else{
-                if(results.hasOwnProperty('rows') && results.rows.length > 0){
-
-                  _this.execute_db_results = JSON.stringify(results.rows);
-                  csv.writeToString(results.rows, {headers: true}, function(err, data){
-                    if(err){
-                      logger.log('error',`Generating csv output for execute_db_results_csv. id: ${_this.id}: ${err}. Results: ${results}`);
-                    }else{
-                      _this.execute_db_results_csv = data;
-                    }
-
-                    resolve();
-                  });
-
-                }else{
-
-                  if(results instanceof Object){
-                    _this.execute_db_results      = '';
-                    _this.execute_db_results_csv  = '';
-                    _this.execute_db_fieldCount   = results.rowCount;
-                    _this.execute_db_affectedRows = '';
-                    _this.execute_db_changedRows  = '';
-                    _this.execute_db_insertId     = results.oid;
-                    _this.execute_db_warningCount = '';
-                    _this.execute_db_message      = '';
-                  }
-
-                  resolve();
-                }
-              }
-              client.end();
-            })
-          }
-        });
-      });
-    }
-
-    return new Promise(function(resolve, reject) {
-
-      if(_this.exec.db_connection_id){
-        _this.loadDbConfig()
-          .then((configValues) => {
-          if(!_this.exec.command){
-            if(!_this.exec.file_name){
-              logger.log('error',`executePostgre dont have command or file_name`);
-              _this.execute_err_return = `executePostgre dont have command or file_name`;
-              _this.execute_return = '';
-              _this.error();
-              _this.write_output();
-              reject(_this, `executePostgre dont have command or file_name`);
-            }else{
-              loadSQLFile(_this.exec.file_name)
-                .then((fileContent) => {
-                  _this.exec.command = fileContent;
-                  executeQuery(_this, configValues)
-                    .then((res) => {
-                      _this.execute_return = '';
-                      _this.execute_err_return = '';
-                      _this.end();
-                      _this.write_output();
-                      resolve();
-                    })
-                    .catch(function(err){
-                        logger.log('error',`executePostgre executeQuery from file: ${err}`);
-                        _this.execute_err_return = `executePostgre executeQuery from file: ${err}`;
-                        _this.execute_return = '';
-                        _this.error();
-                        _this.write_output();
-                        reject(_this, err);
-                      });
-                })
-                .catch(function(err){
-                    logger.log('error',`executePostgre loadSQLFile: ${err}`);
-                    _this.execute_err_return = `executePostgre loadSQLFile: ${err}`;
-                    _this.execute_return = '';
-                    _this.error();
-                    _this.write_output();
-                    reject(_this, err);
-                  });
-            }
-        }else{
-          executeQuery(_this, configValues)
-            .then((res) => {
-              _this.execute_return = '';
-              _this.execute_err_return = '';
-              _this.end();
-              _this.write_output();
-              resolve();
-            })
-            .catch(function(err){
-              logger.log('error',`executePostgre executeQuery: ${err}`);
-              _this.execute_err_return = `executePostgre executeQuery: ${err}`;
-              _this.execute_return = '';
-              _this.error();
-              _this.write_output();
-              reject(_this, err);
-            });
-        }
-      })
-      .catch(function(err){
-          logger.log('error',`executePostgre loadDbConfig: ${err}`);
-          _this.execute_err_return = `executePostgre loadDbConfig: ${err}`;
-          _this.execute_return = '';
-          _this.error();
-          _this.write_output();
-          reject(_this, err);
-        });
-
-      }else{
-        logger.log('error',`executePostgre: db_connection_id not set for ${_this.id}`);
-        _this.execute_err_return = `executePostgre: db_connection_id not set for ${_this.id}`;
-        _this.execute_return = '';
-        _this.error();
-        _this.write_output();
-        reject(_this, `executePostgre: db_connection_id not set for ${_this.id}`);
-      }
-    });
-
-  }
-
-  executeRedis() {
-    var _this = this;
-
-    function commandFormat(query, values) {
-      if (!values) return query.replace(/(\:\/)/g,':');
-      else {
-        var _query = query.replace(/\:(\w+)/g, function (txt, key) {
-          return values && key && values.hasOwnProperty(key)
-            ? escape(replaceWith(values[key],_this.values()))
-            : null;
-        }.bind(this)).replace(/(\:\/)/g,':');
-      }
-      return _query;
-    };
-
-    function commandsFormat(commandsArr, args) {
-      var commands       = commandsArr[0];
-      var commandsLength = commands.length;
-      var result = [];
-
-      while(commandsLength--){
-        var cmd = commands[commandsLength];
-        var cmdLength = cmd.length;
-
-        var cmdFormat = [];
-        for(i = 0; i < cmdLength; i++){
-          var cmdItem = cmd[i];
-          cmdFormat.push(commandFormat(cmdItem, args));
-        }
-        result.push(cmdFormat);
-      }
-      return result;
-    };
-
-    function executeCommand(_this, configValues) {
-      return new Promise(function (resolve, reject) {
-
-        _this.execute_arg = _this.args;
-
-        var redisClient = redis.createClient(configValues.port, configValues.host, configValues.options), multi;
-        redisClient.auth(configValues.password);
-
-        redisClient.on("error", function (err) {
-          logger.log('error', `Could not connect to Redis: ` + err);
-          reject(err);
-        });
-
-        redisClient.on("ready", function () {
-
-          var finalCommands = commandsFormat(_this.exec.command, _this.execute_arg);
-          var commands = finalCommands;
-          console.log('[] REDIS - commands:',commands);
-
-          redisClient
-            .multi(commands)
-            .exec(function (err, replies) {
-              if (err) {
-                logger.log('error', `Error query Redis (${finalCommands}): ` + err);
-                reject(`Error query Redis (${finalCommands}): ` + err);
-              } else {
-                console.log('replies:',replies);
-                resolve(replies);
-              }
-            });
-
-        });
-
-      });
-    };
-
-    return new Promise(function(resolve, reject) {
-
-      if(_this.exec.db_connection_id){
-        _this.loadDbConfig()
-          .then((configValues) => {
-            if(_this.exec.command){
-
-              executeCommand(_this, configValues)
-                .then((res) => {
-                  _this.execute_return = '';
-                  _this.execute_err_return = '';
-                  _this.end();
-                  _this.write_output();
-                  resolve();
-                })
-                .catch(function(err){
-                  logger.log('error',`executeRedis executeCommand: ${err}`);
-                  _this.execute_err_return = `executeRedis executeCommand: ${err}`;
-                  _this.execute_return = '';
-                  _this.error();
-                  _this.write_output();
-                  reject(_this, err);
-                });
-
-            }else{
-              logger.log('error',`executeRedis: command not set for ${_this.id}`);
-              _this.execute_err_return = `executeRedis: command not set for ${_this.id}`;
-              _this.execute_return = '';
-              _this.error();
-              _this.write_output();
-              reject(_this, `executeRedis: command not set for ${_this.id}`);
-            }
-          });
-      }else{
-        logger.log('error',`executeRedis: db_connection_id not set for ${_this.id}`);
-        _this.execute_err_return = `executeRedis: db_connection_id not set for ${_this.id}`;
-        _this.execute_return = '';
-        _this.error();
-        _this.write_output();
-        reject(_this, `executeRedis: db_connection_id not set for ${_this.id}`);
-      }
-    });
-  };
 
   write_output(){
     var _this = this;
