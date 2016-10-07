@@ -83,3 +83,12 @@ Examples:
 "concat", true indicate that output have to append to actual content of file and false that content overwrite content.
 "max_size", set max size of file and content will be truncated from the beginning. Supported units and abbreviations are as follows and are case-insensitive: "b" for bytes, "kb" for kilobytes, "mb" for megabytes, "gb" for gigabytes, "tb" for terabytes. Exmaples: "10gb", "500mb"
 "write", array for set a serie of values to write in file. Any element will be writen in a new line. Example: "write":["[*] EXECUTION :DD-:MM-:YY :HH::mm::ss",":PROCESS_EXECUTE_ERR_RETURN",":PROCESS_EXECUTE_RETURN"]
+
+*  ["redis executor"]
+Examples:
+```json
+"exec":{"command":["KEYS","*"], "db_connection_id":"redis_default"}
+
+"_exec":{"command":[["SET",":PKARG","SAMPLE TEXT"],["KEYS","*"],["GET",":PKARG"]], "db_connection_id":"redis_default"},
+"args":{"PKARG":"VALUE SAMPLE"},
+``` 
