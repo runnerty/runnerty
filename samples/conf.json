@@ -1,55 +1,92 @@
-{"config":{
-  "general":{ "binBackup":"/tmp/bin.json",
-    "planFilePath":"/etc/runnerty/plan.json",
-    "refreshIntervalBinBackup":2000,
-    "api":{"port":3456,
-      "users":[{"user":"coderty", "password":"runnerty"},{"user":"usr_test", "password":"pass_test"}],
-      "secret":"RUNNERTY_BY_CODERTY",
-      "limite_req":"20mb",
-      "propertiesExcludesInResponse":["proc","scheduleCancel","scheduleRepeater","file_watchers","depends_files_ready"]
-    }
-  },
-  "db_connections":[
-    {"id":"mysql_default",
-    "type":"mysql",
-    "user":"root",
-    "password":"nesoca..mysql",
-    "database":"CORE",
-    "host":"devintranetdb.c47prwzsptxu.eu-west-1.rds.amazonaws.com",
-    "port":"3306"
+{
+  "config": {
+    "general": {
+      "binBackup": "/tmp/bin.json",
+      "planFilePath": "/etc/runnerty/plan.json",
+      "refreshIntervalBinBackup": 2000,
+      "api": {
+        "port": 3456,
+        "users": [
+          {
+            "user": "coderty",
+            "password": "runnerty"
+          },
+          {
+            "user": "usr_test",
+            "password": "pass_test"
+          }
+        ],
+        "secret": "RUNNERTY_BY_CODERTY",
+        "limite_req": "20mb",
+        "propertiesExcludesInResponse": [
+          "proc",
+          "scheduleCancel",
+          "scheduleRepeater",
+          "file_watchers",
+          "depends_files_ready"
+        ]
+      }
     },
-    {"id":"postgres_default",
-      "type":"postgres",
-      "user":"postgres",
-      "password":"test",
-      "database":"postgres",
-      "host":"localhost",
-      "port":"5432",
-      "protocol":"TPC"
-    },
-    {"id":"redis_default",
-      "type":"redis",
-      "host":"redishost",
-      "port":"6379",
-      "password":"redis",
-      "options":{}
-    }],
-  "notificators_connections":[
-    {"id":"slack_default",
-      "type":"slack",
-      "webhookurl":"https://hooks.slack.com/services/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",
-      "bot_name":"Runnerty-Sentinel",
-      "bot_emoji": ":v:",
-      "channel": "mlm"},
-    {"id":"mail_default",
-      "type":"mail",
-      "disable":false,
-      "from":"Runnerty <desawc@gmail.com>",
-      "transport": "smtps://desawc%40gmail.com:nesoca..gmail@smtp.gmail.com/?pool=true",
-      "templateDir": "/etc/runnerty/templates",
-      "template": "alerts"}
-  ],
-  "global_values":[{"myparams":{"host":"coderty.com","port":"5123"}},
-                   {"myothersparams":{"host":"google.com"}}]
-}
+    "db_connections": [
+      {
+        "id": "mysql_default",
+        "type": "mysql",
+        "user": "root",
+        "password": "nesoca..mysql",
+        "database": "CORE",
+        "host": "devintranetdb.c47prwzsptxu.eu-west-1.rds.amazonaws.com",
+        "port": "3306"
+      },
+      {
+        "id": "postgres_default",
+        "type": "postgres",
+        "user": "postgres",
+        "password": "test",
+        "database": "postgres",
+        "host": "localhost",
+        "port": "5432",
+        "protocol": "TPC"
+      },
+      {
+        "id": "redis_default",
+        "type": "redis",
+        "host": "redishost",
+        "port": "6379",
+        "password": "redis",
+        "options": {}
+      }
+    ],
+    "notificators_connections": [
+      {
+        "id": "slack_default",
+        "type": "slack",
+        "webhookurl": "https://hooks.slack.com/services/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",
+        "bot_name": "Runnerty-Sentinel",
+        "bot_emoji": ":v:",
+        "channel": "mlm"
+      },
+      {
+        "id": "mail_default",
+        "type": "mail",
+        "disable": false,
+        "from": "Runnerty <desawc@gmail.com>",
+        "transport": "smtps://desawc%40gmail.com:nesoca..gmail@smtp.gmail.com/?pool=true",
+        "templateDir": "/etc/runnerty/templates",
+        "template": "alerts"
+      }
+    ],
+    "global_values": [
+      {
+        "myparams": {
+          "host": "coderty.com",
+          "port": "5123"
+        }
+      },
+      {
+        "myothersparams": {
+          "host": "google.com"
+        }
+      }
+    ]
+  }
 }

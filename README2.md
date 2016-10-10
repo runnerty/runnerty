@@ -137,17 +137,6 @@ Ejemplo de plan:
 }
 ```
 
-#### Valores globales
-```
-YY
-YYYY
-MM
-DD
-HH
-mm
-ss
-```
-
 ### Chain (Cadena)
 Una cadena es una agrupación de procesos con una planificación dada.
 Estos procesos pueden tener o no dependencias entre ellos. Es decir, la ejecución de un proceso puede depender de la finalización correcta o erronea de un proceso previo. En caso de que varios procesos no tengan dependecias hará que las ejecuciones de estos se realicen en paralelo.
@@ -404,7 +393,3 @@ PROCESS_EXEC_DB_INSERTID  (MySQL/Postgres)
 PROCESS_EXEC_DB_WARNINGCOUNT  (MySQL/Postgres)
 PROCESS_EXEC_DB_MESSAGE  (MySQL/Postgres)
 ```
-
-
-### Iterable Chain (Cadena iterable)
-#### Process launcher Iterable chain (Proceso lanzadera de cadenas iterables)
