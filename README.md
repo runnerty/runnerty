@@ -14,7 +14,7 @@ Por defecto runnerty iniciará intentando restaurar el estado anterior mediante 
 ### Configuration
 La configuración general se encuentra en el fichero de configuración, por defecto '/etc/runnerty/conf.json':
 Example:
-```json
+```javascript
 {
   "config": {
     "general": { //General Section
@@ -125,7 +125,7 @@ plan > chains > process
 
 Las cadenas contenidas en el plan pueden cargarse desde un fichero externo con "chain_path" o bien indicarse directamente como un objeto del array de "chains"
 Ejemplo de plan:
-```json
+```javascript
 {
   "chains":[
     {"chain_path":"/var/runnerty/chains/my-chain-one.json"},
@@ -154,7 +154,7 @@ Estos procesos pueden tener o no dependencias entre ellos. Es decir, la ejecuci�
 El inicio de las ejecuciones de las cadenas puede darse por una planificación temporal (patrón CRON) o por un evento reportado por un filewatcher.
 
 Ejemplo:
-```json
+```javascript
 {
   "id":"CHAIN_SAMPLE",
   "name":"MY CHAIN SAMPLE",
@@ -360,7 +360,7 @@ Además podemos crear dependencias filewarcher de cualquiera de estos eventos (a
  En estos eventos podemos especificar una o varias notificaciones que queremos que se produzcan.
  
  Ejemplo:
-```json
+```javascript
    "events":{
     "on_start":{
       "notifications":[
