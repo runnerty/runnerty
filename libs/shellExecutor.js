@@ -4,12 +4,18 @@ var spawn             = require("child_process").spawn;
 
 var logger            = require("../libs/utils.js").logger;
 var csv               = require("fast-csv");
-var loadSQLFile       = require("../libs/utils.js").loadSQLFile;
 var replaceWith       = require("../libs/utils.js").replaceWith;
 
 module.exports.exec = function executeCommand(process){
 
-  var cmd = process.exec.command;
+  var cmd;
+
+  if(typeof process.exec === 'string'){
+    cmd = process.exec;
+  }else{
+    cmd = process.exec.command;
+  }
+
   return new Promise(function(resolve, reject) {
     var stdout = '';
     var stderr = '';
