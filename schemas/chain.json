@@ -1,0 +1,158 @@
+{
+  "type": "object",
+  "required": ["id","name","processes"],
+  "properties": {
+    "id": {"type": "string"},
+    "name": {"type": "string"},
+    "start_date": {"type": "string", "format": "date-time"},
+    "end_date": {"type": "string", "format": "date-time"},
+    "schedule_interval": {"type": "string", "format": "cron"},
+    "depends_chains": {"type": ["array","object"]},
+    "events": {
+      "type": "object",
+      "properties": {
+        "on_start": {
+          "type": "object",
+          "properties":{
+            "notifications":{
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id"],
+                "properties": {
+                  "id": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "on_end": {
+          "type": "object",
+          "properties":{
+            "notifications":{
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id"],
+                "properties": {
+                  "id": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "on_waiting_dependencies": {
+          "type": "object",
+          "properties":{
+            "notifications":{
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["id"],
+                "properties": {
+                  "id": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "processes":{
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id","name","exec"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "exec": {"type": ["string","object"]},
+          "args": {"type": ["array","object"]},
+          "retries": {"type": "number"},
+          "retry_delay": {"type": "number"},
+          "end_chain_on_fail": {"type": "boolean"},
+          "events": {
+            "type": "object",
+            "properties": {
+              "on_start": {
+                "type": "object",
+                "properties":{
+                  "notifications":{
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["id"],
+                      "properties": {
+                        "id": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              },
+              "on_end": {
+                "type": "object",
+                "properties":{
+                  "notifications":{
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["id"],
+                      "properties": {
+                        "id": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              },
+              "on_fail": {
+                "type": "object",
+                "properties":{
+                  "notifications":{
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["id"],
+                      "properties": {
+                        "id": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              },
+              "on_retry": {
+                "type": "object",
+                "properties":{
+                  "notifications":{
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["id"],
+                      "properties": {
+                        "id": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              },
+              "on_waiting_dependencies": {
+                "type": "object",
+                "properties":{
+                  "notifications":{
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["id"],
+                      "properties": {
+                        "id": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+ }
+}

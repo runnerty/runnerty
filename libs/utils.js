@@ -2,7 +2,11 @@
 
 var winston         = require('winston');
 var fs              = require('fs');
+var configSchema    = require('../schemas/conf.json');
+var Ajv             = require('ajv');
+var ajv             = new Ajv({allErrors: true});
 
+ajv.addSchema(configSchema, 'configSchema');
 
 var logger = new (winston.Logger)({
   transports: [
@@ -18,35 +22,53 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath){
   return new Promise((resolve) => {
       var filePath = configFilePath;
 
-  fs.stat(filePath, function(err, res){
-    if(err){
-      logger.log('error',`Load General conf file ${filePath} not exists.`, err);
-      throw new Error(`Load General conf file ${filePath} not found.`);
-      resolve();
-    }else {
-      try {
-        fs.readFile(filePath, 'utf8', function (err, res) {
-          if (err) {
-            logger.log('error', 'Load General conf loadConfig readFile: ' + err);
-            resolve();
-          } else {
-            var objConf = JSON.parse(res).config;
+      fs.stat(filePath, function(err, res){
+        if(err){
+          logger.log('error',`Load General conf file ${filePath} not exists.`, err);
+          throw new Error(`Load General conf file ${filePath} not found.`);
+          resolve();
+        }else {
 
-            //TODO: INCLUIR TODOS LOS PARAMTEROS OBLIGATORIOS DE CONFIG EN ESTA VALIDACIÓN:
-            if (objConf.hasOwnProperty('general')) {
-              resolve(objConf);
-            } else {
-              throw new Error('Invalid Config file, general not found.', objConf);
-              resolve();
-            }
+          try {
+            fs.readFile(filePath, 'utf8', function (err, res) {
+              if (err) {
+                logger.log('error', 'Load General conf loadConfig readFile: ' + err);
+                resolve();
+              } else {
+
+                var fileParsed;
+                try {
+                  fileParsed = JSON.parse(res);
+                } catch(err) {
+                  var newErr = new Error('Problem reading JSON file');
+                  newErr.stack += '\nCaused by: '+err.stack;
+                  throw newErr;
+                }
+
+                var valid = ajv.validate('configSchema', fileParsed);
+
+                if (!valid) {
+                  logger.log('error',`Invalid Config file:`,ajv.errors);
+                  throw new Error(`Invalid Config file:`,ajv.errors);
+                  resolve();
+                }
+                var objConf = fileParsed.config;
+
+                //TODO: INCLUIR TODOS LOS PARAMTEROS OBLIGATORIOS DE CONFIG EN ESTA VALIDACIÓN:
+                if (objConf.hasOwnProperty('general')) {
+                  resolve(objConf);
+                } else {
+                  throw new Error('Invalid Config file, general not found.', objConf);
+                  resolve();
+                }
+              }
+            });
+          } catch (e) {
+            throw new Error('Invalid Config file, incorrect JSON format: ' + e.message, e);
+            resolve();
           }
-        });
-      } catch (e) {
-        throw new Error('Invalid Config file, incorrect JSON format: ' + e.message, e);
-        resolve();
-      }
-    }
-  });
+        }
+      });
 });
 };
 

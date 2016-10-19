@@ -1,10 +1,18 @@
 "use strict";
 
-var fs     = require('fs');
-var crypto = require('crypto');
-var logger = require("../libs/utils.js").logger;
-var Plan   = require("./plan.js");
+var fs          = require('fs');
+var crypto      = require('crypto');
+var logger      = require("../libs/utils.js").logger;
+var planSchema  = require('../schemas/plan.json');
+var chainSchema = require('../schemas/chain.json');
+var Ajv         = require('ajv');
+var ajv         = new Ajv({allErrors: true});
 
+var Plan        = require("./plan.js");
+
+ajv.addFormat('cron', /^(((([\*]{1}){1})|((\*\/){0,1}(([0-9]{1}){1}|(([1-5]{1}){1}([0-9]{1}){1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([0-9]{1}){1}|(([1]{1}){1}([0-9]{1}){1}){1}|([2]{1}){1}([0-3]{1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([1-9]{1}){1}|(([1-2]{1}){1}([0-9]{1}){1}){1}|([3]{1}){1}([0-1]{1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([1-9]{1}){1}|(([1-2]{1}){1}([0-9]{1}){1}){1}|([3]{1}){1}([0-1]{1}){1}))|(jan|feb|mar|apr|may|jun|jul|aug|sep|okt|nov|dec)) ((([\*]{1}){1})|((\*\/){0,1}(([0-7]{1}){1}))|(sun|mon|tue|wed|thu|fri|sat)))$/);
+ajv.addSchema(planSchema, 'planSchema');
+ajv.addSchema(chainSchema,'chainSchema');
 
 class FilePlan {
   constructor(filePath){
@@ -15,7 +23,7 @@ class FilePlan {
 
     return new Promise((resolve) => {
       var _this = this;
-      this.loadFileContent(filePath)
+      this.loadFileContent(filePath,'planSchema')
         .then((res) => {
         _this.fileContent = res;
         _this.getChains(res)
@@ -44,7 +52,7 @@ class FilePlan {
   });
   }
 
-  loadFileContent(filePath){
+  loadFileContent(filePath, schema){
     var _this = this;
     return new Promise((resolve) => {
         fs.stat(filePath, function(err, res){
@@ -59,7 +67,26 @@ class FilePlan {
                 logger.log('error',`File loadFileContent (${filePath}) readFile: `+err);
                 resolve();
               }else{
-                resolve(JSON.parse(res));
+
+                var fileParsed;
+                try {
+                  fileParsed = JSON.parse(res);
+                } catch(err) {
+                  var newErr = new Error(`Invalid file (${filePath}), incorrect JSON`);
+                  newErr.stack += '\nCaused by: '+err.stack;
+                  throw newErr;
+                }
+
+                var valid = ajv.validate(schema, fileParsed);
+
+                if (!valid) {
+                  logger.log('error',`Invalid file (${filePath}) for schema ${schema}:`,ajv.errors);
+                  throw new Error(`Invalid file (${filePath}) for schema ${schema}:`,ajv.errors);
+                  resolve();
+                }else{
+                  resolve(fileParsed);
+                }
+
               }
             });
           } catch(e) {
@@ -117,7 +144,7 @@ class FilePlan {
       } else {
         if (chain.hasOwnProperty('chain_path')) {
 
-          _this.loadFileContent(chain.chain_path)
+          _this.loadFileContent(chain.chain_path,'chainSchema')
             .then((res) => {
             _this.getChain(res)
             .then((res) => {
@@ -143,12 +170,14 @@ class FilePlan {
 
   chainIsValid(chain){
 
-    if(chain.hasOwnProperty('id') && chain.hasOwnProperty('name') && (chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') && chain.iterable) )){
-      return true;
-    }else{
-      return false;
-    }
+    var valid = ajv.validate('chainSchema', chain);
 
+    if (!valid) {
+      logger.log('error',`Invalid chain ${chain.id} for schema chainSchema:`,ajv.errors);
+      return false;
+    }else{
+      return true;
+    }
   };
 
   refreshBinBackup(){

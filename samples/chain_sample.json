@@ -1,8 +1,8 @@
 {
   "id":"CHAIN_SAMPLE",
   "name":"CHAIN SAMPLE",
-  "start_date":"2016-08-01T00:00:00",
-  "end_date":"2099-11-01T00:00:00",
+  "start_date":"2016-08-01T00:00:00.000Z",
+  "end_date":"2099-11-01T00:00:00.000Z",
   "schedule_interval":"*/1 * * * *",
   "depends_chains":[],
   "events":{"on_start":{},"on_end":{}, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},

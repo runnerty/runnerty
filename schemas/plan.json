@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "required": ["chains"],
+  "properties": {
+    "chains":{
+      "type":"array",
+      "items": {
+        "type": "object",
+        "properties":{
+          "chain_path":{"type":"string"}
+        }
+      }
+    }
+  }
+}

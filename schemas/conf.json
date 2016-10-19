@@ -1,0 +1,75 @@
+{ "type": "object",
+  "required": ["config"],
+  "properties": {
+  "config": {
+    "type": "object",
+    "required": ["general"],
+    "properties": {
+      "general": {
+        "type": "object",
+        "required": ["binBackup", "planFilePath", "refreshIntervalBinBackup", "api"],
+        "properties": {
+          "binBackup": {"type": "string"},
+          "planFilePath": {"type": "string"},
+          "refreshIntervalBinBackup": {"type": "number"},
+          "api": {
+            "type": "object",
+            "properties": {
+              "port": {"type": "number"},
+              "users": {"type": "array"},
+              "secret": {"type": "string"},
+              "limite_req": {"type": "string"},
+              "propertiesExcludesInResponse": {"type": "array"}
+            }
+          }
+        }
+      },
+      "db_connections": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["id", "type", "host", "port"],
+          "properties": {
+            "id": {"type": "string"},
+            "type": {"type": "string"},
+            "user": {"type": "string"},
+            "password": {"type": "string"},
+            "database": {"type": "string"},
+            "host": {"type": "string"},
+            "port": {"type": ["number", "string"]}
+          }
+        }
+      },
+      "notificators_connections": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["id", "type"],
+          "properties": {
+            "id": {"type": "string"},
+            "type": {"type": "string"},
+            "disable": {"type": "boolean"},
+            "from": {"type": "string"},
+            "webhookurl": {"type": "string", "format":"uri"},
+            "bot_name": {"type": "string"},
+            "bot_emoji": {"type": "string"},
+            "channel": {"type": "string"},
+            "transport": {"type": "string"},
+            "templateDir": {"type": "string"},
+            "template": {"type": "string"}
+          }
+        }
+      },
+      "global_values": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties" : {
+            "type" : "object"
+          }
+        }
+      }
+    }
+  }
+}
+}

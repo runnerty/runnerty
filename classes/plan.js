@@ -1,10 +1,9 @@
 "use strict";
 
-var schedule = require('node-schedule');
-var chokidar = require('chokidar');
-var logger   = require("../libs/utils.js").logger;
-var Chain    = require("./chain.js");
-
+var schedule   = require('node-schedule');
+var chokidar   = require('chokidar');
+var logger     = require("../libs/utils.js").logger;
+var Chain      = require("./chain.js");
 
 class Plan{
   constructor(version, chains){
