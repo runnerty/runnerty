@@ -132,9 +132,61 @@ module.exports.replaceWith = function replaceWith(text, objParams, ignoreGlobalV
 
       while(keysValueObjectsLength--){
         var valueKey = keysValueObjects[keysValueObjectsLength];
-        var value = global.config.global_values[gvl][keymaster][valueKey];
-        value = replaceWith(value, objParams, true);
-        gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
+        var intialValue = global.config.global_values[gvl][keymaster][valueKey];
+
+        if(intialValue instanceof Object){
+
+          if(intialValue.format === 'text'){
+
+            if(intialValue.value instanceof Array){
+
+              var valuesLength = intialValue.value.length;
+              var i = 0;
+              var finalValue = '';
+
+              while(valuesLength--){
+                var rtext = replaceWith(intialValue.value[i], objParams, true);
+
+                var quotechar = intialValue.quotechar || '';
+                var delimiter = intialValue.delimiter || '';
+
+                if(valuesLength !== 0){
+                  finalValue = finalValue + quotechar + rtext + quotechar + delimiter;
+                }else{
+                  finalValue = finalValue + quotechar + rtext + quotechar;
+                }
+                i++;
+              }
+              gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = finalValue;
+
+            }else{
+              value = replaceWith(intialValue.value, objParams, true);
+              gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
+            }
+
+          }else{
+
+            if(intialValue.format === 'json'){
+
+              if(intialValue.value instanceof Object || intialValue.value instanceof Array){
+                var value;
+                value = replaceWith(JSON.stringify(intialValue.value), objParams, true);
+                gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
+
+              }else{
+                var value;
+                value = replaceWith(intialValue.value, objParams, true);
+                gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
+              }
+            }
+          }
+
+        }else{
+          var value;
+          value = replaceWith(intialValue, objParams, true);
+          gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
+        }
+
       }
     }
     objParams = Object.assign(objParams, gv);

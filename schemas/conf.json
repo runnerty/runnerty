@@ -65,7 +65,13 @@
         "items": {
           "type": "object",
           "additionalProperties" : {
-            "type" : "object"
+            "type" : "object",
+            "properties":{
+              "value": {"type": ["string","array","object"]},
+              "format": {"type": "string"},
+              "delimiter":{"type": "string"},
+              "quotechar":{"type": "string"}
+            }
           }
         }
       }

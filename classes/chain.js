@@ -137,7 +137,7 @@ class Chain {
               event.notifications
             ));
           }else{
-            logger.log('debug',`Chain ${_this.id} Events without procces and notifications`);
+            logger.log('warn',`Chain ${_this.id} Events without procces and notifications`);
           }
         }
 
@@ -459,14 +459,14 @@ class Chain {
               process.execute_input =  _this.execute_input;
 
               if (process.isStoped()){
-                logger.log('debug', `PLANIFICADO PROCESO ${process.id}`);
+                logger.log('debug', `Process ${process.id} planificated`);
 
                 var processMustDo = _this.checkProcessActionToDo(process);
 
                 switch(processMustDo){
                   case 'run':
 
-                    logger.log('debug', `Ejecutar YA ${process.id} -> start`);
+                    logger.log('debug', `Starting ${process.id}`);
 
                     process.start()
                       .then(function(){
@@ -512,13 +512,10 @@ class Chain {
 
                     break;
                   case 'wait':
-
-                    logger.log('debug', `Ejecutar PROCESO ${process.id} -> on_waiting_dependencies `);
                     process.waiting_dependencies();
-
                     break;
                   case 'end':
-                    logger.log('debug', `No se ejecuta el PROCESO ${process.id} -> solo on_fail `);
+                    logger.log('debug', `Ignored: Only executed on_fail ${process.id}`);
                     process.end(true);
 
                     _this.startProcesses()

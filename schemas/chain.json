@@ -71,6 +71,24 @@
           "retries": {"type": "number"},
           "retry_delay": {"type": "number"},
           "end_chain_on_fail": {"type": "boolean"},
+          "output": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["file_name","write"],
+              "properties": {
+                "file_name": {"type": "string"},
+                "write": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "concat": {"type": "boolean"},
+                "maxsize": {"type": "string"}
+              }
+            }
+          },
           "events": {
             "type": "object",
             "properties": {
