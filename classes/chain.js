@@ -333,6 +333,7 @@ class Chain {
                     chain.startProcesses()
                       .then(function(res){
                         //chain.end();
+                        global.runtimePlan.plan.planificateChains();
                         resolve();
                       })
                       .catch(function(e){

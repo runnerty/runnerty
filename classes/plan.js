@@ -164,7 +164,7 @@ class Plan{
     var _this = this;
     // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
     // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
-    if(chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined){
+    if((chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined)){
       chain.stop();
     };
 
@@ -177,7 +177,14 @@ class Plan{
         if ((new Date(chain.start_date)) <= (new Date()) || (chain.hasOwnProperty('iterable') || chain.iterable)){
 
           logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
-
+/*
+          console.log('- - - - - - - - - - - - - - - - - - - - - - - - ',chain.id,' - - - - - - - - - - - - - - - - - - - - - - - -');
+          console.log('- chain.id:',chain.id);
+          console.log('- chain.status:',chain.status);
+          console.log('- chain.end_date:',chain.end_date);
+          console.log('- chain.!chain.end_date:',!chain.end_date);
+          console.log('- chain.hasOwnProperty(end_date):',chain.hasOwnProperty('end_date'));
+*/
 
           logger.log('debug', `INTENTANDO INICIAR CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
 
@@ -185,6 +192,8 @@ class Plan{
             chain.waiting_dependencies();
             logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
           }else{
+
+        //    console.log('SIN BLOQUEOS PARA LA EJECUCION! ',chain.id);
 
             if(chain.hasOwnProperty('iterable') && chain.iterable && chain.iterable !== ''){
 
@@ -195,6 +204,8 @@ class Plan{
                 var execMode = chain.iterable;
 
                 if (execMode === 'parallel'){
+
+          //        console.log('EMPIEZA EJECUCION EN PARALELO! ',chain.id);
 
                   var newChains = [];
 
@@ -226,10 +237,12 @@ class Plan{
 
                       Promise.all(chainsToExec)
                         .then(function (res) {
+                        //  console.log('FINALIZA EJECUCION EN PARALELO! ',chain.id);
                           chain.end();
                           chain.setChainToInitState();
                         })
                         .catch(function(e){
+                        //  console.log('ERROR EN EJECUCION EN PARALELO! ',chain.id);
                           logger.log('error', 'getChains error: ', e);
                           chain.error();
                           chain.setChainToInitState();
@@ -263,7 +276,6 @@ class Plan{
                     var i = 0;
                     chains.forEach(function(chain) {
                       sequence = sequence.then(function() {
-
                         return chain.start(inputIterable[i])
                           .then(function(res) {
                             i = i+1;
@@ -291,9 +303,10 @@ class Plan{
               }
 
             }else{
+            //  console.log('>>>>>>>>>>>> SE EJECUTA CHAIN ',chain.id)
               chain.start()
                 .then(function() {
-                  _this.planificateChains()
+                 // _this.planificateChains()
                 })
                 .catch(function(e){logger.log('error','Error '+e)});
             }
@@ -308,7 +321,7 @@ class Plan{
               logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
               chain.start()
                 .then(function() {
-                  _this.planificateChains()
+                 // _this.planificateChains()
                 })
                 .catch(function(e){logger.log('error','Error '+e)});
             }
@@ -434,6 +447,7 @@ class Plan{
                       if(planChains[planChainsLength].processes[planProccessLength].id === depends_chains[auxDependsChainsLength].process_id){
                         if(planChains[planChainsLength].processes[planProccessLength].isEnded()){
                         }else{
+                        //  console.log('NO SE EJECUTA PORQUE EL PROCESO ',planChains[planChainsLength].processes[planProccessLength].id,' ESTA A ',planChains[planChainsLength].processes[planProccessLength].status);
                           chainsDependencies.push(planChains[planChainsLength]);
                         }
                       }

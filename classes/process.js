@@ -143,11 +143,11 @@ class Process {
   notificate(event){
     var _this = this;
 
+
     if(_this.hasOwnProperty('events') && _this.events !== undefined){
       if(_this.events.hasOwnProperty(event)){
         if(_this.events[event].hasOwnProperty('notifications')){
           if(_this.events[event].notifications instanceof Array){
-
             var notificationsLength = _this.events[event].notifications.length;
             while(notificationsLength--){
               _this.events[event].notifications[notificationsLength].notificate(_this.values())
@@ -199,6 +199,26 @@ class Process {
     if(!noRunned){
       _this.notificate('on_end');
     }
+
+    _this.startChainsDependients();
+
+  }
+
+  startChainsDependients(){
+    var _this = this;
+
+    global.runtimePlan.plan.chains.forEach(function(itemChain){
+      var procValues = _this.values();
+
+      if(itemChain.depends_chains.length > 0 && itemChain.depends_chains[0].chain_id && itemChain.depends_chains[0].process_id && itemChain.depends_chains[0].chain_id === procValues.CHAIN_ID && itemChain.depends_chains[0].process_id === _this.id){
+        if(itemChain.isEnded()){
+          itemChain.status = 'stop';
+        }
+        global.runtimePlan.plan.planificateChain(itemChain);
+      }
+
+    });
+
   }
 
   error(){
@@ -236,7 +256,6 @@ class Process {
       if(typeof _this.exec === 'string' || !_this.exec.db_connection_id){
         resolve(shellExecutor.exec(_this));
       }else {
-
         _this.loadDbConfig()
             .then((configValues) => {
             if(configValues.type){
