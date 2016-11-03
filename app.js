@@ -8,7 +8,7 @@ var FilePlan   = require("./classes/file_plan.js");
 var configFilePath = '/etc/runnerty/conf.json';
 var config;
 
-global.runtimePlan;
+var runtimePlan;
 var reloadPlan = false;
 
 // CHECK ARGS APP:
@@ -42,8 +42,8 @@ loadGeneralConfig(configFilePath)
 
     new FilePlan(fileLoad, config)
       .then(function(plan){
-        global.runtimePlan = plan;
-        require('./api/api.js')(config.general, logger, global.runtimePlan);
+        runtimePlan = plan;
+        require('./api/api.js')(config.general, logger, runtimePlan);
       })
       .catch(function(e){
         logger.log('error','FilePlan: '+e);

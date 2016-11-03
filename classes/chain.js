@@ -286,6 +286,9 @@ class Chain {
     this.ended_at = new Date();
     this.status = 'end';
     this.notificate('on_end');
+
+    console.log('[[END]] CHAIN >>>>>>>>>> :',this.id);
+
   }
 
   running(){
@@ -333,7 +336,6 @@ class Chain {
                     chain.startProcesses()
                       .then(function(res){
                         //chain.end();
-                        global.runtimePlan.plan.planificateChains();
                         resolve();
                       })
                       .catch(function(e){

@@ -200,7 +200,7 @@ class Process {
       _this.notificate('on_end');
     }
 
-    _this.startChainsDependients();
+    //_this.startChainsDependients();
 
   }
 
