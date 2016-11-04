@@ -148,23 +148,17 @@ class Plan{
     var _this = this;
 
     _this.chains.forEach(function (chain) {
-      _this.planificateChain(chain);
+      // IGNORE ITERABLE CHAINS. PLANIFICATED IN PROCESS.END
+      if(!chain.iterable) _this.planificateChain(chain);
     });
 
-    /*
-    var planChainsLength = this.chains.length;
-    while(planChainsLength--) {
-      var chain = this.chains[planChainsLength];
-      _this.planificateChain(chain);
-    }
-    */
   };
 
   planificateChain(chain){
     var _this = this;
     // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
     // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
-    if((chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined)){
+    if(chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined){
       chain.stop();
     };
 
@@ -277,7 +271,7 @@ class Plan{
                     chains.forEach(function(chain) {
                       sequence = sequence.then(function() {
 
-                        console.log('>>>>>>>>>>>> XXXXXX SE EJECUTA CHAIN ',chain.id)
+                        console.log('>>>>>>>>>>>> XXXXXX SE EJECUTA CHAIN ',chain.id);
 
                         return chain.start(inputIterable[i])
                           .then(function(res) {
@@ -306,10 +300,10 @@ class Plan{
               }
 
             }else{
-              console.log('>>>>>>>>>>>> SE EJECUTA CHAIN ',chain.id)
+              console.log('>>>>>>>>>>>> SE EJECUTA CHAIN ',chain.id);
               chain.start()
                 .then(function() {
-                 _this.planificateChains()
+                  _this.planificateChains()
                 })
                 .catch(function(e){logger.log('error','Error '+e)});
             }
@@ -324,7 +318,7 @@ class Plan{
               logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
               chain.start()
                 .then(function() {
-                 _this.planificateChains()
+                  _this.planificateChains()
                 })
                 .catch(function(e){logger.log('error','Error '+e)});
             }

@@ -64,9 +64,9 @@ class Process {
       "PROCESS_NAME":_this.name,
       "PROCESS_EXEC":_this.exec,
       "PROCESS_ARGS":_this.args,
-      "PROCESS_EXECURTE_ARGS":_this.execute_args,
-      "PROCESS_EXECUTE_RETURN":_this.execute_return,
-      "PROCESS_EXECUTE_ERR_RETURN":_this.execute_err_return,
+      "PROCESS_EXEC_ARGS":_this.execute_args,
+      "PROCESS_EXEC_RETURN":_this.execute_return,
+      "PROCESS_EXEC_ERR_RETURN":_this.execute_err_return,
       "PROCESS_STARTED_AT":_this.started_at,
       "PROCESS_ENDED_AT":_this.ended_at,
       "PROCESS_RETRIES_COUNT": _this.retries_count,
@@ -74,8 +74,8 @@ class Process {
       "PROCESS_DEPENDS_FILES_READY": _this.depends_files_ready,
       "PROCESS_FIRST_DEPEND_FILE_READY": (_this.depends_files_ready && _this.depends_files_ready.length > 0) ? _this.depends_files_ready[0] : [],
       "PROCESS_LAST_DEPEND_FILE_READY": (_this.depends_files_ready && _this.depends_files_ready.length > 0) ? _this.depends_files_ready[_this.depends_files_ready.length - 1] : [],
-      "PROCESS_EXEC_DB_RESULTS":_this.execute_db_results,
-      "PROCESS_EXEC_DB_RESULTS_CSV":_this.execute_db_results_csv,
+      "PROCESS_EXEC_DB_RETURN":_this.execute_db_results,
+      "PROCESS_EXEC_DB_RETURN_CSV":_this.execute_db_results_csv,
       "PROCESS_EXEC_DB_FIELDCOUNT":_this.execute_db_fieldCount,
       "PROCESS_EXEC_DB_AFFECTEDROWS":_this.execute_db_affectedRows,
       "PROCESS_EXEC_DB_CHANGEDROWS":_this.execute_db_changedRows,
@@ -143,7 +143,6 @@ class Process {
   notificate(event){
     var _this = this;
 
-
     if(_this.hasOwnProperty('events') && _this.events !== undefined){
       if(_this.events.hasOwnProperty(event)){
         if(_this.events[event].hasOwnProperty('notifications')){
@@ -200,7 +199,7 @@ class Process {
       _this.notificate('on_end');
     }
 
-    //_this.startChainsDependients();
+    _this.startChainsDependients();
 
   }
 

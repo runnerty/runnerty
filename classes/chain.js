@@ -355,7 +355,8 @@ class Chain {
         }else{
           chain.startProcesses()
             .then(function(res){
-              if (inputIteration) chain.end();
+              //if (inputIteration) chain.end();
+              //console.log('>>>>> END DE CHAIN B2 ',chain.id);
               resolve();
             })
             .catch(function(e){

@@ -1,6 +1,6 @@
 1.- Comprobar si el directorio de los ficheros de OUTPUT existe y si no existe crearlo.
-2.- Validar JSON  (https://github.com/epoberezkin/ajv): conf.json, plan.json y cualquier chain que se cargue.
 
+VALIDAR JSON QUE VENGA DE ITERATOR_OUTPUT
 
 
 3.- UN PROCESO DEBE DE PODER PASAR VALORES A LOS SIGUIENTES Y ESTOS RECIBIRLOS.
