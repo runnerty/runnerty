@@ -287,8 +287,7 @@ class Chain {
     this.status = 'end';
     this.notificate('on_end');
 
-    console.log('[[END]] CHAIN >>>>>>>>>> :',this.id);
-
+    //console.log('[[END]] CHAIN >>>>>>>>>> :',this.id);
   }
 
   running(){

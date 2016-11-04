@@ -172,12 +172,12 @@ class Plan{
 
           logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
 
-          console.log('- - - - - - - - - - - - - - - - - - - - - - - - ',chain.id,' - - - - - - - - - - - - - - - - - - - - - - - -');
-          console.log('- chain.id:',chain.id);
-          console.log('- chain.status:',chain.status);
-          console.log('- chain.end_date:',chain.end_date);
-          console.log('- chain.!chain.end_date:',!chain.end_date);
-          console.log('- chain.hasOwnProperty(end_date):',chain.hasOwnProperty('end_date'));
+          //.log('- - - - - - - - - - - - - - - - - - - - - - - - ',chain.id,' - - - - - - - - - - - - - - - - - - - - - - - -');
+          //console.log('- chain.id:',chain.id);
+          //console.log('- chain.status:',chain.status);
+          //console.log('- chain.end_date:',chain.end_date);
+          //console.log('- chain.!chain.end_date:',!chain.end_date);
+          //console.log('- chain.hasOwnProperty(end_date):',chain.hasOwnProperty('end_date'));
 
 
           logger.log('debug', `INTENTANDO INICIAR CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
@@ -187,7 +187,7 @@ class Plan{
             logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
           }else{
 
-            console.log('SIN BLOQUEOS PARA LA EJECUCION! ',chain.id);
+            //console.log('SIN BLOQUEOS PARA LA EJECUCION! ',chain.id);
 
             if(chain.hasOwnProperty('iterable') && chain.iterable && chain.iterable !== ''){
 
@@ -199,7 +199,7 @@ class Plan{
 
                 if (execMode === 'parallel'){
 
-                  console.log('EMPIEZA EJECUCION EN PARALELO! ',chain.id);
+                  //console.log('EMPIEZA EJECUCION EN PARALELO! ',chain.id);
 
                   var newChains = [];
 
@@ -231,12 +231,12 @@ class Plan{
 
                       Promise.all(chainsToExec)
                         .then(function (res) {
-                          console.log('FINALIZA EJECUCION EN PARALELO! ',chain.id);
+                          //console.log('FINALIZA EJECUCION EN PARALELO! ',chain.id);
                           chain.end();
                           chain.setChainToInitState();
                         })
                         .catch(function(e){
-                          console.log('ERROR EN EJECUCION EN PARALELO! ',chain.id);
+                          //console.log('ERROR EN EJECUCION EN PARALELO! ',chain.id);
                           logger.log('error', 'getChains error: ', e);
                           chain.error();
                           chain.setChainToInitState();
@@ -271,7 +271,7 @@ class Plan{
                     chains.forEach(function(chain) {
                       sequence = sequence.then(function() {
 
-                        console.log('>>>>>>>>>>>> XXXXXX SE EJECUTA CHAIN ',chain.id);
+                        //console.log('>>>>>>>>>>>> XXXXXX SE EJECUTA CHAIN ',chain.id);
 
                         return chain.start(inputIterable[i])
                           .then(function(res) {
@@ -300,7 +300,7 @@ class Plan{
               }
 
             }else{
-              console.log('>>>>>>>>>>>> SE EJECUTA CHAIN ',chain.id);
+              //console.log('>>>>>>>>>>>> SE EJECUTA CHAIN ',chain.id);
               chain.start()
                 .then(function() {
                   _this.planificateChains()
@@ -444,7 +444,7 @@ class Plan{
                       if(planChains[planChainsLength].processes[planProccessLength].id === depends_chains[auxDependsChainsLength].process_id){
                         if(planChains[planChainsLength].processes[planProccessLength].isEnded()){
                         }else{
-                          console.log('NO SE EJECUTA PORQUE EL PROCESO ',planChains[planChainsLength].processes[planProccessLength].id,' ESTA A ',planChains[planChainsLength].processes[planProccessLength].status);
+                          //console.log('NO SE EJECUTA PORQUE EL PROCESO ',planChains[planChainsLength].processes[planProccessLength].id,' ESTA A ',planChains[planChainsLength].processes[planProccessLength].status);
                           chainsDependencies.push(planChains[planChainsLength]);
                         }
                       }
