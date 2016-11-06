@@ -106,7 +106,7 @@ class Process {
                 event.notifications
               ));
             }else{
-              logger.log('debug','Process Events without notifications');
+              //logger.log('debug','Process Events without notifications');
             }
           }
 
@@ -213,7 +213,7 @@ class Process {
         if(itemChain.isEnded()){
           itemChain.status = 'stop';
         }
-        global.runtimePlan.plan.planificateChain(itemChain);
+        global.runtimePlan.plan.scheduleChain(itemChain);
       }
 
     });

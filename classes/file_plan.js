@@ -31,7 +31,7 @@ class FilePlan {
           new Plan('', chains)
             .then(function(plan){
               _this.plan = plan;
-              _this.plan.planificateChains();
+              _this.plan.scheduleChains();
               _this.startAutoRefreshBinBackup();
               resolve(_this);
           })

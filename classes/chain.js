@@ -462,7 +462,7 @@ class Chain {
               process.execute_input =  _this.execute_input;
 
               if (process.isStoped()){
-                logger.log('debug', `Process ${process.id} planificated`);
+                logger.log('debug', `Process ${process.id} scheduled`);
 
                 var processMustDo = _this.checkProcessActionToDo(process);
 

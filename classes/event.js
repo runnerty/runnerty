@@ -31,77 +31,75 @@ class Event {
       var objEvent = {};
       objEvent[name] = {};
 
-    //TODO: event/proccess
+      var notificationsPromises = [];
 
-    var notificationsPromises = [];
+      if (notifications instanceof Array) {
+        var notificationsLength = notifications.length;
+        if (notificationsLength > 0) {
 
-    if (notifications instanceof Array) {
-      var notificationsLength = notifications.length;
-      if (notificationsLength > 0) {
+          while (notificationsLength--) {
+            var notification = notifications[notificationsLength];
 
-        while (notificationsLength--) {
-          var notification = notifications[notificationsLength];
+           _this.loadNotificationConfig(notification.id)
+             .then(function (res) {
 
-         _this.loadNotificationConfig(notification.id)
-           .then(function (res) {
+               var type = '';
 
-             var type = '';
+               if(notification.type){
+                 type = notification.type;
+               }else{
+                 type = res.type;
+               }
 
-             if(notification.type){
-               type = notification.type;
-             }else{
-               type = res.type;
-             }
-
-             switch (type) {
-               case 'mail':
-                 notificationsPromises.push(new mailNotificator(type,
-                   notification.id,
-                   notification.title,
-                   notification.message,
-                   notification.recipients,
-                   notification.recipients_cc,
-                   notification.recipients_cco
-                 ));
-                 break;
-               case 'slack':
-                 notificationsPromises.push(new slackNotificator(type,
-                   notification.id,
-                   notification.token,
-                   notification.bot_name,
-                   notification.bot_emoji,
-                   notification.message,
-                   notification.channel,
-                   notification.recipients
-                 ));
-                 break;
-             }
+               switch (type) {
+                 case 'mail':
+                   notificationsPromises.push(new mailNotificator(type,
+                     notification.id,
+                     notification.title,
+                     notification.message,
+                     notification.recipients,
+                     notification.recipients_cc,
+                     notification.recipients_cco
+                   ));
+                   break;
+                 case 'slack':
+                   notificationsPromises.push(new slackNotificator(type,
+                     notification.id,
+                     notification.token,
+                     notification.bot_name,
+                     notification.bot_emoji,
+                     notification.message,
+                     notification.channel,
+                     notification.recipients
+                   ));
+                   break;
+               }
 
 
-             Promise.all(notificationsPromises)
-               .then(function (res) {
-                 objEvent[name]['notifications'] = res;
-                 resolve(objEvent);
-               })
-               .catch(function(e){
-                 logger.log('error','Event loadEventsObjects: '+e);
-                 resolve(objEvent);
-               });
+               Promise.all(notificationsPromises)
+                 .then(function (res) {
+                   objEvent[name]['notifications'] = res;
+                   resolve(objEvent);
+                 })
+                 .catch(function(e){
+                   logger.log('error','Event loadEventsObjects: '+e);
+                   resolve(objEvent);
+                 });
 
-           })
-           .catch(function(err){
-             logger.log('error','Event loadNotificationConfig: '+err);
-           });
+             })
+             .catch(function(err){
+               logger.log('error','Event loadNotificationConfig: '+err);
+             });
+          }
+
+        } else {
+          logger.log('error','Event loadEventsObjects: '+e);
+          resolve(objEvent);
         }
-
       } else {
-        logger.log('error','Event loadEventsObjects: '+e);
+        logger.log('error','Notifications, is not array', name, process, notifications);
         resolve(objEvent);
       }
-    } else {
-      logger.log('error','Notifications, is not array', name, process, notifications);
-      resolve(objEvent);
-    }
   });
   }
 }

@@ -108,8 +108,6 @@ class Plan{
         if(dependence instanceof Object){
           if(dependence.hasOwnProperty('file_name') && dependence.hasOwnProperty('condition')){
 
-            //TODO: VALIDATE CONDITIONS VALUES
-
             var watcher = chokidar.watch(dependence.file_name, { ignored: /[\/\\](\.|\~)/,
               persistent: true,
               usePolling: true,
@@ -127,7 +125,7 @@ class Plan{
               }
 
               if(!chain.isRunning() && !chain.isErrored()){
-                _this.planificateChain(chain);
+                _this.scheduleChain(chain);
               }
 
             })
@@ -144,17 +142,17 @@ class Plan{
     }
   }
 
-  planificateChains(){
+  scheduleChains(){
     var _this = this;
 
     _this.chains.forEach(function (chain) {
-      // IGNORE ITERABLE CHAINS. PLANIFICATED IN PROCESS.END
-      if(!chain.iterable) _this.planificateChain(chain);
+      // IGNORE ITERABLE CHAINS. SCHEDULED IN PROCESS.END EVENT
+      if(!chain.iterable) _this.scheduleChain(chain);
     });
 
   };
 
-  planificateChain(chain){
+  scheduleChain(chain){
     var _this = this;
     // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
     // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
@@ -166,7 +164,7 @@ class Plan{
     {
       if(chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') || chain.iterable)){
 
-        logger.log('debug', `PLANIFICADA CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
+        logger.log('debug', `SCHEDULED CHAIN ${chain.id} EN ${(new Date(chain.start_date))}`);
 
         if ((new Date(chain.start_date)) <= (new Date()) || (chain.hasOwnProperty('iterable') || chain.iterable)){
 
@@ -180,7 +178,7 @@ class Plan{
           //console.log('- chain.hasOwnProperty(end_date):',chain.hasOwnProperty('end_date'));
 
 
-          logger.log('debug', `INTENTANDO INICIAR CADENA ${chain.id} EN ${(new Date(chain.start_date))}`);
+          logger.log('debug', `TRYING START CHAIN ${chain.id} IN ${(new Date(chain.start_date))}`);
 
           if(_this.hasDependenciesBlocking(chain)){
             chain.waiting_dependencies();
@@ -303,7 +301,7 @@ class Plan{
               //console.log('>>>>>>>>>>>> SE EJECUTA CHAIN ',chain.id);
               chain.start()
                 .then(function() {
-                  _this.planificateChains()
+                  _this.scheduleChains()
                 })
                 .catch(function(e){logger.log('error','Error '+e)});
             }
@@ -318,7 +316,7 @@ class Plan{
               logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
               chain.start()
                 .then(function() {
-                  _this.planificateChains()
+                  _this.scheduleChains()
                 })
                 .catch(function(e){logger.log('error','Error '+e)});
             }
@@ -328,7 +326,7 @@ class Plan{
         // Remove Chain from pool
         if(chain.end_date){
 
-          logger.log('debug',`PLANIFICADA CANCELACION DE CADENA ${chain.id} EN ${(new Date(chain.end_date))}`);
+          logger.log('debug',`SCHEDULED CHAIN CANCELATION ${chain.id} IN ${(new Date(chain.end_date))}`);
 
           chain.scheduleCancel = schedule.scheduleJob(new Date(chain.end_date), function(chain){
 
@@ -380,8 +378,8 @@ class Plan{
     }else{
       _this.chains.push(newChain);
     }
-    // Planificate load/reload chain
-    _this.planificateChain(_this.getChainById(chainId));
+    // Schedule load/reload chain
+    _this.scheduleChain(_this.getChainById(chainId));
   }
 
   dependenciesBlocking(chain){
