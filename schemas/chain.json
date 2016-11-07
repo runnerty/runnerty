@@ -6,7 +6,8 @@
     "name": {"type": "string"},
     "start_date": {"type": "string", "format": "date-time"},
     "end_date": {"type": "string", "format": "date-time"},
-    "schedule_interval": {"type": "string", "format": "cron"},
+    "_schedule_interval": {"type": "string", "format": "cron"},
+    "schedule_interval": {"type": "string"},
     "depends_chains": {"type": ["array","object"]},
     "events": {
       "type": "object",
