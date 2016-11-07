@@ -187,7 +187,7 @@ Ejemplo:
             "id":"slack_default",
             "bot_emoji": ":see_no_evil:",
             "channel": "mlm",
-            "message":"ERROR IN PROCESS *:PROCESS_ID* OF CHAIN :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+            "message":"ERROR IN PROCESS *:PROCESS_ID* OF CHAIN :CHAIN_ID - :PROCESS_EXEC_ERR_RETURN / :PROCESS_EXEC_RETURN"
           }
         ]
       },
@@ -218,7 +218,7 @@ Ejemplo:
                "id":"slack_default",
                "bot_emoji": ":see_no_evil:",
                "channel": "mlm",
-               "message":"ERROR IN PROCESS *:PROCESS_ID* OF CHAIN :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+               "message":"ERROR IN PROCESS *:PROCESS_ID* OF CHAIN :CHAIN_ID - :PROCESS_EXEC_ERR_RETURN / :PROCESS_EXEC_RETURN"
              }
            ]
          },
@@ -228,7 +228,7 @@ Ejemplo:
               "id":"slack_default",
               "bot_emoji": ":v:",
               "channel": "mlm",
-              "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_RETURN"
+              "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXEC_RETURN"
             }
           ]
         },
@@ -305,16 +305,16 @@ Parámetros:
 "file_name": ruta y fichero
 "concat": indica si la salida debe concatenarse al fichero actual o por el contrario descartar el contenido previo.
 "max_size": indica el tamaño maximo permitida para el fichero, si este se excede se eliminará el contenido más antiguo para no superarlo. Supported units and abbreviations are as follows and are case-insensitive: "b" for bytes, "kb" for kilobytes, "mb" for megabytes, "gb" for gigabytes, "tb" for terabytes. Exmaples: "10gb", "500mb"
-"write": array en el que se indican los valores a escribir en el fichero, cada elemento será escrito en una nueva linea. Example: "write":["[*] EXECUTION :DD-:MM-:YY :HH::mm::ss",":PROCESS_EXECUTE_ERR_RETURN",":PROCESS_EXECUTE_RETURN"]
+"write": array en el que se indican los valores a escribir en el fichero, cada elemento será escrito en una nueva linea. Example: "write":["[*] EXECUTION :DD-:MM-:YY :HH::mm::ss",":PROCESS_EXEC_ERR_RETURN",":PROCESS_EXEC_RETURN"]
 ```
 
 ```json
-"output":{"file_name":"/var/logs/runnerty/:CHAIN_ID_:PROCESS_ID_:DD:MM:YY_:HH:mm:ss.log", "write":["* EXECUTION :DD-:MM-:YY :HH::mm::ss",":PROCESS_EXECUTE_ERR_RETURN",":PROCESS_EXECUTE_RETURN"], "concat":false, "max_size":"100mb"}
+"output":{"file_name":"/var/logs/runnerty/:CHAIN_ID_:PROCESS_ID_:DD:MM:YY_:HH:mm:ss.log", "write":["* EXECUTION :DD-:MM-:YY :HH::mm::ss",":PROCESS_EXEC_ERR_RETURN",":PROCESS_EXEC_RETURN"], "concat":false, "max_size":"100mb"}
 ```
 
 ```json
-"output":[{"file_name":"/etc/runnerty/:CHAIN_ID_:PROCESS_ID_:DD:MM:YY_:HH:mm:ss.log", "write":["* EXECUTION :DD-:MM-:YY :HH::mm::ss",":PROCESS_EXECUTE_ERR_RETURN",":PROCESS_EXECUTE_RETURN"], "concat":false, "max_size":"100mb"},
-          {"file_name":"/etc/runnerty/:PROCESS_ID.err", "write":[":PROCESS_EXECUTE_ERR_RETURN"], "concat":true, "max_size":"1gb"}]
+"output":[{"file_name":"/etc/runnerty/:CHAIN_ID_:PROCESS_ID_:DD:MM:YY_:HH:mm:ss.log", "write":["* EXECUTION :DD-:MM-:YY :HH::mm::ss",":PROCESS_EXEC_ERR_RETURN",":PROCESS_EXEC_RETURN"], "concat":false, "max_size":"100mb"},
+          {"file_name":"/etc/runnerty/:PROCESS_ID.err", "write":[":PROCESS_EXEC_ERR_RETURN"], "concat":true, "max_size":"1gb"}]
 ```
 
 
@@ -385,9 +385,9 @@ PROCESS_ID
 PROCESS_NAME
 PROCESS_COMMAND
 PROCESS_ARGS
-PROCESS_EXECUTE_ARGS
-PROCESS_EXECUTE_RETURN (Shell command)
-PROCESS_EXECUTE_ERR_RETURN (Shell command, MySQL/Postgres or Redis)
+PROCESS_EXEC_ARGS
+PROCESS_EXEC_RETURN (Shell command)
+PROCESS_EXEC_ERR_RETURN (Shell command, MySQL/Postgres or Redis)
 PROCESS_STARTED_AT
 PROCESS_ENDED_AT
 PROCESS_RETRIES_COUNT

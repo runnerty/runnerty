@@ -37,7 +37,7 @@
               "id":"slack_default",
               "bot_emoji": ":see_no_evil:",
               "channel": "mlm",
-              "message":"ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+              "message":"ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXEC_ERR_RETURN / :PROCESS_EXEC_RETURN"
             }
           ]
         },
@@ -48,7 +48,7 @@
               "id":"slack_default",
               "bot_emoji": ":see_no_evil:",
               "channel": "mlm",
-              "message":"[X] FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+              "message":"[X] FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXEC_ERR_RETURN / :PROCESS_EXEC_RETURN"
             }
           ]
         },
@@ -135,7 +135,7 @@
                 "id":"slack_default",
                 "bot_emoji": ":see_no_evil:",
                 "channel": "mlm",
-                "message":"  ------> [PROC-E] ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID - :PROCESS_EXECUTE_ERR_RETURN / :PROCESS_EXECUTE_RETURN"
+                "message":"  ------> [PROC-E] ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID - :PROCESS_EXEC_ERR_RETURN / :PROCESS_EXEC_RETURN"
               }
             ]
           },
