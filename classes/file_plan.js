@@ -139,7 +139,7 @@ class FilePlan {
     var _this = this;
     return new Promise(function(resolve, reject) {
 
-      if (_this.chainIsValid(chain)) {
+      if (_this.chainIsValid(chain, true)) {
         resolve(chain);
       } else {
         if (chain.hasOwnProperty('chain_path')) {
@@ -168,12 +168,12 @@ class FilePlan {
     });
   }
 
-  chainIsValid(chain){
+  chainIsValid(chain, silent){
 
     var valid = ajv.validate('chainSchema', chain);
 
     if (!valid) {
-      logger.log('error',`Invalid chain ${chain.id} for schema chainSchema:`,ajv.errors);
+      if(!silent) logger.log('error',`Invalid chain, id ${chain.id} for schema chainSchema:`,ajv.errors);
       return false;
     }else{
       return true;
