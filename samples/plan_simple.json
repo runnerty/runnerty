@@ -36,9 +36,9 @@
         "retries":0,
         "retry_delay":0,
         "end_chain_on_fail":true,
-        "output":[{"file_name":"/etc/runnerty/test.log", "write":["[!] EJECUCIÓN :DD-:MM-:YY :HH::mm::ss -","PROCESS_EXEC_DB_RESULTS\n :PROCESS_EXEC_DB_RESULTS","PROCESS_EXEC_DB_AFFECTEDROWS:\n :PROCESS_EXEC_DB_AFFECTEDROWS"], "concat":true, "maxsize":"1mb"},
-          {"file_name":"/etc/runnerty/RES_MYSQL.log", "write":[":PROCESS_EXEC_DB_RESULTS"], "concat":false, "maxsize":"1mb"},
-          {"file_name":"/etc/runnerty/RES_MYSQL.csv", "write":[":PROCESS_EXEC_DB_RESULTS_CSV"], "concat":false, "maxsize":"1mb"}],
+        "output":[{"file_name":"/etc/runnerty/test.log", "write":["[!] EJECUCIÓN :DD-:MM-:YY :HH::mm::ss -","PROCESS_EXEC_DB_RETURN\n :PROCESS_EXEC_DB_RETURN","PROCESS_EXEC_DB_AFFECTEDROWS:\n :PROCESS_EXEC_DB_AFFECTEDROWS"], "concat":true, "maxsize":"1mb"},
+          {"file_name":"/etc/runnerty/RES_MYSQL.log", "write":[":PROCESS_EXEC_DB_RETURN"], "concat":false, "maxsize":"1mb"},
+          {"file_name":"/etc/runnerty/RES_MYSQL.csv", "write":[":PROCESS_EXEC_DB_RETURN_CSV"], "concat":false, "maxsize":"1mb"}],
         "events":{
           "on_start":{
             "notifications":[
@@ -84,10 +84,10 @@
       "retries":0,
       "retry_delay":0,
       "end_chain_on_fail":true,
-      "output":[{"file_name":"/etc/runnerty/test.log", "write":["[!] EJECUCIÓN :DD-:MM-:YY :HH::mm::ss -","PROCESS_EXEC_DB_RESULTS\n :PROCESS_EXEC_DB_RESULTS","PROCESS_EXEC_DB_AFFECTEDROWS:\n :PROCESS_EXEC_DB_AFFECTEDROWS"], "concat":true, "maxsize":"1mb"},
-        {"file_name":"/etc/runnerty/RES_MYSQL.log", "write":[":PROCESS_EXEC_DB_RESULTS"], "concat":false, "maxsize":"1mb"},
-        {"file_name":"/etc/runnerty/RES_MYSQL.csv", "write":[":PROCESS_EXEC_DB_RESULTS_CSV"], "concat":false, "maxsize":"1mb"}],
-      "output_iterable":"PROCESS_EXEC_DB_RESULTS",
+      "output":[{"file_name":"/etc/runnerty/test.log", "write":["[!] EJECUCIÓN :DD-:MM-:YY :HH::mm::ss -","PROCESS_EXEC_DB_RETURN\n :PROCESS_EXEC_DB_RETURN","PROCESS_EXEC_DB_AFFECTEDROWS:\n :PROCESS_EXEC_DB_AFFECTEDROWS"], "concat":true, "maxsize":"1mb"},
+        {"file_name":"/etc/runnerty/RES_MYSQL.log", "write":[":PROCESS_EXEC_DB_RETURN"], "concat":false, "maxsize":"1mb"},
+        {"file_name":"/etc/runnerty/RES_MYSQL.csv", "write":[":PROCESS_EXEC_DB_RETURN_CSV"], "concat":false, "maxsize":"1mb"}],
+      "output_iterable":"PROCESS_EXEC_DB_RETURN",
       "events":{
         "on_start":{
           "notifications":[

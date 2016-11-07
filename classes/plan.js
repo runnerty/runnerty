@@ -189,8 +189,21 @@ class Plan{
 
             if(chain.hasOwnProperty('iterable') && chain.iterable && chain.iterable !== ''){
 
-              var inputIterable = JSON.parse(_this.getValuesInputIterable(chain));
-              var inputIterableLength = inputIterable.length;
+              var valuesInputIterable = _this.getValuesInputIterable(chain);
+              if (valuesInputIterable){
+                var inputIterable;
+                var inputIterableLength;
+
+                try {
+                  inputIterable = JSON.parse(valuesInputIterable);
+                  inputIterableLength = inputIterable.length;
+                } catch(err) {
+                  var newErr = new Error(`Invalid input (${valuesInputIterable}), incorrect JSON`);
+                  newErr.stack += '\nCaused by: '+err.stack;
+                  logger.log('error',`Invalid input (${valuesInputIterable}), incorrect JSON`+'\nCaused by: '+err.stack);
+                  throw newErr;
+                }
+              }
 
               if(inputIterableLength){
                 var execMode = chain.iterable;
@@ -294,7 +307,9 @@ class Plan{
                     });
                 }
               }else{
-                logger.log('error','Error input not found for iterable process'+e);
+                logger.log('error','Error input not found for iterable process');
+                chain.error();
+                chain.setChainToInitState();
               }
 
             }else{

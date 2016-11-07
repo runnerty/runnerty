@@ -101,23 +101,23 @@ module.exports.exec = function exec(process){
         }else{
           loadSQLFile(process.exec.file_name)
             .then((fileContent) => {
-            process.exec.command = fileContent;
-          executeQuery(process, configValues)
-            .then((res) => {
-            process.execute_return = '';
-          process.execute_err_return = '';
-          process.end();
-          process.write_output();
-          resolve();
-        })
-        .catch(function(err){
-            logger.log('error',`executeMysql executeQuery from file: ${err}`);
-            process.execute_err_return = `executeMysql executeQuery from file: ${err}`;
-            process.execute_return = '';
-            process.error();
-            process.write_output();
-            reject(process, err);
-          });
+              process.exec.command = fileContent;
+              executeQuery(process, configValues)
+                .then((res) => {
+                  process.execute_return = '';
+                  process.execute_err_return = '';
+                  process.end();
+                  process.write_output();
+                  resolve();
+                })
+            .catch(function(err){
+                logger.log('error',`executeMysql executeQuery from file: ${err}`);
+                process.execute_err_return = `executeMysql executeQuery from file: ${err}`;
+                process.execute_return = '';
+                process.error();
+                process.write_output();
+                reject(process, err);
+              });
         })
         .catch(function(err){
             logger.log('error',`executeMysql loadSQLFile: ${err}`);
