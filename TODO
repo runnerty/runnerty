@@ -9,3 +9,4 @@ VALIDAR JSON QUE VENGA DE ITERATOR_OUTPUT
 
 5.- Incluir condición exists en depends_process para cuando sea un objeto file. Esto no iría por chokidar sino simplemente una comprobación en dependencias de si existe o no el fichero.
 
+! COMPROBAR O RESTRINGIR DE ALGUNA MANERA QUE LAS DEPENDENCIAS DE UNA CADENA ITERABLE SEAN DE UN SOLO PROCESO DE UNA CADENA.

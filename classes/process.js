@@ -209,13 +209,14 @@ class Process {
     global.runtimePlan.plan.chains.forEach(function(itemChain){
       var procValues = _this.values();
 
-      if(itemChain.depends_chains.length > 0 && itemChain.depends_chains[0].chain_id && itemChain.depends_chains[0].process_id && itemChain.depends_chains[0].chain_id === procValues.CHAIN_ID && itemChain.depends_chains[0].process_id === _this.id){
+      if(itemChain.hasOwnProperty('depends_chains') && itemChain.depends_chains.hasOwnProperty('chain_id') && itemChain.depends_chains.hasOwnProperty('process_id') && itemChain.depends_chains.chain_id === procValues.CHAIN_ID && itemChain.depends_chains.process_id === _this.id){
         if(itemChain.isEnded()){
           itemChain.status = 'stop';
         }
-        global.runtimePlan.plan.scheduleChain(itemChain);
+        var executeInmediate = true;
+        var outputIterable = procValues[_this.output_iterable];
+        global.runtimePlan.plan.scheduleChain(itemChain, executeInmediate, outputIterable);
       }
-
     });
 
   }

@@ -152,7 +152,7 @@ class Plan{
 
   };
 
-  scheduleChain(chain){
+  scheduleChain(chain, executeInmediate, outputIterable){
     var _this = this;
     // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
     // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
@@ -180,16 +180,20 @@ class Plan{
 
           logger.log('debug', `TRYING START CHAIN ${chain.id} IN ${(new Date(chain.start_date))}`);
 
-          if(_this.hasDependenciesBlocking(chain)){
+          if(!executeInmediate && _this.hasDependenciesBlocking(chain)){
             chain.waiting_dependencies();
             logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
           }else{
 
             //console.log('SIN BLOQUEOS PARA LA EJECUCION! ',chain.id);
-
             if(chain.hasOwnProperty('iterable') && chain.iterable && chain.iterable !== ''){
+              var valuesInputIterable;
+              if(!outputIterable){
+                valuesInputIterable = _this.getValuesInputIterable(chain);
+              }else{
+                valuesInputIterable = outputIterable;
+              }
 
-              var valuesInputIterable = _this.getValuesInputIterable(chain);
               if (valuesInputIterable){
                 var inputIterable;
                 var inputIterableLength;
