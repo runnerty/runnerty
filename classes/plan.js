@@ -209,11 +209,7 @@ class Plan{
                 }
               }
 
-              console.log('> inputIterableLength:',inputIterableLength);
-              console.log('> inputIterable:',inputIterable);
-
               if(inputIterableLength){
-                console.log('> inputIterable (SE EJECUTA)');
                 var execMode = chain.iterable;
 
                 if (execMode === 'parallel'){
@@ -315,7 +311,6 @@ class Plan{
                     });
                 }
               }else{
-                console.log('> inputIterable (NO SE EJECUTA)');
                 logger.log('error','Error input not found for iterable process');
                 chain.error();
                 chain.setChainToInitState();
