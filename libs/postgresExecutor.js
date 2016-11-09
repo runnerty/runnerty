@@ -127,10 +127,8 @@ module.exports.exec = function executePostgre(process){
                   });
             }
           }else{
-            console.log('> ANTES DE EXECUTE QUERY');
             executeQuery(process, configValues)
               .then((res) => {
-                console.log('> EJECUTADO OK');
                 process.execute_return = '';
                 process.execute_err_return = '';
                 process.end();
@@ -138,7 +136,6 @@ module.exports.exec = function executePostgre(process){
                 resolve();
               })
               .catch(function(err){
-                console.log('> EJECUTADO ERR');
                 logger.log('error',`executePostgre executeQuery: ${err}`);
                 process.execute_err_return = `executePostgre executeQuery: ${err}`;
                 process.execute_return = '';
