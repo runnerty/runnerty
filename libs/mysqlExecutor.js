@@ -31,8 +31,7 @@ module.exports.exec = function exec(process){
                 : null;
             }.bind(this)).replace(/(\:\/)/g, ':');
           }
-          var finalQuery = replaceWith(_query, process.values());
-          return finalQuery;
+          return _query;
         }
       });
 
@@ -44,7 +43,9 @@ module.exports.exec = function exec(process){
           process.retries_count = process.retries_count +1 || 1;
           reject(err);
         } else {
-          connection.query(process.exec.command, process.execute_arg, function (err, results) {
+
+          var command = replaceWith(process.exec.command, process.values());
+          connection.query(command, process.execute_arg, function (err, results) {
             if (err) {
               logger.log('error', `executeMysql query ${command}: ${err}`);
               process.execute_err_return = `executeMysql query ${command}: ${err}`;
