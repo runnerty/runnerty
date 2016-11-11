@@ -39,7 +39,8 @@ module.exports.exec = function executePostgre(process){
 
           reject(err);
         }else{
-          var finalQuery = queryFormat(process.exec.command, process.execute_arg);
+          var command = replaceWith(process.exec.command, process.values());
+          var finalQuery = queryFormat(command, process.execute_arg);
 
           client.query(finalQuery, null, function(err, results){
             if(err){
