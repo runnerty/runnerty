@@ -44,10 +44,11 @@ module.exports.exec = function exec(process){
           reject(err);
         } else {
 
-          connection.query(process.exec.command, process.execute_arg, function (err, results) {
+          var command = replaceWith(process.exec.command, process.values());
+          connection.query(command, process.execute_arg, function (err, results) {
             if (err) {
-              logger.log('error', `executeMysql query ${process.exec.command}: ${err}`);
-              process.execute_err_return = `executeMysql query ${process.exec.command}: ${err}`;
+              logger.log('error', `executeMysql query ${command}: ${err}`);
+              process.execute_err_return = `executeMysql query ${command}: ${err}`;
               reject(err);
             } else {
 
