@@ -38,8 +38,8 @@ module.exports.exec = function executePostgre(process){
           logger.log('error',`Could not connect to Postgre: `+err);
           reject(err);
         }else{
-          var command = replaceWith(process.exec.command, process.values());
-          var finalQuery = queryFormat(command, process.execute_arg);
+          var queryFormated = queryFormat(process.exec.command, process.execute_arg);
+          var finalQuery = replaceWith(queryFormated, process.values());
 
           client.query(finalQuery, null, function(err, results){
             if(err){
