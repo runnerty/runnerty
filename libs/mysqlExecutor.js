@@ -27,9 +27,9 @@ module.exports.exec = function exec(process){
           else {
             var _query = query.replace(/\:(\w+)/g, function (txt, key) {
               return values && key && values.hasOwnProperty(key)
-                ? this.escape(replaceWith(values[key], process.values()))
+                ? replaceWith(values[key], process.values())
                 : null;
-            }.bind(this)).replace(/(\:\/)/g, ':');
+            }.bind(this));
           }
           return _query;
         }
@@ -43,7 +43,6 @@ module.exports.exec = function exec(process){
           process.retries_count = process.retries_count +1 || 1;
           reject(err);
         } else {
-
           var command = replaceWith(process.exec.command, process.values());
           connection.query(command, process.execute_arg, function (err, results) {
             if (err) {
