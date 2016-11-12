@@ -109,6 +109,7 @@ class Chain {
           process.ended_at,
           process.output,
           process.output_iterable,
+          process.output_share,
           _this.values())
           .then(function(res) {
             resolve(res);

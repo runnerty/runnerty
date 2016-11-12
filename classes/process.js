@@ -15,7 +15,7 @@ var fs                = require('fs');
 var Event = require("./event.js");
 
 class Process {
-  constructor(id, name, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, chain_values){
+  constructor(id, name, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, output_share, chain_values){
     this.id = id;
     this.name = name;
     this.depends_process = depends_process;
@@ -29,6 +29,7 @@ class Process {
     this.end_chain_on_fail = end_chain_on_fail || false;
     this.output = output;
     this.output_iterable = output_iterable;
+    this.output_share = output_share;
 
     //Runtime attributes:
     this.status = status || "stop";
@@ -224,9 +225,17 @@ class Process {
 
   setOutputShare(){
     var _this = this;
-    if(_this.hasOwnProperty('output_share')){
+
+    if(_this.hasOwnProperty('output_share') && _this.output_share){
       var oh = {};
-      oh[_this.name] = replaceWith(_this.value, _this.values());
+
+      var key = replaceWith(_this.output_share.key, _this.values());
+      var name = replaceWith(_this.output_share.name, _this.values());
+      var value = replaceWith(_this.output_share.value, _this.values());
+
+      oh[key] = {};
+      oh[key][name] = value;
+
       global.config.global_values.push(oh);
     }
   }
