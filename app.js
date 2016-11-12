@@ -44,32 +44,6 @@ loadGeneralConfig(configFilePath)
       .then(function(plan){
         global.runtimePlan = plan;
         require('./api/api.js')(config.general, logger, global.runtimePlan);
-
-/* BORRAR
-        var txt = 'hola :ARG_UNO http://www.pepe.com';
-        console.log('i:',txt);
-        var replaceWith       = require("./libs/utils.js").replaceWith;
-        var pvals= {"GV_UNO":"uunnoo"};
-
-        function queryFormat(query, values) {
-          if (!values) return query.replace(/(\:\/)/g,':');
-          else {
-            var _query = query.replace(/\:(\w+)/g, function (txt, key) {
-              console.log('values[key]:',values[key]);
-
-              return (values && key && values.hasOwnProperty(key))
-                ? replaceWith(values[key],pvals)
-                : null;
-            }.bind(this));
-          }
-          return _query;
-        }
-
-        console.log('r:',queryFormat(txt,{"ARG_UNO":":GV_UNO"}));
-
-       // console.log(txt.replace(/\:(\w+)/g,'XXX'));
-
-*/
       })
       .catch(function(e){
         logger.log('error','FilePlan: '+e);
