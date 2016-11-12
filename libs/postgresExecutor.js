@@ -13,9 +13,9 @@ module.exports.exec = function executePostgre(process){
     else {
       var _query = query.replace(/\:(\w+)/g, function (txt, key) {
         return values && key && values.hasOwnProperty(key)
-          ? escape(replaceWith(values[key],process.values()))
+          ? replaceWith(values[key],process.values())
           : null;
-      }.bind(this)).replace(/(\:\/)/g,':');
+      }.bind(this));
     }
     return _query;
   }

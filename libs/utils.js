@@ -119,6 +119,8 @@ module.exports.loadSQLFile = function loadSQLFile(filePath){
 
 module.exports.replaceWith = function replaceWith(text, objParams, ignoreGlobalValues){
 
+  if(!objParams) objParams = {};
+
   if(global.config.global_values && !ignoreGlobalValues){
 
     var gvl =  global.config.global_values.length;
@@ -230,5 +232,6 @@ module.exports.replaceWith = function replaceWith(text, objParams, ignoreGlobalV
   while (keysLength--) {
     text = text.replace(new RegExp('\\:' + keys[keysLength], 'g'), objParams[keys[keysLength]] || '');
   }
+
   return text;
 }
