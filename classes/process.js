@@ -201,6 +201,8 @@ class Process {
 
     _this.startChainsDependients();
 
+    _this.setOutputShare();
+
   }
 
   startChainsDependients(){
@@ -218,7 +220,15 @@ class Process {
         global.runtimePlan.plan.scheduleChain(itemChain, executeInmediate, outputIterable);
       }
     });
+  }
 
+  setOutputShare(){
+    var _this = this;
+    if(_this.hasOwnProperty('output_share')){
+      var oh = {};
+      oh[_this.name] = replaceWith(_this.value, _this.values());
+      global.config.global_values.push(oh);
+    }
   }
 
   error(){
