@@ -197,7 +197,7 @@ module.exports = function (config, logger, fp) {
       var chainId = req.params.chainId;
       var chain = fp.plan.getChainById(chainId);
       if(chain){
-        chain.start();
+        fp.plan.scheduleChain(chain, true);
         res.json(`Chain "${chainId}" starting.`);
       }else{
         res.status(404).send(`Chain "${chainId}" not found`);
