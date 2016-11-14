@@ -156,7 +156,7 @@ class Plan{
     var _this = this;
     // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
     // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
-    if(chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined){
+    if((chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined) || executeInmediate){
       chain.stop();
     };
 
