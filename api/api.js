@@ -196,9 +196,10 @@ module.exports = function (config, logger, fp) {
     router.post('/chain/forceStart/:chainId', function (req, res) {
       var chainId = req.params.chainId;
       var chain = fp.plan.getChainById(chainId);
+
       if(chain){
         fp.plan.scheduleChain(chain, true);
-        res.json(`Chain "${chainId}" starting.`);
+        res.json(`Chain "${chain.id}" starting.`);
       }else{
         res.status(404).send(`Chain "${chainId}" not found`);
       }

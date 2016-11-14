@@ -302,7 +302,7 @@ class Chain {
   }
 
   //Start Chain
-  start(inputIteration){
+  start(inputIteration, executeInmediate){
     var chain = this;
 
     if (inputIteration){
@@ -322,7 +322,7 @@ class Chain {
       if(chain.hasOwnProperty('processes')){
         if(chain.processes instanceof Array && chain.processes.length > 0){
         // Initialize Chain
-          if(chain.schedule_interval){
+          if(chain.schedule_interval && !executeInmediate){
 
             chain.scheduleRepeater = schedule.scheduleJob(chain.schedule_interval, function(chain){
 

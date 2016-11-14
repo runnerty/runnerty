@@ -317,8 +317,8 @@ class Plan{
               }
 
             }else{
-              //console.log('>>>>>>>>>>>> SE EJECUTA CHAIN ',chain.id);
-              chain.start()
+              //console.log('>>>>>>>>>>>> SE EJECUTA CHAIN ',chain.id,executeInmediate);
+              chain.start(undefined,executeInmediate)
                 .then(function() {
                   _this.scheduleChains()
                 })
