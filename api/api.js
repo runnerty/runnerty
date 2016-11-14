@@ -192,6 +192,18 @@ module.exports = function (config, logger, fp) {
       }
     });
 
+    // GET A CHAIN
+    router.post('/chain/forceStart/:chainId', function (req, res) {
+      var chainId = req.params.chainId;
+      var chain = fp.plan.getChainById(chainId);
+      if(chain){
+        chain.start();
+        res.json(`Chain "${chainId}" starting.`);
+      }else{
+        res.status(404).send(`Chain "${chainId}" not found`);
+      }
+    });
+
     //GET ALL PROCESSES OF CHAIN INDICATED IN PARAMETER chainId
     router.get('/processes/:chainId', function (req, res) {
       var chainId = req.params.chainId;
