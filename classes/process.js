@@ -3,11 +3,13 @@
 var logger            = require("../libs/utils.js").logger;
 var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var replaceWith       = require("../libs/utils.js").replaceWith;
+var getChainByUId     = require("../libs/utils.js").getChainByUId;
 
 var mysqlExecutor     = require("../libs/mysqlExecutor.js");
 var postgresExecutor  = require("../libs/postgresExecutor.js");
 var redisExecutor     = require("../libs/redisExecutor.js");
 var shellExecutor     = require("../libs/shellExecutor.js");
+var crypto            = require('crypto');
 
 var bytes             = require("bytes");
 var fs                = require('fs');
@@ -15,9 +17,11 @@ var fs                = require('fs');
 var Event = require("./event.js");
 
 class Process {
-  constructor(id, name, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, output_share, chain_values){
+  constructor(id, name, parentUId, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, output_share, chain_values){
     this.id = id;
     this.name = name;
+    this.uId;
+    this.parentUId = parentUId;
     this.depends_process = depends_process;
     this.depends_process_alt = depends_process_alt;
     this.exec = exec;
@@ -42,17 +46,34 @@ class Process {
     this.chain_values = chain_values;
 
     return new Promise((resolve) => {
-      this.loadEvents(events)
-      .then((events) => {
-        this.events = events;
-        resolve(this);
-      })
-      .catch(function(e){
-        logger.log('error','Process constructor loadEvents:'+e);
-        resolve(this);
-      });
+      var _this = this;
+      _this.setUid()
+        .then(() => {
+          _this.loadEvents(events)
+           .then((events) => {
+             _this.events = events;
+             resolve(this);
+           })
+           .catch(function(e){
+             logger.log('error','Process constructor loadEvents:'+e);
+              resolve(this);
+           });
+        })
+        .catch(function(err){
+          logger.log('error',`Chain ${_this.id} setUid: `+err);
+          resolve();
+        });
     });
+  }
 
+  setUid(){
+    var _this = this;
+    return new Promise((resolve) => {
+        crypto.randomBytes(16, function(err, buffer) {
+        _this.uId = _this.id + '_' + buffer.toString('hex');
+        resolve();
+      });
+  });
   }
 
   values(){
@@ -200,13 +221,41 @@ class Process {
       _this.notificate('on_end');
     }
 
-    _this.startChainsDependients();
-
+    _this.startChildChainsDependients();
     _this.setOutputShare();
 
   }
 
-  startChainsDependients(){
+  endChildChains(){
+    var _this = this;
+
+    _this.notificate('on_end_childs');
+    _this.childs_chains_status = 'end';
+
+    var globalPlanChains = global.runtimePlan.plan.chains;
+    var chainParentFound = getChainByUId(globalPlanChains, _this.parentUId);
+
+    if(chainParentFound){
+      chainParentFound.refreshChainStatus()
+        .then(function(chainStatus){
+          if(chainStatus === 'end'){
+            chainParentFound.end();
+          }
+        })
+        .catch(function(e){
+          logger.log('error','Error in process refreshChainStatus:'+e);
+        });
+
+    }
+  }
+
+  startChildChains(){
+    var _this = this;
+    _this.notificate('on_start_childs');
+    _this.childs_chains_status = 'running';
+  }
+
+  startChildChainsDependients(){
     var _this = this;
 
     global.runtimePlan.plan.chains.forEach(function(itemChain){
@@ -217,10 +266,49 @@ class Process {
           itemChain.status = 'stop';
         }
         var executeInmediate = true;
-        var outputIterable = procValues[_this.output_iterable];
-        global.runtimePlan.plan.scheduleChain(itemChain, executeInmediate, outputIterable);
+        _this.startChildChains();
+        console.log('EL PROCESO ',_this.id,' ENVIA A PLANIFICAR ',itemChain.id);
+        global.runtimePlan.plan.scheduleChain(itemChain, _this, executeInmediate);
       }
     });
+  }
+
+  refreshProcessChildsChainsStatus(){
+    var _this = this;
+
+    return new Promise((resolve) => {
+      var childsChainsLength = _this.childs_chains.length;
+      var statusChildsChains = 'end';
+
+    var chainsError   = 0;
+    var chainsEnd     = 0;
+    var chainsRunning = 0;
+    var chainsStop    = 0;
+
+    while(childsChainsLength--) {
+      switch (_this.childs_chains[childsChainsLength].status)
+      {
+        case 'stop'   : chainsStop += 1;    break;
+        case 'end'    : chainsEnd += 1;     break;
+        case 'running': chainsRunning += 1; break;
+        case 'error'  : chainsError += 1;   break;
+      }
+    }
+
+    if (chainsRunning > 0 || chainsStop > 0){
+      statusChildsChains = 'running';
+    }else{
+      if (chainsError > 0){
+        statusChildsChains = 'error';
+      }else{
+        statusChildsChains = 'end';
+      }
+    }
+
+    _this.childs_chains_status = statusChildsChains;
+    console.log()
+    resolve(statusChildsChains);
+  });
   }
 
   setOutputShare(){

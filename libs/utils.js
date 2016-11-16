@@ -235,3 +235,59 @@ module.exports.replaceWith = function replaceWith(text, objParams, ignoreGlobalV
 
   return text;
 }
+
+module.exports.getChainByUId = function getChainByUId(chains, uId){
+
+  var chainLength = chains.length;
+
+  var res = false;
+
+  while(chainLength-- && !res){
+    var chain = chains[chainLength];
+    if(chain.uId === uId){
+      res = chain;
+    }else{
+      var chainProcessesLength = chain.processes.length;
+      if(chainProcessesLength){
+        while(chainProcessesLength-- && !res){
+          var process = chain.processes[chainProcessesLength];
+          if(process.childs_chains){
+            var result = getChainByUId(process.childs_chains, uId);
+            if(result){
+              res = result;
+            }
+          }
+        }
+      }
+    }
+  }
+  return res;
+}
+
+module.exports.getProcessByUId = function getProcessByUId(chains, uId){
+
+  var chainLength = chains.length;
+
+  var res = false;
+
+  while(chainLength-- && !res){
+    var chain = chains[chainLength];
+
+    var chainProcessesLength = chain.processes.length;
+
+    while(chainProcessesLength-- && !res){
+      var process = chain.processes[chainProcessesLength];
+      if(process.uId === uId){
+        res = process;
+      }else{
+        if(process.childs_chains){
+          var result = getProcessByUId(process.childs_chains, uId);
+          if(result){
+            res = result;
+            }
+        }
+      }
+    }
+  }
+  return res;
+}

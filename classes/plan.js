@@ -12,13 +12,13 @@ class Plan{
     return new Promise((resolve) => {
       this.loadChains(chains)
       .then((chains) => {
-      this.chains = chains;
-    resolve(this);
-  })
-  .catch(function(e){
-      logger.log('error','Plan constructor:'+e);
-      resolve(this);
-    });
+        this.chains = chains;
+        resolve(this);
+      })
+      .catch(function(e){
+        logger.log('error','Plan constructor:'+e);
+        resolve(this);
+      });
   });
   }
 
@@ -66,11 +66,12 @@ class Plan{
   });
   }
 
-  loadChain(chain, isIteration){
+  loadChain(chain, parentUId){
 
     return new Promise((resolve) => {
         new Chain(chain.id,
           chain.name,
+          parentUId,
           chain.iterable,
           chain.input,
           chain.start_date,
@@ -78,8 +79,7 @@ class Plan{
           chain.schedule_interval,
           chain.depends_chains,
           chain.depends_chains_alt,
-          (isIteration)?chain.events_iterations:chain.events,
-          chain.events_iterations,
+          chain.events,
           chain.processes,
           chain.status,
           chain.started_at,
@@ -152,7 +152,7 @@ class Plan{
 
   };
 
-  scheduleChain(chain, executeInmediate, outputIterable){
+  scheduleChain(chain, process, executeInmediate){
     var _this = this;
     // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
     // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
@@ -188,6 +188,8 @@ class Plan{
             //console.log('SIN BLOQUEOS PARA LA EJECUCION! ',chain.id);
             if(chain.hasOwnProperty('iterable') && chain.iterable && chain.iterable !== ''){
               var valuesInputIterable;
+              var procValues = process.values();
+              var outputIterable = procValues[process.output_iterable];
               if(!outputIterable){
                 valuesInputIterable = _this.getValuesInputIterable(chain);
               }else{
@@ -216,15 +218,15 @@ class Plan{
 
                   //console.log('EMPIEZA EJECUCION EN PARALELO! ',chain.id);
 
-                  var newChains = [];
+                  process.childs_chains = [];
 
                   function createChainSerie(inputIterable) {
                     var sequence = Promise.resolve();
                     inputIterable.forEach(function(item) {
                       sequence = sequence.then(function() {
-                        return _this.loadChain(chain, true)
+                        return _this.loadChain(chain, process.uId)
                           .then(function(res) {
-                            newChains.push(res);
+                            process.childs_chains.push(res);
                           })
                           .catch(function(e){
                             logger.log('error','Error '+e)
@@ -234,46 +236,38 @@ class Plan{
                     return sequence;
                   }
 
-                  chain.running();
-
                   createChainSerie(inputIterable)
                     .then(function() {
-                      var chainsToExec = [];
-                      var chainsToExecLength = newChains.length;
+                      process.childs_chains = [];
+                      var chainsToExecLength = process.childs_chains.length;
                       while(chainsToExecLength--){
-                        chainsToExec.push(newChains[chainsToExecLength].start(inputIterable[chainsToExecLength]));
+                        process.childs_chains.push(process.childs_chains[chainsToExecLength].start(inputIterable[chainsToExecLength]));
                       }
 
-                      Promise.all(chainsToExec)
+                      Promise.all(process.childs_chains)
                         .then(function (res) {
-                          //console.log('FINALIZA EJECUCION EN PARALELO! ',chain.id);
-                          chain.end();
-                          chain.setChainToInitState();
+
                         })
                         .catch(function(e){
-                          //console.log('ERROR EN EJECUCION EN PARALELO! ',chain.id);
-                          logger.log('error', 'getChains error: ', e);
-                          chain.error();
-                          chain.setChainToInitState();
+                          logger.log('error', 'createChainSerie getChains error: ', e);
                         });
 
                     });
                 }else{
                   //SERIE:
-                  chain.running();
 
-                  var newChains = [];
+                  process.childs_chains = [];
 
                   function createChainSerie(inputIterable) {
                     var sequence = Promise.resolve();
                     inputIterable.forEach(function(item) {
                       sequence = sequence.then(function() {
-                        return _this.loadChain(chain, true)
+                        return _this.loadChain(chain, process.uId)
                           .then(function(res) {
-                            newChains.push(res);
+                            process.childs_chains.push(res);
                           })
                           .catch(function(e){
-                            logger.log('error','Error '+e)
+                            logger.log('error','Error '+e);
                           });
                       });
                     });
@@ -286,15 +280,13 @@ class Plan{
                     chains.forEach(function(chain) {
                       sequence = sequence.then(function() {
 
-                        //console.log('>>>>>>>>>>>> XXXXXX SE EJECUTA CHAIN ',chain.id);
-
                         return chain.start(inputIterable[i])
                           .then(function(res) {
                             i = i+1;
                           })
                           .catch(function(e){
                             i = i+1;
-                            logger.log('error','Error '+e)
+                            logger.log('error','scheduleChain execSerie Error '+e);
                           });
                       });
                     });
@@ -303,21 +295,16 @@ class Plan{
 
                   createChainSerie(inputIterable)
                     .then(function() {
-                      execSerie(newChains)
+                      execSerie(process.childs_chains)
                         .then(function() {
-                          chain.setChainToInitState();
-                          chain.end();
                         });
                     });
                 }
               }else{
                 logger.log('error','Error input not found for iterable process');
-                chain.error();
-                chain.setChainToInitState();
               }
 
             }else{
-              //console.log('>>>>>>>>>>>> SE EJECUTA CHAIN ',chain.id,executeInmediate);
               chain.start(undefined,executeInmediate)
                 .then(function() {
                   _this.scheduleChains()
@@ -337,7 +324,9 @@ class Plan{
                 .then(function() {
                   _this.scheduleChains()
                 })
-                .catch(function(e){logger.log('error','Error '+e)});
+                .catch(function(e){
+                  logger.log('error','scheduleChain chain.start Error '+e)
+                });
             }
           }.bind(null,chain));
         }

@@ -361,6 +361,7 @@ module.exports = function (config, logger, fp) {
               if(newChain){
                 fp.plan.loadChain(newChain)
                   .then(function(newChainObj){
+                    console.log('>> CREADA CADENA:',newChainObj.id,newChainObj.uId,newChainObj.parentUId);
                     res.json();
                     fp.plan.loadChainToPlan(newChainObj);
                     // Force refresh binBackup

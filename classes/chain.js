@@ -1,17 +1,21 @@
 "use strict";
 
-var schedule = require('node-schedule');
-var anymatch = require('anymatch');
-var logger   = require("../libs/utils.js").logger;
+var schedule        = require('node-schedule');
+var anymatch        = require('anymatch');
+var logger          = require("../libs/utils.js").logger;
+var crypto          = require('crypto');
+var getProcessByUId = require("../libs/utils.js").getProcessByUId;
 
 var Process  = require("./process.js");
 var Event    = require("./event.js");
 
 class Chain {
-  constructor(id, name, iterable, input, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, events_iterations, processes, status, started_at, ended_at) {
+  constructor(id, name, parentUId, iterable, input, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at) {
     this.id = id;
     this.name = name;
+    this.uId;
     this.iterable = iterable;
+    this.parentUId = parentUId;
     this.input = input;
     this.start_date = start_date;
     this.end_date = end_date;
@@ -19,7 +23,6 @@ class Chain {
     this.depends_chains = depends_chains;
     this.depends_chains_alt = depends_chains_alt;
     this.events;
-    this.events_iterations = events_iterations;
 
     this.status = status || "stop";
     this.started_at = started_at;
@@ -29,25 +32,41 @@ class Chain {
     return new Promise((resolve) => {
       var _this = this;
 
+    _this.setUid()
+      .then(() => {
       _this.loadProcesses(processes)
         .then((processes) => {
           _this.processes = processes;
-
-          _this.loadEvents(events)
-            .then((events) => {
-              _this.events = events;
-              resolve(_this);
-            })
-            .catch(function(err){
-                logger.log('error',`Chain ${_this.id} loadEvents: `+err);
-                resolve();
-              });
-            })
+         _this.loadEvents(events)
+           .then((events) => {
+             _this.events = events;
+             resolve(_this);
+           })
+           .catch(function(err){
+             logger.log('error',`Chain ${_this.id} loadEvents: `+err);
+             resolve();
+           });
+        })
         .catch(function(err){
-            logger.log('error',`Chain ${_this.id} loadProcesses: `+err);
-            resolve();
-          });
+          logger.log('error',`Chain ${_this.id} loadProcesses: `+err);
+          resolve();
         });
+       })
+      .catch(function(err){
+        logger.log('error',`Chain ${_this.id} setUid: `+err);
+        resolve();
+      });
+  });
+  };
+
+  setUid(){
+    var _this = this;
+    return new Promise((resolve) => {
+        crypto.randomBytes(16, function(err, buffer) {
+        _this.uId = _this.id + '_' + buffer.toString('hex');
+        resolve();
+      });
+    });
   }
 
   // Executed in construction:
@@ -61,7 +80,7 @@ class Chain {
 
         while(processesLength--){
           var process = processes[processesLength];
-          chainProcessPromises.push(_this.loadProcess(process));
+          chainProcessPromises.push(_this.loadProcess(process, _this.uId));
         }
 
         Promise.all(chainProcessPromises)
@@ -87,11 +106,12 @@ class Chain {
   });
   }
 
-  loadProcess(process){
+  loadProcess(process, parentUId){
     var _this = this;
     return new Promise((resolve) => {
         new Process(process.id,
           process.name,
+          parentUId,
           process.depends_process,
           process.depends_process_alt,
           process.exec,
@@ -254,7 +274,7 @@ class Chain {
                 .then(function(res){
                 })
                 .catch(function(e){
-                  logger.log('error','Notification chain sended: '+e)
+                  logger.log('error','Notification chain sended: '+e);
                 });
             }
           }
@@ -288,7 +308,26 @@ class Chain {
     this.status = 'end';
     this.notificate('on_end');
 
-    //console.log('[[END]] CHAIN >>>>>>>>>> :',this.id);
+    this.refreshParentProcessChildsChainsStatus();
+  }
+
+  refreshParentProcessChildsChainsStatus(){
+    var _this = this;
+    var globalPlanChains = global.runtimePlan.plan.chains;
+
+    var processParentFound = getProcessByUId(globalPlanChains, _this.parentUId);
+
+    if(processParentFound){
+      processParentFound.refreshProcessChildsChainsStatus()
+        .then(function(processChildsChainsStatus){
+          if(processChildsChainsStatus === 'end'){
+            processParentFound.endChildChains();
+          }
+        })
+        .catch(function(e){
+          logger.log('error','Error in chain refreshParentProcessChildsChainsStatus:'+e);
+        });
+    }
   }
 
   running(){
@@ -350,13 +389,12 @@ class Chain {
               }else{
                 logger.log('warn',`Trying start processes of ${chain.id} but this is running`);
               }
-          }.bind(null,chain))
+          }.bind(null,chain));
 
         }else{
           chain.startProcesses()
             .then(function(res){
               //if (inputIteration) chain.end();
-              //console.log('>>>>> END DE CHAIN B2 ',chain.id);
               resolve();
             })
             .catch(function(e){
@@ -409,6 +447,7 @@ class Chain {
 
   refreshChainStatus(){
     return new Promise((resolve) => {
+
       var processesLength = this.processes.length;
       var statusChain = 'end';
 
@@ -426,6 +465,18 @@ class Chain {
           case 'error'  : processesError += 1;   break;
         }
       }
+
+    processesLength = this.processes.length;
+    while(processesLength--) {
+      switch (this.processes[processesLength].childs_chains_status)
+      {
+        case 'stop'   : processesStop += 1;    break;
+        case 'end'    : processesEnd += 1;     break;
+        case 'running': processesRunning += 1; break;
+        case 'error'  : processesError += 1;   break;
+      }
+    }
+
       //Set Chain Status
       if (processesRunning > 0 || processesStop > 0){
         statusChain = 'running';
@@ -517,6 +568,7 @@ class Chain {
                     break;
                   case 'wait':
                     process.waiting_dependencies();
+                    resolve();
                     break;
                   case 'end':
                     logger.log('debug', `Ignored: Only executed on_fail ${process.id}`);
@@ -534,6 +586,15 @@ class Chain {
                     break;
                 }
 
+              }else{
+                // SI TODOS LOS PROCESOS DE LA CADENA ESTAN EN ESTADO DISTINTO DE STOP - RESOLVE - ELSE NO HACER NADA
+                function checkAnyNotEnded(proc){
+                  return !proc.isEnded();
+                }
+
+                if(!_this.processes.find(checkAnyNotEnded)){
+                  resolve();
+                }
               }
             })
           }else{
@@ -549,7 +610,7 @@ class Chain {
           }
         })
         .catch(function(e){
-          logger.log('error','Error en refreshChainStatus: '+e);
+          logger.log('error','Error en chain startProcesses refreshChainStatus: '+e);
           resolve();
         })
     });
