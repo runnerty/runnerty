@@ -305,11 +305,9 @@ class Plan{
                     var i = 0;
                     chains.forEach(function(chain) {
                       sequence = sequence.then(function() {
-                        console.log('[><] chain:',chain.id,chain.uId,' > ',inputIterable[i]);
                         var waitEndChilds = true;
                         return chain.start(inputIterable[i], undefined, waitEndChilds)
                           .then(function(res) {
-                            console.log('[><] FIN chain:',chain.id,chain.uId,' > ',inputIterable[i]);
                             i = i+1;
                           })
                           .catch(function(e){
@@ -323,7 +321,6 @@ class Plan{
 
                   createChainSerie(inputIterable)
                     .then(function() {
-                      console.log('> process.childs_chains:',process.id,' - (',process.childs_chains[0].id,' - ',process.childs_chains[0].uId,' - ',process.childs_chains[1].id,' - ',process.childs_chains[1].uId,')');
                       execSerie(process.childs_chains)
                         .then(function() {
                           resolve();

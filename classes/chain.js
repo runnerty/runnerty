@@ -290,31 +290,38 @@ class Chain {
   }
 
   isStoped(){
-    return (this.status === 'stop');
+    var _this = this;
+    return (_this.status === 'stop');
   }
 
   isEnded(){
-    return (this.status === 'end');
+    var _this = this;
+    return (_this.status === 'end');
   }
 
   isRunning(){
-    return (this.status === 'running');
+    var _this = this;
+    return (_this.status === 'running');
   }
 
   isErrored(){
-    return (this.status === 'error');
+    var _this = this;
+    return (_this.status === 'error');
   }
 
   stop(){
-    this.status = 'stop';
+    var _this = this;
+    _this.status = 'stop';
   }
 
   end(){
-    this.ended_at = new Date();
-    this.status = 'end';
-    this.notificate('on_end');
+    var _this = this;
 
-    this.refreshParentProcessChildsChainsStatus();
+    _this.ended_at = new Date();
+    _this.status = 'end';
+    _this.notificate('on_end');
+
+    _this.refreshParentProcessChildsChainsStatus();
   }
 
   refreshParentProcessChildsChainsStatus(){
@@ -430,6 +437,7 @@ class Chain {
     var _this = this;
 
     if(_this.isRunning() || _this.isErrored()){
+      console.log('END CHAIN! 1',_this.id,_this.uId);
       _this.end();
     }
 
@@ -499,6 +507,116 @@ class Chain {
   });
   }
 
+
+  startProcess(process, waitEndChilds){
+
+    var _this = this;
+
+    return new Promise(function(resolve, reject) {
+      process.execute_input =  _this.execute_input;
+
+      if (process.isStoped()){
+        logger.log('debug', `Process ${process.id} scheduled`);
+
+        var processMustDo = _this.checkProcessActionToDo(process);
+
+        switch(processMustDo){
+          case 'run':
+
+            logger.log('debug', `Starting ${process.id}`);
+
+            process.start()
+              .then(function(){
+
+                process.startChildChainsDependients(waitEndChilds)
+                  .then(function(res){
+                    _this.startProcesses(waitEndChilds)
+                      .then(function(res){
+                        resolve();
+                      })
+                      .catch(function(e){
+                        logger.log('error','Error in startProcess:'+e);
+                        resolve();
+                      })
+                  })
+                  .catch(function(e){
+                    logger.log('error','Error in startProcess:'+e);
+                    _this.startProcesses(waitEndChilds)
+                      .then(function(res){
+                        resolve();
+                      })
+                      .catch(function(e){
+                        logger.log('error','Error in startProcess:'+e);
+                        resolve();
+                      })
+                  })
+
+              })
+              .catch(function(proc, e){
+                logger.log('error','Error in process.start: '+e);
+
+                if (proc.end_chain_on_fail){
+                  _this.end();
+
+                  _this.setChainToInitState()
+                    .then(function(){
+                      logger.log('debug','setChainToInitState end_chain_on_fail');
+                      resolve();
+                    })
+                    .catch(function(e){
+                      logger.log('error','Error setChainToInitState on end_chain_on_fail: '+e);
+                      resolve();
+                    });
+
+                }else{
+                  // Aun cuando hay error puede que haya procesos que tengan que ejecutarse:
+                  _this.startProcesses(waitEndChilds)
+                    .then(function(res){
+                      resolve();
+                    })
+                    .catch(function(e){
+                      logger.log('error','Error in startProcesses (prev errored):'+e);
+                      resolve();
+                    })
+                }
+              })
+
+            break;
+          case 'wait':
+            process.waiting_dependencies();
+            resolve();
+            break;
+          case 'end':
+            logger.log('debug', `Ignored: Only executed on_fail ${process.id}`);
+            process.end(true);
+
+            _this.startProcesses(waitEndChilds)
+              .then(function(res){
+                resolve();
+              })
+              .catch(function(e){
+                logger.log('error','Error in startProcesses (end errored):'+e);
+                resolve();
+              });
+
+            break;
+        }
+
+      }else{
+        // SI TODOS LOS PROCESOS DE LA CADENA ESTAN EN ESTADO DISTINTO DE STOP - RESOLVE - ELSE NO HACER NADA
+        function checkAnyNotEnded(proc){
+          return !proc.isEnded();
+        }
+
+        if(!_this.processes.find(checkAnyNotEnded)){
+          resolve();
+        }
+      }
+    });
+
+  }
+
+
   startProcesses(waitEndChilds){
 
     var _this = this;
@@ -515,109 +633,28 @@ class Chain {
 
           // If Chains is running:
           if (chainStatus === 'running'){
-
+/*
             _this.processes.forEach(function (process) {
-              process.execute_input =  _this.execute_input;
-
-              if (process.isStoped()){
-                logger.log('debug', `Process ${process.id} scheduled`);
-
-                var processMustDo = _this.checkProcessActionToDo(process);
-
-                switch(processMustDo){
-                  case 'run':
-
-                    logger.log('debug', `Starting ${process.id}`);
-
-                    process.start(undefined, undefined, waitEndChilds)
-                      .then(function(){
-
-                        process.startChildChainsDependients(waitEndChilds)
-                          .then(function(res){
-                            _this.startProcesses(waitEndChilds)
-                              .then(function(res){
-                                resolve();
-                              })
-                              .catch(function(e){
-                                logger.log('error','Error in startProcess:'+e);
-                                resolve();
-                              })
-                          })
-                          .catch(function(e){
-                            logger.log('error','Error in startProcess:'+e);
-                            _this.startProcesses(waitEndChilds)
-                              .then(function(res){
-                                resolve();
-                              })
-                              .catch(function(e){
-                                logger.log('error','Error in startProcess:'+e);
-                                resolve();
-                              })
-                          })
-
-                      })
-                      .catch(function(proc, e){
-                        logger.log('error','Error in process.start: '+e);
-
-                        if (proc.end_chain_on_fail){
-
-                          _this.end();
-
-                          _this.setChainToInitState()
-                            .then(function(){
-                              logger.log('debug','setChainToInitState end_chain_on_fail');
-                              resolve();
-                            })
-                            .catch(function(e){
-                              logger.log('error','Error setChainToInitState on end_chain_on_fail: '+e);
-                              resolve();
-                            });
-
-                        }else{
-                          // Aun cuando hay error puede que haya procesos que tengan que ejecutarse:
-                          _this.startProcesses(waitEndChilds)
-                            .then(function(res){
-                              resolve();
-                            })
-                            .catch(function(e){
-                              logger.log('error','Error in startProcesses (prev errored):'+e);
-                              resolve();
-                            })
-                        }
-                      })
-
-                    break;
-                  case 'wait':
-                    process.waiting_dependencies();
-                    resolve();
-                    break;
-                  case 'end':
-                    logger.log('debug', `Ignored: Only executed on_fail ${process.id}`);
-                    process.end(true);
-
-                    _this.startProcesses(waitEndChilds)
-                      .then(function(res){
-                        resolve();
-                      })
-                      .catch(function(e){
-                        logger.log('error','Error in startProcesses (end errored):'+e);
-                        resolve();
-                      })
-
-                    break;
-                }
-
-              }else{
-                // SI TODOS LOS PROCESOS DE LA CADENA ESTAN EN ESTADO DISTINTO DE STOP - RESOLVE - ELSE NO HACER NADA
-                function checkAnyNotEnded(proc){
-                  return !proc.isEnded();
-                }
-
-                if(!_this.processes.find(checkAnyNotEnded)){
-                  resolve();
-                }
-              }
+              return _this.startProcess(process, waitEndChilds);
             })
+*/
+            var processRuns = [];
+            var processesLength = _this.processes.length;
+
+            while(processesLength--){
+              processRuns.push(_this.startProcess(_this.processes[processesLength], waitEndChilds));
+            }
+
+            Promise.all(processRuns)
+              .then(function() {
+                resolve();
+              })
+              .catch(function(e){
+                logger.log('error',`chain startProcesses:`+e)
+                resolve();
+              });
+
+
           }else{
             if (chainStatus === 'end'){
               _this.end();

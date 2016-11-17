@@ -237,9 +237,6 @@ class Process {
     if(chainParentFound){
       chainParentFound.refreshChainStatus()
         .then(function(chainStatus){
-          if(chainStatus === 'end'){
-            chainParentFound.end();
-          }
         })
         .catch(function(e){
           logger.log('error','Error in process refreshChainStatus:'+e);
@@ -261,6 +258,8 @@ class Process {
 
       var chainsLength = global.runtimePlan.plan.chains.length;
 
+      var chainsToRun = [];
+
       while(chainsLength--){
         var itemChain = global.runtimePlan.plan.chains[chainsLength];
         var procValues = _this.values();
@@ -270,19 +269,26 @@ class Process {
             itemChain.status = 'stop';
           }
           var executeInmediate = true;
-          _this.startChildChains();
-          console.log('> EL PROCESO ',_this.id,' ENVIA A PLANIFICAR ',itemChain.id,itemChain.uId);
-          global.runtimePlan.plan.scheduleChain(itemChain, _this, executeInmediate)
-            .then(function(res) {
-              resolve();
-            })
-            .catch(function(e){
-              logger.log('error',`process ${_this.id} startChildChainsDependients scheduleChain. chain ${itemChain.id} ${itemChain.uId}`+e);
-              resolve();
-            });
+          chainsToRun.push(global.runtimePlan.plan.scheduleChain(itemChain, _this, executeInmediate));
         }
       }
-      resolve();
+
+      if(chainsToRun.length){
+        _this.startChildChains();
+
+        Promise.all(chainsToRun)
+          .then(function () {
+            resolve();
+          })
+          .catch(function(e){
+            logger.log('error','Process startChildChainsDependients: '+e);
+            resolve();
+          });
+
+      }else{
+        resolve();
+      }
+
     });
   }
 
@@ -319,7 +325,6 @@ class Process {
     }
 
     _this.childs_chains_status = statusChildsChains;
-    console.log()
     resolve(statusChildsChains);
   });
   }
