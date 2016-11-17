@@ -398,7 +398,7 @@ class Chain {
                   .catch(function(e){
                     logger.log('error','Error setChainToInitState: '+e);
                     resolve();
-                  })
+                  });
               }else{
                 logger.log('warn',`Trying start processes of ${chain.id} but this is running`);
               }
@@ -437,7 +437,6 @@ class Chain {
     var _this = this;
 
     if(_this.isRunning() || _this.isErrored()){
-      console.log('END CHAIN! 1',_this.id,_this.uId);
       _this.end();
     }
 
@@ -633,26 +632,56 @@ class Chain {
 
           // If Chains is running:
           if (chainStatus === 'running'){
-/*
-            _this.processes.forEach(function (process) {
-              return _this.startProcess(process, waitEndChilds);
-            })
-*/
-            var processRuns = [];
-            var processesLength = _this.processes.length;
 
-            while(processesLength--){
-              processRuns.push(_this.startProcess(_this.processes[processesLength], waitEndChilds));
+            if(waitEndChilds){ //Serie
+
+              function execSerie(processes) {
+                var sequence = Promise.resolve();
+                var i = 0;
+                processes.forEach(function(itemProcess) {
+                  sequence = sequence.then(function() {
+                    return _this.startProcess(itemProcess, waitEndChilds)
+                      .then(function(res) {
+                        i = i+1;
+                      })
+                      .catch(function(e){
+                        i = i+1;
+                        logger.log('error','chain startProcesses execSerie  startProcesses waitEndChilds. Error '+e);
+                      });
+                  });
+                });
+                return sequence;
+              }
+
+              execSerie(_this.processes)
+                .then(function() {
+                  resolve();
+                })
+                .catch(function(e){
+                  logger.log('error','chain startProcesses execSerie waitEndChilds. Error '+e);
+                  resolve();
+                });
+
+
+            }else{
+
+              var processRuns = [];
+              var processesLength = _this.processes.length;
+
+              while(processesLength--){
+                processRuns.push(_this.startProcess(_this.processes[processesLength], waitEndChilds));
+              }
+
+              Promise.all(processRuns)
+                .then(function() {
+                  resolve();
+                })
+                .catch(function(e){
+                  logger.log('error',`chain startProcesses:`+e)
+                  resolve();
+                });
+
             }
-
-            Promise.all(processRuns)
-              .then(function() {
-                resolve();
-              })
-              .catch(function(e){
-                logger.log('error',`chain startProcesses:`+e)
-                resolve();
-              });
 
 
           }else{

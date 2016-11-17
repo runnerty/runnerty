@@ -241,7 +241,7 @@ class Plan{
 
                 if (execMode === 'parallel'){
 
-                  //console.log('EMPIEZA EJECUCION EN PARALELO! ',chain.id);
+                  console.log('EMPIEZA EJECUCION EN PARALELO! ',chain.id,inputIterable);
 
                   process.childs_chains = [];
 
@@ -250,12 +250,12 @@ class Plan{
                     inputIterable.forEach(function(item) {
                       sequence = sequence.then(function() {
                         return _this.loadChain(chain, process.uId)
-                               .then(function(res) {
-                                 process.childs_chains.push(res);
-                               })
-                               .catch(function(e){
-                                 logger.log('error','scheduleChain createChainSerie parallel Error '+e)
-                               });
+                          .then(function(res) {
+                            process.childs_chains.push(res);
+                          })
+                          .catch(function(e){
+                            logger.log('error', `scheduleChain loadChain ${chain.id} parallel. Error: `+e)
+                          });
                       });
                     });
                     return sequence;
@@ -263,7 +263,6 @@ class Plan{
 
                   createChainSerie(inputIterable)
                     .then(function() {
-                      process.childs_chains = [];
                       var chainsToExecLength = process.childs_chains.length;
                       while(chainsToExecLength--){
                         process.childs_chains.push(process.childs_chains[chainsToExecLength].start(inputIterable[chainsToExecLength]));
@@ -274,7 +273,7 @@ class Plan{
                           resolve();
                         })
                         .catch(function(e){
-                          logger.log('error', 'scheduleChain createChainSerie getChains error: ', e);
+                          logger.log('error', 'scheduleChain createChainSerie createChainSerie parallel. Error: '+e);
                           resolve();
                         });
 
