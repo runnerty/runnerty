@@ -532,16 +532,29 @@ class Chain {
                     process.start(undefined, undefined, waitEndChilds)
                       .then(function(){
 
-                        process.startChildChainsDependients();
-
-                        _this.startProcesses(waitEndChilds)
+                        process.startChildChainsDependients(waitEndChilds)
                           .then(function(res){
-                            resolve();
+                            _this.startProcesses(waitEndChilds)
+                              .then(function(res){
+                                resolve();
+                              })
+                              .catch(function(e){
+                                logger.log('error','Error in startProcess:'+e);
+                                resolve();
+                              })
                           })
                           .catch(function(e){
                             logger.log('error','Error in startProcess:'+e);
-                            resolve();
+                            _this.startProcesses(waitEndChilds)
+                              .then(function(res){
+                                resolve();
+                              })
+                              .catch(function(e){
+                                logger.log('error','Error in startProcess:'+e);
+                                resolve();
+                              })
                           })
+
                       })
                       .catch(function(proc, e){
                         logger.log('error','Error in process.start: '+e);

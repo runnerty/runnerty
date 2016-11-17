@@ -259,7 +259,10 @@ class Process {
 
     return new Promise(function(resolve, reject) {
 
-      global.runtimePlan.plan.chains.forEach(function(itemChain){
+      var chainsLength = global.runtimePlan.plan.chains.length;
+
+      while(chainsLength--){
+        var itemChain = global.runtimePlan.plan.chains[chainsLength];
         var procValues = _this.values();
 
         if(itemChain.hasOwnProperty('depends_chains') && itemChain.depends_chains.hasOwnProperty('chain_id') && itemChain.depends_chains.hasOwnProperty('process_id') && itemChain.depends_chains.chain_id === procValues.CHAIN_ID && itemChain.depends_chains.process_id === _this.id){
@@ -277,13 +280,9 @@ class Process {
               logger.log('error',`process ${_this.id} startChildChainsDependients scheduleChain. chain ${itemChain.id} ${itemChain.uId}`+e);
               resolve();
             });
-
-          if(!waitEndChilds){
-            resolve();
-          }
         }
-      });
-
+      }
+      resolve();
     });
   }
 
