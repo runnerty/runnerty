@@ -254,21 +254,36 @@ class Process {
     _this.childs_chains_status = 'running';
   }
 
-  startChildChainsDependients(){
+  startChildChainsDependients(waitEndChilds){
     var _this = this;
 
-    global.runtimePlan.plan.chains.forEach(function(itemChain){
-      var procValues = _this.values();
+    return new Promise(function(resolve, reject) {
 
-      if(itemChain.hasOwnProperty('depends_chains') && itemChain.depends_chains.hasOwnProperty('chain_id') && itemChain.depends_chains.hasOwnProperty('process_id') && itemChain.depends_chains.chain_id === procValues.CHAIN_ID && itemChain.depends_chains.process_id === _this.id){
-        if(itemChain.isEnded()){
-          itemChain.status = 'stop';
+      global.runtimePlan.plan.chains.forEach(function(itemChain){
+        var procValues = _this.values();
+
+        if(itemChain.hasOwnProperty('depends_chains') && itemChain.depends_chains.hasOwnProperty('chain_id') && itemChain.depends_chains.hasOwnProperty('process_id') && itemChain.depends_chains.chain_id === procValues.CHAIN_ID && itemChain.depends_chains.process_id === _this.id){
+          if(itemChain.isEnded()){
+            itemChain.status = 'stop';
+          }
+          var executeInmediate = true;
+          _this.startChildChains();
+          console.log('> EL PROCESO ',_this.id,' ENVIA A PLANIFICAR ',itemChain.id,itemChain.uId);
+          global.runtimePlan.plan.scheduleChain(itemChain, _this, executeInmediate)
+            .then(function(res) {
+              resolve();
+            })
+            .catch(function(e){
+              logger.log('error',`process ${_this.id} startChildChainsDependients scheduleChain. chain ${itemChain.id} ${itemChain.uId}`+e);
+              resolve();
+            });
+
+          if(!waitEndChilds){
+            resolve();
+          }
         }
-        var executeInmediate = true;
-        _this.startChildChains();
-        console.log('> EL PROCESO ',_this.id,' ENVIA A PLANIFICAR ',itemChain.id,itemChain.uId);
-        global.runtimePlan.plan.scheduleChain(itemChain, _this, executeInmediate);
-      }
+      });
+
     });
   }
 
@@ -343,7 +358,7 @@ class Process {
     _this.notificate('on_waiting_dependencies');
   }
 
-  start(isRetry, forceOnceInRetry, waitEndChilds){
+  start(isRetry, forceOnceInRetry){
     var _this = this;
     _this.status = 'running';
     _this.started_at = new Date();

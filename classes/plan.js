@@ -125,7 +125,12 @@ class Plan{
               }
 
               if(!chain.isRunning() && !chain.isErrored()){
-                _this.scheduleChain(chain);
+                _this.scheduleChain(chain)
+                  .then(function(res) {
+                  })
+                  .catch(function(e){
+                    logger.log('error','loadChainFileDependencies scheduleChain'+e);
+                  });
               }
 
             })
@@ -147,16 +152,27 @@ class Plan{
 
     _this.chains.forEach(function (chain) {
       // IGNORE ITERABLE CHAINS. SCHEDULED IN PROCESS.END EVENT
-      if(!chain.iterable) _this.scheduleChain(chain);
+      if(!chain.iterable){
+        _this.scheduleChain(chain)
+          .then(function(res) {
+          })
+          .catch(function(e){
+            logger.log('error','scheduleChains scheduleChain'+e);
+          });
+      }
     });
 
   };
+
+
 
   scheduleChain(chain, process, executeInmediate){
     var _this = this;
     // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
     // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
-    if((chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined) || executeInmediate){
+
+    return new Promise((resolve) => {
+        if((chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined) || executeInmediate){
       chain.stop();
     };
 
@@ -165,6 +181,15 @@ class Plan{
       if(chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') || chain.iterable)){
 
         logger.log('debug', `SCHEDULED CHAIN ${chain.id} EN ${(new Date(chain.start_date))}`);
+
+        // Remove Chain from pool
+        if(chain.end_date){
+          logger.log('debug',`SCHEDULED CHAIN CANCELATION ${chain.id} IN ${(new Date(chain.end_date))}`);
+          chain.scheduleCancel = schedule.scheduleJob(new Date(chain.end_date), function(chain){
+            logger.log('debug',`CANCELANDO CADENA ${chain.id}`);
+            chain.schedule.cancel();
+          }.bind(null,chain));
+        }
 
         if ((new Date(chain.start_date)) <= (new Date()) || (chain.hasOwnProperty('iterable') || chain.iterable)){
 
@@ -225,12 +250,12 @@ class Plan{
                     inputIterable.forEach(function(item) {
                       sequence = sequence.then(function() {
                         return _this.loadChain(chain, process.uId)
-                          .then(function(res) {
-                            process.childs_chains.push(res);
-                          })
-                          .catch(function(e){
-                            logger.log('error','scheduleChain createChainSerie parallel Error '+e)
-                          });
+                               .then(function(res) {
+                                 process.childs_chains.push(res);
+                               })
+                               .catch(function(e){
+                                 logger.log('error','scheduleChain createChainSerie parallel Error '+e)
+                               });
                       });
                     });
                     return sequence;
@@ -246,10 +271,11 @@ class Plan{
 
                       Promise.all(process.childs_chains)
                         .then(function (res) {
-
+                          resolve();
                         })
                         .catch(function(e){
                           logger.log('error', 'scheduleChain createChainSerie getChains error: ', e);
+                          resolve();
                         });
 
                     });
@@ -263,12 +289,12 @@ class Plan{
                     inputIterable.forEach(function(item) {
                       sequence = sequence.then(function() {
                         return _this.loadChain(chain, process.uId)
-                          .then(function(res) {
-                            process.childs_chains.push(res);
-                          })
-                          .catch(function(e){
-                            logger.log('error','scheduleChain createChainSerie Error '+e);
-                          });
+                               .then(function(res) {
+                                 process.childs_chains.push(res);
+                               })
+                               .catch(function(e){
+                                 logger.log('error','scheduleChain createChainSerie Error '+e);
+                               });
                       });
                     });
                     return sequence;
@@ -300,19 +326,29 @@ class Plan{
                       console.log('> process.childs_chains:',process.id,' - (',process.childs_chains[0].id,' - ',process.childs_chains[0].uId,' - ',process.childs_chains[1].id,' - ',process.childs_chains[1].uId,')');
                       execSerie(process.childs_chains)
                         .then(function() {
-                        });
+                          resolve();
+                        })
+                        .catch(function(e){
+                          logger.log('error','scheduleChain createChainSerie Error '+e);
+                          resolve();
+                      });
                     });
                 }
               }else{
                 logger.log('error','Error input not found for iterable process');
+                resolve();
               }
 
             }else{
               chain.start(undefined,executeInmediate)
                 .then(function() {
-                  _this.scheduleChains()
+                  _this.scheduleChains();
+                  resolve();
                 })
-                .catch(function(e){logger.log('error','Error '+e)});
+                .catch(function(e){
+                  logger.log('error','Error '+e);
+                  resolve();
+                });
             }
           }
         }else{
@@ -321,40 +357,32 @@ class Plan{
             if(_this.hasDependenciesBlocking(chain)){
               chain.waiting_dependencies();
               logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> on_waiting_dependencies`);
+              resolve();
             }else{
               logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
               chain.start()
                 .then(function() {
-                  _this.scheduleChains()
+                  _this.scheduleChains();
+                  resolve();
                 })
                 .catch(function(e){
                   logger.log('error','scheduleChain chain.start Error '+e)
+                  resolve();
                 });
             }
-          }.bind(null,chain));
-        }
-
-        // Remove Chain from pool
-        if(chain.end_date){
-
-          logger.log('debug',`SCHEDULED CHAIN CANCELATION ${chain.id} IN ${(new Date(chain.end_date))}`);
-
-          chain.scheduleCancel = schedule.scheduleJob(new Date(chain.end_date), function(chain){
-
-            logger.log('debug',`CANCELANDO CADENA ${chain.id}`);
-
-            chain.schedule.cancel();
-
           }.bind(null,chain));
         }
 
       }else{
         logger.log('error',`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
         throw new Error(`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
+        resolve();
       }
     }else{
       logger.log('warn',`CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `,new Date(),'-  chain.status:'+chain.status,'- chain.schedule_interval:',chain.schedule_interval,'- chain.scheduleRepeater:',(chain.scheduleRepeater===undefined));
+      resolve();
     }
+    });
   };
 
   getChainById(chainId){
@@ -390,7 +418,12 @@ class Plan{
       _this.chains.push(newChain);
     }
     // Schedule load/reload chain
-    _this.scheduleChain(_this.getChainById(chainId));
+    _this.scheduleChain(_this.getChainById(chainId))
+      .then(function(res) {
+      })
+      .catch(function(e){
+        logger.log('error','loadChainToPlan scheduleChain'+e);
+      });
   }
 
   dependenciesBlocking(chain){
