@@ -221,7 +221,6 @@ class Process {
       _this.notificate('on_end');
     }
 
-    _this.startChildChainsDependients();
     _this.setOutputShare();
 
   }
@@ -267,7 +266,7 @@ class Process {
         }
         var executeInmediate = true;
         _this.startChildChains();
-        console.log('EL PROCESO ',_this.id,' ENVIA A PLANIFICAR ',itemChain.id);
+        console.log('> EL PROCESO ',_this.id,' ENVIA A PLANIFICAR ',itemChain.id,itemChain.uId);
         global.runtimePlan.plan.scheduleChain(itemChain, _this, executeInmediate);
       }
     });
@@ -344,7 +343,7 @@ class Process {
     _this.notificate('on_waiting_dependencies');
   }
 
-  start(isRetry, forceOnceInRetry){
+  start(isRetry, forceOnceInRetry, waitEndChilds){
     var _this = this;
     _this.status = 'running';
     _this.started_at = new Date();

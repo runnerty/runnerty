@@ -341,7 +341,7 @@ class Chain {
   }
 
   //Start Chain
-  start(inputIteration, executeInmediate){
+  start(inputIteration, executeInmediate, /* for serie executions*/ waitEndChilds){
     var chain = this;
 
     if (inputIteration){
@@ -372,7 +372,7 @@ class Chain {
               if(chain.isStoped() || chain.isEnded()){
                 chain.setChainToInitState()
                   .then(function(){
-                    chain.startProcesses()
+                    chain.startProcesses(waitEndChilds)
                       .then(function(res){
                         //chain.end();
                         resolve();
@@ -392,7 +392,7 @@ class Chain {
           }.bind(null,chain));
 
         }else{
-          chain.startProcesses()
+          chain.startProcesses(waitEndChilds)
             .then(function(res){
               //if (inputIteration) chain.end();
               resolve();
@@ -493,7 +493,7 @@ class Chain {
   });
   }
 
-  startProcesses(){
+  startProcesses(waitEndChilds){
 
     var _this = this;
 
@@ -523,9 +523,12 @@ class Chain {
 
                     logger.log('debug', `Starting ${process.id}`);
 
-                    process.start()
+                    process.start(undefined, undefined, waitEndChilds)
                       .then(function(){
-                        _this.startProcesses()
+
+                        process.startChildChainsDependients();
+
+                        _this.startProcesses(waitEndChilds)
                           .then(function(res){
                             resolve();
                           })
@@ -552,9 +555,8 @@ class Chain {
                             });
 
                         }else{
-
                           // Aun cuando hay error puede que haya procesos que tengan que ejecutarse:
-                          _this.startProcesses()
+                          _this.startProcesses(waitEndChilds)
                             .then(function(res){
                               resolve();
                             })
@@ -574,7 +576,7 @@ class Chain {
                     logger.log('debug', `Ignored: Only executed on_fail ${process.id}`);
                     process.end(true);
 
-                    _this.startProcesses()
+                    _this.startProcesses(waitEndChilds)
                       .then(function(res){
                         resolve();
                       })

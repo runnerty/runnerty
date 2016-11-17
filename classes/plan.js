@@ -229,7 +229,7 @@ class Plan{
                             process.childs_chains.push(res);
                           })
                           .catch(function(e){
-                            logger.log('error','Error '+e)
+                            logger.log('error','scheduleChain createChainSerie parallel Error '+e)
                           });
                       });
                     });
@@ -249,7 +249,7 @@ class Plan{
 
                         })
                         .catch(function(e){
-                          logger.log('error', 'createChainSerie getChains error: ', e);
+                          logger.log('error', 'scheduleChain createChainSerie getChains error: ', e);
                         });
 
                     });
@@ -267,7 +267,7 @@ class Plan{
                             process.childs_chains.push(res);
                           })
                           .catch(function(e){
-                            logger.log('error','Error '+e);
+                            logger.log('error','scheduleChain createChainSerie Error '+e);
                           });
                       });
                     });
@@ -279,9 +279,11 @@ class Plan{
                     var i = 0;
                     chains.forEach(function(chain) {
                       sequence = sequence.then(function() {
-
-                        return chain.start(inputIterable[i])
+                        console.log('[><] chain:',chain.id,chain.uId,' > ',inputIterable[i]);
+                        var waitEndChilds = true;
+                        return chain.start(inputIterable[i], undefined, waitEndChilds)
                           .then(function(res) {
+                            console.log('[><] FIN chain:',chain.id,chain.uId,' > ',inputIterable[i]);
                             i = i+1;
                           })
                           .catch(function(e){
@@ -295,6 +297,7 @@ class Plan{
 
                   createChainSerie(inputIterable)
                     .then(function() {
+                      console.log('> process.childs_chains:',process.id,' - (',process.childs_chains[0].id,' - ',process.childs_chains[0].uId,' - ',process.childs_chains[1].id,' - ',process.childs_chains[1].uId,')');
                       execSerie(process.childs_chains)
                         .then(function() {
                         });
