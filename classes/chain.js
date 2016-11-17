@@ -222,7 +222,13 @@ class Chain {
 
               // If chain is running try execute processes:
               if(_this.isRunning()){
-                _this.startProcesses();
+                _this.startProcesses()
+                  .then(function(res){
+                    //chain.end();
+                  })
+                  .catch(function(e){
+                    logger.log('error','Error in loadProcessFileDependencies startProcesses:'+e);
+                  });
               }
             })
 
