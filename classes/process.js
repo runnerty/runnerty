@@ -207,10 +207,9 @@ class Process {
   }
 
   end(noRunned){
-
+    var _this = this;
     noRunned = noRunned || false; // If process has not been executed but we need set to end
 
-    var _this = this;
     _this.status = 'end';
     _this.ended_at = new Date();
 
@@ -222,7 +221,6 @@ class Process {
     }
 
     _this.setOutputShare();
-
   }
 
   endChildChains(){
@@ -257,7 +255,6 @@ class Process {
     return new Promise(function(resolve, reject) {
 
       var chainsLength = global.runtimePlan.plan.chains.length;
-
       var chainsToRun = [];
 
       while(chainsLength--){

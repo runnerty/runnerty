@@ -38,12 +38,10 @@ class Plan{
           }else{
             planChainsPromises.push(_this.loadChain(chain));
           }
-
         }
 
         Promise.all(planChainsPromises)
           .then(function(chains) {
-
             var chainsLength = chains.length;
             while(chainsLength--){
               _this.loadChainFileDependencies(chains[chainsLength]);
@@ -132,7 +130,6 @@ class Plan{
                     logger.log('error','loadChainFileDependencies scheduleChain'+e);
                   });
               }
-
             })
 
             if(process.file_watchers){
@@ -161,10 +158,7 @@ class Plan{
           });
       }
     });
-
   };
-
-
 
   scheduleChain(chain, process, executeInmediate){
     var _this = this;
@@ -387,7 +381,6 @@ class Plan{
     function byId(chain){
       return chain.id === chainId;
     }
-
     return _this.chains.find(byId);
   }
 
@@ -397,7 +390,6 @@ class Plan{
     function byId(chain){
       return chain.id === chainId;
     }
-
     return _this.chains.findIndex(byId);
   }
 
@@ -423,8 +415,6 @@ class Plan{
   }
 
   dependenciesBlocking(chain){
-
-    //var hasDependencies = false;
     var chainsDependencies = [];
 
     if(chain.hasOwnProperty('depends_chains') && chain.depends_chains.length > 0){
@@ -443,11 +433,9 @@ class Plan{
               if(chain.depends_files_ready.indexOf(depends_chains[dependsChainsLength].file_name) > -1){
               }else{
                 chainsDependencies.push(depends_chains[dependsChainsLength]);
-                //hasDependencies = true;
               }
             }else{
               chainsDependencies.push(depends_chains);
-              //hasDependencies = true;
             }
           }
         }
@@ -465,7 +453,6 @@ class Plan{
               if(depends_chains[auxDependsChainsLength] === planChains[planChainsLength].id){
                 if(!planChains[planChainsLength].isEnded()){
                   chainsDependencies.push(planChains[planChainsLength]);
-                  //hasDependencies = true;
                 }
               }
               break;
@@ -507,9 +494,7 @@ class Plan{
     return (this.dependenciesBlocking(chain).length > 0);
   }
 
-
   getValuesInputIterable(chain){
-
     var input = [];
 
     if(chain.hasOwnProperty('depends_chains') && chain.depends_chains.length > 0){
@@ -520,7 +505,6 @@ class Plan{
       var dependsChainsLength = depends_chains.length;
 
       //Chains dependences:
-
       while(planChainsLength--){
         var auxDependsChainsLength = dependsChainsLength;
         while(auxDependsChainsLength--){
@@ -545,7 +529,6 @@ class Plan{
       return input;
     }
   }
-
 };
 
 module.exports = Plan;

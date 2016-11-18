@@ -445,16 +445,16 @@ class Chain {
       // TODO: REVISAR ESTO - PROBLEMAS SI EXISTEN FICHEROS Y NO SE VUELVE A METER EN depends_files_ready
       _this.depends_files_ready = [];
       _this.execute_input = {};
-    //Warning
-    if (this.isRunning()){
-      logger.log('warn',`This chain ${_this.id} is running yet and is being initialized`)
-    }
-    // Set All Process to stopped
-    var processesLength = _this.processes.length;
-    while(processesLength--) {
-      this.processes[processesLength].stop();
-    }
-    resolve();
+      //Warning
+      if (_this.isRunning()){
+        logger.log('warn',`This chain ${_this.id} is running yet and is being initialized`)
+      }
+      // Set All Process to stopped
+      var processesLength = _this.processes.length;
+      while(processesLength--) {
+        _this.processes[processesLength].stop();
+      }
+      resolve();
   });
   }
 
@@ -613,12 +613,9 @@ class Chain {
         }
       }
     });
-
   }
 
-
   startProcesses(waitEndChilds){
-
     var _this = this;
 
     var runningBeforeRefresh = _this.isRunning();
@@ -635,7 +632,6 @@ class Chain {
           if (chainStatus === 'running'){
 
             if(waitEndChilds){ //Serie
-
               function execSerie(processes) {
                 var sequence = Promise.resolve();
                 var i = 0;
@@ -663,7 +659,6 @@ class Chain {
                   resolve();
                 });
 
-
             }else{
 
               var processRuns = [];
@@ -681,9 +676,7 @@ class Chain {
                   logger.log('error',`chain startProcesses:`+e)
                   resolve();
                 });
-
             }
-
 
           }else{
             if (chainStatus === 'end'){
@@ -706,7 +699,6 @@ class Chain {
 
 
   checkProcessActionToDo(process){
-
     var _this = this;
     var action = 'run';
 
@@ -808,7 +800,6 @@ class Chain {
       return action;
     }
   }
-
 }
 
 module.exports = Chain;
