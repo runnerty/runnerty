@@ -247,8 +247,8 @@ module.exports.getChainByUId = function getChainByUId(chains, uId){
     if(chain.uId === uId){
       res = chain;
     }else{
-      var chainProcessesLength = chain.processes.length;
-      if(chainProcessesLength){
+      if(chain.processes && chain.processes.length){
+        var chainProcessesLength = chain.processes.length;
         while(chainProcessesLength-- && !res){
           var process = chain.processes[chainProcessesLength];
           if(process.childs_chains){
@@ -273,18 +273,20 @@ module.exports.getProcessByUId = function getProcessByUId(chains, uId){
   while(chainLength-- && !res){
     var chain = chains[chainLength];
 
-    var chainProcessesLength = chain.processes.length;
+    if(chain.processes){
+      var chainProcessesLength = chain.processes.length;
 
-    while(chainProcessesLength-- && !res){
-      var process = chain.processes[chainProcessesLength];
-      if(process.uId === uId){
-        res = process;
-      }else{
-        if(process.childs_chains){
-          var result = getProcessByUId(process.childs_chains, uId);
-          if(result){
-            res = result;
+      while(chainProcessesLength-- && !res){
+        var process = chain.processes[chainProcessesLength];
+        if(process.uId === uId){
+          res = process;
+        }else{
+          if(process.childs_chains){
+            var result = getProcessByUId(process.childs_chains, uId);
+            if(result){
+              res = result;
             }
+          }
         }
       }
     }

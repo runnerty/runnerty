@@ -241,7 +241,7 @@ class Plan{
 
                 if (execMode === 'parallel'){
 
-                  console.log('EMPIEZA EJECUCION EN PARALELO! ',chain.id,inputIterable);
+                  //console.log('EMPIEZA EJECUCION EN PARALELO! ',chain.id,inputIterable);
 
                   process.childs_chains = [];
 
