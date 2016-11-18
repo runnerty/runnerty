@@ -147,7 +147,6 @@ module.exports = function (config, logger, fp) {
 
       var user 	   = req.body.user;
       var password = req.body.password;
-      console.log('user:',user,'password:',password,req.body);
 
       if (!user) {
         res.json({ success: false, message: 'Authentication failed. User not found.' });

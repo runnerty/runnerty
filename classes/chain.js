@@ -508,7 +508,6 @@ class Chain {
 
 
   startProcess(process, waitEndChilds){
-
     var _this = this;
 
     return new Promise(function(resolve, reject) {
@@ -608,6 +607,8 @@ class Chain {
         }
 
         if(!_this.processes.find(checkAnyNotEnded)){
+          resolve();
+        }else{
           resolve();
         }
       }
