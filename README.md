@@ -319,10 +319,10 @@ Parámetros:
 
 ### OutputShare (Creación de variable globales en tiempo de ejecución)
 Creación, en el proceso:
-"output_share":{"key":"CLAVE","name":"NOMBRE","value":"VALOR :YYYY"},
+"output_share":[{"key":"CLAVE","name":"NOMBRE","value":"VALOR :YYYY"},{"key":"CLAVE2","name":"NOMBRE2","value":"VALOR2 :YYYY"}],
 
 Uso:
-:CLAVE_NOMBRE_VALUE
+":CLAVE_NOMBRE_VALUE :CLAVE2_NOMBRE2_VALUE"
 
 #### Dependencias
 Todos los procesos pueden tener dependencia de uno o varios procesos. Existen dos tipos de dependencias, por defecto cuando una proceso finaliza sin errores da paso a su/s procesos dependientes pero tambien podemos indicar que se de paso sólo cuando el proceso finalize con errores.
