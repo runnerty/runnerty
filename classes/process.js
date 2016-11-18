@@ -330,16 +330,20 @@ class Process {
     var _this = this;
 
     if(_this.hasOwnProperty('output_share') && _this.output_share){
-      var oh = {};
 
-      var key = replaceWith(_this.output_share.key, _this.values());
-      var name = replaceWith(_this.output_share.name, _this.values());
-      var value = replaceWith(_this.output_share.value, _this.values());
+      _this.output_share.forEach(function(gVar){
+        var values = _this.values();
+        var oh = {};
 
-      oh[key] = {};
-      oh[key][name] = value;
+        var key = replaceWith(gVar.key, values);
+        var name = replaceWith(gVar.name, values);
+        var value = replaceWith(gVar.value, values);
 
-      global.config.global_values.push(oh);
+        oh[key] = {};
+        oh[key][name] = value;
+
+        global.config.global_values.push(oh);
+      })
     }
   }
 

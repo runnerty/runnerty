@@ -317,6 +317,12 @@ Parámetros:
           {"file_name":"/etc/runnerty/:PROCESS_ID.err", "write":[":PROCESS_EXEC_ERR_RETURN"], "concat":true, "max_size":"1gb"}]
 ```
 
+### OutputShare (Creación de variable globales en tiempo de ejecución)
+Creación, en el proceso:
+"output_share":{"key":"CLAVE","name":"NOMBRE","value":"VALOR :YYYY"},
+
+Uso:
+:CLAVE_NOMBRE_VALUE
 
 #### Dependencias
 Todos los procesos pueden tener dependencia de uno o varios procesos. Existen dos tipos de dependencias, por defecto cuando una proceso finaliza sin errores da paso a su/s procesos dependientes pero tambien podemos indicar que se de paso sólo cuando el proceso finalize con errores.
