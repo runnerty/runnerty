@@ -50,6 +50,7 @@ module.exports.exec = function executePostgre(process){
               if(results.hasOwnProperty('rows') && results.rows.length > 0){
 
                 process.execute_db_results = JSON.stringify(results.rows);
+                process.execute_db_results_object = results;
                 csv.writeToString(results.rows, {headers: true}, function(err, data){
                   if(err){
                     logger.log('error',`Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
@@ -65,6 +66,7 @@ module.exports.exec = function executePostgre(process){
                 if(results instanceof Object){
                   process.execute_db_results      = '';
                   process.execute_db_results_csv  = '';
+                  process.execute_db_results_object = [];
                   process.execute_db_fieldCount   = results.rowCount;
                   process.execute_db_affectedRows = '';
                   process.execute_db_changedRows  = '';

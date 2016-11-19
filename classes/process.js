@@ -98,6 +98,7 @@ class Process {
       "PROCESS_LAST_DEPEND_FILE_READY": (_this.depends_files_ready && _this.depends_files_ready.length > 0) ? _this.depends_files_ready[_this.depends_files_ready.length - 1] : [],
       "PROCESS_EXEC_DB_RETURN":_this.execute_db_results,
       "PROCESS_EXEC_DB_RETURN_CSV":_this.execute_db_results_csv,
+      "PROCESS_EXEC_DB_RETURN_FIRSTROW": {},
       "PROCESS_EXEC_DB_FIELDCOUNT":_this.execute_db_fieldCount,
       "PROCESS_EXEC_DB_AFFECTEDROWS":_this.execute_db_affectedRows,
       "PROCESS_EXEC_DB_CHANGEDROWS":_this.execute_db_changedRows,
@@ -105,6 +106,19 @@ class Process {
       "PROCESS_EXEC_DB_WARNINGCOUNT":_this.execute_db_warningCount,
       "PROCESS_EXEC_DB_MESSAGE":_this.execute_db_message
     };
+
+    if(_this.execute_db_results_object && _this.execute_db_results_object.length) {
+      process_values["PROCESS_EXEC_DB_RETURN_FIRSTROW"] = _this.execute_db_results_object[0];
+
+      if (_this.execute_db_results_object[0] instanceof Object) {
+        var keys = Object.keys(_this.execute_db_results_object[0]);
+        var keysLength = keys.length;
+        while (keysLength--) {
+          var key = keys[keysLength];
+          process_values["PROCESS_EXEC_DB_RETURN_FIRSTROW_" + [key.toUpperCase()]] = _this.execute_db_results_object[0][key];
+        }
+      }
+    }
 
     var values = Object.assign(process_values, _this.execute_input);
     return values;

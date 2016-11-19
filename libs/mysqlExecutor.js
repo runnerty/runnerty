@@ -54,6 +54,7 @@ module.exports.exec = function exec(process){
               if (results instanceof Array) {
 
                 process.execute_db_results = JSON.stringify(results);
+                process.execute_db_results_object = results;
                 csv.writeToString(results, {headers: true}, function (err, data) {
                   if (err) {
                     logger.log('error', `Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
@@ -67,6 +68,7 @@ module.exports.exec = function exec(process){
 
                 if (results instanceof Object) {
                   process.execute_db_results = '';
+                  process.execute_db_results_object = [];
                   process.execute_db_results_csv = '';
                   process.execute_db_fieldCount = results.fieldCount;
                   process.execute_db_affectedRows = results.affectedRows;
