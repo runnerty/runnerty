@@ -401,6 +401,7 @@ class Chain {
                   });
               }else{
                 logger.log('warn',`Trying start processes of ${chain.id} but this is running`);
+                resolve();
               }
           }.bind(null,chain));
 
