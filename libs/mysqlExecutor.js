@@ -23,7 +23,11 @@ module.exports.exec = function exec(process){
         port: configValues.port,
         ssl: configValues.ssl,
         queryFormat: function (query, values) {
-          if (!values) return query.replace(/(\:\/)/g, ':');
+          if (!values){
+            var queryResult = query.replace(/(\:\/)/g, ':');
+            process.command_executed = queryResult;
+            return queryResult;
+          }
           else {
             var _query = query.replace(/\:(\w+)/g, function (txt, key) {
               return values && key && values.hasOwnProperty(key)
@@ -31,6 +35,7 @@ module.exports.exec = function exec(process){
                 : null;
             }.bind(this));
           }
+          process.command_executed = _query;
           return _query;
         }
       });
@@ -133,20 +138,20 @@ module.exports.exec = function exec(process){
       }else{
         executeQuery(process, configValues)
           .then((res) => {
-          process.execute_return = '';
-        process.execute_err_return = '';
-        process.end();
-        process.write_output();
-        resolve();
-      })
-      .catch(function(err){
-          logger.log('error',`executeMysql executeQuery: ${err}`);
-          process.execute_err_return = `executeMysql executeQuery: ${err}`;
-          process.execute_return = '';
-          process.error();
-          process.write_output();
-          reject(process, err);
-        });
+            process.execute_return = '';
+            process.execute_err_return = '';
+            process.end();
+            process.write_output();
+            resolve();
+          })
+          .catch(function(err){
+            logger.log('error',`executeMysql executeQuery: ${err}`);
+            process.execute_err_return = `executeMysql executeQuery: ${err}`;
+            process.execute_return = '';
+            process.error();
+            process.write_output();
+            reject(process, err);
+          });
       }
     })
     .catch(function(err){

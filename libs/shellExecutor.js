@@ -26,6 +26,7 @@ module.exports.exec = function executeCommand(process){
     process.execute_args = process.args.map(repArg);
 
     process.proc = spawn(cmd, process.execute_args, { shell:true });
+    process.command_executed = cmd +' '+ process.execute_args;
 
     process.proc.stdout.on('data', function(chunk) {
       stdout += chunk;

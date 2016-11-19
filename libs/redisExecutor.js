@@ -60,9 +60,8 @@ module.exports.exec =  function executeRedis(process) {
       });
 
       redisClient.on("ready", function () {
-
-        var finalCommands = commandsFormat(process.exec.command, process.execute_arg);
-        var commands = finalCommands;
+        var commands = commandsFormat(process.exec.command, process.execute_arg);
+        process.command_executed = commands;
 
         try {
           redisClient
