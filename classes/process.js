@@ -351,8 +351,8 @@ class Process {
         var values = _this.values();
         var oh = {};
 
-        var key = replaceWith(gVar.key, values);
-        var name = replaceWith(gVar.name, values);
+        var key = replaceWith(gVar.key, values).toUpperCase();
+        var name = replaceWith(gVar.name, values).toUpperCase();
         var value = replaceWith(gVar.value, values);
 
         oh[key] = {};

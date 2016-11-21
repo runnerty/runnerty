@@ -256,7 +256,7 @@ module.exports.replaceWith = function replaceWith(text, objParams, ignoreGlobalV
   var keysLength = keys.length;
 
   while (keysLength--) {
-    text = text.replace(new RegExp('\\:' + keys[keysLength], 'g'), objParams[keys[keysLength]] || '');
+    text = text.replace(new RegExp('\\:' + keys[keysLength], 'ig'), objParams[keys[keysLength]] || '');
   }
 
   return text;
