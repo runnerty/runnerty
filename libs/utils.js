@@ -143,7 +143,17 @@ module.exports.loadSQLFile = function loadSQLFile(filePath){
 });
 };
 
-module.exports.replaceWith = function replaceWith(text, objParams, ignoreGlobalValues){
+module.exports.replaceWith = function replaceTwoSteps(text, objParams, ignoreGlobalValues){
+  var result = replaceWith(text, objParams, ignoreGlobalValues);
+  if(text !== result){
+    return replaceWith(result, objParams, ignoreGlobalValues);
+  }else{
+    return result;
+  }
+}
+
+
+function replaceWith(text, objParams, ignoreGlobalValues){
 
   if(!objParams) objParams = {};
 
