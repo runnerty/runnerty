@@ -32,7 +32,8 @@
         "id": "mysql_default",
         "type": "mysql",
         "user": "root",
-        "password": "nesoca..mysql",
+        "__password": "nesoca..mysql",
+        "crypted_password": "nesoca..mysql",
         "database": "CORE",
         "host": "devintranetdb.c47prwzsptxu.eu-west-1.rds.amazonaws.com",
         "port": "3306"

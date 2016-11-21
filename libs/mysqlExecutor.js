@@ -12,7 +12,7 @@ module.exports.exec = function exec(process){
 
     return new Promise(function(resolve, reject) {
 
-      process.execute_arg = process.args
+      process.execute_arg = process.args;
 
       var connection = mysql.createConnection({
         host: configValues.host,

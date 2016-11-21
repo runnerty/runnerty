@@ -5,6 +5,10 @@ var fs              = require('fs');
 var configSchema    = require('../schemas/conf.json');
 var Ajv             = require('ajv');
 var ajv             = new Ajv({allErrors: true});
+var crypto          = require('crypto');
+
+const algorithm     = 'aes-256-ctr';
+
 
 ajv.addSchema(configSchema, 'configSchema');
 
@@ -17,6 +21,21 @@ var logger = new (winston.Logger)({
 });
 
 module.exports.logger = logger;
+
+
+function encrypt(text){
+  var cipher = crypto.createCipher(algorithm,global.cryptoPassword)
+  var crypted = cipher.update(text,'utf8','hex')
+  crypted += cipher.final('hex');
+  return crypted;
+}
+
+function decrypt(text){
+  var decipher = crypto.createDecipher(algorithm,global.cryptoPassword)
+  var dec = decipher.update(text,'hex','utf8')
+  dec += decipher.final('utf8');
+  return dec;
+}
 
 module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath){
   return new Promise((resolve) => {
@@ -81,6 +100,13 @@ module.exports.loadConfigSection = function loadConfigSection(config, section, i
       while (sectionLength--) {
         if (config[section][sectionLength].id === id_config) {
           cnf = config[section][sectionLength];
+          if(cnf.hasOwnProperty('crypted_password')){
+            if(global.cryptoPassword){
+              cnf.password = decrypt(cnf.crypted_password);
+            }else{
+              reject(`No crypto password set for encrypt crypted_password of section ${section} id ${id_config}.`);
+            }
+          }
         }
       }
 

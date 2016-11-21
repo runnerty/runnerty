@@ -20,6 +20,9 @@ program
   .option('-r, --reload', 'reload plan', function(){
     reloadPlan = true;
   })
+  .option('-p, --password <password>', 'Password cryptor', function(argCryptoPassword){
+    global.cryptoPassword = argCryptoPassword;
+  })
 
 program.parse(process.argv);
 
