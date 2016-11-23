@@ -7,13 +7,22 @@ var replaceWith       = require("../libs/utils.js").replaceWith;
 module.exports.exec =  function executeRedis(process) {
 
   function commandFormat(query, values) {
-    if (!values) return query.replace(/(\:\/)/g,':');
+    if (!values) return query.replace(/(\:\/)/ig,':');
     else {
-      var _query = query.replace(/\:(\w+)/g, function (txt, key) {
+      //FIRST TURN
+      var _query = query.replace(/\:(\w+)/ig, function (txt, key) {
         return values && key && values.hasOwnProperty(key)
-          ? escape(replaceWith(values[key],process.values()))
+          ? replaceWith(values[key],process.values())
           : null;
-      }.bind(this)).replace(/(\:\/)/g,':');
+      }.bind(this)).replace(/(\:\/)/ig,':');
+
+      //SECOND TURN
+      _query = _query.replace(/\:(\w+)/ig,
+        function (txt, key) {
+          return values && key && values.hasOwnProperty(key)
+            ? replaceWith(values[key], process.values())
+            : null;
+        }.bind(this));
     }
     return _query;
   };
