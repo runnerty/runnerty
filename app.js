@@ -3,9 +3,9 @@ var program           = require('commander');
 var logger            = require("./libs/utils.js").logger;
 var loadGeneralConfig = require("./libs/utils.js").loadGeneralConfig;
 
-var FilePlan   = require("./classes/file_plan.js");
+var FilePlan          = require("./classes/file_plan.js");
 
-var configFilePath = '/etc/runnerty/conf.json';
+var configFilePath    = '/etc/runnerty/conf.json';
 var config;
 
 //var runtimePlan;
@@ -65,5 +65,5 @@ process.on('uncaughtException', function (err) {
 });
 
 process.on('exit', function (err) {
-  logger.log('warn','--> [R]unnerty stoped.', err);
+  logger.log('warn','--> [R]unnerty stopped.', err);
 });

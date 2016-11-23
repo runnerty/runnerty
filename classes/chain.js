@@ -6,8 +6,8 @@ var logger          = require("../libs/utils.js").logger;
 var crypto          = require('crypto');
 var getProcessByUId = require("../libs/utils.js").getProcessByUId;
 
-var Process  = require("./process.js");
-var Event    = require("./event.js");
+var Process         = require("./process.js");
+var Event           = require("./event.js");
 
 class Chain {
   constructor(id, name, parentUId, iterable, input, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at) {
@@ -289,7 +289,7 @@ class Chain {
     }
   }
 
-  isStoped(){
+  isStopped(){
     var _this = this;
     return (_this.status === 'stop');
   }
@@ -382,7 +382,7 @@ class Chain {
                 chain.scheduleRepeater.cancel();
               }
 
-              if(chain.isStoped() || chain.isEnded()){
+              if(chain.isStopped() || chain.isEnded()){
                 chain.setChainToInitState()
                   .then(function(){
                     chain.startProcesses(waitEndChilds)
@@ -514,7 +514,7 @@ class Chain {
     return new Promise(function(resolve, reject) {
       process.execute_input =  _this.execute_input;
 
-      if (process.isStoped()){
+      if (process.isStopped()){
         logger.log('debug', `Process ${process.id} scheduled`);
 
         var processMustDo = _this.checkProcessActionToDo(process);

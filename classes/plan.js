@@ -24,6 +24,7 @@ class Plan{
 
   loadChains(chains){
     var _this = this;
+
     return new Promise((resolve) => {
         if (chains instanceof Array) {
       var chainLength = chains.length;
@@ -170,7 +171,7 @@ class Plan{
       chain.stop();
     };
 
-    if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStoped()))
+    if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStopped()))
     {
       if(chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') || chain.iterable)){
 

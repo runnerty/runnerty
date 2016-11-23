@@ -36,7 +36,7 @@ function slackSender(){
     //If not exists on pendings array try every second:
     setTimeout(function(){
       slackSender();
-    },1000)
+    },500)
   }
 };
 
