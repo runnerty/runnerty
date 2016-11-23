@@ -151,7 +151,7 @@ module.exports = function (config, logger, fp) {
       if (!user) {
         res.json({ success: false, message: 'Authentication failed. User not found.' });
       } else if (user) {
-        console.log('user:',user,'password:',password);
+        // console.log('user:',user,'password:',password);
 
         function checkAcces(up){
           return (up.user === user && up.password === password);
@@ -183,7 +183,7 @@ module.exports = function (config, logger, fp) {
     // GET A CHAIN
     router.get('/chain/:chainId', function (req, res) {
       var chainId = req.params.chainId;
-      var chain = fp.plan.getChainById(chainId);
+      var chain   = fp.plan.getChainById(chainId);
       if(chain){
         res.json(chain);
       }else{
@@ -194,10 +194,10 @@ module.exports = function (config, logger, fp) {
     // GET A CHAIN
     router.post('/chain/forceStart/:chainId', function (req, res) {
       var chainId = req.params.chainId;
-      var chain = fp.plan.getChainById(chainId);
+      var chain   = fp.plan.getChainById(chainId);
 
       if(chain){
-        fp.plan.scheduleChain(chain, true);
+        fp.plan.scheduleChain(chain, undefined, true);
         res.json(`Chain "${chain.id}" starting.`);
       }else{
         res.status(404).send(`Chain "${chainId}" not found`);
@@ -207,7 +207,7 @@ module.exports = function (config, logger, fp) {
     //GET ALL PROCESSES OF CHAIN INDICATED IN PARAMETER chainId
     router.get('/processes/:chainId', function (req, res) {
       var chainId = req.params.chainId;
-      var chain = fp.plan.getChainById(chainId);
+      var chain   = fp.plan.getChainById(chainId);
 
       if(chain){
         res.json(chain.processes);
@@ -227,8 +227,6 @@ module.exports = function (config, logger, fp) {
         var process = chain.getProcessById(processId);
         if(process){
           res.json(process);
-          //var j = JSON.parse(JSON.stringify(process, cleaner));
-          //res.send(JSON.stringify(process, cleaner));
         }else{
           res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
         }
