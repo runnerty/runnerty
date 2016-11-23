@@ -8,6 +8,35 @@ var replaceWith       = require("../libs/utils.js").replaceWith;
 
 module.exports.exec = function exec(process){
 
+  function customQueryFormat(query, values) {
+      if (!values){
+        var queryResult = query.replace(/(\:\/)/ig, ':');
+        process.command_executed = queryResult;
+        return queryResult;
+      }
+      else {
+        //FIRST TURN
+        var _query = query.replace(/\:(\w+)/ig,
+          function (txt, key) {
+            return values && key && values.hasOwnProperty(key)
+              ? replaceWith(values[key], process.values())
+              : null;
+          }.bind(this));
+
+        //SECOND TURN
+        _query = _query.replace(/\:(\w+)/ig,
+          function (txt, key) {
+            return values && key && values.hasOwnProperty(key)
+              ? replaceWith(values[key], process.values())
+              : null;
+          }.bind(this));
+      }
+
+      process.command_executed = _query;
+      return _query;
+    };
+
+
   function executeQuery(process, configValues){
 
     return new Promise(function(resolve, reject) {
@@ -22,22 +51,7 @@ module.exports.exec = function exec(process){
         socketPath: configValues.socketPath,
         port: configValues.port,
         ssl: configValues.ssl,
-        queryFormat: function (query, values) {
-          if (!values){
-            var queryResult = query.replace(/(\:\/)/g, ':');
-            process.command_executed = queryResult;
-            return queryResult;
-          }
-          else {
-            var _query = query.replace(/\:(\w+)/g, function (txt, key) {
-              return values && key && values.hasOwnProperty(key)
-                ? replaceWith(values[key], process.values())
-                : null;
-            }.bind(this));
-          }
-          process.command_executed = _query;
-          return _query;
-        }
+        queryFormat: customQueryFormat
       });
 
       connection.connect(function (err) {
