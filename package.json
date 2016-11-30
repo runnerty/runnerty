@@ -20,6 +20,7 @@
     "fast-csv": "^2.1.0",
     "helmet": "^2.1.2",
     "jsonwebtoken": "^7.1.6",
+    "moment": "^2.17.0",
     "morgan": "^1.7.0",
     "mysql": "^2.12.0",
     "node-schedule": "^1.2.0",

@@ -6,6 +6,7 @@ var configSchema    = require('../schemas/conf.json');
 var Ajv             = require('ajv');
 var ajv             = new Ajv({allErrors: true});
 var crypto          = require('crypto');
+var moment          = require('moment');
 
 const algorithm     = 'aes-256-ctr';
 
@@ -35,6 +36,13 @@ function decrypt(text){
   var dec = decipher.update(text,'hex','utf8')
   dec += decipher.final('utf8');
   return dec;
+}
+
+function getDateString(format,uppercase,lang){
+  if(lang) moment.locale(lang.toLowerCase());
+  var strDate = moment().format(format);
+  if(uppercase) strDate = strDate.toUpperCase();
+  return strDate;
 }
 
 module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath){
@@ -162,14 +170,14 @@ function replaceWith(text, objParams, ignoreGlobalValues){
     }
   }
 
-  var currentTime = new Date();
-  objParams.DD   = pad('00',currentTime.getDate());
-  objParams.MM   = pad('00',currentTime.getMonth() + 1);
-  objParams.YY   = pad('00',currentTime.getFullYear().toString().substr(2,2));
-  objParams.YYYY = currentTime.getFullYear().toString();
-  objParams.HH   = pad('00',currentTime.getHours());
-  objParams.mm   = pad('00',currentTime.getMinutes());
-  objParams.ss   = pad('00',currentTime.getSeconds());
+  objParams.DD   = getDateString('DD');
+  objParams.MM   = getDateString('MM');
+  objParams.YY   = getDateString('YY');
+  objParams.YYYY = getDateString('YYYY');
+  objParams.HH   = getDateString('HH');
+  objParams.HH12 = getDateString('hh');
+  objParams.mm   = getDateString('mm');
+  objParams.ss   = getDateString('ss');
 
   var keys = Object.keys(objParams);
 
@@ -185,6 +193,22 @@ function replaceWith(text, objParams, ignoreGlobalValues){
 
   keys.sort(orderByLength);
   var keysLength = keys.length;
+
+
+  // console.log('DDDD ENCONTRADOS:', text.match(/\:DDDD_\w{2}/ig));
+
+  var months = text.match(/\:MMMM_\w{2}/ig);
+
+  if(months){
+    var monthsLength = months.length;
+
+    while (monthsLength--){
+      var month  = months[monthsLength].substr(1,7);
+      //var format = months[monthsLength].substr(1,4);
+      var lang   = months[monthsLength].substr(6,2);
+      objParams[month] = getDateString('MMMM',true,lang);
+    }
+  }
 
   // FIRST TURN
   while (keysLength--) {
