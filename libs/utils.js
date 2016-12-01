@@ -179,6 +179,58 @@ function replaceWith(text, objParams, ignoreGlobalValues){
   objParams.mm   = getDateString('mm');
   objParams.ss   = getDateString('ss');
 
+  // MONTHS MMMM_[LANG]
+  var months = text.match(/\:MMMM_\w{2}/ig);
+
+  if(months){
+    var monthsLength = months.length;
+
+    while (monthsLength--){
+      var month  = months[monthsLength].substr(1,7);
+      var lang   = months[monthsLength].substr(6,2);
+      objParams[month] = getDateString('MMMM',true,lang);
+    }
+  }
+
+  // SHORT MONTHS MMM_[LANG]
+  var shortMonths = text.match(/\:MMM_\w{2}/ig);
+
+  if(shortMonths){
+    var shortMonthsLength = shortMonths.length;
+
+    while (shortMonthsLength--){
+      var shortMonth = shortMonths[shortMonthsLength].substr(1,6);
+      var lang       = shortMonths[shortMonthsLength].substr(5,2);
+      objParams[shortMonth] = getDateString('MMM',true,lang);
+    }
+  }
+
+  // DAYS DDDD_[LANG]
+  var days = text.match(/\:DDDD_\w{2}/ig);
+
+  if(days){
+    var daysLength = days.length;
+
+    while (daysLength--){
+      var day  = days[daysLength].substr(1,7);
+      var lang = days[daysLength].substr(6,2);
+      objParams[day] = getDateString('dddd',true,lang);
+    }
+  }
+
+  // SHORT DAYS DDD_[LANG]
+  var shortDays = text.match(/\:DDD_\w{2}/ig);
+
+  if(shortDays){
+    var shortDaysLength = shortDays.length;
+
+    while (shortDaysLength--){
+      var shortDay = shortDays[shortDaysLength].substr(1,6);
+      var lang       = shortDays[shortDaysLength].substr(5,2);
+      objParams[shortDay] = getDateString('ddd',true,lang);
+    }
+  }
+
   var keys = Object.keys(objParams);
 
   function orderByLength(a, b) {
@@ -193,22 +245,6 @@ function replaceWith(text, objParams, ignoreGlobalValues){
 
   keys.sort(orderByLength);
   var keysLength = keys.length;
-
-
-  // console.log('DDDD ENCONTRADOS:', text.match(/\:DDDD_\w{2}/ig));
-
-  var months = text.match(/\:MMMM_\w{2}/ig);
-
-  if(months){
-    var monthsLength = months.length;
-
-    while (monthsLength--){
-      var month  = months[monthsLength].substr(1,7);
-      //var format = months[monthsLength].substr(1,4);
-      var lang   = months[monthsLength].substr(6,2);
-      objParams[month] = getDateString('MMMM',true,lang);
-    }
-  }
 
   // FIRST TURN
   while (keysLength--) {
