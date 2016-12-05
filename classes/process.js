@@ -9,6 +9,7 @@ var mysqlExecutor     = require("../libs/mysqlExecutor.js");
 var postgresExecutor  = require("../libs/postgresExecutor.js");
 var redisExecutor     = require("../libs/redisExecutor.js");
 var shellExecutor     = require("../libs/shellExecutor.js");
+var waitExecutor      = require("../libs/waitExecutor.js");
 var crypto            = require('crypto');
 
 var bytes             = require("bytes");
@@ -395,48 +396,56 @@ class Process {
 
     return new Promise(function(resolve, reject) {
 
-      if(typeof _this.exec === 'string' || !_this.exec.db_connection_id){
+      if(typeof _this.exec === 'string' || (!_this.exec.db_connection_id && !_this.exec.wait)){
         resolve(shellExecutor.exec(_this));
       }else {
-        _this.loadDbConfig()
+        if(_this.exec.db_connection_id){
+          _this.loadDbConfig()
             .then((configValues) => {
-            if(configValues.type){
-              switch (configValues.type) {
-                case 'mysql':
-                  resolve(mysqlExecutor.exec(_this));
-                  break;
-                case 'postgres':
-                  resolve(postgresExecutor.exec(_this));
-                  break;
-                case 'redis':
-                  resolve(redisExecutor.exec(_this));
-                  break;
-                default:
-                  logger.log('error',`DBConnection ${_this.exec.db_connection_id} type is not valid`);
-                  _this.execute_err_return = `DBConnection ${_this.exec.db_connection_id} type is not valid`;
-                  _this.execute_return = '';
-                  _this.error();
-                  _this.write_output();
-                  reject(_this, `DBConnection ${_this.exec.db_connection_id} type is not valid`);
-                  break;
+              if(configValues.type){
+                switch (configValues.type) {
+                  case 'mysql':
+                    resolve(mysqlExecutor.exec(_this));
+                    break;
+                  case 'postgres':
+                    resolve(postgresExecutor.exec(_this));
+                    break;
+                  case 'redis':
+                    resolve(redisExecutor.exec(_this));
+                    break;
+                  default:
+                    logger.log('error',`DBConnection ${_this.exec.db_connection_id} type is not valid`);
+                    _this.execute_err_return = `DBConnection ${_this.exec.db_connection_id} type is not valid`;
+                    _this.execute_return = '';
+                    _this.error();
+                    _this.write_output();
+                    reject(_this, `DBConnection ${_this.exec.db_connection_id} type is not valid`);
+                    break;
+                }
+              }else{
+                logger.log('error',`DBConnection ${_this.exec.db_connection_id} doesn't have type`);
+                _this.execute_err_return = `DBConnection ${_this.exec.db_connection_id} doesn't have type`;
+                _this.execute_return = '';
+                _this.error();
+                _this.write_output();
+                reject(_this, `DBConnection ${_this.exec.db_connection_id} doesn't have type`);
               }
-            }else{
-              logger.log('error',`DBConnection ${_this.exec.db_connection_id} doesn't have type`);
-              _this.execute_err_return = `DBConnection ${_this.exec.db_connection_id} doesn't have type`;
+            })
+            .catch(function(err){
+              logger.log('error',`Procces start loadDbConfig: ${err}`);
+              _this.execute_err_return = `Procces start loadDbConfig: ${err}`;
               _this.execute_return = '';
               _this.error();
               _this.write_output();
-              reject(_this, `DBConnection ${_this.exec.db_connection_id} doesn't have type`);
-            }
-      })
-      .catch(function(err){
-          logger.log('error',`Procces start loadDbConfig: ${err}`);
-          _this.execute_err_return = `Procces start loadDbConfig: ${err}`;
-          _this.execute_return = '';
-          _this.error();
-          _this.write_output();
-          reject(_this, err);
-        });
+              reject(_this, err);
+              });
+        }else{
+          if(_this.exec.wait){
+            resolve(waitExecutor.exec(_this));
+          }else{
+            reject(_this, `Incorrect exec ${_this.exec}`);
+          }
+        }
       }
     });
   }

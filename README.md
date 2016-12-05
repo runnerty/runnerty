@@ -300,6 +300,11 @@ Ejecución de sentencia **redis**:
 "exec":{"command":["SET",":my_key","OTHER_TEST_VALUE"], "db_connection_id":"redis_default"},
 "args":{"my_key":"RTEST"}
 ```
+   
+Ejecución de pausa **wait** (segundos/seconds):
+```json
+"exec":{"wait":"60"}
+```
         
 #### Output (Salida)
 Objeto o array de objetos que definen la salida personalizada cuando un proceso finaliza o falla.
@@ -418,3 +423,4 @@ PROCESS_EXEC_DB_MESSAGE  (MySQL/Postgres)
 
 ### Iterable Chain (Cadena iterable)
 #### Process launcher Iterable chain (Proceso lanzadera de cadenas iterables)
+

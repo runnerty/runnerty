@@ -180,7 +180,7 @@ function replaceWith(text, objParams, ignoreGlobalValues){
   objParams.ss   = getDateString('ss');
 
   // MONTHS MMMM_[LANG]
-  var months = text.match(/\:MMMM_\w{2}/ig);
+  var months = text.toString().match(/\:MMMM_\w{2}/ig);
 
   if(months){
     var monthsLength = months.length;
@@ -193,7 +193,7 @@ function replaceWith(text, objParams, ignoreGlobalValues){
   }
 
   // SHORT MONTHS MMM_[LANG]
-  var shortMonths = text.match(/\:MMM_\w{2}/ig);
+  var shortMonths = text.toString().match(/\:MMM_\w{2}/ig);
 
   if(shortMonths){
     var shortMonthsLength = shortMonths.length;
@@ -206,7 +206,7 @@ function replaceWith(text, objParams, ignoreGlobalValues){
   }
 
   // DAYS DDDD_[LANG]
-  var days = text.match(/\:DDDD_\w{2}/ig);
+  var days = text.toString().match(/\:DDDD_\w{2}/ig);
 
   if(days){
     var daysLength = days.length;
@@ -219,7 +219,7 @@ function replaceWith(text, objParams, ignoreGlobalValues){
   }
 
   // SHORT DAYS DDD_[LANG]
-  var shortDays = text.match(/\:DDD_\w{2}/ig);
+  var shortDays = text.toString().match(/\:DDD_\w{2}/ig);
 
   if(shortDays){
     var shortDaysLength = shortDays.length;
@@ -248,13 +248,13 @@ function replaceWith(text, objParams, ignoreGlobalValues){
 
   // FIRST TURN
   while (keysLength--) {
-    text = text.replace(new RegExp('\\:' + keys[keysLength], 'ig'), objParams[keys[keysLength]] || '');
+    text = text.toString().replace(new RegExp('\\:' + keys[keysLength], 'ig'), objParams[keys[keysLength]] || '');
   }
 
   // SECOND TURN
   var keysLength = keys.length;
   while (keysLength--) {
-    text = text.replace(new RegExp('\\:' + keys[keysLength], 'ig'), objParams[keys[keysLength]] || '');
+    text = text.toString().replace(new RegExp('\\:' + keys[keysLength], 'ig'), objParams[keys[keysLength]] || '');
   }
 
   return text;
