@@ -396,7 +396,7 @@ class Process {
 
     return new Promise(function(resolve, reject) {
 
-      if(typeof _this.exec === 'string' || (!_this.exec.db_connection_id && !_this.exec.wait)){
+      if((typeof _this.exec === 'string' && _this.exec !== '') || (!_this.exec.db_connection_id && !_this.exec.wait && Object.keys(_this.exec).length !== 0)){
         resolve(shellExecutor.exec(_this));
       }else {
         if(_this.exec.db_connection_id){
@@ -443,7 +443,15 @@ class Process {
           if(_this.exec.wait){
             resolve(waitExecutor.exec(_this));
           }else{
-            reject(_this, `Incorrect exec ${_this.exec}`);
+
+            // DUMMY PROCCESS:
+            if(Object.keys(_this.exec).length === 0 || _this.exec === ''){
+              _this.end();
+              _this.write_output();
+              resolve();
+            }else{
+              reject(_this, `Incorrect exec ${_this.exec}`);
+            }
           }
         }
       }
