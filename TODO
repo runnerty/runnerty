@@ -1,6 +1,8 @@
 
 0.- IMPLEMENTAR LOGICAS EN LAS DEPENDECNIAS DE LOS PROCESOS: "depends_process":[{"id":"PROC_SAMPLE_ONE","on_fail":true,"evaluate":{"key":"FORMATEAR_A_CSV","condition":"equal","value":"YES"}}]
 
+0.1 - Hacer que la API pueda ejecutar cadenas iterables pasando en el body el array que enviaría el proceso iterador.
+
 1.- Comprobar si el directorio de los ficheros de OUTPUT existe y si no existe crearlo.
 
 VALIDAR JSON QUE VENGA DE ITERATOR_OUTPUT
