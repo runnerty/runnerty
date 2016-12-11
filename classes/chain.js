@@ -5,6 +5,7 @@ var anymatch        = require('anymatch');
 var logger          = require("../libs/utils.js").logger;
 var crypto          = require('crypto');
 var getProcessByUId = require("../libs/utils.js").getProcessByUId;
+var checkEvaluation = require("../libs/utils.js").checkEvaluation;
 
 var Process         = require("./process.js");
 var Event           = require("./event.js");
@@ -771,6 +772,8 @@ class Chain {
                   if(!planProcess[planProcessLength].isEnded() && !planProcess[planProcessLength].isErrored()){
                     action = 'wait';
                   }else{
+
+                    //CHECK ON_FAIL
                     var on_fail = false;
                     if(depends_process[auxDependsprocessLength].hasOwnProperty('on_fail')){
                       on_fail = depends_process[auxDependsprocessLength].on_fail;
@@ -787,6 +790,20 @@ class Chain {
                         action = 'end';
                       }else{
                         action = 'run';
+                      }
+                    }
+
+                    // CHECK EVALUATE
+                    if(action === 'run' && depends_process[auxDependsprocessLength].hasOwnProperty('evaluate')){
+                      var evaluate = depends_process[auxDependsprocessLength].evaluate;
+                      var evaluateLength = evaluate.length;
+                      var _eval = {};
+
+                      while(evaluateLength--){
+                         _eval = evaluate[evaluateLength];
+                        if(!checkEvaluation(_eval.oper_left, _eval.condition, _eval.oper_right)){
+                          action = 'wait';
+                        }
                       }
                     }
                   }

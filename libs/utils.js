@@ -392,3 +392,27 @@ module.exports.getProcessByUId = function getProcessByUId(chains, uId){
   }
   return res;
 }
+
+module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, oper_right){
+
+  var oper_left  = replaceWith(oper_left);
+  var oper_right = replaceWith(oper_right);
+
+  switch (condition) {
+    case '==':
+      return (oper_left == oper_right);
+      break;
+    case '!=':
+      return (oper_left != oper_right);
+      break;
+    case '>=':
+      return (oper_left >= oper_right);
+      break;
+    case '<=':
+      return (oper_left <= oper_right);
+      break;
+    default:
+      return false;
+      break;
+  }
+}
