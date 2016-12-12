@@ -8,54 +8,6 @@ var replaceWith       = require("../libs/utils.js").replaceWith;
 
 module.exports.exec = function executePostgre(process){
 
-  function execScript(client, sql) {
-    var statements = sql.split(/;\s*$/m);
-
-    (function next() {
-      var finalQuery = statements.shift();
-
-      client.query(finalQuery, null, function(err, results){
-        if(err){
-          logger.log('error',`Error query Postgre (${finalQuery}): `+err);
-
-          reject(`Error query Postgre (${finalQuery}): `+err);
-        }else{
-          if(results.hasOwnProperty('rows') && results.rows.length > 0){
-
-            process.execute_db_results = JSON.stringify(results.rows);
-            process.execute_db_results_object = results.rows;
-            csv.writeToString(results.rows, {headers: true}, function(err, data){
-              if(err){
-                logger.log('error',`Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
-              }else{
-                process.execute_db_results_csv = data;
-              }
-              resolve();
-            });
-
-          }else{
-
-            if(results instanceof Object){
-              process.execute_db_results      = '';
-              process.execute_db_results_csv  = '';
-              process.execute_db_results_object = [];
-              process.execute_db_fieldCount   = results.rowCount;
-              process.execute_db_affectedRows = '';
-              process.execute_db_changedRows  = '';
-              process.execute_db_insertId     = results.oid;
-              process.execute_db_warningCount = '';
-              process.execute_db_message      = '';
-            }
-
-            resolve();
-          }
-        }
-        client.end();
-      })
-
-    })();
-  }
-
   function queryFormat(query, values) {
     if (!values) return query.replace(/(\:\/)/ig,':');
     else {
@@ -96,10 +48,54 @@ module.exports.exec = function executePostgre(process){
           reject(err);
         }else{
           var command = replaceWith(process.exec.command, process.values());
-          var finalQuery = queryFormat(command, process.execute_arg);
-          process.command_executed = finalQuery;
+          var _finalQuery = queryFormat(command, process.execute_arg);
+          process.command_executed = _finalQuery;
 
-          execScript(client,finalQuery);
+          var statements = finalQuery.split(/;\s*$/m);
+
+          (function next() {
+            var finalQuery = statements.shift();
+
+            client.query(finalQuery, null, function (err, results) {
+              if (err) {
+                logger.log('error', `Error query Postgre (${finalQuery}): ` + err);
+
+                reject(`Error query Postgre (${finalQuery}): ` + err);
+              } else {
+                if (results.hasOwnProperty('rows') && results.rows.length > 0) {
+
+                  process.execute_db_results = JSON.stringify(results.rows);
+                  process.execute_db_results_object = results.rows;
+                  csv.writeToString(results.rows, {headers: true}, function (err, data) {
+                    if (err) {
+                      logger.log('error', `Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
+                    } else {
+                      process.execute_db_results_csv = data;
+                    }
+                    resolve();
+                  });
+
+                } else {
+
+                  if (results instanceof Object) {
+                    process.execute_db_results = '';
+                    process.execute_db_results_csv = '';
+                    process.execute_db_results_object = [];
+                    process.execute_db_fieldCount = results.rowCount;
+                    process.execute_db_affectedRows = '';
+                    process.execute_db_changedRows = '';
+                    process.execute_db_insertId = results.oid;
+                    process.execute_db_warningCount = '';
+                    process.execute_db_message = '';
+                  }
+
+                  resolve();
+                }
+              }
+              client.end();
+            })
+
+          })();
 
          /*
           client.query(finalQuery, null, function(err, results){
