@@ -51,6 +51,7 @@ module.exports.exec = function exec(process){
         socketPath: configValues.socketPath,
         port: configValues.port,
         ssl: configValues.ssl,
+        multipleStatements: true,
         queryFormat: customQueryFormat
       });
 
