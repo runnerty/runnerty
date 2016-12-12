@@ -31,10 +31,13 @@ module.exports.exec = function executePostgre(process){
 
   function executeQuerys(process, configValues){
     return new Promise(function(resolve, reject){
-
+      console.log('executeQuerys - process.exec.command:',process.exec.command);
       var command              = replaceWith(process.exec.command, process.values());
+      console.log('executeQuerys - [2]');
       var _finalQuery          = queryFormat(command, process.execute_arg);
+      console.log('executeQuerys - [3]');
       process.command_executed = _finalQuery;
+      console.log('executeQuerys - [4]');
       var statements           = _finalQuery.split(/;\s*$/m);
 
       console.log('executeQuerys - statements:',statements);
