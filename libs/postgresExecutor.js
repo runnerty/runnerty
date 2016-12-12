@@ -51,7 +51,7 @@ module.exports.exec = function executePostgre(process){
           var _finalQuery = queryFormat(command, process.execute_arg);
           process.command_executed = _finalQuery;
 
-          var statements = finalQuery.split(/;\s*$/m);
+          var statements = _finalQuery.split(/;\s*$/m);
 
           (function next() {
             var finalQuery = statements.shift();
