@@ -52,9 +52,12 @@ module.exports.exec = function executePostgre(process){
           process.command_executed = _finalQuery;
 
           var statements = _finalQuery.split(/;\s*$/m);
+          console.log('LEE:',statements);
 
           (function next() {
             var finalQuery = statements.shift();
+
+            console.log('> EJECUTA:',finalQuery);
 
             client.query(finalQuery, null, function (err, results) {
               if (err) {
