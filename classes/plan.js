@@ -162,7 +162,7 @@ class Plan{
     });
   };
 
-  scheduleChain(chain, process, executeInmediate, valuesInputIterable, customValues){
+  scheduleChain(chain, process, executeInmediate, inputIterableValues, customValues){
     var _this = this;
     // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
     // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
@@ -209,29 +209,29 @@ class Plan{
             //console.log('SIN BLOQUEOS PARA LA EJECUCION! ',chain.id);
             if(chain.hasOwnProperty('iterable') && chain.iterable && chain.iterable !== ''){
 
-              if(!valuesInputIterable){
-                //var valuesInputIterable;
+              if(!inputIterableValues){
+                //var inputIterableValues;
                 var procValues = process.values();
                 var outputIterable = procValues[process.output_iterable];
 
                 if(!outputIterable){
-                  valuesInputIterable = _this.getValuesInputIterable(chain);
+                  inputIterableValues = _this.getValuesInputIterable(chain);
                 }else{
-                  valuesInputIterable = outputIterable;
+                  inputIterableValues = outputIterable;
                 }
               }
 
-              if (valuesInputIterable){
+              if (inputIterableValues){
                 var inputIterable;
                 var inputIterableLength;
 
                 try {
-                  inputIterable = JSON.parse(valuesInputIterable);
+                  inputIterable = JSON.parse(inputIterableValues);
                   inputIterableLength = inputIterable.length;
                 } catch(err) {
-                  var newErr = new Error(`Invalid input (${valuesInputIterable}), incorrect JSON`);
+                  var newErr = new Error(`Invalid input (${inputIterableValues}), incorrect JSON`);
                   newErr.stack += '\nCaused by: '+err.stack;
-                  logger.log('error',`Invalid input (${valuesInputIterable}), incorrect JSON`+'\nCaused by: '+err.stack);
+                  logger.log('error',`Invalid input (${inputIterableValues}), incorrect JSON`+'\nCaused by: '+err.stack);
                   throw newErr;
                 }
               }

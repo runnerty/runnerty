@@ -197,7 +197,7 @@ module.exports = function (config, logger, fp) {
     router.post('/chain/forceStart/:chainId', function (req, res) {
       var chainId = req.params.chainId;
       var chain   = fp.plan.getChainById(chainId);
-      var valuesInputIterable;
+      var inputIterableValues;
 
       var customValues = {};
       if(req.body.hasOwnProperty('customValues')) {
@@ -216,15 +216,15 @@ module.exports = function (config, logger, fp) {
         crypto.randomBytes(16, function(err, buffer) {
           var vProcUId = chainId + '_VP_' + buffer.toString('hex');
 
-          if(req.body.hasOwnProperty('valuesInputIterable')){
-            valuesInputIterable = req.body.valuesInputIterable;
+          if(req.body.hasOwnProperty('inputIterableValues')){
+            inputIterableValues = req.body.inputIterableValues;
           }
 
           if(chain){
             var dummy_process = {};
             dummy_process.uId = vProcUId;
             dummy_process.childs_chains = [];
-            fp.plan.scheduleChain(chain, dummy_process, true, valuesInputIterable, customValues);
+            fp.plan.scheduleChain(chain, dummy_process, true, inputIterableValues, customValues);
             res.json(`Chain "${chain.id}" starting.`);
           }else{
             res.status(404).send(`Chain "${chainId}" not found`);
