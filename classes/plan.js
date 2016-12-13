@@ -65,7 +65,7 @@ class Plan{
   });
   }
 
-  loadChain(chain, parentUId){
+  loadChain(chain, parentUId, custom_values){
 
     return new Promise((resolve) => {
         new Chain(chain.id,
@@ -73,6 +73,7 @@ class Plan{
           parentUId,
           chain.iterable,
           chain.input,
+          custom_values,
           chain.start_date,
           chain.end_date,
           chain.schedule_interval,
@@ -161,7 +162,7 @@ class Plan{
     });
   };
 
-  scheduleChain(chain, process, executeInmediate, valuesInputIterable){
+  scheduleChain(chain, process, executeInmediate, valuesInputIterable, customValues){
     var _this = this;
     // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
     // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
@@ -248,7 +249,7 @@ class Plan{
                     var sequence = Promise.resolve();
                     inputIterable.forEach(function(item) {
                       sequence = sequence.then(function() {
-                        return _this.loadChain(chain, process.uId)
+                        return _this.loadChain(chain, process.uId, customValues)
                           .then(function(res) {
                             process.childs_chains.push(res);
                           })
@@ -286,7 +287,7 @@ class Plan{
                     var sequence = Promise.resolve();
                     inputIterable.forEach(function(item) {
                       sequence = sequence.then(function() {
-                        return _this.loadChain(chain, process.uId)
+                        return _this.loadChain(chain, process.uId, customValues)
                                .then(function(res) {
                                  process.childs_chains.push(res);
                                })

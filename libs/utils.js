@@ -170,14 +170,14 @@ function replaceWith(text, objParams, ignoreGlobalValues){
     }
   }
 
-  objParams.DD   = getDateString('DD');
-  objParams.MM   = getDateString('MM');
-  objParams.YY   = getDateString('YY');
-  objParams.YYYY = getDateString('YYYY');
-  objParams.HH   = getDateString('HH');
-  objParams.HH12 = getDateString('hh');
-  objParams.mm   = getDateString('mm');
-  objParams.ss   = getDateString('ss');
+  objParams.DD   = objParams.DD   || getDateString('DD');
+  objParams.MM   = objParams.MM   || getDateString('MM');
+  objParams.YY   = objParams.YY   || getDateString('YY');
+  objParams.YYYY = objParams.YYYY || getDateString('YYYY');
+  objParams.HH   = objParams.HH   || getDateString('HH');
+  objParams.HH12 = objParams.HH12 || getDateString('hh');
+  objParams.mm   = objParams.mm   || getDateString('mm');
+  objParams.ss   = objParams.ss   || getDateString('ss');
 
   // MONTHS MMMM_[LANG]
   var months = text.toString().match(/\:MMMM_\w{2}/ig);
@@ -332,7 +332,7 @@ module.exports.replaceWith = replaceWith;
     }
   }
 
-  return Object.assign(objParams, gv);;
+  return Object.assign(gv, objParams);
 }
 
 module.exports.getChainByUId = function getChainByUId(chains, uId){

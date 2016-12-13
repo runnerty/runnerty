@@ -11,13 +11,14 @@ var Process         = require("./process.js");
 var Event           = require("./event.js");
 
 class Chain {
-  constructor(id, name, parentUId, iterable, input, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at) {
+  constructor(id, name, parentUId, iterable, input, custom_values, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at) {
     this.id = id;
     this.name = name;
     this.uId;
     this.iterable = iterable;
     this.parentUId = parentUId;
     this.input = input;
+    this.custom_values = custom_values;
     this.start_date = start_date;
     this.end_date = end_date;
     this.schedule_interval = schedule_interval;
@@ -81,7 +82,7 @@ class Chain {
 
         while(processesLength--){
           var process = processes[processesLength];
-          chainProcessPromises.push(_this.loadProcess(process, _this.uId));
+          chainProcessPromises.push(_this.loadProcess(process, _this.uId, _this.custom_values));
         }
 
         Promise.all(chainProcessPromises)
@@ -107,7 +108,7 @@ class Chain {
   });
   }
 
-  loadProcess(process, parentUId){
+  loadProcess(process, parentUId, custom_values){
     var _this = this;
     return new Promise((resolve) => {
         new Process(process.id,
@@ -131,6 +132,7 @@ class Chain {
           process.output,
           process.output_iterable,
           process.output_share,
+          custom_values,
           _this.values())
           .then(function(res) {
             resolve(res);
@@ -265,6 +267,7 @@ class Chain {
     }
 
     var values = Object.assign(chain_values, _this.execute_input);
+    values = Object.assign(values, _this.custom_values);
 
     return values;
   }
@@ -366,7 +369,6 @@ class Chain {
       while(inputLength--){
         var key = Object.keys(chain.input[inputLength])[0];
         var value = chain.input[inputLength][key];
-        console.log('INPUT KEY',key,' - inputIteration: ',value);
         chain.execute_input[key] = inputIteration[value];
       }
     }

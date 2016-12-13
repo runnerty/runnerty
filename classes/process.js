@@ -18,7 +18,7 @@ var fs                = require('fs');
 var Event = require("./event.js");
 
 class Process {
-  constructor(id, name, parentUId, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, output_share, chain_values){
+  constructor(id, name, parentUId, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, output_share, custom_values, chain_values){
     this.id = id;
     this.name = name;
     this.uId;
@@ -34,6 +34,7 @@ class Process {
     this.end_chain_on_fail = end_chain_on_fail || false;
     this.output = output;
     this.output_iterable = output_iterable;
+    this.custom_values = custom_values;
     this.output_share = output_share;
 
     //Runtime attributes:
@@ -124,6 +125,7 @@ class Process {
     }
 
     var values = Object.assign(process_values, _this.execute_input);
+    values = Object.assign(values, _this.custom_values);
     return values;
   }
 

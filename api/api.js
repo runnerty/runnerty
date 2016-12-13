@@ -199,84 +199,17 @@ module.exports = function (config, logger, fp) {
       var chain   = fp.plan.getChainById(chainId);
       var valuesInputIterable;
 
-
-      if(req.body.hasOwnProperty('globalValues')){
-
-        console.log('> LLEGA:',req.body.globalValues);
-
-        var values = {};
+      var customValues = {};
+      if(req.body.hasOwnProperty('customValues')) {
 
         try {
-          values = JSON.parse(req.body.globalValues);
-        } catch(err) {
+          customValues = JSON.parse(req.body.customValues);
+        } catch (err) {
           var newErr = new Error('Problem reading JSON file');
-          newErr.stack += '\nCaused by: '+err.stack;
+          newErr.stack += '\nCaused by: ' + err.stack;
           throw newErr;
         }
-
-        var valuesLength = values.length;
-
-        while(valuesLength--){
-          var gVar = values[valuesLength];
-
-          console.log('> TRATANDO:',gVar);
-
-          if(gVar.hasOwnProperty('key') && gVar.hasOwnProperty('name') && gVar.hasOwnProperty('value')) {
-
-            var oh = {};
-            var key = replaceWith(gVar.key).toUpperCase();
-            var name = replaceWith(gVar.name).toUpperCase();
-            var value = replaceWith(gVar.value);
-
-            oh[key] = {};
-            oh[key][name] = value;
-
-            var gcgvl = global.config.global_values.length;
-
-            while(gcgvl--){
-
-              if(Object.keys(global.config.global_values[gcgvl])[0].toUpperCase() === key.toUpperCase()){
-
-                console.log('EQ >',Object.keys(global.config.global_values[gcgvl])[0]);
-
-                var ogv  = Object.keys(global.config.global_values[gcgvl][Object.keys(global.config.global_values[gcgvl])[0]]);
-                var ogvl = ogv.length;
-
-                console.log('ogv:',ogv);
-
-                while(ogvl--){
-                  if(ogv[ogvl].toUpperCase() === name.toUpperCase()){
-                    console.log('IGUAL');
-                    global.config.global_values[gcgvl][Object.keys(global.config.global_values[gcgvl])[0]][ogv[ogvl]] = value;
-                  }
-                }
-              }
-            }
-
-            console.log('>',global.config.global_values);
-
-            /*
-            function findObjGV(obj) {
-              if (Object.keys(obj)[0] === key) {
-                if (Object.keys(obj)[0].hasOwnProperty(name)) {
-                  Object.keys(obj)[0][name] = value;
-                  console.log('SET DE ', Object.keys(obj)[0], name, ' A:', value);
-                  return true;
-                }
-              }
-            };
-            */
-
-           // console.log(global.config.global_values.find(findObjGV));
-
-            //global.config.global_values.push(oh);
-          }else{
-            res.status(505).send(`Incorrect Global values`);
-          }
-
-        }
-
-      }
+      };
 
       if(chain.hasOwnProperty('iterable')){
 
@@ -291,7 +224,7 @@ module.exports = function (config, logger, fp) {
             var dummy_process = {};
             dummy_process.uId = vProcUId;
             dummy_process.childs_chains = [];
-            fp.plan.scheduleChain(chain, dummy_process, true, valuesInputIterable);
+            fp.plan.scheduleChain(chain, dummy_process, true, valuesInputIterable, customValues);
             res.json(`Chain "${chain.id}" starting.`);
           }else{
             res.status(404).send(`Chain "${chainId}" not found`);
