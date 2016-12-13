@@ -366,6 +366,7 @@ class Chain {
       while(inputLength--){
         var key = Object.keys(chain.input[inputLength])[0];
         var value = chain.input[inputLength][key];
+        console.log('INPUT KEY',key,' - inputIteration: ',value);
         chain.execute_input[key] = inputIteration[value];
       }
     }

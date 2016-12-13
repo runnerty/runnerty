@@ -13,6 +13,8 @@ var app             = express();
 var server          = require('http').Server(app);
 var helmet          = require('helmet');
 var util            = require('util');
+var crypto          = require('crypto');
+var replaceWith     = require("../libs/utils.js").replaceWith;
 /*
  var lusca           = require('lusca');
 */
@@ -195,12 +197,115 @@ module.exports = function (config, logger, fp) {
     router.post('/chain/forceStart/:chainId', function (req, res) {
       var chainId = req.params.chainId;
       var chain   = fp.plan.getChainById(chainId);
+      var valuesInputIterable;
 
-      if(chain){
-        fp.plan.scheduleChain(chain, undefined, true);
-        res.json(`Chain "${chain.id}" starting.`);
+
+      if(req.body.hasOwnProperty('globalValues')){
+
+        console.log('> LLEGA:',req.body.globalValues);
+
+        var values = {};
+
+        try {
+          values = JSON.parse(req.body.globalValues);
+        } catch(err) {
+          var newErr = new Error('Problem reading JSON file');
+          newErr.stack += '\nCaused by: '+err.stack;
+          throw newErr;
+        }
+
+        var valuesLength = values.length;
+
+        while(valuesLength--){
+          var gVar = values[valuesLength];
+
+          console.log('> TRATANDO:',gVar);
+
+          if(gVar.hasOwnProperty('key') && gVar.hasOwnProperty('name') && gVar.hasOwnProperty('value')) {
+
+            var oh = {};
+            var key = replaceWith(gVar.key).toUpperCase();
+            var name = replaceWith(gVar.name).toUpperCase();
+            var value = replaceWith(gVar.value);
+
+            oh[key] = {};
+            oh[key][name] = value;
+
+            var gcgvl = global.config.global_values.length;
+
+            while(gcgvl--){
+
+              if(Object.keys(global.config.global_values[gcgvl])[0].toUpperCase() === key.toUpperCase()){
+
+                console.log('EQ >',Object.keys(global.config.global_values[gcgvl])[0]);
+
+                var ogv  = Object.keys(global.config.global_values[gcgvl][Object.keys(global.config.global_values[gcgvl])[0]]);
+                var ogvl = ogv.length;
+
+                console.log('ogv:',ogv);
+
+                while(ogvl--){
+                  if(ogv[ogvl].toUpperCase() === name.toUpperCase()){
+                    console.log('IGUAL');
+                    global.config.global_values[gcgvl][Object.keys(global.config.global_values[gcgvl])[0]][ogv[ogvl]] = value;
+                  }
+                }
+              }
+            }
+
+            console.log('>',global.config.global_values);
+
+            /*
+            function findObjGV(obj) {
+              if (Object.keys(obj)[0] === key) {
+                if (Object.keys(obj)[0].hasOwnProperty(name)) {
+                  Object.keys(obj)[0][name] = value;
+                  console.log('SET DE ', Object.keys(obj)[0], name, ' A:', value);
+                  return true;
+                }
+              }
+            };
+            */
+
+           // console.log(global.config.global_values.find(findObjGV));
+
+            //global.config.global_values.push(oh);
+          }else{
+            res.status(505).send(`Incorrect Global values`);
+          }
+
+        }
+
+      }
+
+      if(chain.hasOwnProperty('iterable')){
+
+        crypto.randomBytes(16, function(err, buffer) {
+          var vProcUId = chainId + '_VP_' + buffer.toString('hex');
+
+          if(req.body.hasOwnProperty('valuesInputIterable')){
+            valuesInputIterable = req.body.valuesInputIterable;
+          }
+
+          if(chain){
+            var dummy_process = {};
+            dummy_process.uId = vProcUId;
+            dummy_process.childs_chains = [];
+            fp.plan.scheduleChain(chain, dummy_process, true, valuesInputIterable);
+            res.json(`Chain "${chain.id}" starting.`);
+          }else{
+            res.status(404).send(`Chain "${chainId}" not found`);
+          }
+        });
+
       }else{
-        res.status(404).send(`Chain "${chainId}" not found`);
+
+        if(chain){
+          fp.plan.scheduleChain(chain, undefined, true);
+          res.json(`Chain "${chain.id}" starting.`);
+        }else{
+          res.status(404).send(`Chain "${chainId}" not found`);
+        }
       }
     });
 
