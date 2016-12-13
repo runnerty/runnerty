@@ -424,3 +424,18 @@ PROCESS_EXEC_DB_MESSAGE  (MySQL/Postgres)
 ### Iterable Chain (Cadena iterable)
 #### Process launcher Iterable chain (Proceso lanzadera de cadenas iterables)
 
+
+## API:
+### API EJECUCIÓN DE CADENAS: chain/forceStart/[CHAIN_ID]
+
+### API - EJECUCIÓN DE CADENAS ITERABLES: chain/forceStart/[CHAIN_ID]
+EJEMPLO:
+EN LA CADENA ITERABLE: "input":[{"MY_VAR_ID":"id"},{"MY_VAR_NAME":"text"}]
+
+ENVIAR EN EL BODY:
+ inputIterableValues - [{"id":"ID_UNO","text":"NAME_UNO"},{"id":"ID_DOS","text":"NAME_DOS"}]
+ 
+### API - EJECUCIÓN SOBREESCRIBIENDO Y/O ESTABLECIENDO PARÁMETROS:
+ENVIAR EN EL BODY:
+ customValues        - {"MYPARAMS_HOST":"pepe.com","YYYY":"1998"}
+ 
