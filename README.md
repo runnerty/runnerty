@@ -439,3 +439,5 @@ ENVIAR EN EL BODY:
 ENVIAR EN EL BODY:
  customValues        - {"MYPARAMS_HOST":"pepe.com","YYYY":"1998"}
  
+### EVALUATE EN DEPENDS PROCESS:
+“depends_process”:[{”id”:"PROCESS_ODSI_DELETE_QUERY","evaluate":[{"oper_left":":VALOR_GLOBAL_X","condition":"!=","oper_right":"YES"}]}]
