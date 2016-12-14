@@ -67,6 +67,12 @@
         "channel": "mlm"
       },
       {
+        "id": "telegram_default",
+        "type": "telegram",
+        "token": "298463760:AAG3qnkKhdPMwrSLJWVmJAN6MnLH_zPGO_8",
+        "chat_id": "@RUNNERTY"
+      },
+      {
         "id": "mail_default",
         "type": "mail",
         "disable": false,

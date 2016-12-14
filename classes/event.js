@@ -3,8 +3,9 @@
 var logger            = require("../libs/utils.js").logger;
 var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 
-var slackNotificator  = require("./slack_notificator.js");
-var mailNotificator   = require("./mail_notificator.js");
+var slackNotificator     = require("./slack_notificator.js");
+var telegramNotificator  = require("./telegram_notificator.js");
+var mailNotificator      = require("./mail_notificator.js");
 
 class Event {
   constructor(name, process, notifications){
@@ -65,7 +66,7 @@ class Event {
                  case 'slack':
                    notificationsPromises.push(new slackNotificator(type,
                      notification.id,
-                     notification.token,
+                     notification.webhookurl,
                      notification.bot_name,
                      notification.bot_emoji,
                      notification.message,
@@ -73,8 +74,15 @@ class Event {
                      notification.recipients
                    ));
                    break;
+                 case 'telegram':
+                   notificationsPromises.push(new telegramNotificator(type,
+                     notification.id,
+                     notification.token,
+                     notification.message,
+                     notification.chat_id
+                   ));
+                   break;
                }
-
 
                Promise.all(notificationsPromises)
                  .then(function (res) {
