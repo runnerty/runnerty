@@ -51,42 +51,7 @@ class Event {
                }
 
                notificationsPromises.push(new notificators[type](notification));
-/*
-               switch (type) {
-                 case 'mail':
-                   notificationsPromises.push(new notificators['mail'](type,
-                     notification.id,
-                     notification.title,
-                     notification.message,
-                     notification.recipients,
-                     notification.recipients_cc,
-                     notification.recipients_cco
-                   ));
-                   break;
-                 case 'slack':
-                   notificationsPromises.push(new notificators['slack'](notification));
-                   /*
-                   notificationsPromises.push(new notificators['slack'](type,
-                     notification.id,
-                     notification.webhookurl,
-                     notification.bot_name,
-                     notification.bot_emoji,
-                     notification.message,
-                     notification.channel,
-                     notification.recipients
-                   ));
 
-                   break;
-                 case 'telegram':
-                   notificationsPromises.push(new notificators['telegram'](type,
-                     notification.id,
-                     notification.token,
-                     notification.message,
-                     notification.chat_id
-                   ));
-                   break;
-               }
-*/
                Promise.all(notificationsPromises)
                  .then(function (res) {
                    objEvent[name]['notifications'] = res;

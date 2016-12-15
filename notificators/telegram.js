@@ -1,7 +1,5 @@
 "use strict";
 
-var logger           = require("../libs/utils.js").logger;
-var replaceWith      = require("../libs/utils.js").replaceWith;
 var Notification     = require("../classes/notification.js");
 var TelegramBot      = require('node-telegram-bot-api');
 
@@ -13,29 +11,11 @@ function sendNextPending(){
    var currentlNotification = pendings.shift();
   
   if (currentlNotification){
-    var bot = new TelegramBot(currentlNotification.token /* , {polling: {timeout: 1, interval: 100}}*/);
+    var bot = new TelegramBot(currentlNotification.token);
 
-    //console.log('telegramSender:',currentlNotification.token,currentlNotification.chat_id, currentlNotification.msgToSend);
-    /*
-     var opts = {
-     reply_markup: JSON.stringify(
-     {
-     force_reply: true
-     }
-     )};
-     */
-
-    bot.sendMessage(currentlNotification.chat_id, currentlNotification.msgToSend /*, opts */)
+    bot.sendMessage(currentlNotification.chat_id, currentlNotification.msgToSend)
       .then(function (sended) {
         resolve();
-        /*
-         var chatId = sended.chat.id;
-         var messageId = sended.message_id;
-
-         bot.onReplyToMessage(chatId, messageId, function(message) {
-         console.log('User is %s years old', message.text);
-         });
-         */
       });
   }else{
     resolve();
@@ -50,25 +30,13 @@ function telegramSender(){
         telegramSender();
   })
   .catch(function(err){
-      logger.log('error',`telegramSender: `+err);
+      _this.logger.log('error',`telegramSender: `+err);
       resolve();
     });
   }else{
     senderRunning = false;
   }
-  /*
-  else{
-    //If not exists on pendings array try every second:
-    setTimeout(function(){
-      console.log('PING telegramSender!');
-      telegramSender();
-    },500)
-  }
-  */
 };
-
-//Init try send telegram messages if exists on pendings array
-// telegramSender();
 
 class telegramNotificator extends Notification{
   constructor(notification){
@@ -92,13 +60,13 @@ class telegramNotificator extends Notification{
         if (!_this.token && configValues.token)     _this.token     = configValues.token;
         if (!_this.chat_id && configValues.chat_id) _this.chat_id   = configValues.chat_id;
       }
-      _this.msgToSend = replaceWith(_this.message, values);
+      _this.msgToSend = _this.replaceWith(_this.message, values);
       pendings.push(_this);
       _this.run();
       resolve();
   })
   .catch(function(e){
-      logger.log('error','Telegram notificate loadConfig '+e)
+      _this.logger.log('error','Telegram notificate loadConfig '+e)
       resolve();
     });
   });

@@ -1,7 +1,5 @@
 "use strict";
 
-var logger           = require("../libs/utils.js").logger;
-var replaceWith      = require("../libs/utils.js").replaceWith;
 var Notification     = require("../classes/notification.js");
 var IncomingWebhooks = require('@slack/client').IncomingWebhook;
 
@@ -25,7 +23,6 @@ function sendNextPending(){
     }else{
       resolve();
     }
-
   });
 };
 
@@ -36,34 +33,24 @@ function slackSender(){
         slackSender();
       })
       .catch(function(err){
-        logger.log('error',`slackSender: `+err);
+        _this.logger.log('error',`slackSender: `+err);
         resolve();
       });
   }else{
     senderRunning = false;
   }
 
-  /*
-  else{
-    //If not exists on pendings array try every second:
-    setTimeout(function(){
-      slackSender();
-    },500)
-  }
-  */
 };
 
-//Init try send slack messages if exists on pendings array
-//slackSender();
 
 class slackNotificator extends Notification{
   constructor(notification){
-    super('slack', notification.id, null, notification.message, notification.recipients, null, null);
+    super('slack', notification.id, null, notification.message, notification.channel, null, null);
 
     this.webhookurl = notification.webhookurl;
-    this.bot_name = notification.bot_name;
-    this.bot_emoji = notification.bot_emoji;
-    this.channel = notification.channel;
+    this.bot_name   = notification.bot_name;
+    this.bot_emoji  = notification.bot_emoji;
+    this.channel    = notification.channel;
 
     return new Promise((resolve) => {
         resolve(this);
@@ -82,13 +69,13 @@ class slackNotificator extends Notification{
           if (!_this.bot_emoji && configValues.bot_emoji)   _this.bot_emoji  = configValues.bot_emoji;
           if (!_this.channel && configValues.channel)       _this.channel    = configValues.channel;
         }
-        _this.msgToSend = replaceWith(_this.message, values);
+        _this.msgToSend = _this.replaceWith(_this.message, values);
         pendings.push(_this);
         _this.run();
         resolve();
       })
       .catch(function(e){
-        logger.log('error','Slack notificate loadConfig '+e);
+        _this.logger.log('error','Slack notificate loadConfig '+e);
         resolve();
       });
     });

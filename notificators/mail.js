@@ -3,7 +3,6 @@
 var nodemailer      = require('nodemailer');
 var path            = require('path');
 var fs              = require('fs');
-var replaceWith     = require("../libs/utils.js").replaceWith;
 var Notification    = require("../classes/notification.js");
 
 function sendMail(mail, callback){
@@ -47,8 +46,8 @@ function sendMail(mail, callback){
         text_data = res[0].text.toString();
       }
 
-      var html = replaceWith(html_data, mail.params);
-      var text = replaceWith(text_data, mail.params);
+      var html = _this.replaceWith(html_data, mail.params);
+      var text = _this.replaceWith(text_data, mail.params);
 
       var mailOptions = {
         from: mail.from,
@@ -59,13 +58,13 @@ function sendMail(mail, callback){
       };
 
       if(mail.disable){
-        logger.log('warn','Mail sender is disable.');
+        _this.logger.log('warn','Mail sender is disable.');
         callback();
       }else{
         transport.sendMail(mailOptions,
           function(err, res){
             if(err) {
-              logger.log('error','Error sending mail:',err);
+              _this.logger.log('error','Error sending mail:',err);
               callback(err,null);
             }else{
               callback(null,res);
@@ -74,7 +73,7 @@ function sendMail(mail, callback){
       }
     })
     .catch(function(e){
-      logger.log('error','Error sending mail:',e);
+      _this.logger.log('error','Error sending mail:',e);
       callback(e,null);
     });
 };
@@ -135,19 +134,19 @@ class mailNotificator extends Notification{
         }
       }
 
-      this.params.subject = replaceWith(this.title, values);
-      this.params.message = replaceWith(this.message, values);
+      this.params.subject = _this.replaceWith(this.title, values);
+      this.params.message = _this.replaceWith(this.message, values);
 
       sendMail(this, function(err, res){
         if (err){
-          logger.log('error','Error sending mail:'+e,this,values);
+          _this.logger.log('error','Error sending mail:'+e,this,values);
         }
         resolve(res);
       });
 
   })
   .catch(function(e){
-      logger.log('error','Mail notificate loadConfig '+e)
+      _this.logger.log('error','Mail notificate loadConfig '+e)
       resolve();
     });
   });

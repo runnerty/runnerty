@@ -1,5 +1,6 @@
 "use strict";
 
+var utilReplaceWith   = require("../libs/utils.js").replaceWith;
 var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var logger            = require("../libs/utils.js").logger;
 
@@ -12,6 +13,8 @@ class Notification {
     this.recipients = recipients;
     this.recipients_cc = recipients_cc;
     this.recipients_cco = recipients_cco;
+    this.replaceWith = utilReplaceWith;
+    this.logger = logger;
   }
 
   notificate(){
