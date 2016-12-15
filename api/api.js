@@ -197,49 +197,48 @@ module.exports = function (config, logger, fp) {
     router.post('/chain/forceStart/:chainId', function (req, res) {
       var chainId = req.params.chainId;
       var chain   = fp.plan.getChainById(chainId);
-      var inputIterableValues;
 
-      var customValues = {};
-      if(req.body.hasOwnProperty('customValues')) {
+      if(chain){
+        var inputIterableValues;
 
-        try {
-          customValues = JSON.parse(req.body.customValues);
-        } catch (err) {
-          var newErr = new Error('Problem reading JSON file');
-          newErr.stack += '\nCaused by: ' + err.stack;
-          throw newErr;
-        }
-      };
+        var customValues = {};
+        if(req.body.hasOwnProperty('customValues')) {
 
-      if(chain.hasOwnProperty('iterable')){
-
-        crypto.randomBytes(16, function(err, buffer) {
-          var vProcUId = chainId + '_VP_' + buffer.toString('hex');
-
-          if(req.body.hasOwnProperty('inputIterableValues')){
-            inputIterableValues = req.body.inputIterableValues;
+          try {
+            customValues = JSON.parse(req.body.customValues);
+          } catch (err) {
+            var newErr = new Error('Problem reading JSON file');
+            newErr.stack += '\nCaused by: ' + err.stack;
+            throw newErr;
           }
+        };
 
-          if(chain){
+        if(chain.hasOwnProperty('iterable')){
+
+          crypto.randomBytes(16, function(err, buffer) {
+            var vProcUId = chainId + '_VP_' + buffer.toString('hex');
+
+            if(req.body.hasOwnProperty('inputIterableValues')){
+              inputIterableValues = req.body.inputIterableValues;
+            }
+
             var dummy_process = {};
             dummy_process.uId = vProcUId;
             dummy_process.childs_chains = [];
             fp.plan.scheduleChain(chain, dummy_process, true, inputIterableValues, customValues);
             res.json(`Chain "${chain.id}" starting.`);
-          }else{
-            res.status(404).send(`Chain "${chainId}" not found`);
-          }
-        });
 
-      }else{
+          });
 
-        if(chain){
+        }else{
+
           fp.plan.scheduleChain(chain, undefined, true);
           res.json(`Chain "${chain.id}" starting.`);
-        }else{
-          res.status(404).send(`Chain "${chainId}" not found`);
         }
+      }else{
+        res.status(404).send(`Chain "${chainId}" not found`);
       }
+
     });
 
     //GET ALL PROCESSES OF CHAIN INDICATED IN PARAMETER chainId
