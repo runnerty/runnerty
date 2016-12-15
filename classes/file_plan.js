@@ -34,15 +34,15 @@ class FilePlan {
               _this.plan.scheduleChains();
               _this.startAutoRefreshBinBackup();
               resolve(_this);
-          })
-          .catch(function(err){
-            logger.log('error','FilePlan new Plan: '+err);
-            resolve();
-          })
+            })
+           .catch(function(err){
+             logger.log('error','FilePlan new Plan getChains: '+err);
+             return new Error(`FilePlan new Plan getChains:`+err);
+           })
       })
     .catch(function(err){
         logger.log('error','FilePlan loadFileContent getChains: '+err);
-        resolve();
+        return new Error(`FilePlan new Plan:`+err);
       });
   })
   .catch(function(e){
@@ -50,6 +50,7 @@ class FilePlan {
       resolve(this);
     });
   });
+
   }
 
   loadFileContent(filePath, schema){
@@ -102,8 +103,7 @@ class FilePlan {
     var _this = this;
 
     return new Promise((resolve) => {
-
-        if(json.hasOwnProperty('chains')){
+      if(json.hasOwnProperty('chains')){
       if(json.chains instanceof Array){
 
         var loadChains = [];
@@ -120,15 +120,15 @@ class FilePlan {
           })
           .catch(function(e){
             logger.log('error', 'getChains error: ', e);
-            reject();
+            return new Error(`getChains error: `+e);
           });
 
       }else{
-        throw new Error('Invalid PlanFile, chain is not an array.');
+        return new Error('Invalid PlanFile, chain is not an array.');
         resolve();
       }
     }else{
-      throw new Error('Invalid PlanFile, chain property not found.');
+      return new Error('Invalid PlanFile, chain property not found.');
       resolve();
     }
 
@@ -139,11 +139,7 @@ class FilePlan {
     var _this = this;
     return new Promise(function(resolve, reject) {
 
-      if (_this.chainIsValid(chain, true)) {
-        resolve(chain);
-      } else {
         if (chain.hasOwnProperty('chain_path')) {
-
           _this.loadFileContent(chain.chain_path,'chainSchema')
             .then((res) => {
             _this.getChain(res)
@@ -159,12 +155,14 @@ class FilePlan {
             logger.log('error', 'External chain file error: ', err, chain);
             reject();
           });
-
         } else {
-          logger.log('error', 'Chain ignored, id, name or start_date is not set: ', chain);
-          reject();
+          if (_this.chainIsValid(chain, false)) {
+            resolve(chain);
+          } else {
+            reject();
+          }
         }
-      }
+
     });
   }
 

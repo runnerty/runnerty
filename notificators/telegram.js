@@ -10,28 +10,28 @@ function sendNextPending(){
   return new Promise((resolve) => {
    var currentlNotification = pendings.shift();
   
-  if (currentlNotification){
-    var bot = new TelegramBot(currentlNotification.token);
+   if (currentlNotification){
+     var bot = new TelegramBot(currentlNotification.token);
 
-    bot.sendMessage(currentlNotification.chat_id, currentlNotification.msgToSend)
-      .then(function (sended) {
-        resolve();
-      });
-  }else{
-    resolve();
-  }
+     bot.sendMessage(currentlNotification.chat_id, currentlNotification.msgToSend)
+       .then(function (sended) {
+         resolve();
+       });
+   }else{
+     resolve();
+   }
 });
 };
 
-function telegramSender(){
+function telegramSender(_this){
   if(pendings.length){
     sendNextPending()
       .then((end) => {
-        telegramSender();
+        telegramSender(_this);
   })
   .catch(function(err){
       _this.logger.log('error',`telegramSender: `+err);
-      resolve();
+      senderRunning = false;
     });
   }else{
     senderRunning = false;
@@ -73,9 +73,10 @@ class telegramNotificator extends Notification{
   }
 
   run(){
+    var _this = this;
     if(!senderRunning){
       senderRunning = true;
-      telegramSender();
+      telegramSender(_this);
     }
   }
 

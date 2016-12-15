@@ -90,6 +90,18 @@
               }
             }
           },
+          "output_share": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["key","name","value"],
+              "properties": {
+                "key": {"type": "string"},
+                "name": {"type": "string"},
+                "value": {"type": "string"}
+              }
+            }
+          },
           "events": {
             "type": "object",
             "properties": {

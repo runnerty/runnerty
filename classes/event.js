@@ -12,16 +12,26 @@ class Event {
         this.loadEventsObjects(name, process, notifications)
         .then((events) => {
         resolve(events);
-  })
-  .catch(function(e){
-      logger.log('error','Event constructor '+e);
-      resolve();
-    });
-  });
+        })
+        .catch(function(e){
+            logger.log('error','Event constructor '+e);
+            resolve();
+          });
+        });
   }
 
-  loadNotificationConfig(notificationId){
-    return loadConfigSection(global.config, 'notificators_connections', notificationId);
+  loadNotificationConfig(notification){
+    return new Promise((resolve) => {
+        loadConfigSection(global.config, 'notificators_connections', notification.id)
+        .then((config) => {
+         notification.config = config;
+         resolve(notification);
+        })
+        .catch(function(e){
+            logger.log('error','loadNotificationConfig'+e);
+            resolve(notification);
+          });
+        });
   }
 
   loadEventsObjects(name, process, notifications) {
@@ -30,27 +40,20 @@ class Event {
       var objEvent = {};
       objEvent[name] = {};
 
-      var notificationsPromises = [];
-
       if (notifications instanceof Array) {
         var notificationsLength = notifications.length;
         if (notificationsLength > 0) {
 
+          var notificationsPromises = [];
+
           while (notificationsLength--) {
             var notification = notifications[notificationsLength];
+           _this.loadNotificationConfig(notification)
+             .then(function (notificationAndConfig) {
 
-           _this.loadNotificationConfig(notification.id)
-             .then(function (res) {
+               var type = notificationAndConfig.config.type;
 
-               var type = '';
-
-               if(notification.type){
-                 type = notification.type;
-               }else{
-                 type = res.type;
-               }
-
-               notificationsPromises.push(new notificators[type](notification));
+               notificationsPromises.push(new notificators[type](notificationAndConfig));
 
                Promise.all(notificationsPromises)
                  .then(function (res) {
