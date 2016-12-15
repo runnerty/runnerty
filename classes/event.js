@@ -2,10 +2,8 @@
 
 var logger            = require("../libs/utils.js").logger;
 var loadConfigSection = require("../libs/utils.js").loadConfigSection;
-
-var slackNotificator     = require("./slack_notificator.js");
-var telegramNotificator  = require("./telegram_notificator.js");
-var mailNotificator      = require("./mail_notificator.js");
+var requireDir        = require('require-dir');
+var notificators      = requireDir('../notificators');
 
 class Event {
   constructor(name, process, notifications){
@@ -52,9 +50,11 @@ class Event {
                  type = res.type;
                }
 
+               notificationsPromises.push(new notificators[type](notification));
+/*
                switch (type) {
                  case 'mail':
-                   notificationsPromises.push(new mailNotificator(type,
+                   notificationsPromises.push(new notificators['mail'](type,
                      notification.id,
                      notification.title,
                      notification.message,
@@ -64,7 +64,9 @@ class Event {
                    ));
                    break;
                  case 'slack':
-                   notificationsPromises.push(new slackNotificator(type,
+                   notificationsPromises.push(new notificators['slack'](notification));
+                   /*
+                   notificationsPromises.push(new notificators['slack'](type,
                      notification.id,
                      notification.webhookurl,
                      notification.bot_name,
@@ -73,9 +75,10 @@ class Event {
                      notification.channel,
                      notification.recipients
                    ));
+
                    break;
                  case 'telegram':
-                   notificationsPromises.push(new telegramNotificator(type,
+                   notificationsPromises.push(new notificators['telegram'](type,
                      notification.id,
                      notification.token,
                      notification.message,
@@ -83,7 +86,7 @@ class Event {
                    ));
                    break;
                }
-
+*/
                Promise.all(notificationsPromises)
                  .then(function (res) {
                    objEvent[name]['notifications'] = res;

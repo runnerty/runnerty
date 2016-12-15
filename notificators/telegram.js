@@ -2,7 +2,7 @@
 
 var logger           = require("../libs/utils.js").logger;
 var replaceWith      = require("../libs/utils.js").replaceWith;
-var Notification     = require("./notification.js");
+var Notification     = require("../classes/notification.js");
 var TelegramBot      = require('node-telegram-bot-api');
 
 var pendings = [];
@@ -71,11 +71,11 @@ function telegramSender(){
 // telegramSender();
 
 class telegramNotificator extends Notification{
-  constructor(type, id, token, message, chat_id){
-    super('telegram', id, null, message, chat_id, null, null);
+  constructor(notification){
+    super('telegram', notification.id, null, notification.message, notification.chat_id, null, null);
 
-    this.token = token;
-    this.chat_id = chat_id;
+    this.token   = notification.token;
+    this.chat_id = notification.chat_id;
 
     return new Promise((resolve) => {
         resolve(this);

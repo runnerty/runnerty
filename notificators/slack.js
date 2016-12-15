@@ -2,7 +2,7 @@
 
 var logger           = require("../libs/utils.js").logger;
 var replaceWith      = require("../libs/utils.js").replaceWith;
-var Notification     = require("./notification.js");
+var Notification     = require("../classes/notification.js");
 var IncomingWebhooks = require('@slack/client').IncomingWebhook;
 
 var pendings = [];
@@ -54,16 +54,16 @@ function slackSender(){
 };
 
 //Init try send slack messages if exists on pendings array
-slackSender();
+//slackSender();
 
 class slackNotificator extends Notification{
-  constructor(type, id, webhookurl, bot_name, bot_emoji, message, channel, recipients){
-    super('slack', id, null, message, recipients, null, null);
+  constructor(notification){
+    super('slack', notification.id, null, notification.message, notification.recipients, null, null);
 
-    this.webhookurl = webhookurl;
-    this.bot_name = bot_name;
-    this.bot_emoji = bot_emoji;
-    this.channel = channel;
+    this.webhookurl = notification.webhookurl;
+    this.bot_name = notification.bot_name;
+    this.bot_emoji = notification.bot_emoji;
+    this.channel = notification.channel;
 
     return new Promise((resolve) => {
         resolve(this);

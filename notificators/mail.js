@@ -4,7 +4,7 @@ var nodemailer      = require('nodemailer');
 var path            = require('path');
 var fs              = require('fs');
 var replaceWith     = require("../libs/utils.js").replaceWith;
-var Notification    = require("./notification.js");
+var Notification    = require("../classes/notification.js");
 
 function sendMail(mail, callback){
 
@@ -80,8 +80,8 @@ function sendMail(mail, callback){
 };
 
 class mailNotificator extends Notification{
-  constructor(type, id, title, message, recipients, recipients_cc, recipients_cco){
-    super('mail', id, title, message, recipients, recipients_cc, recipients_cco);
+  constructor(notification){
+    super('mail', notification.id, notification.title, notification.message, notification.recipients, notification.recipients_cc, notification.recipients_cco);
 
     return new Promise((resolve) => {
         resolve(this);
@@ -113,21 +113,25 @@ class mailNotificator extends Notification{
         }
       }
 
-      for (var i = 0, len = this.recipients_cc.length; i < len; i++) {
-        if (i){
-          this.cc = this.cc + this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
-        }
-        else{
-          this.cc = this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
+      if(this.recipients_cc){
+        for (var i = 0, len = this.recipients_cc.length; i < len; i++) {
+          if (i){
+            this.cc = this.cc + this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
+          }
+          else{
+            this.cc = this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
+          }
         }
       }
 
-      for (var i = 0, len = this.recipients_cco.length; i < len; i++) {
-        if (i){
-          this.bcc = this.bcc + this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
-        }
-        else{
-          this.bcc = this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
+      if(this.recipients_cco){
+        for (var i = 0, len = this.recipients_cco.length; i < len; i++) {
+          if (i){
+            this.bcc = this.bcc + this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
+          }
+          else{
+            this.bcc = this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
+          }
         }
       }
 
