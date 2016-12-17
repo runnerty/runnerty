@@ -46,8 +46,8 @@ function sendMail(mail, callback){
         text_data = res[0].text.toString();
       }
 
-      var html = _this.replaceWith(html_data, mail.params);
-      var text = _this.replaceWith(text_data, mail.params);
+      var html = mail.replaceWith(html_data, mail.params);
+      var text = mail.replaceWith(text_data, mail.params);
 
       var mailOptions = {
         from: mail.from,
@@ -58,13 +58,13 @@ function sendMail(mail, callback){
       };
 
       if(mail.disable){
-        _this.logger.log('warn','Mail sender is disable.');
+        mail.logger.log('warn','Mail sender is disable.');
         callback();
       }else{
         transport.sendMail(mailOptions,
           function(err, res){
             if(err) {
-              _this.logger.log('error','Error sending mail:',err);
+              mail.logger.log('error','Error sending mail:',err);
               callback(err,null);
             }else{
               callback(null,res);
@@ -73,7 +73,7 @@ function sendMail(mail, callback){
       }
     })
     .catch(function(e){
-      _this.logger.log('error','Error sending mail:',e);
+      mail.logger.log('error','Error sending mail:',e);
       callback(e,null);
     });
 };
@@ -84,7 +84,7 @@ class mailNotificator extends Notification{
 
     return new Promise((resolve) => {
         resolve(this);
-  });
+    });
   }
 
   notificate(values){
@@ -134,19 +134,19 @@ class mailNotificator extends Notification{
         }
       }
 
-      this.params.subject = _this.replaceWith(this.title, values);
-      this.params.message = _this.replaceWith(this.message, values);
+      this.params.subject = this.replaceWith(this.title, values);
+      this.params.message = this.replaceWith(this.message, values);
 
       sendMail(this, function(err, res){
         if (err){
-          _this.logger.log('error','Error sending mail:'+e,this,values);
+          this.logger.log('error','Error sending mail:'+e,this,values);
         }
         resolve(res);
       });
 
   })
   .catch(function(e){
-      _this.logger.log('error','Mail notificate loadConfig '+e)
+      this.logger.log('error','Mail notificate loadConfig '+e)
       resolve();
     });
   });

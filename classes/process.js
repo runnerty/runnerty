@@ -5,11 +5,16 @@ var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var replaceWith       = require("../libs/utils.js").replaceWith;
 var getChainByUId     = require("../libs/utils.js").getChainByUId;
 
-var mysqlExecutor     = require("../libs/mysqlExecutor.js");
-var postgresExecutor  = require("../libs/postgresExecutor.js");
-var redisExecutor     = require("../libs/redisExecutor.js");
-var shellExecutor     = require("../libs/shellExecutor.js");
-var waitExecutor      = require("../libs/waitExecutor.js");
+var mysqlExecutor     = require("../executors/mysql.js");
+var postgresExecutor  = require("../executors/postgres.js");
+var redisExecutor     = require("../executors/redis.js");
+var shellExecutor     = require("../executors/shell.js");
+var waitExecutor      = require("../executors/wait.js");
+
+var requireDir        = require('require-dir');
+var executors         = requireDir('../executors');
+
+
 var crypto            = require('crypto');
 
 var bytes             = require("bytes");
@@ -87,7 +92,7 @@ class Process {
       "PROCESS_ID":_this.id,
       "PROCESS_NAME":_this.name,
       "PROCESS_EXEC_COMMAND":(_this.exec instanceof Object)? _this.exec.command : _this.exec,
-      "PROCESS_EXEC_DB_CONNECTION_ID":(_this.exec instanceof Object)? _this.exec.db_connection_id : '',
+      "PROCESS_EXEC_ID":(_this.exec instanceof Object)? _this.exec.id : '',
       "PROCESS_EXEC_COMMAND_EXECUTED": _this.command_executed,
       "PROCESS_ARGS":_this.args,
       "PROCESS_EXEC_ARGS":_this.execute_args,
@@ -175,10 +180,51 @@ class Process {
   });
   }
 
-  loadDbConfig(){
+  loadExecutorConfig(){
     var _this = this;
 
-    return loadConfigSection(global.config, 'db_connections', _this.exec.db_connection_id);
+    return loadConfigSection(global.config, 'executors', _this.exec.id);
+  }
+
+  getArgs(){
+    var _this = this;
+
+    function repArg(arg){
+      if(arg instanceof String){
+        return replaceWith(arg, _this.values());
+      }else{
+        return arg;
+      }
+    }
+
+    //Value list: ["value0","value1",":YYYY"]
+    if(_this.args instanceof Array){
+      return _this.args.map(repArg);
+    }else{
+      // Key/Value: {"key0":"value0", "key1","value1","key3":":YYYY"}
+      var rArgs = {};
+      if(_this.args instanceof Object){
+        var keys = Object.keys(_this.args);
+        var keysLength = keys.length;
+
+        while(keysLength--){
+          if(_this.args[keys[keysLength]] instanceof String){
+            rArgs[keys[keysLength]] = replaceWith(_this.args[keys[keysLength]], _this.values());
+          }else{
+            if(_this.args[keys[keysLength]] instanceof Array){
+              rArgs[keys[keysLength]] = _this.args[keys[keysLength]].map(repArg);
+            }else{
+              rArgs[keys[keysLength]] = _this.args[keys[keysLength]];
+            }
+          }
+        }
+        return rArgs;
+
+      }else{
+        return _this.args;
+      }
+    }
+
   }
 
   notificate(event){
@@ -225,17 +271,22 @@ class Process {
     _this.ended_at = new Date();
   }
 
-  end(noRunned){
+  end(notificate, writeOutput){
     var _this = this;
-    noRunned = noRunned || false; // If process has not been executed but we need set to end
+    notificate  = notificate  || true;
+    writeOutput = writeOutput || true;
 
     _this.status = 'end';
     _this.ended_at = new Date();
 
+    if(writeOutput){
+      _this.write_output();
+    }
+
     //Clear depends_files_ready for re-check:
     _this.depends_files_ready = [];
 
-    if(!noRunned){
+    if(notificate){
       _this.notificate('on_end');
     }
 
@@ -366,10 +417,22 @@ class Process {
     }
   }
 
-  error(){
+  error(notificate, writeOutput){
     var _this = this;
+
+    notificate  = notificate  || true;
+    writeOutput = writeOutput || true;
+
+    if(notificate){
+      _this.notificate('on_fail');
+    }
+
+    if(writeOutput){
+      _this.notificate('on_fail');
+    }
+
     _this.status = 'error';
-    _this.notificate('on_fail');
+
   }
 
   retry(){
@@ -398,65 +461,46 @@ class Process {
 
     return new Promise(function(resolve, reject) {
 
-      if((typeof _this.exec === 'string' && _this.exec !== '') || (!_this.exec.db_connection_id && !_this.exec.wait && Object.keys(_this.exec).length !== 0)){
-        resolve(shellExecutor.exec(_this));
-      }else {
-        if(_this.exec.db_connection_id){
-          _this.loadDbConfig()
-            .then((configValues) => {
-              if(configValues.type){
-                switch (configValues.type) {
-                  case 'mysql':
-                    resolve(mysqlExecutor.exec(_this));
-                    break;
-                  case 'postgres':
-                    resolve(postgresExecutor.exec(_this));
-                    break;
-                  case 'redis':
-                    resolve(redisExecutor.exec(_this));
-                    break;
-                  default:
-                    logger.log('error',`DBConnection ${_this.exec.db_connection_id} type is not valid`);
-                    _this.execute_err_return = `DBConnection ${_this.exec.db_connection_id} type is not valid`;
-                    _this.execute_return = '';
-                    _this.error();
-                    _this.write_output();
-                    reject(_this, `DBConnection ${_this.exec.db_connection_id} type is not valid`);
-                    break;
-                }
-              }else{
-                logger.log('error',`DBConnection ${_this.exec.db_connection_id} doesn't have type`);
-                _this.execute_err_return = `DBConnection ${_this.exec.db_connection_id} doesn't have type`;
-                _this.execute_return = '';
-                _this.error();
-                _this.write_output();
-                reject(_this, `DBConnection ${_this.exec.db_connection_id} doesn't have type`);
-              }
-            })
-            .catch(function(err){
-              logger.log('error',`Procces start loadDbConfig: ${err}`);
-              _this.execute_err_return = `Procces start loadDbConfig: ${err}`;
-              _this.execute_return = '';
-              _this.error();
-              _this.write_output();
-              reject(_this, err);
-              });
-        }else{
-          if(_this.exec.wait){
-            resolve(waitExecutor.exec(_this));
-          }else{
+      if(_this.exec.id){
+        _this.loadExecutorConfig()
+          .then((configValues) => {
+          if(configValues.type){
 
-            // DUMMY PROCCESS:
-            if(Object.keys(_this.exec).length === 0 || _this.exec === ''){
-              _this.end();
-              _this.write_output();
-              resolve();
-            }else{
-              reject(_this, `Incorrect exec ${_this.exec}`);
-            }
+          if(executors[configValues.type]){
+            resolve(executors[configValues.type].exec(_this));
+          }else{
+            logger.log('error',`Executor ${_this.exec.id} type is not valid`);
+            _this.execute_err_return = `Executor ${_this.exec.id} type is not valid`;
+            _this.execute_return = '';
+            _this.error();
+            reject(_this, `Executor ${_this.exec.id} type is not valid`);
           }
+
+        }else{
+          logger.log('error',`Executor ${_this.exec.id} type is not valid`);
+          _this.execute_err_return = `Executor ${_this.exec.id} type is not valid`;
+          _this.execute_return = '';
+          _this.error();
+          reject(_this, `Executor ${_this.exec.id} type is not valid`);
         }
+      })
+      .catch(function(err){
+          logger.log('error',`Procces start loadExecutorConfig: ${err}`);
+          _this.execute_err_return = `Procces start loadExecutorConfig: ${err}`;
+          _this.execute_return = '';
+          _this.error();
+          reject(_this, err);
+        });
+      }else{
+          // DUMMY PROCCESS:
+          if(Object.keys(_this.exec).length === 0 || _this.exec === ''){
+            _this.end();
+            resolve();
+          }else{
+            reject(_this, `Incorrect exec ${_this.exec}`);
+          }
       }
+
     });
   }
 

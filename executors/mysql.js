@@ -1,8 +1,8 @@
 "use strict";
 
 var mysql             = require("mysql");
-var logger            = require("../libs/utils.js").logger;
 var csv               = require("fast-csv");
+var logger            = require("../libs/utils.js").logger;
 var loadSQLFile       = require("../libs/utils.js").loadSQLFile;
 var replaceWith       = require("../libs/utils.js").replaceWith;
 
@@ -41,7 +41,7 @@ module.exports.exec = function exec(process){
 
     return new Promise(function(resolve, reject) {
 
-      process.execute_arg = process.args;
+      process.execute_arg = process.getArgs();
 
       var connection = mysql.createConnection({
         host: configValues.host,
@@ -72,7 +72,6 @@ module.exports.exec = function exec(process){
             } else {
 
               if (results instanceof Array) {
-
                 process.execute_db_results = JSON.stringify(results);
                 process.execute_db_results_object = results;
                 csv.writeToString(results, {headers: true}, function (err, data) {
@@ -109,19 +108,18 @@ module.exports.exec = function exec(process){
 
   return new Promise(function(resolve, reject) {
 
-    if(process.exec.db_connection_id){
-      process.loadDbConfig()
+    if(process.exec.id){
+      process.loadExecutorConfig()
         .then((configValues) => {
         if(!process.exec.command){
-        if(!process.exec.file_name){
-          logger.log('error',`executeMysql dont have command or file_name`);
-          process.execute_err_return = `executeMysql dont have command or file_name`;
+        if(!process.exec.command_file){
+          logger.log('error',`executeMysql dont have command or command_file`);
+          process.execute_err_return = `executeMysql dont have command or command_file`;
           process.execute_return = '';
           process.error();
-          process.write_output();
-          reject(`executeMysql dont have command or file_name`);
+          reject(`executeMysql dont have command or command_file`);
         }else{
-          loadSQLFile(process.exec.file_name)
+          loadSQLFile(process.exec.command_file)
             .then((fileContent) => {
               process.exec.command = fileContent;
               executeQuery(process, configValues)
@@ -129,7 +127,6 @@ module.exports.exec = function exec(process){
                   process.execute_return = '';
                   process.execute_err_return = '';
                   process.end();
-                  process.write_output();
                   resolve();
                 })
             .catch(function(err){
@@ -137,7 +134,6 @@ module.exports.exec = function exec(process){
                 process.execute_err_return = `executeMysql executeQuery from file: ${err}`;
                 process.execute_return = '';
                 process.error();
-                process.write_output();
                 reject(process, err);
               });
         })
@@ -146,7 +142,6 @@ module.exports.exec = function exec(process){
             process.execute_err_return = `executeMysql loadSQLFile: ${err}`;
             process.execute_return = '';
             process.error();
-            process.write_output();
             reject(process, err);
           });
         }
@@ -156,7 +151,6 @@ module.exports.exec = function exec(process){
             process.execute_return = '';
             process.execute_err_return = '';
             process.end();
-            process.write_output();
             resolve();
           })
           .catch(function(err){
@@ -164,26 +158,23 @@ module.exports.exec = function exec(process){
             process.execute_err_return = `executeMysql executeQuery: ${err}`;
             process.execute_return = '';
             process.error();
-            process.write_output();
             reject(process, err);
           });
       }
     })
     .catch(function(err){
-        logger.log('error',`executeMysql loadDbConfig: ${err}`);
-        process.execute_err_return = `executeMysql loadDbConfig: ${err}`;
+        logger.log('error',`executeMysql loadExecutorConfig: ${err}`);
+        process.execute_err_return = `executeMysql loadExecutorConfig: ${err}`;
         process.execute_return = '';
         process.error();
-        process.write_output();
         reject(process, err);
       });
 
     }else{
-      logger.log('error',`db_connection_id not set for ${process.id}`);
-      process.execute_err_return = `db_connection_id not set for ${process.id}`;
+      logger.log('error',`executeMysql: exec id not set for ${process.id}`);
+      process.execute_err_return = `executeMysql: exec id not set for ${process.id}`;
       process.execute_return = '';
       process.error();
-      process.write_output();
       reject(process);
     }
   });

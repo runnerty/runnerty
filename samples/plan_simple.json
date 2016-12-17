@@ -79,7 +79,7 @@
       "id":"PROCESS_TWO",
       "name":"Concatenador de CSVs",
       "depends_process":["PROCESS_ONE"],
-      "exec":{"command":"SELECT * FROM test", "db_connection_id":"postgres_default"},
+      "exec":{"command":"SELECT * FROM test", "id":"postgres_default"},
       "args": {"idg":"3", "pop":":PROCESS_ID"},
       "retries":0,
       "retry_delay":0,

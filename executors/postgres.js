@@ -1,14 +1,14 @@
 "use strict";
 
 var pg                = require('pg'); //PostgreSQL
-var logger            = require("../libs/utils.js").logger;
 var csv               = require("fast-csv");
+var logger            = require("../libs/utils.js").logger;
 var loadSQLFile       = require("../libs/utils.js").loadSQLFile;
 var replaceWith       = require("../libs/utils.js").replaceWith;
 
 module.exports.exec = function executePostgre(process){
 
-  function queryFormat(query, values) {
+  function customQueryFormat(query, values) {
     if (!values) return query.replace(/(\:\/)/ig,':');
     else {
       //FIRST TURN
@@ -33,7 +33,7 @@ module.exports.exec = function executePostgre(process){
   function executeQuery(process, configValues){
     return new Promise(function(resolve, reject) {
 
-      process.execute_arg = process.args
+      process.execute_arg = process.getArgs();
 
       var client = new pg.Client({
         user     : configValues.user,
@@ -49,7 +49,7 @@ module.exports.exec = function executePostgre(process){
           reject(err);
         }else{
           var command = replaceWith(process.exec.command, process.values());
-          var finalQuery = queryFormat(command, process.execute_arg);
+          var finalQuery = customQueryFormat(command, process.execute_arg);
           process.command_executed = finalQuery;
 
           client.query(finalQuery, null, function(err, results){
@@ -97,82 +97,73 @@ module.exports.exec = function executePostgre(process){
   }
 
   return new Promise(function(resolve, reject) {
-
-    if(process.exec.db_connection_id){
-      process.loadDbConfig()
+    if(process.exec.id){
+      process.loadExecutorConfig()
         .then((configValues) => {
-        if(!process.exec.command){
-        if(!process.exec.file_name){
-          logger.log('error',`executePostgre dont have command or file_name`);
-          process.execute_err_return = `executePostgre dont have command or file_name`;
-          process.execute_return = '';
-          process.error();
-          process.write_output();
-          reject(process, `executePostgre dont have command or file_name`);
-        }else{
-          loadSQLFile(process.exec.file_name)
-            .then((fileContent) => {
-            process.exec.command = fileContent;
-          executeQuery(process, configValues)
-            .then((res) => {
-            process.execute_return = '';
-          process.execute_err_return = '';
-          process.end();
-          process.write_output();
-          resolve();
+          if(!process.exec.command){
+            if(!process.exec.command_file){
+              logger.log('error',`executePostgre dont have command or command_file`);
+              process.execute_err_return = `executePostgre dont have command or command_file`;
+              process.execute_return = '';
+              process.error();
+              reject(process, `executePostgre dont have command or command_file`);
+            }else{
+              loadSQLFile(process.exec.command_file)
+                .then((fileContent) => {
+                  process.exec.command = fileContent;
+                  executeQuery(process, configValues)
+                    .then((res) => {
+                      process.execute_return = '';
+                      process.execute_err_return = '';
+                      process.end();
+                      resolve();
+                    })
+                    .catch(function(err){
+                        logger.log('error',`executePostgre executeQuery from file: ${err}`);
+                        process.execute_err_return = `executePostgre executeQuery from file: ${err}`;
+                        process.execute_return = '';
+                        process.error();
+                        reject(process, err);
+                      });
+                })
+                .catch(function(err){
+                    logger.log('error',`executePostgre loadSQLFile: ${err}`);
+                    process.execute_err_return = `executePostgre loadSQLFile: ${err}`;
+                    process.execute_return = '';
+                    process.error();
+                    reject(process, err);
+                  });
+            }
+          }else{
+            executeQuery(process, configValues)
+              .then((res) => {
+                process.execute_return = '';
+                process.execute_err_return = '';
+                process.end();
+                resolve();
+              })
+             .catch(function(err){
+               logger.log('error',`executePostgre executeQuery: ${err}`);
+               process.execute_err_return = `executePostgre executeQuery: ${err}`;
+               process.execute_return = '';
+               process.error();
+               reject(process, err);
+              });
+          }
         })
         .catch(function(err){
-            logger.log('error',`executePostgre executeQuery from file: ${err}`);
-            process.execute_err_return = `executePostgre executeQuery from file: ${err}`;
-            process.execute_return = '';
-            process.error();
-            process.write_output();
-            reject(process, err);
-          });
-        })
-        .catch(function(err){
-            logger.log('error',`executePostgre loadSQLFile: ${err}`);
-            process.execute_err_return = `executePostgre loadSQLFile: ${err}`;
-            process.execute_return = '';
-            process.error();
-            process.write_output();
-            reject(process, err);
-          });
-        }
-      }else{
-        executeQuery(process, configValues)
-          .then((res) => {
-          process.execute_return = '';
-        process.execute_err_return = '';
-        process.end();
-        process.write_output();
-        resolve();
-      })
-      .catch(function(err){
-          logger.log('error',`executePostgre executeQuery: ${err}`);
-          process.execute_err_return = `executePostgre executeQuery: ${err}`;
+          logger.log('error',`executePostgre loadExecutorConfig: ${err}`);
+          process.execute_err_return = `executePostgre loadExecutorConfig: ${err}`;
           process.execute_return = '';
           process.error();
-          process.write_output();
           reject(process, err);
         });
-      }
-    })
-    .catch(function(err){
-        logger.log('error',`executePostgre loadDbConfig: ${err}`);
-        process.execute_err_return = `executePostgre loadDbConfig: ${err}`;
-        process.execute_return = '';
-        process.error();
-        process.write_output();
-        reject(process, err);
-      });
     }else{
-      logger.log('error',`executePostgre: db_connection_id not set for ${process.id}`);
-      process.execute_err_return = `executePostgre: db_connection_id not set for ${process.id}`;
+      logger.log('error',`executePostgre: exec id not set for ${process.id}`);
+      process.execute_err_return = `executePostgre: exec id not set for ${process.id}`;
       process.execute_return = '';
       process.error();
-      process.write_output();
-      reject(process, `executePostgre: db_connection_id not set for ${process.id}`);
+      reject(process, `executePostgre: exec id not set for ${process.id}`);
     }
   });
 

@@ -23,14 +23,14 @@ function sendNextPending(){
 });
 };
 
-function telegramSender(_this){
+function telegramSender(notification){
   if(pendings.length){
     sendNextPending()
-      .then((end) => {
-        telegramSender(_this);
-  })
-  .catch(function(err){
-      _this.logger.log('error',`telegramSender: `+err);
+    .then((end) => {
+      telegramSender(notification);
+    })
+    .catch(function(err){
+      notification.logger.log('error',`telegramSender: `+err);
       senderRunning = false;
     });
   }else{
@@ -46,8 +46,8 @@ class telegramNotificator extends Notification{
     this.chat_id = notification.chat_id;
 
     return new Promise((resolve) => {
-        resolve(this);
-  });
+      resolve(this);
+    });
   }
 
   notificate(values){
@@ -64,16 +64,17 @@ class telegramNotificator extends Notification{
       pendings.push(_this);
       _this.run();
       resolve();
-  })
-  .catch(function(e){
-      _this.logger.log('error','Telegram notificate loadConfig '+e)
-      resolve();
+      })
+      .catch(function(e){
+        this.logger.log('error','Telegram notificate loadConfig '+e)
+        resolve();
+      });
     });
-  });
   }
 
   run(){
     var _this = this;
+
     if(!senderRunning){
       senderRunning = true;
       telegramSender(_this);

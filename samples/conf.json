@@ -27,7 +27,16 @@
         ]
       }
     },
-    "db_connections": [
+    "executors": [
+      {
+        "id": "shell_default",
+        "type": "shell"
+      },
+      {
+        "id": "wait_default",
+        "type": "wait",
+        "seconds": "60"
+      },
       {
         "id": "mysql_default",
         "type": "mysql",

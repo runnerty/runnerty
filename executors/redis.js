@@ -6,7 +6,7 @@ var replaceWith       = require("../libs/utils.js").replaceWith;
 
 module.exports.exec =  function executeRedis(process) {
 
-  function commandFormat(query, values) {
+  function customQueryFormat(query, values) {
     if (!values) return query.replace(/(\:\/)/ig,':');
     else {
       //FIRST TURN
@@ -46,7 +46,7 @@ module.exports.exec =  function executeRedis(process) {
 
       for(var i = 0; i < cmdLength; i++){
         var cmdItem = cmd[i];
-        var cmdItemFormat = commandFormat(cmdItem, args);
+        var cmdItemFormat = customQueryFormat(cmdItem, args);
         cmdFormat.push(cmdItemFormat);
       }
       result.push(cmdFormat);
@@ -58,7 +58,7 @@ module.exports.exec =  function executeRedis(process) {
   function executeCommand(process, configValues) {
     return new Promise(function (resolve, reject) {
 
-      process.execute_arg = process.args;
+      process.execute_arg = process.getArgs();
 
       var redisClient = redis.createClient(configValues.port, configValues.host, configValues.options), multi;
       redisClient.auth(configValues.password);
@@ -102,52 +102,46 @@ module.exports.exec =  function executeRedis(process) {
 
   return new Promise(function(resolve, reject) {
 
-    if(process.exec.db_connection_id){
-      process.loadDbConfig()
+    if(process.exec.id){
+      process.loadExecutorConfig()
         .then((configValues) => {
         if(process.exec.command){
 
         executeCommand(process, configValues)
           .then((res) => {
-          process.execute_return = '';
-        process.execute_err_return = '';
-        process.end();
-        process.write_output();
-        resolve();
-      })
-      .catch(function(err){
-          logger.log('error',`executeRedis executeCommand: ${err}`);
-          process.execute_err_return = `executeRedis executeCommand: ${err}`;
-          process.execute_return = '';
-          process.error();
-          process.write_output();
-          reject(process, err);
-        });
-
+            process.execute_return = '';
+            process.execute_err_return = '';
+            process.end();
+            resolve();
+          })
+          .catch(function(err){
+            logger.log('error',`executeRedis executeCommand: ${err}`);
+            process.execute_err_return = `executeRedis executeCommand: ${err}`;
+            process.execute_return = '';
+            process.error();
+            reject(process, err);
+          });
       }else{
         logger.log('error',`executeRedis: command not set for ${process.id}`);
         process.execute_err_return = `executeRedis: command not set for ${process.id}`;
         process.execute_return = '';
         process.error();
-        process.write_output();
         reject(process, `executeRedis: command not set for ${process.id}`);
       }
     })
     .catch(function(err){
-        logger.log('error',`executeRedis loadDbConfig: ${err}`);
-        process.execute_err_return = `executeRedis loadDbConfig: ${err}`;
+        logger.log('error',`executeRedis loadExecutorConfig: ${err}`);
+        process.execute_err_return = `executeRedis loadExecutorConfig: ${err}`;
         process.execute_return = '';
         process.error();
-        process.write_output();
         reject(process, err);
       });
     }else{
-      logger.log('error',`executeRedis: db_connection_id not set for ${process.id}`);
-      process.execute_err_return = `executeRedis: db_connection_id not set for ${process.id}`;
+      logger.log('error',`executeRedis: exec id not set for ${process.id}`);
+      process.execute_err_return = `executeRedis: exec id not set for ${process.id}`;
       process.execute_return = '';
       process.error();
-      process.write_output();
-      reject(process, `executeRedis: db_connection_id not set for ${process.id}`);
+      reject(process, `executeRedis: exec id not set for ${process.id}`);
     }
   });
 };

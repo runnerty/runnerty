@@ -1,0 +1,11 @@
+{
+  "name": "runnerty-executors",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.7.15",
+    "mysql": "^2.12.0",
+    "pg": "^6.1.2",
+    "redis": "^2.6.3"
+  }
+}

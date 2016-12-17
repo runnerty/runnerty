@@ -24,11 +24,11 @@
           }
         }
       },
-      "db_connections": {
+      "executors": {
         "type": "array",
         "items": {
           "type": "object",
-          "required": ["id", "type", "host", "port"],
+          "required": ["id", "type"],
           "properties": {
             "id": {"type": "string"},
             "type": {"type": "string"},
@@ -40,7 +40,7 @@
           }
         }
       },
-      "notificators_connections": {
+      "notificators": {
         "type": "array",
         "items": {
           "type": "object",

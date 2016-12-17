@@ -1,29 +1,17 @@
 "use strict";
 
 var spawn             = require("child_process").spawn;
-
 var logger            = require("../libs/utils.js").logger;
-var csv               = require("fast-csv");
-var replaceWith       = require("../libs/utils.js").replaceWith;
 
 module.exports.exec = function executeCommand(process){
 
-  var cmd;
-
-  if(typeof process.exec === 'string'){
-    cmd = process.exec;
-  }else{
-    cmd = process.exec.command;
-  }
+  var cmd = process.exec.command;
 
   return new Promise(function(resolve, reject) {
     var stdout = '';
     var stderr = '';
 
-    function repArg(arg){
-      return replaceWith(arg, process.values());
-    }
-    process.execute_args = process.args.map(repArg);
+    process.execute_args = process.getArgs();
 
     process.proc = spawn(cmd, process.execute_args, { shell:true });
     process.command_executed = cmd +' '+ process.execute_args;
@@ -43,7 +31,6 @@ module.exports.exec = function executeCommand(process){
           process.execute_return = stdout;
           process.execute_err_return = stderr;
           process.end();
-          process.write_output();
           resolve(stdout);
         } else {
           logger.log('error',process.id+' FIN: '+code+' - '+stdout+' - '+stderr);
@@ -52,7 +39,6 @@ module.exports.exec = function executeCommand(process){
           process.execute_err_return = stderr;
           process.retries_count = process.retries_count +1 || 1;
           process.error();
-          process.write_output();
 
           if(process.retries >= process.retries_count && !forceOnceInRetry){
 
@@ -73,7 +59,6 @@ module.exports.exec = function executeCommand(process){
           }else{
             if (process.end_on_fail){
               process.end();
-              process.write_output();
             }
             reject(process, stderr);
           }

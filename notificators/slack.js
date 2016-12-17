@@ -26,20 +26,19 @@ function sendNextPending(){
   });
 };
 
-function slackSender(){
+function slackSender(notification){
   if(pendings.length){
     sendNextPending()
       .then(() => {
-        slackSender();
+        slackSender(notification);
       })
       .catch(function(err){
-        _this.logger.log('error',`slackSender: `+err);
+        notification.logger.log('error',`slackSender: `+err);
         resolve();
       });
   }else{
     senderRunning = false;
   }
-
 };
 
 
@@ -82,9 +81,11 @@ class slackNotificator extends Notification{
   }
 
   run(){
+    var _this = this;
+
     if(!senderRunning){
       senderRunning = true;
-      slackSender();
+      slackSender(_this);
     }
   }
 

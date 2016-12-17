@@ -591,7 +591,8 @@ class Chain {
             break;
           case 'end':
             logger.log('debug', `Ignored: Only executed on_fail ${process.id}`);
-            process.end(true);
+            var notificateEnd = false;
+            process.end(notificateEnd);
 
             _this.startProcesses(waitEndChilds)
               .then(function(res){

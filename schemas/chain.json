@@ -67,7 +67,18 @@
         "properties": {
           "id": {"type": "string"},
           "name": {"type": "string"},
-          "exec": {"type": ["string","object"]},
+          "exec": {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": {
+                "type": "string"},
+              "command": {
+                "type": "string"},
+              "command_file": {
+                "type": "string"}
+            }
+          },
           "args": {"type": ["array","object"]},
           "retries": {"type": "number"},
           "retry_delay": {"type": "number"},
