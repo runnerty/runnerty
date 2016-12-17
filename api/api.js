@@ -15,6 +15,7 @@ var helmet          = require('helmet');
 var util            = require('util');
 var crypto          = require('crypto');
 var replaceWith     = require("../libs/utils.js").replaceWith;
+var cors            = require("cors");
 /*
  var lusca           = require('lusca');
 */
@@ -29,6 +30,8 @@ module.exports = function (config, logger, fp) {
       //TODO CATCH ERRORS:
       logger.log('info','Listening on port '+config.api.port);
     });
+
+    app.use(cors());
 
     app.use(function (req, res, next) {
       res.header("Content-Type",'application/json');

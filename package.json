@@ -28,5 +28,8 @@
     "redis": "^2.6.3",
     "require-dir": "^0.3.1",
     "winston": "^2.3.0"
+  },
+  "devDependencies": {
+    "cors": "^2.8.1"
   }
 }
