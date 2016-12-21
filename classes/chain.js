@@ -804,7 +804,7 @@ class Chain {
 
                       while(evaluateLength--){
                          _eval = evaluate[evaluateLength];
-                        if(!checkEvaluation(_eval.oper_left, _eval.condition, _eval.oper_right, process.value())){
+                        if(!checkEvaluation(_eval.oper_left, _eval.condition, _eval.oper_right, process.values())){
                           action = 'wait';
                         }
                       }
