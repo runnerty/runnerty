@@ -393,10 +393,10 @@ module.exports.getProcessByUId = function getProcessByUId(chains, uId){
   return res;
 }
 
-module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, oper_right){
+module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, oper_right, values){
 
-  var oper_left  = replaceWith(oper_left);
-  var oper_right = replaceWith(oper_right);
+  var oper_left  = replaceWith(oper_left, values);
+  var oper_right = replaceWith(oper_right, values);
 
   switch (condition) {
     case '==':
