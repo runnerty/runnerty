@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "@slack/client": "^3.7.0",
+    "@slack/client": "^3.8.1",
     "node-telegram-bot-api": "^0.24.0",
     "nodemailer": "^2.7.0"
   }

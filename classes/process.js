@@ -5,12 +5,6 @@ var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var replaceWith       = require("../libs/utils.js").replaceWith;
 var getChainByUId     = require("../libs/utils.js").getChainByUId;
 
-var mysqlExecutor     = require("../executors/mysql.js");
-var postgresExecutor  = require("../executors/postgres.js");
-var redisExecutor     = require("../executors/redis.js");
-var shellExecutor     = require("../executors/shell.js");
-var waitExecutor      = require("../executors/wait.js");
-
 var requireDir        = require('require-dir');
 var executors         = requireDir('../executors');
 
@@ -428,11 +422,10 @@ class Process {
     }
 
     if(writeOutput){
-      _this.notificate('on_fail');
+      _this.write_output();
     }
 
     _this.status = 'error';
-
   }
 
   retry(){
@@ -467,7 +460,10 @@ class Process {
           if(configValues.type){
 
           if(executors[configValues.type]){
-            resolve(executors[configValues.type].exec(_this));
+            resolve(executors[configValues.type].exec(_this)
+              .then((res)  => {})
+              .catch((err) => {})
+            );
           }else{
             logger.log('error',`Executor ${_this.exec.id} type is not valid`);
             _this.execute_err_return = `Executor ${_this.exec.id} type is not valid`;
