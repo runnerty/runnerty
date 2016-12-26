@@ -96,9 +96,14 @@ function sendMail(mail, callback){
 
 class mailNotificator extends Notification{
   constructor(notification){
-    super('mail', notification.id, notification.title, notification.message, notification.recipients, notification.recipients_cc, notification.recipients_cco);
+    super(notification.id);
 
-    this.attachments = notification.attachments;
+    this.title          = notification.title;
+    this.message        = notification.message;
+    this.recipients     = notification.recipients;
+    this.recipients_cc  = notification.recipients_cc;
+    this.recipients_cco = notification.recipients_cco;
+    this.attachments    = notification.attachments;
 
     return new Promise((resolve) => {
         resolve(this);
@@ -112,11 +117,11 @@ class mailNotificator extends Notification{
     this.loadConfig()
     .then((configValues) => {
       if (configValues){
-        if (!this.from && configValues.from)               this.from        = configValues.from;
-        if (!this.transport && configValues.transport)     this.transport   = configValues.transport;
+        if (!this.from        && configValues.from)        this.from        = configValues.from;
+        if (!this.transport   && configValues.transport)   this.transport   = configValues.transport;
         if (!this.templateDir && configValues.templateDir) this.templateDir = configValues.templateDir;
-        if (!this.template && configValues.template)       this.template    = configValues.template;
-        if (!this.disable && configValues.disable)         this.disable     = configValues.disable;
+        if (!this.template    && configValues.template)    this.template    = configValues.template;
+        if (!this.disable     && configValues.disable)     this.disable     = configValues.disable;
       }
 
       this.params = values;

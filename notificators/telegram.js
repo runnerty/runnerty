@@ -40,8 +40,9 @@ function telegramSender(notification){
 
 class telegramNotificator extends Notification{
   constructor(notification){
-    super('telegram', notification.id, null, notification.message, notification.chat_id, null, null);
+    super(notification.id);
 
+    this.message = notification.message;
     this.token   = notification.token;
     this.chat_id = notification.chat_id;
 

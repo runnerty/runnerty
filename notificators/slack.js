@@ -44,8 +44,10 @@ function slackSender(notification){
 
 class slackNotificator extends Notification{
   constructor(notification){
-    super('slack', notification.id, null, notification.message, notification.channel, null, null);
+    super(notification.id);
 
+    this.message    = notification.message;
+    this.channel    = notification.channel;
     this.webhookurl = notification.webhookurl;
     this.bot_name   = notification.bot_name;
     this.bot_emoji  = notification.bot_emoji;
