@@ -2,8 +2,13 @@
 
 var logger            = require("../libs/utils.js").logger;
 var loadConfigSection = require("../libs/utils.js").loadConfigSection;
-var requireDir        = require('require-dir');
-var notificators      = requireDir('../notificators');
+var requireDir        = require("../libs/utils.js").requireDir;
+
+// REQUIRE EXECUTORS:
+var notificators = {};
+requireDir('/../notificators/')
+  .then((res)  => {notificators = res;})
+  .catch((err) => {throw err});
 
 class Event {
   constructor(name, process, notifications){

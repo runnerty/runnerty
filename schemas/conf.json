@@ -43,21 +43,7 @@
       "notificators": {
         "type": "array",
         "items": {
-          "type": "object",
-          "required": ["id", "type"],
-          "properties": {
-            "id": {"type": "string"},
-            "type": {"type": "string"},
-            "disable": {"type": "boolean"},
-            "from": {"type": "string"},
-            "webhookurl": {"type": "string", "format":"uri"},
-            "bot_name": {"type": "string"},
-            "bot_emoji": {"type": "string"},
-            "channel": {"type": "string"},
-            "transport": {"type": "string"},
-            "templateDir": {"type": "string"},
-            "template": {"type": "string"}
-          }
+          "anyOf": []
         }
       },
       "global_values": {

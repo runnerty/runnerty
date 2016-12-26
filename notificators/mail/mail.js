@@ -3,7 +3,7 @@
 var nodemailer      = require('nodemailer');
 var path            = require('path');
 var fs              = require('fs');
-var Notification    = require("../classes/notification.js");
+var Notification    = require("../../classes/notification.js");
 
 function sendMail(mail, callback){
 
@@ -44,7 +44,7 @@ function sendMail(mail, callback){
     }
   }
 
-  filesReads.push(readFilePromise('html',htmlTemplate));
+  filesReads.push(readFilePromise('html', htmlTemplate));
   filesReads.push(readFilePromise('text', txtTemplate));
 
   Promise.all(filesReads)

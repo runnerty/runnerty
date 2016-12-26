@@ -4,16 +4,17 @@ var logger            = require("../libs/utils.js").logger;
 var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var replaceWith       = require("../libs/utils.js").replaceWith;
 var getChainByUId     = require("../libs/utils.js").getChainByUId;
-
-var requireDir        = require('require-dir');
-var executors         = requireDir('../executors');
-
-
-var crypto            = require('crypto');
-
+var requireDir        = require("../libs/utils.js").requireDir;
+var crypto            = require("crypto");
 var bytes             = require("bytes");
-var fs                = require('fs-extra');
-var path              = require('path');
+var fs                = require("fs-extra");
+var path              = require("path");
+
+// REQUIRE EXECUTORS:
+var executors = {};
+requireDir('/../executors/')
+  .then((res)  => {executors = res;})
+  .catch((err) => {throw err});
 
 var Event = require("./event.js");
 

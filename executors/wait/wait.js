@@ -1,6 +1,6 @@
 "use strict";
 
-var logger = require("../libs/utils.js").logger;
+var logger = require("../../libs/utils.js").logger;
 
 module.exports.exec = function executeWait(process){
 

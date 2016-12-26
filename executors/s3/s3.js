@@ -1,6 +1,6 @@
 "use strict";
 
-var logger = require("../libs/utils.js").logger;
+var logger = require("../../libs/utils.js").logger;
 var AWS    = require('aws-sdk');
 var fs     = require('fs');
 var path   = require('path');

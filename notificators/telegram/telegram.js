@@ -1,6 +1,6 @@
 "use strict";
 
-var Notification     = require("../classes/notification.js");
+var Notification     = require("../../classes/notification.js");
 var TelegramBot      = require('node-telegram-bot-api');
 
 var pendings = [];

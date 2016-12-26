@@ -10,8 +10,21 @@ var moment          = require('moment');
 
 const algorithm     = 'aes-256-ctr';
 
-
-ajv.addSchema(configSchema, 'configSchema');
+// ADD NOTIFICATORS SCHEMAS:
+requireDir('/../notificators/','schema.json')
+  .then((res)  => {
+    var keys = Object.keys(res);
+    var keysLength = keys.length;
+    while (keysLength--) {
+      configSchema.properties.config.properties.notificators.items.anyOf.push({"$ref": keys[keysLength] + "#/definitions/config"});
+      ajv.addSchema(res[keys[keysLength]], keys[keysLength]);
+    }
+    ajv.addSchema(configSchema, 'configSchema');
+  })
+  .catch((err) => {
+    ajv.addSchema(configSchema, 'configSchema');
+    throw err;
+  });
 
 var logger = new (winston.Logger)({
   transports: [
@@ -417,4 +430,49 @@ module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, 
       return false;
       break;
   }
+}
+
+module.exports.requireDir = requireDir;
+
+
+function requireDir(directory, filename){
+
+  // REQUIRE DIRECTORY:
+  var container = {};
+  var containerDirectory = __dirname + directory;
+  var excludes = ['node_modules','git','snv'];
+
+  return new Promise((resolve, reject) => {
+      fs.readdir(containerDirectory, function(err, items) {
+      if (err) {
+        reject(err);
+      }
+
+      var dirs = items?items.filter(function(i){return !excludes.includes(i);}):[];
+
+      var dirsLength = dirs.length;
+      while (dirsLength--) {
+        if (fs.statSync(containerDirectory + dirs[dirsLength]).isDirectory()){
+
+          if(filename){
+            if(fs.existsSync(containerDirectory + dirs[dirsLength] + '/' + filename)){
+              container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/' + filename );
+            }
+          }else{
+            if(fs.existsSync(containerDirectory + dirs[dirsLength] + '/' + dirs[dirsLength] + '.js')){
+              container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/' + dirs[dirsLength] + '.js' );
+            }else{
+              if(containerDirectory + dirs[dirsLength] + '/index.js'){
+                container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/index.js' );
+              }
+            }
+          }
+
+        }
+      }
+      resolve(container);
+    });
+
+  });
+
 }

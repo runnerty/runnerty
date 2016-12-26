@@ -1,6 +1,6 @@
 "use strict";
 
-var Notification     = require("../classes/notification.js");
+var Notification     = require("../../classes/notification.js");
 var IncomingWebhooks = require('@slack/client').IncomingWebhook;
 
 var pendings = [];

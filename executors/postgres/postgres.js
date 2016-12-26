@@ -2,9 +2,9 @@
 
 var pg                = require('pg'); //PostgreSQL
 var csv               = require("fast-csv");
-var logger            = require("../libs/utils.js").logger;
-var loadSQLFile       = require("../libs/utils.js").loadSQLFile;
-var replaceWith       = require("../libs/utils.js").replaceWith;
+var logger            = require("../../libs/utils.js").logger;
+var loadSQLFile       = require("../../libs/utils.js").loadSQLFile;
+var replaceWith       = require("../../libs/utils.js").replaceWith;
 
 module.exports.exec = function executePostgre(process){
 

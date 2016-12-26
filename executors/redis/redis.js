@@ -1,8 +1,8 @@
 "use strict";
 
 var redis             = require('redis');
-var logger            = require("../libs/utils.js").logger;
-var replaceWith       = require("../libs/utils.js").replaceWith;
+var logger            = require("../../libs/utils.js").logger;
+var replaceWith       = require("../../libs/utils.js").replaceWith;
 
 module.exports.exec =  function executeRedis(process) {
 
