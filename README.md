@@ -79,7 +79,7 @@ Example:
       }
     ],
     // Conexiones de Notificaciones
-    "notificators_connections": [
+    "notificators": [
       {
         "id": "slack_default",
         "type": "slack",

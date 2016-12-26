@@ -555,8 +555,9 @@ class Chain {
                   })
 
               })
-              .catch(function(proc, e){
-                logger.log('error','Error in process.start: '+e);
+              .catch(function(proc, err){
+                err = err || proc.execute_err_return;
+                logger.log('error','Error in process.start: '+err);
 
                 if (proc.end_chain_on_fail){
                   _this.end();
@@ -566,8 +567,8 @@ class Chain {
                       logger.log('debug','setChainToInitState end_chain_on_fail');
                       resolve();
                     })
-                    .catch(function(e){
-                      logger.log('error','Error setChainToInitState on end_chain_on_fail: '+e);
+                    .catch(function(err){
+                      logger.log('error','Error setChainToInitState on end_chain_on_fail: '+err);
                       resolve();
                     });
 

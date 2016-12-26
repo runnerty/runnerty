@@ -61,7 +61,7 @@ module.exports.exec = function exec(process){
           process.execute_return = '';
           process.execute_err_return = 'Error connecting Mysql: ' + err;
           process.retries_count = process.retries_count +1 || 1;
-          reject(err);
+          reject(pro);
         } else {
           var command = replaceWith(process.exec.command, process.values());
           connection.query(command, process.execute_arg, function (err, results) {
@@ -117,7 +117,7 @@ module.exports.exec = function exec(process){
           process.execute_err_return = `executeMysql dont have command or command_file`;
           process.execute_return = '';
           process.error();
-          reject(`executeMysql dont have command or command_file`);
+          reject(process);
         }else{
           loadSQLFile(process.exec.command_file)
             .then((fileContent) => {
@@ -134,7 +134,7 @@ module.exports.exec = function exec(process){
                 process.execute_err_return = `executeMysql executeQuery from file: ${err}`;
                 process.execute_return = '';
                 process.error();
-                reject(process, err);
+                reject(process);
               });
         })
         .catch(function(err){
@@ -142,7 +142,7 @@ module.exports.exec = function exec(process){
             process.execute_err_return = `executeMysql loadSQLFile: ${err}`;
             process.execute_return = '';
             process.error();
-            reject(process, err);
+            reject(process);
           });
         }
       }else{
@@ -158,7 +158,7 @@ module.exports.exec = function exec(process){
             process.execute_err_return = `executeMysql executeQuery: ${err}`;
             process.execute_return = '';
             process.error();
-            reject(process, err);
+            reject(process);
           });
       }
     })
@@ -167,7 +167,7 @@ module.exports.exec = function exec(process){
         process.execute_err_return = `executeMysql loadExecutorConfig: ${err}`;
         process.execute_return = '';
         process.error();
-        reject(process, err);
+        reject(process);
       });
 
     }else{

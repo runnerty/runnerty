@@ -106,7 +106,7 @@ module.exports.exec = function executePostgre(process){
               process.execute_err_return = `executePostgre dont have command or command_file`;
               process.execute_return = '';
               process.error();
-              reject(process, `executePostgre dont have command or command_file`);
+              reject(process);
             }else{
               loadSQLFile(process.exec.command_file)
                 .then((fileContent) => {
@@ -123,7 +123,7 @@ module.exports.exec = function executePostgre(process){
                         process.execute_err_return = `executePostgre executeQuery from file: ${err}`;
                         process.execute_return = '';
                         process.error();
-                        reject(process, err);
+                        reject(process);
                       });
                 })
                 .catch(function(err){
@@ -131,7 +131,7 @@ module.exports.exec = function executePostgre(process){
                     process.execute_err_return = `executePostgre loadSQLFile: ${err}`;
                     process.execute_return = '';
                     process.error();
-                    reject(process, err);
+                    reject(process);
                   });
             }
           }else{
@@ -147,7 +147,7 @@ module.exports.exec = function executePostgre(process){
                process.execute_err_return = `executePostgre executeQuery: ${err}`;
                process.execute_return = '';
                process.error();
-               reject(process, err);
+               reject(process);
               });
           }
         })
@@ -156,14 +156,14 @@ module.exports.exec = function executePostgre(process){
           process.execute_err_return = `executePostgre loadExecutorConfig: ${err}`;
           process.execute_return = '';
           process.error();
-          reject(process, err);
+          reject(process);
         });
     }else{
       logger.log('error',`executePostgre: exec id not set for ${process.id}`);
       process.execute_err_return = `executePostgre: exec id not set for ${process.id}`;
       process.execute_return = '';
       process.error();
-      reject(process, `executePostgre: exec id not set for ${process.id}`);
+      reject(process);
     }
   });
 

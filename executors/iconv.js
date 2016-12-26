@@ -40,7 +40,7 @@ module.exports.exec = function(process){
               process.execute_err_return = `Error Iconv reading file ${_file_input}: ${err}`;
               process.execute_return = '';
               process.error();
-              reject(err);
+              reject(process);
             });
 
             decoderStream.on('error', function(err, str) {
@@ -48,7 +48,7 @@ module.exports.exec = function(process){
               process.execute_err_return = `Error Iconv decoding (${_decode_encoding}) file ${_file_input}: ${err}`;
               process.execute_return = '';
               process.error();
-              reject(err);
+              reject(process);
             });
 
             decoderStream.on('error', function(err, str) {
@@ -56,7 +56,7 @@ module.exports.exec = function(process){
               process.execute_err_return = `Error Iconv encoding (${_encode_encoding}) file ${_file_input}: ${err}`;
               process.execute_return = '';
               process.error();
-              reject(err);
+              reject(process, err);
             });
 
             fileStreamOutput.on('error', function(err) {
@@ -64,7 +64,7 @@ module.exports.exec = function(process){
               process.execute_err_return = `Error Iconv writing encoded file ${_file_output}: ${err}`;
               process.execute_return = '';
               process.error();
-              reject(err);
+              reject(process);
             });
 
             fileStreamOutput.on('close', function(err) {
@@ -78,7 +78,7 @@ module.exports.exec = function(process){
             process.execute_err_return = `Error Iconv files not setted: file_input: ${_file_input} / file_output: ${_file_output}`;
             process.execute_return = '';
             process.error();
-            reject();
+            reject(process);
           }
 
         }else{
@@ -86,7 +86,7 @@ module.exports.exec = function(process){
           process.execute_err_return = `Error Iconv encodings not supported. decode_encoding: ${_decode_encoding} ${iconv.encodingExists(_decode_encoding)? 'supported':'not supported'} / encode_encoding: ${_encode_encoding} ${iconv.encodingExists(_decode_encoding)? 'supported':'not supported'}`;
           process.execute_return = '';
           process.error();
-          reject();
+          reject(process);
         }
 
       }else{
@@ -94,7 +94,7 @@ module.exports.exec = function(process){
         process.execute_err_return = `Error Iconv encoders not setted. decode_encoding: ${_decode_encoding} / encode_encoding: ${_encode_encoding}`;
         process.execute_return = '';
         process.error();
-        reject();
+        reject(process);
       }
 
   });

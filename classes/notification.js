@@ -23,7 +23,7 @@ class Notification {
 
   loadConfig(){
     var _this = this;
-    return loadConfigSection(global.config, 'notificators_connections', _this.id);
+    return loadConfigSection(global.config, 'notificators', _this.id);
   }
 
 

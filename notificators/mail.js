@@ -29,6 +29,21 @@ function sendMail(mail, callback){
   var htmlTemplate = path.resolve(templateDir, 'html.html');
   var txtTemplate	 = path.resolve(templateDir, 'text.txt');
 
+  var attachments  = [];
+  var attachmentsLength = mail.attachments.length;
+
+  while(attachmentsLength--){
+    var keys = Object.keys(mail.attachments[attachmentsLength]);
+    var keysLength = keys.length;
+    var attAux = {};
+    if (keysLength > 0) {
+      while (keysLength--) {
+        attAux[keys[keysLength]] = mail.replaceWith(mail.attachments[attachmentsLength][keys[keysLength]], mail.params);
+      }
+      attachments.push(attAux);
+    }
+  }
+
   filesReads.push(readFilePromise('html',htmlTemplate));
   filesReads.push(readFilePromise('text', txtTemplate));
 
@@ -54,7 +69,8 @@ function sendMail(mail, callback){
         to: mail.to,
         subject: mail.params.subject,
         text: text,
-        html: html
+        html: html,
+        attachments: attachments
       };
 
       if(mail.disable){
@@ -81,6 +97,8 @@ function sendMail(mail, callback){
 class mailNotificator extends Notification{
   constructor(notification){
     super('mail', notification.id, notification.title, notification.message, notification.recipients, notification.recipients_cc, notification.recipients_cco);
+
+    this.attachments = notification.attachments;
 
     return new Promise((resolve) => {
         resolve(this);

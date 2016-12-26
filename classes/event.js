@@ -22,7 +22,7 @@ class Event {
 
   loadNotificationConfig(notification){
     return new Promise((resolve) => {
-        loadConfigSection(global.config, 'notificators_connections', notification.id)
+        loadConfigSection(global.config, 'notificators', notification.id)
         .then((config) => {
          notification.config = config;
          resolve(notification);

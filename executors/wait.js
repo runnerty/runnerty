@@ -22,7 +22,7 @@ module.exports.exec = function executeWait(process){
         process.execute_err_return = `executeWait loadExecutorConfig: ${err}`;
         process.execute_return = '';
         process.error();
-        reject(process, err);
+        reject(process);
       });
   });
 

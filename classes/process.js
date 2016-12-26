@@ -12,7 +12,8 @@ var executors         = requireDir('../executors');
 var crypto            = require('crypto');
 
 var bytes             = require("bytes");
-var fs                = require('fs');
+var fs                = require('fs-extra');
+var path              = require('path');
 
 var Event = require("./event.js");
 
@@ -508,19 +509,28 @@ class Process {
     }
 
     function writeFile(filePath, mode, os){
-      fs.open(filePath, mode, (err, fd) => {
+
+      var dirname = path.dirname(filePath);
+
+      fs.ensureDir(dirname, function (err) {
         if(err){
-          logger.log('error',`Writing output, open file ${filePath} in ${_this.id}: `,err);
+          logger.log('error',`Creating directory ${dirname} in ensureDir in ${_this.id}: `,err);
         }else{
-          fs.write(fd, os, null, 'utf8', function(){
-          fs.close(fd, function(err){
+          fs.open(filePath, mode, (err, fd) => {
             if(err){
-              logger.log('error',`Closing file ${filePath} in writeFile in ${_this.id}: `,err);
-            }
-          });
+              logger.log('error',`Writing output, open file ${filePath} in ${_this.id}: `,err);
+            }else{
+              fs.write(fd, os, null, 'utf8', function(){
+              fs.close(fd, function(err){
+                if(err){
+                  logger.log('error',`Closing file ${filePath} in writeFile in ${_this.id}: `,err);
+                }
+              });
+            });
+        }
         });
         }
-    });
+      })
     }
 
     function generateOutput(output){

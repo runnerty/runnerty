@@ -119,14 +119,14 @@ module.exports.exec =  function executeRedis(process) {
             process.execute_err_return = `executeRedis executeCommand: ${err}`;
             process.execute_return = '';
             process.error();
-            reject(process, err);
+            reject(process);
           });
       }else{
         logger.log('error',`executeRedis: command not set for ${process.id}`);
         process.execute_err_return = `executeRedis: command not set for ${process.id}`;
         process.execute_return = '';
         process.error();
-        reject(process, `executeRedis: command not set for ${process.id}`);
+        reject(process);
       }
     })
     .catch(function(err){
@@ -134,14 +134,14 @@ module.exports.exec =  function executeRedis(process) {
         process.execute_err_return = `executeRedis loadExecutorConfig: ${err}`;
         process.execute_return = '';
         process.error();
-        reject(process, err);
+        reject(process);
       });
     }else{
       logger.log('error',`executeRedis: exec id not set for ${process.id}`);
       process.execute_err_return = `executeRedis: exec id not set for ${process.id}`;
       process.execute_return = '';
       process.error();
-      reject(process, `executeRedis: exec id not set for ${process.id}`);
+      reject(process);
     }
   });
 };

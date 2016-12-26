@@ -39,7 +39,7 @@ module.exports.exec = function executeS3(process){
               process.execute_err_return = `S3 upload file error: ${err}`;
               process.execute_return = '';
               process.error();
-              reject(err);
+              reject(process);
             } if (data) {
               process.execute_err_return = '';
               process.execute_return = JSON.stringify(data);
@@ -52,7 +52,7 @@ module.exports.exec = function executeS3(process){
            process.execute_err_return = `S3 method not accepted: ${process.execute_args.method}`;
            process.execute_return = '';
            process.error();
-           reject(err);
+           reject(process);
         }
   });
  });
