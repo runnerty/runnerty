@@ -153,6 +153,8 @@ module.exports.loadSQLFile = function loadSQLFile(filePath){
 
 function replaceWith(text, objParams, ignoreGlobalValues){
 
+  text = text || '';
+
   if(!objParams) objParams = {};
 
   if(global.config.global_values && !ignoreGlobalValues){
