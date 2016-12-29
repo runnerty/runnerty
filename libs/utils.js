@@ -112,7 +112,8 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath){
 });
 };
 
-module.exports.loadConfigSection = function loadConfigSection(config, section, id_config){
+module.exports.loadConfigSection = function loadConfigSection (config, section, id_config){
+
   return new Promise(function(resolve, reject) {
 
     if (config.hasOwnProperty(section)) {

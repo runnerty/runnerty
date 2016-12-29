@@ -50,48 +50,25 @@ function slackSender(notification){
 
 class slackNotificator extends Notification{
   constructor(notification){
-    super(notification.id);
-
-    this.title      = notification.title;
-    this.message    = notification.message;
-    this.channel    = notification.channel;
-    this.webhookurl = notification.webhookurl;
-    this.bot_name   = notification.bot_name;
-    this.bot_emoji  = notification.bot_emoji;
-    this.channel    = notification.channel;
-    this.color      = notification.color;
-
-    return new Promise((resolve) => {
-        resolve(this);
-    });
+    super(notification)
   }
 
   notificate(values){
     var _this = this;
 
-    return new Promise((resolve) => {
-      _this.loadConfig()
-      .then((configValues) => {
-        if (configValues){
-          if (!_this.webhookurl && configValues.webhookurl) _this.webhookurl = configValues.webhookurl;
-          if (!_this.bot_name   && configValues.bot_name)   _this.bot_name   = configValues.bot_name;
-          if (!_this.bot_emoji  && configValues.bot_emoji)  _this.bot_emoji  = configValues.bot_emoji;
-          if (!_this.channel    && configValues.channel)    _this.channel    = configValues.channel;
-          if (!_this.title      && configValues.title)      _this.title      = configValues.title;
-          if (!_this.color      && configValues.color)      _this.color      = configValues.color;
-        }
-        _this.msgToSend   = _this.replaceWith(_this.message, values);
-        _this.titleToSend = _this.replaceWith(_this.title, values);
+    if (_this.config){
+      if (!_this.webhookurl && _this.config.webhookurl) _this.webhookurl = _this.config.webhookurl;
+      if (!_this.bot_name   && _this.config.bot_name)   _this.bot_name   = _this.config.bot_name;
+      if (!_this.bot_emoji  && _this.config.bot_emoji)  _this.bot_emoji  = _this.config.bot_emoji;
+      if (!_this.channel    && _this.config.channel)    _this.channel    = _this.config.channel;
+      if (!_this.title      && _this.config.title)      _this.title      = _this.config.title;
+      if (!_this.color      && _this.config.color)      _this.color      = _this.config.color;
+    }
+    _this.msgToSend   = _this.replaceWith(_this.message, values);
+    _this.titleToSend = _this.replaceWith(_this.title, values);
 
-        pendings.push(_this);
-        _this.run();
-        resolve();
-      })
-      .catch(function(e){
-        _this.logger.log('error','Slack notificate loadConfig '+e);
-        resolve();
-      });
-    });
+    pendings.push(_this);
+    _this.run();
   }
 
   run(){

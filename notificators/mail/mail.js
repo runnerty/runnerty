@@ -96,83 +96,62 @@ function sendMail(mail, callback){
 
 class mailNotificator extends Notification{
   constructor(notification){
-    super(notification.id);
-
-    this.title          = notification.title;
-    this.message        = notification.message;
-    this.recipients     = notification.recipients;
-    this.recipients_cc  = notification.recipients_cc;
-    this.recipients_cco = notification.recipients_cco;
-    this.attachments    = notification.attachments;
-
-    return new Promise((resolve) => {
-        resolve(this);
-    });
-  }
+    super(notification)
+}
 
   notificate(values){
 
-    return new Promise((resolve) => {
+    var _this = this;
 
-    this.loadConfig()
-    .then((configValues) => {
-      if (configValues){
-        if (!this.from        && configValues.from)        this.from        = configValues.from;
-        if (!this.transport   && configValues.transport)   this.transport   = configValues.transport;
-        if (!this.templateDir && configValues.templateDir) this.templateDir = configValues.templateDir;
-        if (!this.template    && configValues.template)    this.template    = configValues.template;
-        if (!this.disable     && configValues.disable)     this.disable     = configValues.disable;
+    if (_this.config){
+      if (!_this.from        && _this.config.from)        _this.from        = _this.config.from;
+      if (!_this.transport   && _this.config.transport)   _this.transport   = _this.config.transport;
+      if (!_this.templateDir && _this.config.templateDir) _this.templateDir = _this.config.templateDir;
+      if (!_this.template    && _this.config.template)    _this.template    = _this.config.template;
+      if (!_this.disable     && _this.config.disable)     _this.disable     = _this.config.disable;
+    }
+
+    _this.params = values;
+
+    for (var   i = 0, len = _this.recipients.length; i < len; i++) {
+      if (i){
+        _this.to = _this.to + _this.recipients[i] + ((i < len-1) ? ', ' : '');
       }
+      else{
+        _this.to = _this.recipients[i] + ((i < len-1) ? ', ' : '');
+      }
+    }
 
-      this.params = values;
-
-      for (var   i = 0, len = this.recipients.length; i < len; i++) {
+    if(_this.recipients_cc){
+      for (var i = 0, len = _this.recipients_cc.length; i < len; i++) {
         if (i){
-          this.to = this.to + this.recipients[i] + ((i < len-1) ? ', ' : '');
+          _this.cc = _this.cc + _this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
         }
         else{
-          this.to = this.recipients[i] + ((i < len-1) ? ', ' : '');
+          _this.cc = _this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
         }
       }
+    }
 
-      if(this.recipients_cc){
-        for (var i = 0, len = this.recipients_cc.length; i < len; i++) {
-          if (i){
-            this.cc = this.cc + this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
-          }
-          else{
-            this.cc = this.recipients_cc[i] + ((i < len-1) ? ', ' : '');
-          }
+    if(_this.recipients_cco){
+      for (var i = 0, len = _this.recipients_cco.length; i < len; i++) {
+        if (i){
+          _this.bcc = _this.bcc + _this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
+        }
+        else{
+          _this.bcc = _this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
         }
       }
+    }
 
-      if(this.recipients_cco){
-        for (var i = 0, len = this.recipients_cco.length; i < len; i++) {
-          if (i){
-            this.bcc = this.bcc + this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
-          }
-          else{
-            this.bcc = this.recipients_cco[i] + ((i < len-1) ? ', ' : '');
-          }
-        }
+    _this.params.subject = _this.replaceWith(_this.title, values);
+    _this.params.message = _this.replaceWith(_this.message, values);
+
+    sendMail(_this, function(err, res){
+      if (err){
+        _this.logger.log('error','Error sending mail:',err);
       }
-
-      this.params.subject = this.replaceWith(this.title, values);
-      this.params.message = this.replaceWith(this.message, values);
-
-      sendMail(this, function(err, res){
-        if (err){
-          this.logger.log('error','Error sending mail:'+e,this,values);
-        }
-        resolve(res);
-      });
-
-  })
-  .catch(function(e){
-      this.logger.log('error','Mail notificate loadConfig '+e)
-      resolve();
     });
-  });
   }
 }
 

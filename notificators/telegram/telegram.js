@@ -40,37 +40,19 @@ function telegramSender(notification){
 
 class telegramNotificator extends Notification{
   constructor(notification){
-    super(notification.id);
-
-    this.message = notification.message;
-    this.token   = notification.token;
-    this.chat_id = notification.chat_id;
-
-    return new Promise((resolve) => {
-      resolve(this);
-    });
+    super(notification)
   }
 
   notificate(values){
     var _this = this;
 
-    return new Promise((resolve) => {
-      _this.loadConfig()
-      .then((configValues) => {
-      if (configValues){
-        if (!_this.token && configValues.token)     _this.token     = configValues.token;
-        if (!_this.chat_id && configValues.chat_id) _this.chat_id   = configValues.chat_id;
-      }
-      _this.msgToSend = _this.replaceWith(_this.message, values);
-      pendings.push(_this);
-      _this.run();
-      resolve();
-      })
-      .catch(function(e){
-        this.logger.log('error','Telegram notificate loadConfig '+e)
-        resolve();
-      });
-    });
+    if (_this.config){
+      if (!_this.token   && _this.config.token)   _this.token   = _this.config.token;
+      if (!_this.chat_id && _this.config.chat_id) _this.chat_id = _this.config.chat_id;
+    }
+    _this.msgToSend = _this.replaceWith(_this.message, values);
+    pendings.push(_this);
+    _this.run();
   }
 
   run(){

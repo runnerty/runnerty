@@ -277,17 +277,19 @@ class Chain {
     if(_this.hasOwnProperty('events') && _this.events !== undefined){
       if(_this.events.hasOwnProperty(event)){
         if(_this.events[event].hasOwnProperty('notifications')){
-          if(_this.events[event].notifications instanceof Array){
+         // if(_this.events[event].notifications instanceof Array){
             var notificationsLength = _this.events[event].notifications.length;
             while(notificationsLength--){
-              _this.events[event].notifications[notificationsLength].notificate(_this.values())
+              _this.events[event].notifications[notificationsLength].notificate(_this.values());
+              /*
                 .then(function(res){
                 })
                 .catch(function(e){
                   logger.log('error','Notification chain sended: '+e);
                 });
+                */
             }
-          }
+          //}
         }
       }
     }
