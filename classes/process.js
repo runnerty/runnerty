@@ -332,7 +332,7 @@ class Process {
             itemChain.status = 'stop';
           }
           var executeInmediate = true;
-          chainsToRun.push(global.runtimePlan.plan.scheduleChain(itemChain, _this, executeInmediate));
+          chainsToRun.push(global.runtimePlan.plan.scheduleChain(itemChain, _this, executeInmediate, null, _this.custom_values));
         }
       }
 
