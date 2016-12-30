@@ -37,21 +37,21 @@ var logger = new (winston.Logger)({
 module.exports.logger = logger;
 
 
-function encrypt(text){
+function encrypt (text){
   var cipher = crypto.createCipher(algorithm,global.cryptoPassword)
   var crypted = cipher.update(text,'utf8','hex')
   crypted += cipher.final('hex');
   return crypted;
 }
 
-function decrypt(text){
+function decrypt (text){
   var decipher = crypto.createDecipher(algorithm,global.cryptoPassword)
   var dec = decipher.update(text,'hex','utf8')
   dec += decipher.final('utf8');
   return dec;
 }
 
-function getDateString(format,uppercase,lang){
+function getDateString (format,uppercase,lang){
   if(lang) moment.locale(lang.toLowerCase());
   var strDate = moment().format(format);
   if(uppercase) strDate = strDate.toUpperCase();
@@ -103,8 +103,8 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath){
                 }
               }
             });
-          } catch (e) {
-            throw new Error('Invalid Config file, incorrect JSON format: ' + e.message, e);
+          } catch (err) {
+            throw new Error('Invalid Config file, incorrect JSON format: ' + err.message, err);
             resolve();
           }
         }
@@ -143,7 +143,7 @@ module.exports.loadConfigSection = function loadConfigSection (config, section, 
   });
 };
 
-module.exports.loadSQLFile = function loadSQLFile(filePath){
+module.exports.loadSQLFile = function loadSQLFile (filePath){
   return new Promise((resolve) => {
 
   fs.stat(filePath, function(err, res){
@@ -165,7 +165,7 @@ module.exports.loadSQLFile = function loadSQLFile(filePath){
 });
 };
 
-function replaceWith(text, objParams, ignoreGlobalValues){
+function replaceWith (text, objParams, ignoreGlobalValues){
 
   text = text || '';
 

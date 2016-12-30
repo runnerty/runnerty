@@ -57,13 +57,13 @@ class Process {
              _this.events = events;
              resolve(this);
            })
-           .catch(function(e){
-             logger.log('error','Process constructor loadEvents:'+e);
+           .catch(function(err){
+             logger.log('error','Process constructor loadEvents:',err);
               resolve(this);
            });
         })
         .catch(function(err){
-          logger.log('error',`Chain ${_this.id} setUid: `+err);
+          logger.log('error',`Chain ${_this.id} setUid: `,err);
           resolve();
         });
     });
@@ -163,14 +163,14 @@ class Process {
               }
               resolve(events);
             })
-            .catch(function(e){
-              logger.log('error','Process loadEvents: '+e);
+            .catch(function(err){
+              logger.log('error','Process loadEvents: ',err);
               resolve();
             });
         }
       }
     }else{
-      logger.log('error','Process, events is not object', err);
+      logger.log('error','Process, events is not object');
       resolve();
     }
   });
@@ -304,8 +304,8 @@ class Process {
       chainParentFound.refreshChainStatus()
         .then(function(chainStatus){
         })
-        .catch(function(e){
-          logger.log('error','Error in process refreshChainStatus:'+e);
+        .catch(function(err){
+          logger.log('error','Error in process refreshChainStatus:',err);
         });
 
     }
@@ -345,8 +345,8 @@ class Process {
           .then(function () {
             resolve();
           })
-          .catch(function(e){
-            logger.log('error','Process startChildChainsDependients: '+e);
+          .catch(function(err){
+            logger.log('error','Process startChildChainsDependients: ',err);
             resolve();
           });
 

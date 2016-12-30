@@ -18,8 +18,8 @@ class Event {
         .then((events) => {
         resolve(events);
         })
-        .catch(function(e){
-            logger.log('error','Event constructor '+e);
+        .catch(function(err){
+            logger.log('error','Event constructor ',err);
             resolve();
           });
         });
@@ -32,8 +32,8 @@ class Event {
          notification.config = config;
          resolve(notification);
         })
-        .catch(function(e){
-            logger.log('error','loadNotificationConfig'+e);
+        .catch(function(err){
+            logger.log('error','loadNotificationConfig',err);
             resolve(notification);
           });
         });
@@ -65,19 +65,20 @@ class Event {
                    objEvent[name]['notifications'] = res;
                    resolve(objEvent);
                  })
-                 .catch(function(e){
-                   logger.log('error','Event loadEventsObjects: '+e);
+                 .catch(function(err){
+                   logger.log('error','Event loadEventsObjects: ',err);
                    resolve(objEvent);
                  });
 
              })
              .catch(function(err){
-               logger.log('error','Event loadNotificationConfig: '+err);
+               logger.log('error','Event loadNotificationConfig: ',err);
+               resolve(objEvent);
              });
           }
 
         } else {
-          logger.log('error','Event loadEventsObjects: '+e);
+          logger.log('error','Event loadEventsObjects  zero notifications');
           resolve(objEvent);
         }
       } else {

@@ -15,8 +15,8 @@ class Plan{
         this.chains = chains;
         resolve(this);
       })
-      .catch(function(e){
-        logger.log('error','Plan constructor:'+e);
+      .catch(function(err){
+        logger.log('error','Plan constructor:',err);
         resolve(this);
       });
   });
@@ -49,8 +49,8 @@ class Plan{
             }
             resolve(chains);
           })
-          .catch(function(e){
-            logger.log('error','Loading chains:'+e);
+          .catch(function(err){
+            logger.log('error','Loading chains:',err);
             resolve();
           });
 
@@ -88,8 +88,8 @@ class Plan{
             // console.log(res);
             resolve(res);
           })
-          .catch(function(e){
-            logger.log('error','Loading chain:'+e);
+          .catch(function(err){
+            logger.log('error','Loading chain:',err);
             resolve();
           });
   });
@@ -128,8 +128,8 @@ class Plan{
                 _this.scheduleChain(chain)
                   .then(function(res) {
                   })
-                  .catch(function(e){
-                    logger.log('error','loadChainFileDependencies scheduleChain'+e);
+                  .catch(function(err){
+                    logger.log('error','loadChainFileDependencies scheduleChain',err);
                   });
               }
             })
@@ -155,8 +155,8 @@ class Plan{
         _this.scheduleChain(chain)
           .then(function(res) {
           })
-          .catch(function(e){
-            logger.log('error','scheduleChains scheduleChain'+e);
+          .catch(function(err){
+            logger.log('error','scheduleChains scheduleChain',err);
           });
       }
     });
@@ -168,9 +168,9 @@ class Plan{
     // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
 
     return new Promise((resolve) => {
-        if((chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined) || executeInmediate){
-      chain.stop();
-    };
+      if((chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined) || executeInmediate){
+        chain.stop();
+      };
 
     if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStopped()))
     {
@@ -253,8 +253,8 @@ class Plan{
                           .then(function(res) {
                             process.childs_chains.push(res);
                           })
-                          .catch(function(e){
-                            logger.log('error', `scheduleChain loadChain ${chain.id} parallel. Error: `+e)
+                          .catch(function(err){
+                            logger.log('error', `scheduleChain loadChain ${chain.id} parallel. Error: `,err)
                           });
                       });
                     });
@@ -272,8 +272,8 @@ class Plan{
                         .then(function (res) {
                           resolve();
                         })
-                        .catch(function(e){
-                          logger.log('error', 'scheduleChain createChainSerie createChainSerie parallel. Error: '+e);
+                        .catch(function(err){
+                          logger.log('error', 'scheduleChain createChainSerie createChainSerie parallel. Error: ',err);
                           resolve();
                         });
 
@@ -291,8 +291,8 @@ class Plan{
                                .then(function(res) {
                                  process.childs_chains.push(res);
                                })
-                               .catch(function(e){
-                                 logger.log('error','scheduleChain createChainSerie Error '+e);
+                               .catch(function(err){
+                                 logger.log('error','scheduleChain createChainSerie Error ',err);
                                });
                       });
                     });
@@ -301,17 +301,14 @@ class Plan{
 
                   function execSerie(chains) {
                     var sequence = Promise.resolve();
-                    var i = 0;
                     chains.forEach(function(chain) {
                       sequence = sequence.then(function() {
                         var waitEndChilds = true;
                         return chain.start(inputIterable[i], undefined, waitEndChilds)
                           .then(function(res) {
-                            i = i+1;
                           })
-                          .catch(function(e){
-                            i = i+1;
-                            logger.log('error','scheduleChain execSerie Error '+e);
+                          .catch(function(err){
+                            logger.log('error','scheduleChain execSerie Error ',err);
                           });
                       });
                     });
@@ -324,8 +321,8 @@ class Plan{
                         .then(function() {
                           resolve();
                         })
-                        .catch(function(e){
-                          logger.log('error','scheduleChain createChainSerie Error '+e);
+                        .catch(function(err){
+                          logger.log('error','scheduleChain createChainSerie Error ',err);
                           resolve();
                       });
                     });
@@ -341,8 +338,8 @@ class Plan{
                   _this.scheduleChains();
                   resolve();
                 })
-                .catch(function(e){
-                  logger.log('error','Error '+e);
+                .catch(function(err){
+                  logger.log('error','Error ',err);
                   resolve();
                 });
             }
@@ -361,8 +358,8 @@ class Plan{
                   _this.scheduleChains();
                   resolve();
                 })
-                .catch(function(e){
-                  logger.log('error','scheduleChain chain.start Error '+e)
+                .catch(function(err){
+                  logger.log('error','scheduleChain chain.start Error ',err)
                   resolve();
                 });
             }
@@ -415,8 +412,8 @@ class Plan{
     _this.scheduleChain(_this.getChainById(chainId))
       .then(function(res) {
       })
-      .catch(function(e){
-        logger.log('error','loadChainToPlan scheduleChain'+e);
+      .catch(function(err){
+        logger.log('error','loadChainToPlan scheduleChain',err);
       });
   }
 

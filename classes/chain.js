@@ -93,8 +93,8 @@ class Chain {
             }
             resolve(processes);
           })
-          .catch(function(e){
-            logger.log('error',`Chain ${_this.id} loadProcesses:`+e)
+          .catch(function(err){
+            logger.log('error',`Chain ${_this.id} loadProcesses:`,err)
             resolve();
           });
 
@@ -137,8 +137,8 @@ class Chain {
           .then(function(res) {
             resolve(res);
           })
-          .catch(function(e){
-            logger.log('error','Loading process:'+e);
+          .catch(function(err){
+            logger.log('error','Loading process:',err);
             resolve();
           });
   });
@@ -176,8 +176,8 @@ class Chain {
             }
             resolve(events);
           })
-          .catch(function(e){
-            logger.log('error',`Chain ${_this.id} events: `+e);
+          .catch(function(err){
+            logger.log('error',`Chain ${_this.id} events: `+err);
             resolve();
           });
 
@@ -229,8 +229,8 @@ class Chain {
                   .then(function(res){
                     //chain.end();
                   })
-                  .catch(function(e){
-                    logger.log('error','Error in loadProcessFileDependencies startProcesses:'+e);
+                  .catch(function(err){
+                    logger.log('error','Error in loadProcessFileDependencies startProcesses:',err);
                   });
               }
             })
@@ -343,8 +343,8 @@ class Chain {
             processParentFound.endChildChains();
           }
         })
-        .catch(function(e){
-          logger.log('error','Error in chain refreshParentProcessChildsChainsStatus:'+e);
+        .catch(function(err){
+          logger.log('error','Error in chain refreshParentProcessChildsChainsStatus:',err);
         });
     }
   }
@@ -396,13 +396,13 @@ class Chain {
                         //chain.end();
                         resolve();
                       })
-                      .catch(function(e){
-                        logger.log('error','Error in startProcesses:'+e);
+                      .catch(function(err){
+                        logger.log('error','Error in startProcesses:',err);
                         resolve();
                       });
                   })
-                  .catch(function(e){
-                    logger.log('error','Error setChainToInitState: '+e);
+                  .catch(function(err){
+                    logger.log('error','Error setChainToInitState: ',err);
                     resolve();
                   });
               }else{
@@ -417,8 +417,8 @@ class Chain {
               //if (inputIteration) chain.end();
               resolve();
             })
-            .catch(function(e){
-              logger.log('error','Error in startProcesses:'+e);
+            .catch(function(err){
+              logger.log('error','Error in startProcesses:',err);
               resolve();
             });
         }
@@ -539,19 +539,19 @@ class Chain {
                       .then(function(res){
                         resolve();
                       })
-                      .catch(function(e){
-                        logger.log('error','Error in startProcess:'+e);
+                      .catch(function(err){
+                        logger.log('error','Error in startProcess:',err);
                         resolve();
                       })
                   })
-                  .catch(function(e){
-                    logger.log('error','Error in startProcess:'+e);
+                  .catch(function(err){
+                    logger.log('error','Error in startProcess:',err);
                     _this.startProcesses(waitEndChilds)
                       .then(function(res){
                         resolve();
                       })
-                      .catch(function(e){
-                        logger.log('error','Error in startProcess:'+e);
+                      .catch(function(err){
+                        logger.log('error','Error in startProcess:',err);
                         resolve();
                       })
                   })
@@ -559,7 +559,7 @@ class Chain {
               })
               .catch(function(proc, err){
                 err = err || proc.execute_err_return;
-                logger.log('error','Error in process.start: '+err);
+                logger.log('error','Error in process.start: ',err);
 
                 if (proc.end_chain_on_fail){
                   _this.end();
@@ -570,7 +570,7 @@ class Chain {
                       resolve();
                     })
                     .catch(function(err){
-                      logger.log('error','Error setChainToInitState on end_chain_on_fail: '+err);
+                      logger.log('error','Error setChainToInitState on end_chain_on_fail: ',err);
                       resolve();
                     });
 
@@ -580,8 +580,8 @@ class Chain {
                     .then(function(res){
                       resolve();
                     })
-                    .catch(function(e){
-                      logger.log('error','Error in startProcesses (prev errored):'+e);
+                    .catch(function(err){
+                      logger.log('error','Error in startProcesses (prev errored):',err);
                       resolve();
                     })
                 }
@@ -601,8 +601,8 @@ class Chain {
               .then(function(res){
                 resolve();
               })
-              .catch(function(e){
-                logger.log('error','Error in startProcesses (end errored):'+e);
+              .catch(function(err){
+                logger.log('error','Error in startProcesses (end errored):',err);
                 resolve();
               });
 
@@ -650,9 +650,9 @@ class Chain {
                       .then(function(res) {
                         i = i+1;
                       })
-                      .catch(function(e){
+                      .catch(function(err){
                         i = i+1;
-                        logger.log('error','chain startProcesses execSerie  startProcesses waitEndChilds. Error '+e);
+                        logger.log('error','chain startProcesses execSerie  startProcesses waitEndChilds. Error ',err);
                       });
                   });
                 });
@@ -663,8 +663,8 @@ class Chain {
                 .then(function() {
                   resolve();
                 })
-                .catch(function(e){
-                  logger.log('error','chain startProcesses execSerie waitEndChilds. Error '+e);
+                .catch(function(err){
+                  logger.log('error','chain startProcesses execSerie waitEndChilds. Error ',err);
                   resolve();
                 });
 
@@ -681,8 +681,8 @@ class Chain {
                 .then(function() {
                   resolve();
                 })
-                .catch(function(e){
-                  logger.log('error',`chain startProcesses:`+e)
+                .catch(function(err){
+                  logger.log('error',`chain startProcesses:`,err)
                   resolve();
                 });
             }
@@ -699,8 +699,8 @@ class Chain {
             }
           }
         })
-        .catch(function(e){
-          logger.log('error','Error en chain startProcesses refreshChainStatus: '+e);
+        .catch(function(err){
+          logger.log('error','Error en chain startProcesses refreshChainStatus: ',err);
           resolve();
         })
     });

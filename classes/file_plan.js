@@ -43,12 +43,12 @@ class FilePlan {
            })
       })
     .catch(function(err){
-        logger.log('error','FilePlan loadFileContent getChains: '+err);
-        return new Error(`FilePlan new Plan:`+err);
+        logger.log('error','FilePlan loadFileContent getChains: ',err);
+        return new Error(`FilePlan new Plan:`,err);
       });
   })
-  .catch(function(e){
-      logger.log('error','File Plan, constructor:'+e)
+  .catch(function(err){
+      logger.log('error','File Plan, constructor:',err)
       resolve(this);
     });
   });
@@ -67,7 +67,7 @@ class FilePlan {
           try {
             fs.readFile(filePath, 'utf8', function(err, res){
               if(err){
-                logger.log('error',`File loadFileContent (${filePath}) readFile: `+err);
+                logger.log('error',`File loadFileContent (${filePath}) readFile: `,err);
                 resolve();
               }else{
 
@@ -92,8 +92,8 @@ class FilePlan {
 
               }
             });
-          } catch(e) {
-            throw new Error(`Invalid file (${filePath}), incorrect JSON format: `+e.message,e);
+          } catch(err) {
+            throw new Error(`Invalid file (${filePath}), incorrect JSON format: `+err.message,err);
             resolve();
           }
         }
@@ -120,9 +120,9 @@ class FilePlan {
           .then(function (res) {
             resolve(res);
           })
-          .catch(function(e){
-            logger.log('error', 'getChains error: ', e);
-            return new Error(`getChains error: `+e);
+          .catch(function(err){
+            logger.log('error', 'getChains error: ', err);
+            return new Error(`getChains error: `+err);
           });
 
       }else{
@@ -188,21 +188,23 @@ class FilePlan {
 
     try {
       objStr = JSON.stringify(plan);
-    } catch (e) {
-      if (e.message.indexOf('circular') !== -1) {
-        logger.log('warn',e);
+    } catch (err) {
+      if (err.message.indexOf('circular') !== -1) {
+        logger.log('warn',err);
         logger.log('warn','Retrying stringify plan.');
         try {
+          objStr = {};
+          plan = _this.plan;
           objStr = JSON.stringify(plan);
-        } catch (e) {
-          if (e.message.indexOf('circular') !== -1) {
-            logger.log('error',e);
+        } catch (err) {
+          if (err.message.indexOf('circular') !== -1) {
+            logger.log('error',err);
             logger.log('error',plan);
-            throw e;
+            throw err;
           }
         }
       }else{
-        throw e;
+        throw err;
       }
     }
 
