@@ -1,17 +1,19 @@
 "use strict";
 
-var fs          = require('fs');
-var crypto      = require('crypto');
-var logger      = require("../libs/utils.js").logger;
-var planSchema  = require('../schemas/plan.json');
-var chainSchema = require('../schemas/chain.json');
-var Ajv         = require('ajv');
-var ajv         = new Ajv({allErrors: true});
+var fs            = require('fs');
+var crypto        = require('crypto');
+var logger        = require("../libs/utils.js").logger;
+var planSchema    = require('../schemas/plan.json');
+var chainSchema   = require('../schemas/chain.json');
+var processSchema = require('../schemas/process.json');
+var Ajv           = require('ajv');
+var ajv           = new Ajv({allErrors: true});
 
-var Plan        = require("./plan.js");
+var Plan          = require("./plan.js");
 
 ajv.addFormat('cron', /^(((([\*]{1}){1})|((\*\/){0,1}(([0-9]{1}){1}|(([1-5]{1}){1}([0-9]{1}){1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([0-9]{1}){1}|(([1]{1}){1}([0-9]{1}){1}){1}|([2]{1}){1}([0-3]{1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([1-9]{1}){1}|(([1-2]{1}){1}([0-9]{1}){1}){1}|([3]{1}){1}([0-1]{1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([1-9]{1}){1}|(([1-2]{1}){1}([0-9]{1}){1}){1}|([3]{1}){1}([0-1]{1}){1}))|(jan|feb|mar|apr|may|jun|jul|aug|sep|okt|nov|dec)) ((([\*]{1}){1})|((\*\/){0,1}(([0-7]{1}){1}))|(sun|mon|tue|wed|thu|fri|sat)))$/);
 ajv.addSchema(planSchema, 'planSchema');
+ajv.addSchema(processSchema,'processSchema');
 ajv.addSchema(chainSchema,'chainSchema');
 
 class FilePlan {
