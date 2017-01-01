@@ -277,19 +277,10 @@ class Chain {
     if(_this.hasOwnProperty('events') && _this.events !== undefined){
       if(_this.events.hasOwnProperty(event)){
         if(_this.events[event].hasOwnProperty('notifications')){
-         // if(_this.events[event].notifications instanceof Array){
             var notificationsLength = _this.events[event].notifications.length;
             while(notificationsLength--){
               _this.events[event].notifications[notificationsLength].notificate(_this.values());
-              /*
-                .then(function(res){
-                })
-                .catch(function(e){
-                  logger.log('error','Notification chain sended: '+e);
-                });
-                */
             }
-          //}
         }
       }
     }
@@ -643,15 +634,11 @@ class Chain {
             if(waitEndChilds){ //Serie
               function execSerie(processes) {
                 var sequence = Promise.resolve();
-                var i = 0;
                 processes.forEach(function(itemProcess) {
                   sequence = sequence.then(function() {
                     return _this.startProcess(itemProcess, waitEndChilds)
-                      .then(function(res) {
-                        i = i+1;
-                      })
+                      .then(function(res) {})
                       .catch(function(err){
-                        i = i+1;
                         logger.log('error','chain startProcesses execSerie  startProcesses waitEndChilds. Error ',err);
                       });
                   });
