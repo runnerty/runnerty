@@ -1,45 +1,44 @@
 "use strict";
 
-var mysql             = require("mysql");
-var csv               = require("fast-csv");
-var logger            = require("../../libs/utils.js").logger;
-var loadSQLFile       = require("../../libs/utils.js").loadSQLFile;
-var replaceWith       = require("../../libs/utils.js").replaceWith;
+var mysql = require("mysql");
+var csv = require("fast-csv");
+var logger = require("../../libs/utils.js").logger;
+var loadSQLFile = require("../../libs/utils.js").loadSQLFile;
+var replaceWith = require("../../libs/utils.js").replaceWith;
 
-module.exports.exec = function exec(process){
+module.exports.exec = function exec(process) {
 
   function customQueryFormat(query, values) {
-      if (!values){
-        var queryResult = query.replace(/(\:\/)/ig, ':');
-        process.command_executed = queryResult;
-        return queryResult;
-      }
-      else {
-        //FIRST TURN
-        var _query = query.replace(/\:(\w+)/ig,
-          function (txt, key) {
-            return values && key && values.hasOwnProperty(key)
-              ? replaceWith(values[key], process.values())
-              : null;
-          }.bind(this));
+    if (!values) {
+      var queryResult = query.replace(/(\:\/)/ig, ':');
+      process.command_executed = queryResult;
+      return queryResult;
+    }
+    else {
+      //FIRST TURN
+      var _query = query.replace(/\:(\w+)/ig,
+        function (txt, key) {
+          return values && key && values.hasOwnProperty(key)
+            ? replaceWith(values[key], process.values())
+            : null;
+        }.bind(this));
 
-        //SECOND TURN
-        _query = _query.replace(/\:(\w+)/ig,
-          function (txt, key) {
-            return values && key && values.hasOwnProperty(key)
-              ? replaceWith(values[key], process.values())
-              : null;
-          }.bind(this));
-      }
+      //SECOND TURN
+      _query = _query.replace(/\:(\w+)/ig,
+        function (txt, key) {
+          return values && key && values.hasOwnProperty(key)
+            ? replaceWith(values[key], process.values())
+            : null;
+        }.bind(this));
+    }
 
-      process.command_executed = _query;
-      return _query;
-    };
+    process.command_executed = _query;
+    return _query;
+  }
 
+  function executeQuery(process, configValues) {
 
-  function executeQuery(process, configValues){
-
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
 
       process.execute_arg = process.getArgs();
 
@@ -57,11 +56,11 @@ module.exports.exec = function exec(process){
 
       connection.connect(function (err) {
         if (err) {
-          logger.log('error', 'Error connecting Mysql: ' + err)
+          logger.log('error', 'Error connecting Mysql: ' + err);
           process.execute_return = '';
           process.execute_err_return = 'Error connecting Mysql: ' + err;
-          process.retries_count = process.retries_count +1 || 1;
-          reject(pro);
+          process.retries_count = process.retries_count + 1 || 1;
+          reject(err);
         } else {
           var command = replaceWith(process.exec.command, process.values());
           connection.query(command, process.execute_arg, function (err, results) {
@@ -106,72 +105,72 @@ module.exports.exec = function exec(process){
     });
   }
 
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
 
-    if(process.exec.id){
+    if (process.exec.id) {
       process.loadExecutorConfig()
         .then((configValues) => {
-        if(!process.exec.command){
-        if(!process.exec.command_file){
-          logger.log('error',`executeMysql dont have command or command_file`);
-          process.execute_err_return = `executeMysql dont have command or command_file`;
-          process.execute_return = '';
-          process.error();
-          reject(process);
-        }else{
-          loadSQLFile(process.exec.command_file)
-            .then((fileContent) => {
-              process.exec.command = fileContent;
-              executeQuery(process, configValues)
-                .then((res) => {
-                  process.execute_return = '';
-                  process.execute_err_return = '';
-                  process.end();
-                  resolve();
+          if (!process.exec.command) {
+            if (!process.exec.command_file) {
+              logger.log('error', `executeMysql dont have command or command_file`);
+              process.execute_err_return = `executeMysql dont have command or command_file`;
+              process.execute_return = '';
+              process.error();
+              reject(process);
+            } else {
+              loadSQLFile(process.exec.command_file)
+                .then((fileContent) => {
+                  process.exec.command = fileContent;
+                  executeQuery(process, configValues)
+                    .then((res) => {
+                      process.execute_return = '';
+                      process.execute_err_return = '';
+                      process.end();
+                      resolve();
+                    })
+                    .catch(function (err) {
+                      logger.log('error', `executeMysql executeQuery from file: ${err}`);
+                      process.execute_err_return = `executeMysql executeQuery from file: ${err}`;
+                      process.execute_return = '';
+                      process.error();
+                      reject(process);
+                    });
                 })
-            .catch(function(err){
-                logger.log('error',`executeMysql executeQuery from file: ${err}`);
-                process.execute_err_return = `executeMysql executeQuery from file: ${err}`;
+                .catch(function (err) {
+                  logger.log('error', `executeMysql loadSQLFile: ${err}`);
+                  process.execute_err_return = `executeMysql loadSQLFile: ${err}`;
+                  process.execute_return = '';
+                  process.error();
+                  reject(process);
+                });
+            }
+          } else {
+            executeQuery(process, configValues)
+              .then(() => {
+                process.execute_return = '';
+                process.execute_err_return = '';
+                process.end();
+                resolve();
+              })
+              .catch(function (err) {
+                logger.log('error', `executeMysql executeQuery: ${err}`);
+                process.execute_err_return = `executeMysql executeQuery: ${err}`;
                 process.execute_return = '';
                 process.error();
                 reject(process);
               });
+          }
         })
-        .catch(function(err){
-            logger.log('error',`executeMysql loadSQLFile: ${err}`);
-            process.execute_err_return = `executeMysql loadSQLFile: ${err}`;
-            process.execute_return = '';
-            process.error();
-            reject(process);
-          });
-        }
-      }else{
-        executeQuery(process, configValues)
-          .then((res) => {
-            process.execute_return = '';
-            process.execute_err_return = '';
-            process.end();
-            resolve();
-          })
-          .catch(function(err){
-            logger.log('error',`executeMysql executeQuery: ${err}`);
-            process.execute_err_return = `executeMysql executeQuery: ${err}`;
-            process.execute_return = '';
-            process.error();
-            reject(process);
-          });
-      }
-    })
-    .catch(function(err){
-        logger.log('error',`executeMysql loadExecutorConfig: ${err}`);
-        process.execute_err_return = `executeMysql loadExecutorConfig: ${err}`;
-        process.execute_return = '';
-        process.error();
-        reject(process);
-      });
+        .catch(function (err) {
+          logger.log('error', `executeMysql loadExecutorConfig: ${err}`);
+          process.execute_err_return = `executeMysql loadExecutorConfig: ${err}`;
+          process.execute_return = '';
+          process.error();
+          reject(process);
+        });
 
-    }else{
-      logger.log('error',`executeMysql: exec id not set for ${process.id}`);
+    } else {
+      logger.log('error', `executeMysql: exec id not set for ${process.id}`);
       process.execute_err_return = `executeMysql: exec id not set for ${process.id}`;
       process.execute_return = '';
       process.error();

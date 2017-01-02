@@ -1,18 +1,18 @@
 "use strict";
 
-var winston         = require('winston');
-var fs              = require('fs');
-var configSchema    = require('../schemas/conf.json');
-var Ajv             = require('ajv');
-var ajv             = new Ajv({allErrors: true});
-var crypto          = require('crypto');
-var moment          = require('moment');
+var winston = require('winston');
+var fs = require('fs');
+var configSchema = require('../schemas/conf.json');
+var Ajv = require('ajv');
+var ajv = new Ajv({allErrors: true});
+var crypto = require('crypto');
+var moment = require('moment');
 
-const algorithm     = 'aes-256-ctr';
+const algorithm = 'aes-256-ctr';
 
 // ADD NOTIFICATORS SCHEMAS:
-requireDir('/../notificators/','schema.json')
-  .then((res)  => {
+requireDir('/../notificators/', 'schema.json')
+  .then((res) => {
     var keys = Object.keys(res);
     var keysLength = keys.length;
     while (keysLength--) {
@@ -37,148 +37,152 @@ var logger = new (winston.Logger)({
 module.exports.logger = logger;
 
 
-function encrypt (text){
-  var cipher = crypto.createCipher(algorithm,global.cryptoPassword)
-  var crypted = cipher.update(text,'utf8','hex')
+function encrypt(text) {
+  var cipher = crypto.createCipher(algorithm, global.cryptoPassword);
+  var crypted = cipher.update(text, 'utf8', 'hex');
   crypted += cipher.final('hex');
   return crypted;
 }
 
-function decrypt (text){
-  var decipher = crypto.createDecipher(algorithm,global.cryptoPassword)
-  var dec = decipher.update(text,'hex','utf8')
+function decrypt(text) {
+  var decipher = crypto.createDecipher(algorithm, global.cryptoPassword);
+  var dec = decipher.update(text, 'hex', 'utf8');
   dec += decipher.final('utf8');
   return dec;
 }
 
-function getDateString (format,uppercase,lang){
-  if(lang) moment.locale(lang.toLowerCase());
+function getDateString(format, uppercase, lang) {
+  if (lang) {
+    moment.locale(lang.toLowerCase());
+  }
+
   var strDate = moment().format(format);
-  if(uppercase) strDate = strDate.toUpperCase();
+  if (uppercase) {
+    strDate = strDate.toUpperCase();
+  }
+
   return strDate;
 }
 
-module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath){
+module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
   return new Promise((resolve) => {
-      var filePath = configFilePath;
+    var filePath = configFilePath;
 
-      fs.stat(filePath, function(err, res){
-        if(err){
-          logger.log('error',`Load General conf file ${filePath} not exists.`, err);
-          throw new Error(`Load General conf file ${filePath} not found.`);
-          resolve();
-        }else {
+    fs.stat(filePath, function (err, res) {
+      if (err) {
+        logger.log('error', `Load General conf file ${filePath} not exists.`, err);
+        throw new Error(`Load General conf file ${filePath} not found.`);
+      } else {
 
-          try {
-            fs.readFile(filePath, 'utf8', function (err, res) {
-              if (err) {
-                logger.log('error', 'Load General conf loadConfig readFile: ' + err);
-                resolve();
-              } else {
+        try {
+          fs.readFile(filePath, 'utf8', function (err, res) {
+            if (err) {
+              logger.log('error', 'Load General conf loadConfig readFile: ', err);
+              resolve();
+            } else {
 
-                var fileParsed;
-                try {
-                  fileParsed = JSON.parse(res);
-                } catch(err) {
-                  var newErr = new Error('Problem reading JSON file');
-                  newErr.stack += '\nCaused by: '+err.stack;
-                  throw newErr;
-                }
-
-                var valid = ajv.validate('configSchema', fileParsed);
-
-                if (!valid) {
-                  logger.log('error',`Invalid Config file:`,ajv.errors);
-                  throw new Error(`Invalid Config file:`,ajv.errors);
-                  resolve();
-                }
-                var objConf = fileParsed.config;
-
-                //TODO: INCLUIR TODOS LOS PARAMTEROS OBLIGATORIOS DE CONFIG EN ESTA VALIDACIÓN:
-                if (objConf.hasOwnProperty('general')) {
-                  resolve(objConf);
-                } else {
-                  throw new Error('Invalid Config file, general not found.', objConf);
-                  resolve();
-                }
+              var fileParsed;
+              try {
+                fileParsed = JSON.parse(res);
+              } catch (err) {
+                var newErr = new Error('Problem reading JSON file');
+                newErr.stack += '\nCaused by: ' + err.stack;
+                throw newErr;
               }
-            });
-          } catch (err) {
-            throw new Error('Invalid Config file, incorrect JSON format: ' + err.message, err);
-            resolve();
-          }
+
+              var valid = ajv.validate('configSchema', fileParsed);
+
+              if (!valid) {
+                logger.log('error', `Invalid Config file:`, ajv.errors);
+                throw new Error(`Invalid Config file:`, ajv.errors);
+              }
+              var objConf = fileParsed.config;
+
+              //TODO: INCLUIR TODOS LOS PARAMTEROS OBLIGATORIOS DE CONFIG EN ESTA VALIDACIÓN:
+              if (objConf.hasOwnProperty('general')) {
+                resolve(objConf);
+              } else {
+                throw new Error('Invalid Config file, general not found.', objConf);
+              }
+            }
+          });
+        } catch (err) {
+          throw new Error('Invalid Config file, incorrect JSON format: ' + err.message, err);
         }
-      });
-});
+      }
+    });
+  });
 };
 
-module.exports.loadConfigSection = function loadConfigSection (config, section, id_config){
+module.exports.loadConfigSection = function loadConfigSection(config, section, id_config) {
 
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
 
     if (config.hasOwnProperty(section)) {
       var sectionLength = config[section].length;
-      var cnf = undefined;
+      var cnf;
       while (sectionLength--) {
         if (config[section][sectionLength].id === id_config) {
           cnf = config[section][sectionLength];
-          if(cnf.hasOwnProperty('crypted_password')){
-            if(global.cryptoPassword){
+          if (cnf.hasOwnProperty('crypted_password')) {
+            if (global.cryptoPassword) {
               cnf.password = decrypt(cnf.crypted_password);
-            }else{
+            } else {
               reject(`No crypto password set for encrypt crypted_password of section ${section} id ${id_config}.`);
             }
           }
         }
       }
 
-      if (cnf){
+      if (cnf) {
         resolve(cnf);
-      }else{
+      } else {
         reject(`Config for ${id_config} not found in section ${section}`);
       }
-    }else{
+    } else {
       reject(`Section ${section} not found in config file.`, config);
     }
   });
 };
 
-module.exports.loadSQLFile = function loadSQLFile (filePath){
+module.exports.loadSQLFile = function loadSQLFile(filePath) {
   return new Promise((resolve) => {
 
-  fs.stat(filePath, function(err, res){
-    if(err){
-      logger.log('error',`Load SQL file ${filePath} not exists.`, err);
-      throw new Error(`Load SQL file ${filePath} not found.`);
-      resolve();
-    }else {
+    fs.stat(filePath, function (err, res) {
+      if (err) {
+        logger.log('error', `Load SQL file ${filePath} not exists.`, err);
+        throw new Error(`Load SQL file ${filePath} not found.`);
+      } else {
         fs.readFile(filePath, 'utf8', function (err, res) {
           if (err) {
-            logger.log('error', 'Load SQL file readFile: ' + err);
+            logger.log('error', 'Load SQL file readFile: ', err);
             resolve();
           } else {
             resolve(res);
           }
         });
-    }
+      }
+    });
   });
-});
 };
 
-function replaceWith (text, objParams, ignoreGlobalValues){
+function replaceWith(text, objParams, ignoreGlobalValues) {
 
   text = text || '';
 
-  if(!objParams) objParams = {};
+  objParams = objParams || {};
 
-  if(global.config.global_values && !ignoreGlobalValues){
+  if (global.config.global_values && !ignoreGlobalValues) {
     objParams = addGlobalValuesToObjParams(objParams);
   }
 
   function pad(pad, str, padLeft) {
-    if(!padLeft) padLeft = true;
-    if (typeof str === 'undefined')
+    if (!padLeft) {
+      padLeft = true;
+    }
+    if (typeof str === 'undefined') {
       return pad;
+    }
     if (padLeft) {
       return (pad + str).slice(-pad.length);
     } else {
@@ -186,64 +190,64 @@ function replaceWith (text, objParams, ignoreGlobalValues){
     }
   }
 
-  objParams.DD   = objParams.DD   || getDateString('DD');
-  objParams.MM   = objParams.MM   || getDateString('MM');
-  objParams.YY   = objParams.YY   || getDateString('YY');
+  objParams.DD = objParams.DD || getDateString('DD');
+  objParams.MM = objParams.MM || getDateString('MM');
+  objParams.YY = objParams.YY || getDateString('YY');
   objParams.YYYY = objParams.YYYY || getDateString('YYYY');
-  objParams.HH   = objParams.HH   || getDateString('HH');
+  objParams.HH = objParams.HH || getDateString('HH');
   objParams.HH12 = objParams.HH12 || getDateString('hh');
-  objParams.mm   = objParams.mm   || getDateString('mm');
-  objParams.ss   = objParams.ss   || getDateString('ss');
+  objParams.mm = objParams.mm || getDateString('mm');
+  objParams.ss = objParams.ss || getDateString('ss');
 
   // MONTHS MMMM_[LANG]
   var months = text.toString().match(/\:MMMM_\w{2}/ig);
 
-  if(months){
+  if (months) {
     var monthsLength = months.length;
 
-    while (monthsLength--){
-      var month  = months[monthsLength].substr(1,7);
-      var lang   = months[monthsLength].substr(6,2);
-      objParams[month] = getDateString('MMMM',true,lang);
+    while (monthsLength--) {
+      var month = months[monthsLength].substr(1, 7);
+      var monthLang = months[monthsLength].substr(6, 2);
+      objParams[month] = getDateString('MMMM', true, monthLang);
     }
   }
 
   // SHORT MONTHS MMM_[LANG]
   var shortMonths = text.toString().match(/\:MMM_\w{2}/ig);
 
-  if(shortMonths){
+  if (shortMonths) {
     var shortMonthsLength = shortMonths.length;
 
-    while (shortMonthsLength--){
-      var shortMonth = shortMonths[shortMonthsLength].substr(1,6);
-      var lang       = shortMonths[shortMonthsLength].substr(5,2);
-      objParams[shortMonth] = getDateString('MMM',true,lang);
+    while (shortMonthsLength--) {
+      var shortMonth = shortMonths[shortMonthsLength].substr(1, 6);
+      var shortMonthLang = shortMonths[shortMonthsLength].substr(5, 2);
+      objParams[shortMonth] = getDateString('MMM', true, shortMonthLang);
     }
   }
 
   // DAYS DDDD_[LANG]
   var days = text.toString().match(/\:DDDD_\w{2}/ig);
 
-  if(days){
+  if (days) {
     var daysLength = days.length;
 
-    while (daysLength--){
-      var day  = days[daysLength].substr(1,7);
-      var lang = days[daysLength].substr(6,2);
-      objParams[day] = getDateString('dddd',true,lang);
+    while (daysLength--) {
+      var day = days[daysLength].substr(1, 7);
+      var lang = days[daysLength].substr(6, 2);
+      objParams[day] = getDateString('dddd', true, lang);
     }
   }
 
   // SHORT DAYS DDD_[LANG]
   var shortDays = text.toString().match(/\:DDD_\w{2}/ig);
 
-  if(shortDays){
+  if (shortDays) {
     var shortDaysLength = shortDays.length;
 
-    while (shortDaysLength--){
-      var shortDay = shortDays[shortDaysLength].substr(1,6);
-      var lang       = shortDays[shortDaysLength].substr(5,2);
-      objParams[shortDay] = getDateString('ddd',true,lang);
+    while (shortDaysLength--) {
+      var shortDay = shortDays[shortDaysLength].substr(1, 6);
+      var lang = shortDays[shortDaysLength].substr(5, 2);
+      objParams[shortDay] = getDateString('ddd', true, lang);
     }
   }
 
@@ -260,17 +264,17 @@ function replaceWith (text, objParams, ignoreGlobalValues){
   }
 
   keys.sort(orderByLength);
-  var keysLength = keys.length;
+  var keysLengthFirst = keys.length;
+  var keysLengthSecond = keys.length;
 
   // FIRST TURN
-  while (keysLength--) {
-    text = text.toString().replace(new RegExp('\\:' + keys[keysLength], 'ig'), objParams[keys[keysLength]] || '');
+  while (keysLengthFirst--) {
+    text = text.toString().replace(new RegExp('\\:' + keys[keysLengthFirst], 'ig'), objParams[keys[keysLengthFirst]] || '');
   }
 
   // SECOND TURN
-  var keysLength = keys.length;
-  while (keysLength--) {
-    text = text.toString().replace(new RegExp('\\:' + keys[keysLength], 'ig'), objParams[keys[keysLength]] || '');
+  while (keysLengthSecond--) {
+    text = text.toString().replace(new RegExp('\\:' + keys[keysLengthSecond], 'ig'), objParams[keys[keysLengthSecond]] || '');
   }
 
   return text;
@@ -278,72 +282,69 @@ function replaceWith (text, objParams, ignoreGlobalValues){
 
 module.exports.replaceWith = replaceWith;
 
-  function addGlobalValuesToObjParams(objParams){
+function addGlobalValuesToObjParams(objParams) {
 
-  var gvl =  global.config.global_values.length;
+  var gvl = global.config.global_values.length;
   var gv = {};
 
-  while(gvl--){
+  while (gvl--) {
     var keymaster = Object.keys(global.config.global_values[gvl])[0];
     var valueObjects = global.config.global_values[gvl][keymaster];
     var keysValueObjects = Object.keys(valueObjects);
     var keysValueObjectsLength = keysValueObjects.length;
 
-    while(keysValueObjectsLength--){
+    while (keysValueObjectsLength--) {
       var valueKey = keysValueObjects[keysValueObjectsLength];
       var intialValue = global.config.global_values[gvl][keymaster][valueKey];
 
-      if(intialValue instanceof Object){
+      if (intialValue instanceof Object) {
 
-        if(intialValue.format === 'text'){
+        if (intialValue.format === 'text') {
 
-          if(intialValue.value instanceof Array){
+          if (intialValue.value instanceof Array) {
 
             var valuesLength = intialValue.value.length;
             var i = 0;
             var finalValue = '';
 
-            while(valuesLength--){
+            while (valuesLength--) {
               var rtext = replaceWith(intialValue.value[i], objParams, true);
 
               var quotechar = intialValue.quotechar || '';
               var delimiter = intialValue.delimiter || '';
 
-              if(valuesLength !== 0){
+              if (valuesLength !== 0) {
                 finalValue = finalValue + quotechar + rtext + quotechar + delimiter;
-              }else{
+              } else {
                 finalValue = finalValue + quotechar + rtext + quotechar;
               }
               i++;
             }
             gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = finalValue;
 
-          }else{
-            value = replaceWith(intialValue.value, objParams, true);
+          } else {
+            let value = replaceWith(intialValue.value, objParams, true);
             gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
           }
 
-        }else{
+        } else {
 
-          if(intialValue.format === 'json'){
+          if (intialValue.format === 'json') {
 
-            if(intialValue.value instanceof Object || intialValue.value instanceof Array){
-              var value;
-              value = replaceWith(JSON.stringify(intialValue.value), objParams, true);
-              gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
+            if (intialValue.value instanceof Object || intialValue.value instanceof Array) {
+              gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(JSON.stringify(intialValue.value), objParams, true);
+              ;
 
-            }else{
-              var value;
-              value = replaceWith(intialValue.value, objParams, true);
-              gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
+            } else {
+              gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(intialValue.value, objParams, true);
+              ;
             }
           }
         }
 
-      }else{
-        var value;
-        value = replaceWith(intialValue, objParams, true);
-        gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
+      } else {
+        gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(intialValue, objParams, true);
+        ;
       }
     }
   }
@@ -351,24 +352,24 @@ module.exports.replaceWith = replaceWith;
   return Object.assign(gv, objParams);
 }
 
-module.exports.getChainByUId = function getChainByUId(chains, uId){
+module.exports.getChainByUId = function getChainByUId(chains, uId) {
 
   var chainLength = chains.length;
 
   var res = false;
 
-  while(chainLength-- && !res){
+  while (chainLength-- && !res) {
     var chain = chains[chainLength];
-    if(chain.uId === uId){
+    if (chain.uId === uId) {
       res = chain;
-    }else{
-      if(chain.processes && chain.processes.length){
+    } else {
+      if (chain.processes && chain.processes.length) {
         var chainProcessesLength = chain.processes.length;
-        while(chainProcessesLength-- && !res){
+        while (chainProcessesLength-- && !res) {
           var process = chain.processes[chainProcessesLength];
-          if(process.childs_chains){
+          if (process.childs_chains) {
             var result = getChainByUId(process.childs_chains, uId);
-            if(result){
+            if (result) {
               res = result;
             }
           }
@@ -377,28 +378,28 @@ module.exports.getChainByUId = function getChainByUId(chains, uId){
     }
   }
   return res;
-}
+};
 
-module.exports.getProcessByUId = function getProcessByUId(chains, uId){
+module.exports.getProcessByUId = function getProcessByUId(chains, uId) {
 
   var chainLength = chains.length;
 
   var res = false;
 
-  while(chainLength-- && !res){
+  while (chainLength-- && !res) {
     var chain = chains[chainLength];
 
-    if(chain.processes){
+    if (chain.processes) {
       var chainProcessesLength = chain.processes.length;
 
-      while(chainProcessesLength-- && !res){
+      while (chainProcessesLength-- && !res) {
         var process = chain.processes[chainProcessesLength];
-        if(process.uId === uId){
+        if (process.uId === uId) {
           res = process;
-        }else{
-          if(process.childs_chains){
+        } else {
+          if (process.childs_chains) {
             var result = getProcessByUId(process.childs_chains, uId);
-            if(result){
+            if (result) {
               res = result;
             }
           }
@@ -407,12 +408,12 @@ module.exports.getProcessByUId = function getProcessByUId(chains, uId){
     }
   }
   return res;
-}
+};
 
-module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, oper_right, values){
+module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, oper_right, values) {
 
-  var oper_left  = replaceWith(oper_left, values);
-  var oper_right = replaceWith(oper_right, values);
+  oper_left = replaceWith(oper_left, values);
+  oper_right = replaceWith(oper_right, values);
 
   switch (condition) {
     case '==':
@@ -431,40 +432,41 @@ module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, 
       return false;
       break;
   }
-}
+};
 
 module.exports.requireDir = requireDir;
 
-
-function requireDir(directory, filename){
+function requireDir(directory, filename) {
 
   // REQUIRE DIRECTORY:
   var container = {};
   var containerDirectory = __dirname + directory;
-  var excludes = ['node_modules','git','snv'];
+  var excludes = ['node_modules', 'git', 'snv'];
 
   return new Promise((resolve, reject) => {
-      fs.readdir(containerDirectory, function(err, items) {
+    fs.readdir(containerDirectory, function (err, items) {
       if (err) {
         reject(err);
       }
 
-      var dirs = items?items.filter(function(i){return !excludes.includes(i);}):[];
+      var dirs = items ? items.filter(function (i) {
+        return !excludes.includes(i);
+      }) : [];
 
       var dirsLength = dirs.length;
       while (dirsLength--) {
-        if (fs.statSync(containerDirectory + dirs[dirsLength]).isDirectory()){
+        if (fs.statSync(containerDirectory + dirs[dirsLength]).isDirectory()) {
 
-          if(filename){
-            if(fs.existsSync(containerDirectory + dirs[dirsLength] + '/' + filename)){
-              container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/' + filename );
+          if (filename) {
+            if (fs.existsSync(containerDirectory + dirs[dirsLength] + '/' + filename)) {
+              container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/' + filename);
             }
-          }else{
-            if(fs.existsSync(containerDirectory + dirs[dirsLength] + '/' + dirs[dirsLength] + '.js')){
-              container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/' + dirs[dirsLength] + '.js' );
-            }else{
-              if(containerDirectory + dirs[dirsLength] + '/index.js'){
-                container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/index.js' );
+          } else {
+            if (fs.existsSync(containerDirectory + dirs[dirsLength] + '/' + dirs[dirsLength] + '.js')) {
+              container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/' + dirs[dirsLength] + '.js');
+            } else {
+              if (containerDirectory + dirs[dirsLength] + '/index.js') {
+                container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/index.js');
               }
             }
           }

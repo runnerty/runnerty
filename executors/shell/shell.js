@@ -40,7 +40,7 @@ module.exports.exec = function executeCommand(process){
           process.retries_count = process.retries_count +1 || 1;
           process.error();
 
-          if(process.retries >= process.retries_count && !forceOnceInRetry){
+          if(process.retries >= process.retries_count){
 
             process.retry();
 
@@ -50,9 +50,9 @@ module.exports.exec = function executeCommand(process){
                   process.retries_count = 0;
                   resolve(res);
                 })
-                .catch(function(e){
-                  logger.log('error','Retrying process:'+e)
-                  resolve(e);
+                .catch(function(err){
+                  logger.log('error','Retrying process:',err);
+                  resolve(err);
                 });
             }, process.retry_delay * 1000 || 0);
 
