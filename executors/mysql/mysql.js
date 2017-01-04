@@ -48,7 +48,7 @@ module.exports.exec = function exec(process) {
         password: configValues.password,
         database: configValues.database,
         socketPath: configValues.socketPath,
-        port: configValues.port,
+        port: configValues.port || "3306",
         ssl: configValues.ssl,
         multipleStatements: true,
         queryFormat: customQueryFormat

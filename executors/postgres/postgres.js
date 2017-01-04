@@ -40,7 +40,7 @@ module.exports.exec = function executePostgre(process){
         password : configValues.password,
         database : configValues.database,
         host     : configValues.host || configValues.socketPath,
-        port     : configValues.port
+        port     : configValues.port || "5432"
       });
 
       client.connect(function(err) {

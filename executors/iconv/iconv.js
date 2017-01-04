@@ -1,6 +1,7 @@
 "use strict";
 
 var logger = require("../../libs/utils.js").logger;
+var replaceWith = require("../../libs/utils.js").replaceWith;
 var iconv = require('iconv-lite');
 var fs = require('fs');
 var path = require('path');
@@ -11,12 +12,10 @@ module.exports.exec = function (process) {
     process.loadExecutorConfig()
       .then((configValues) => {
 
-        process.execute_args = process.getArgs();
-
-        var _file_input = process.execute_args.file_input || configValues.file_input;
-        var _file_output = process.execute_args.file_output || configValues.file_output;
-        var _decode_encoding = process.execute_args.decode_encoding || configValues.decode_encoding;
-        var _encode_encoding = process.execute_args.encode_encoding || configValues.encode_encoding;
+        var _file_input = replaceWith(process.exec.file_input || configValues.file_input, process.values());
+        var _file_output = replaceWith(process.exec.file_output || configValues.file_output, process.values());
+        var _decode_encoding = replaceWith(process.exec.decode_encoding || configValues.decode_encoding, process.values());
+        var _encode_encoding = replaceWith(process.exec.encode_encoding || configValues.encode_encoding, process.values());
 
         if (_decode_encoding && _encode_encoding) {
 

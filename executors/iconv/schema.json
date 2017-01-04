@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "iconv",
+  "definitions": {
+    "config":
+      { "type": "object",
+        "required": ["id","type"],
+        "properties":{
+          "id": {"type": "string"},
+          "type": {"type": "string", "pattern": "\\biconv\\b"},
+          "decode_encoding": {"type": "string"},
+          "encode_encoding": {"type": "string"},
+          "file_input": {"type": "string"},
+          "file_output": {"type": "string"}
+      }
+    },
+    "params":
+    { "type": "object",
+      "required": ["id"],
+      "properties":{
+        "id": {"type": "string"},
+        "decode_encoding": {"type": "string"},
+        "encode_encoding": {"type": "string"},
+        "file_input": {"type": "string"},
+        "file_output": {"type": "string"}
+      }
+    }
+  }
+}

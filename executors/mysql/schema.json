@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "mysql",
+  "definitions": {
+    "config":
+      { "type": "object",
+        "required": ["id","type","user","password","database","host"],
+        "properties":{
+          "id": {"type": "string"},
+          "type": {"type": "string", "pattern": "\\bmysql\\b"},
+          "user": {"type": "string"},
+          "password": {"type": "string"},
+          "crypted_password": {"type": "string"},
+          "database": {"type": "string"},
+          "host": {"type": "hostname"},
+          "port": {"type": "string"}
+      }
+    },
+    "params":
+    {
+      "oneOf":[
+        {
+          "type": "object",
+          "required": ["id","command"],
+          "properties":{
+            "id": {"type": "string"},
+            "command": {"type": "string"}
+          }
+        },
+        {
+          "type": "object",
+          "required": ["id","command_file"],
+          "properties":{
+            "id": {"type": "string"},
+            "command_file": {"type": "string"}
+          }
+        }
+      ]
+    }
+  }
+}

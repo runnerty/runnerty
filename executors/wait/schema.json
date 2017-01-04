@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "wait",
+  "definitions": {
+    "config":
+      { "type": "object",
+        "required": ["id","type"],
+        "properties":{
+          "id": {"type": "string"},
+          "type": {"type": "string", "pattern": "\\bwait\\b"},
+          "seconds": {"type": ["string","number"]}
+      }
+    },
+    "params":
+    { "type": "object",
+      "required": ["id"],
+      "properties":{
+        "id": {"type": "string"},
+        "seconds": {"type": ["string","number"]}
+      }
+    }
+  }
+}

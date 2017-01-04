@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "s3",
+  "definitions": {
+    "config":
+      { "type": "object",
+        "required": ["id","type","apiVersion","accessKeyId","secretAccessKey","bucket","method","region"],
+        "properties":{
+          "id": {"type": "string"},
+          "type": {"type": "string", "pattern": "\\bs3\\b"},
+          "apiVersion": {"type": "string"},
+          "accessKeyId": {"type": "string"},
+          "secretAccessKey": {"type": "string"},
+          "bucket": {"type": "host"},
+          "method": {"type": "string"},
+          "region": {"type": "string"}
+      }
+    },
+    "params":
+    { "type": "object",
+      "required": ["id","file"],
+      "properties":{
+        "id": {"type": "string"},
+        "file": {"type": "string"},
+        "file_name": {"type": "string"},
+        "method": {"type": "string"},
+        "bucket": {"type": "string"}
+      }
+    }
+  }
+}

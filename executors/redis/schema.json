@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "redis",
+  "definitions": {
+    "config":
+      { "type": "object",
+        "required": ["id","type","password","host"],
+        "properties":{
+          "id": {"type": "string"},
+          "type": {"type": "string", "pattern": "\\bredis\\b"},
+          "password": {"type": "string"},
+          "crypted_password": {"type": "string"},
+          "options": {"type": "object"},
+          "host": {"type": "string"},
+          "port": {"type": "string"}
+      }
+    },
+    "params":
+    {
+      "oneOf":[
+        {
+          "type": "object",
+          "required": ["id","command"],
+          "properties":{
+            "id": {"type": "string"},
+            "command": {"type": "string"}
+          }
+        },
+        {
+          "type": "object",
+          "required": ["id","command_file"],
+          "properties":{
+            "id": {"type": "string"},
+            "command_file": {"type": "string"}
+          }
+        }
+      ]
+    }
+  }
+}

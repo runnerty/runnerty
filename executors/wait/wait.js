@@ -1,6 +1,7 @@
 "use strict";
 
 var logger = require("../../libs/utils.js").logger;
+var replaceWith = require("../../libs/utils.js").replaceWith;
 
 module.exports.exec = function executeWait(process){
 
@@ -8,13 +9,28 @@ module.exports.exec = function executeWait(process){
     process.loadExecutorConfig()
       .then((configValues) => {
 
-        process.execute_args = process.getArgs();
-        var values = Object.assign(configValues, process.execute_arg);
+        var seconds = 60;
+
+        if(process.exec.seconds){
+          if(typeof process.exec.seconds === 'string'){
+            seconds = replaceWith(process.exec.seconds, process.values());
+          }else{
+            seconds = process.exec.seconds;
+          }
+        }else{
+          if (configValues.seconds){
+            if(typeof configValues.seconds === 'string'){
+              seconds = replaceWith(configValues.seconds, process.values());
+            }else{
+              seconds = configValues.seconds;
+            }
+          }
+        }
 
         setTimeout(function(){
           process.end();
           resolve();
-        }, values.seconds * 1000 || 0);
+        }, seconds * 1000 || 0);
 
       })
       .catch(function(err){

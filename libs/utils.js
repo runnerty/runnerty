@@ -2,6 +2,7 @@
 
 var winston = require('winston');
 var fs = require('fs');
+var path = require('path');
 var configSchema = require('../schemas/conf.json');
 var Ajv = require('ajv');
 var ajv = new Ajv({allErrors: true});
@@ -440,7 +441,7 @@ function requireDir(directory, filename) {
 
   // REQUIRE DIRECTORY:
   var container = {};
-  var containerDirectory = __dirname + directory;
+  var containerDirectory = path.join(__dirname, directory);
   var excludes = ['node_modules', 'git', 'snv'];
 
   return new Promise((resolve, reject) => {
@@ -458,15 +459,15 @@ function requireDir(directory, filename) {
         if (fs.statSync(containerDirectory + dirs[dirsLength]).isDirectory()) {
 
           if (filename) {
-            if (fs.existsSync(containerDirectory + dirs[dirsLength] + '/' + filename)) {
-              container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/' + filename);
+            if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], filename))) {
+              container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], filename));
             }
           } else {
-            if (fs.existsSync(containerDirectory + dirs[dirsLength] + '/' + dirs[dirsLength] + '.js')) {
-              container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/' + dirs[dirsLength] + '.js');
+            if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'))) {
+              container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'));
             } else {
-              if (containerDirectory + dirs[dirsLength] + '/index.js') {
-                container[dirs[dirsLength]] = require(containerDirectory + dirs[dirsLength] + '/index.js');
+              if (path.join(containerDirectory, dirs[dirsLength], 'index.js')) {
+                container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], 'index.js'));
               }
             }
           }
