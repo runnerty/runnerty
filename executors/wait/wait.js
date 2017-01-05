@@ -1,8 +1,5 @@
 "use strict";
 
-var logger = require("../../libs/utils.js").logger;
-var replaceWith = require("../../libs/utils.js").replaceWith;
-
 var Execution = require("../../classes/execution.js");
 
 class waitExecutor extends Execution {
@@ -11,6 +8,7 @@ class waitExecutor extends Execution {
   }
 
   exec(process) {
+    var _this = this;
 
     return new Promise(function (resolve, reject) {
       process.loadExecutorConfig()
@@ -20,14 +18,14 @@ class waitExecutor extends Execution {
 
           if (process.exec.seconds) {
             if (typeof process.exec.seconds === 'string') {
-              seconds = replaceWith(process.exec.seconds, process.values());
+              seconds = _this.replaceWith(process.exec.seconds, process.values());
             } else {
               seconds = process.exec.seconds;
             }
           } else {
             if (configValues.seconds) {
               if (typeof configValues.seconds === 'string') {
-                seconds = replaceWith(configValues.seconds, process.values());
+                seconds = _this.replaceWith(configValues.seconds, process.values());
               } else {
                 seconds = configValues.seconds;
               }
@@ -41,7 +39,7 @@ class waitExecutor extends Execution {
 
         })
         .catch(function (err) {
-          logger.log('error', `executeWait loadExecutorConfig: ${err}`);
+          _this.logger.log('error', `executeWait loadExecutorConfig: ${err}`);
           process.execute_err_return = `executeWait loadExecutorConfig: ${err}`;
           process.execute_return = '';
           process.error();

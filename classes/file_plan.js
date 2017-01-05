@@ -224,8 +224,6 @@ class FilePlan {
       _this.refreshBinBackup();
     }, global.config.general.refreshIntervalBinBackup);
   }
-
 }
-;
 
 module.exports = FilePlan;

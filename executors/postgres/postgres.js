@@ -2,9 +2,7 @@
 
 var pg = require('pg'); //PostgreSQL
 var csv = require("fast-csv");
-var logger = require("../../libs/utils.js").logger;
 var loadSQLFile = require("../../libs/utils.js").loadSQLFile;
-var replaceWith = require("../../libs/utils.js").replaceWith;
 
 var Execution = require("../../classes/execution.js");
 
@@ -14,6 +12,7 @@ class postgresExecutor extends Execution {
   }
 
   exec(process) {
+    var _this = this;
 
     function customQueryFormat(query, values) {
       if (!values) {
@@ -23,7 +22,7 @@ class postgresExecutor extends Execution {
         //FIRST TURN
         var _query = query.replace(/\:(\w+)/ig, function (txt, key) {
           return values && key && values.hasOwnProperty(key)
-            ? replaceWith(values[key], process.values())
+            ? _this.replaceWith(values[key], process.values())
             : null;
         }.bind(this));
 
@@ -31,7 +30,7 @@ class postgresExecutor extends Execution {
         _query = _query.replace(/\:(\w+)/ig,
           function (txt, key) {
             return values && key && values.hasOwnProperty(key)
-              ? replaceWith(values[key], process.values())
+              ? _this.replaceWith(values[key], process.values())
               : null;
           }.bind(this));
         return _query;
@@ -53,16 +52,16 @@ class postgresExecutor extends Execution {
 
         client.connect(function (err) {
           if (err) {
-            logger.log('error', `Could not connect to Postgre: ` + err);
+            _this.logger.log('error', `Could not connect to Postgre: ` + err);
             reject(err);
           } else {
-            var command = replaceWith(process.exec.command, process.values());
+            var command = _this.replaceWith(process.exec.command, process.values());
             var finalQuery = customQueryFormat(command, process.execute_arg);
             process.command_executed = finalQuery;
 
             client.query(finalQuery, null, function (err, results) {
               if (err) {
-                logger.log('error', `Error query Postgre (${finalQuery}): ` + err);
+                _this.logger.log('error', `Error query Postgre (${finalQuery}): ` + err);
 
                 reject(`Error query Postgre (${finalQuery}): ` + err);
               } else {
@@ -72,7 +71,7 @@ class postgresExecutor extends Execution {
                   process.execute_db_results_object = results.rows;
                   csv.writeToString(results.rows, {headers: true}, function (err, data) {
                     if (err) {
-                      logger.log('error', `Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
+                      _this.logger.log('error', `Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
                     } else {
                       process.execute_db_results_csv = data;
                     }
@@ -108,7 +107,7 @@ class postgresExecutor extends Execution {
           .then((configValues) => {
             if (!process.exec.command) {
               if (!process.exec.command_file) {
-                logger.log('error', `executePostgre dont have command or command_file`);
+                _this.logger.log('error', `executePostgre dont have command or command_file`);
                 process.execute_err_return = `executePostgre dont have command or command_file`;
                 process.execute_return = '';
                 process.error();
@@ -125,7 +124,7 @@ class postgresExecutor extends Execution {
                         resolve();
                       })
                       .catch(function (err) {
-                        logger.log('error', `executePostgre executeQuery from file: ${err}`);
+                        _this.logger.log('error', `executePostgre executeQuery from file: ${err}`);
                         process.execute_err_return = `executePostgre executeQuery from file: ${err}`;
                         process.execute_return = '';
                         process.error();
@@ -133,7 +132,7 @@ class postgresExecutor extends Execution {
                       });
                   })
                   .catch(function (err) {
-                    logger.log('error', `executePostgre loadSQLFile: ${err}`);
+                    _this.logger.log('error', `executePostgre loadSQLFile: ${err}`);
                     process.execute_err_return = `executePostgre loadSQLFile: ${err}`;
                     process.execute_return = '';
                     process.error();
@@ -149,7 +148,7 @@ class postgresExecutor extends Execution {
                   resolve();
                 })
                 .catch(function (err) {
-                  logger.log('error', `executePostgre executeQuery: ${err}`);
+                  _this.logger.log('error', `executePostgre executeQuery: ${err}`);
                   process.execute_err_return = `executePostgre executeQuery: ${err}`;
                   process.execute_return = '';
                   process.error();
@@ -158,14 +157,14 @@ class postgresExecutor extends Execution {
             }
           })
           .catch(function (err) {
-            logger.log('error', `executePostgre loadExecutorConfig: ${err}`);
+            _this.logger.log('error', `executePostgre loadExecutorConfig: ${err}`);
             process.execute_err_return = `executePostgre loadExecutorConfig: ${err}`;
             process.execute_return = '';
             process.error();
             reject(process);
           });
       } else {
-        logger.log('error', `executePostgre: exec id not set for ${process.id}`);
+        _this.logger.log('error', `executePostgre: exec id not set for ${process.id}`);
         process.execute_err_return = `executePostgre: exec id not set for ${process.id}`;
         process.execute_return = '';
         process.error();

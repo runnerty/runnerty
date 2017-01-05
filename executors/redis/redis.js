@@ -1,8 +1,6 @@
 "use strict";
 
 var redis = require('redis');
-var logger = require("../../libs/utils.js").logger;
-var replaceWith = require("../../libs/utils.js").replaceWith;
 
 var Execution = require("../../classes/execution.js");
 
@@ -12,6 +10,7 @@ class redisExecutor extends Execution {
   }
 
   exec(process) {
+    var _this = this;
 
     function customQueryFormat(query, values) {
       if (!values) {
@@ -21,7 +20,7 @@ class redisExecutor extends Execution {
         //FIRST TURN
         var _query = query.replace(/\:(\w+)/ig, function (txt, key) {
           return values && key && values.hasOwnProperty(key)
-            ? replaceWith(values[key], process.values())
+            ? _this.replaceWith(values[key], process.values())
             : null;
         }.bind(this)).replace(/(\:\/)/ig, ':');
 
@@ -29,7 +28,7 @@ class redisExecutor extends Execution {
         _query = _query.replace(/\:(\w+)/ig,
           function (txt, key) {
             return values && key && values.hasOwnProperty(key)
-              ? replaceWith(values[key], process.values())
+              ? _this.replaceWith(values[key], process.values())
               : null;
           }.bind(this));
 
@@ -74,7 +73,7 @@ class redisExecutor extends Execution {
         redisClient.auth(configValues.password);
 
         redisClient.on("error", function (err) {
-          logger.log('error', `Could not connect to Redis: ` + err);
+          _this.logger.log('error', `Could not connect to Redis: ` + err);
           reject(`Could not connect to Redis: ` + err);
         });
 
@@ -87,7 +86,7 @@ class redisExecutor extends Execution {
               .batch(commands)
               .exec(function (err, replies) {
                 if (err) {
-                  logger.log('error', `Error query Redis (${commands}): ` + err);
+                  _this.logger.log('error', `Error query Redis (${commands}): ` + err);
                   reject(`Error query Redis (${commands}): ` + err);
                 } else {
                   process.execute_db_results = replies;
@@ -102,7 +101,7 @@ class redisExecutor extends Execution {
                 }
               });
           } catch (err) {
-            logger.log('error', `Error query Redis, check commands: ` + commands, err);
+            _this.logger.log('error', `Error query Redis, check commands: ` + commands, err);
             reject(`Error query Redis, check commands: ` + commands, err);
           }
         });
@@ -125,14 +124,14 @@ class redisExecutor extends Execution {
                   resolve();
                 })
                 .catch(function (err) {
-                  logger.log('error', `executeRedis executeCommand: ${err}`);
+                  _this.logger.log('error', `executeRedis executeCommand: ${err}`);
                   process.execute_err_return = `executeRedis executeCommand: ${err}`;
                   process.execute_return = '';
                   process.error();
                   reject(process);
                 });
             } else {
-              logger.log('error', `executeRedis: command not set for ${process.id}`);
+              _this.logger.log('error', `executeRedis: command not set for ${process.id}`);
               process.execute_err_return = `executeRedis: command not set for ${process.id}`;
               process.execute_return = '';
               process.error();
@@ -140,14 +139,14 @@ class redisExecutor extends Execution {
             }
           })
           .catch(function (err) {
-            logger.log('error', `executeRedis loadExecutorConfig: ${err}`);
+            _this.logger.log('error', `executeRedis loadExecutorConfig: ${err}`);
             process.execute_err_return = `executeRedis loadExecutorConfig: ${err}`;
             process.execute_return = '';
             process.error();
             reject(process);
           });
       } else {
-        logger.log('error', `executeRedis: exec id not set for ${process.id}`);
+        _this.logger.log('error', `executeRedis: exec id not set for ${process.id}`);
         process.execute_err_return = `executeRedis: exec id not set for ${process.id}`;
         process.execute_return = '';
         process.error();

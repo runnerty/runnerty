@@ -1,7 +1,6 @@
 "use strict";
 
 var spawn = require("child_process").spawn;
-var logger = require("../../libs/utils.js").logger;
 
 var Execution = require("../../classes/execution.js");
 
@@ -11,6 +10,7 @@ class shellExecutor extends Execution {
   }
 
   exec(process) {
+    var _this = this;
 
     var cmd = process.exec.command;
 
@@ -40,7 +40,7 @@ class shellExecutor extends Execution {
             process.end();
             resolve(stdout);
           } else {
-            logger.log('error', process.id + ' FIN: ' + code + ' - ' + stdout + ' - ' + stderr);
+            _this.logger.log('error', process.id + ' FIN: ' + code + ' - ' + stdout + ' - ' + stderr);
 
             process.execute_return = stdout;
             process.execute_err_return = stderr;
@@ -58,7 +58,7 @@ class shellExecutor extends Execution {
                     resolve(res);
                   })
                   .catch(function (err) {
-                    logger.log('error', 'Retrying process:', err);
+                    _this.logger.log('error', 'Retrying process:', err);
                     resolve(err);
                   });
               }, process.retry_delay * 1000 || 0);

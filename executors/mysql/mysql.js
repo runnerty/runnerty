@@ -2,9 +2,7 @@
 
 var mysql = require("mysql");
 var csv = require("fast-csv");
-var logger = require("../../libs/utils.js").logger;
 var loadSQLFile = require("../../libs/utils.js").loadSQLFile;
-var replaceWith = require("../../libs/utils.js").replaceWith;
 
 var Execution = require("../../classes/execution.js");
 
@@ -14,6 +12,7 @@ class mysqlExecutor extends Execution {
   }
 
   exec(process) {
+    var _this = this;
 
     function customQueryFormat(query, values) {
       if (!values) {
@@ -26,7 +25,7 @@ class mysqlExecutor extends Execution {
         var _query = query.replace(/\:(\w+)/ig,
           function (txt, key) {
             return values && key && values.hasOwnProperty(key)
-              ? replaceWith(values[key], process.values())
+              ? _this.replaceWith(values[key], process.values())
               : null;
           }.bind(this));
 
@@ -34,7 +33,7 @@ class mysqlExecutor extends Execution {
         _query = _query.replace(/\:(\w+)/ig,
           function (txt, key) {
             return values && key && values.hasOwnProperty(key)
-              ? replaceWith(values[key], process.values())
+              ? _this.replaceWith(values[key], process.values())
               : null;
           }.bind(this));
         process.command_executed = _query;
@@ -62,16 +61,16 @@ class mysqlExecutor extends Execution {
 
         connection.connect(function (err) {
           if (err) {
-            logger.log('error', 'Error connecting Mysql: ' + err);
+            _this.logger.log('error', 'Error connecting Mysql: ' + err);
             process.execute_return = '';
             process.execute_err_return = 'Error connecting Mysql: ' + err;
             process.retries_count = process.retries_count + 1 || 1;
             reject(err);
           } else {
-            var command = replaceWith(process.exec.command, process.values());
+            var command = _this.replaceWith(process.exec.command, process.values());
             connection.query(command, process.execute_arg, function (err, results) {
               if (err) {
-                logger.log('error', `executeMysql query ${command}: ${err}`);
+                _this.logger.log('error', `executeMysql query ${command}: ${err}`);
                 process.execute_err_return = `executeMysql query ${command}: ${err}`;
                 reject(err);
               } else {
@@ -81,7 +80,7 @@ class mysqlExecutor extends Execution {
                   process.execute_db_results_object = results;
                   csv.writeToString(results, {headers: true}, function (err, data) {
                     if (err) {
-                      logger.log('error', `Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
+                      _this.logger.log('error', `Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
                     } else {
                       process.execute_db_results_csv = data;
                     }
@@ -118,7 +117,7 @@ class mysqlExecutor extends Execution {
           .then((configValues) => {
             if (!process.exec.command) {
               if (!process.exec.command_file) {
-                logger.log('error', `executeMysql dont have command or command_file`);
+                _this.logger.log('error', `executeMysql dont have command or command_file`);
                 process.execute_err_return = `executeMysql dont have command or command_file`;
                 process.execute_return = '';
                 process.error();
@@ -135,7 +134,7 @@ class mysqlExecutor extends Execution {
                         resolve();
                       })
                       .catch(function (err) {
-                        logger.log('error', `executeMysql executeQuery from file: ${err}`);
+                        _this.logger.log('error', `executeMysql executeQuery from file: ${err}`);
                         process.execute_err_return = `executeMysql executeQuery from file: ${err}`;
                         process.execute_return = '';
                         process.error();
@@ -143,7 +142,7 @@ class mysqlExecutor extends Execution {
                       });
                   })
                   .catch(function (err) {
-                    logger.log('error', `executeMysql loadSQLFile: ${err}`);
+                    _this.logger.log('error', `executeMysql loadSQLFile: ${err}`);
                     process.execute_err_return = `executeMysql loadSQLFile: ${err}`;
                     process.execute_return = '';
                     process.error();
@@ -159,7 +158,7 @@ class mysqlExecutor extends Execution {
                   resolve();
                 })
                 .catch(function (err) {
-                  logger.log('error', `executeMysql executeQuery: ${err}`);
+                  _this.logger.log('error', `executeMysql executeQuery: ${err}`);
                   process.execute_err_return = `executeMysql executeQuery: ${err}`;
                   process.execute_return = '';
                   process.error();
@@ -168,7 +167,7 @@ class mysqlExecutor extends Execution {
             }
           })
           .catch(function (err) {
-            logger.log('error', `executeMysql loadExecutorConfig: ${err}`);
+            _this.logger.log('error', `executeMysql loadExecutorConfig: ${err}`);
             process.execute_err_return = `executeMysql loadExecutorConfig: ${err}`;
             process.execute_return = '';
             process.error();
@@ -176,7 +175,7 @@ class mysqlExecutor extends Execution {
           });
 
       } else {
-        logger.log('error', `executeMysql: exec id not set for ${process.id}`);
+        _this.logger.log('error', `executeMysql: exec id not set for ${process.id}`);
         process.execute_err_return = `executeMysql: exec id not set for ${process.id}`;
         process.execute_return = '';
         process.error();
