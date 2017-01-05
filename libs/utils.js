@@ -76,7 +76,6 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
               }
 
               // ADD NOTIFICATORS SCHEMAS:
-
               var promiseNotificatorsSchemas =
                 requireDir('/../notificators/', 'schema.json')
                   .then((res) => {
@@ -95,12 +94,10 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
                     });
                   })
                   .catch((err) => {
-                    //ajv.addSchema(configSchema, 'configSchema');
                     throw err;
                   });
 
-// ADD EXECUTORS SCHEMAS:
-
+              // ADD EXECUTORS SCHEMAS:
               var promiseExecutorsSchemas =
                 requireDir('/../executors/', 'schema.json')
                   .then((res) => {
@@ -111,21 +108,17 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
                       items.anyOf = [];
                       while (keysLength--) {
                         items.anyOf.push({"$ref": keys[keysLength] + "#/definitions/config"});
-                        console.log('>',keys[keysLength],res[keys[keysLength]].definitions.config);
                         ajv.addSchema(res[keys[keysLength]], keys[keysLength]);
                       }
                       configSchema.properties.config.properties.executors.items = items;
                       resolve();
-                      //ajv.addSchema(configSchema, 'configSchema');
                     });
                   })
                   .catch((err) => {
-                    //ajv.addSchema(configSchema, 'configSchema');
                     throw err;
                   });
 
               Promise.all([promiseNotificatorsSchemas, promiseExecutorsSchemas]).then(values => {
-                console.log('>>>>>>>>>>>>> ',configSchema.properties.config.properties.executors.items);
                 ajv.addSchema(configSchema, 'configSchema');
 
                 var valid = ajv.validate('configSchema', fileParsed);
@@ -137,14 +130,6 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
                 var objConf = fileParsed.config;
                 resolve(objConf);
               });
-/*
-              //TODO: INCLUIR TODOS LOS PARAMTEROS OBLIGATORIOS DE CONFIG EN ESTA VALIDACIÓN:
-              if (objConf.hasOwnProperty('general')) {
-                resolve(objConf);
-              } else {
-                throw new Error('Invalid Config file, general not found.', objConf);
-              }
-              */
             }
           });
         } catch (err) {

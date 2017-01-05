@@ -1,10 +1,9 @@
 {
-  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "mysql",
   "definitions": {
     "config":
       { "type": "object",
-        "required": ["id","type","user","password","database","host"],
         "properties":{
           "id": {"type": "string"},
           "type": {"type": "string", "pattern": "mysql"},
