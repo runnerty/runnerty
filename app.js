@@ -8,7 +8,6 @@ var FilePlan = require("./classes/file_plan.js");
 var configFilePath = '/etc/runnerty/conf.json';
 var config;
 
-//var runtimePlan;
 var reloadPlan = false;
 
 // CHECK ARGS APP:

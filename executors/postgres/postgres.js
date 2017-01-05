@@ -16,18 +16,18 @@ class postgresExecutor extends Execution {
 
     function customQueryFormat(query, values) {
       if (!values) {
-        return query.replace(/(\:\/)/ig, ':');
+        return query.replace(/(:\/)/ig, ':');
       }
       else {
         //FIRST TURN
-        var _query = query.replace(/\:(\w+)/ig, function (txt, key) {
+        var _query = query.replace(/:(\w+)/ig, function (txt, key) {
           return values && key && values.hasOwnProperty(key)
             ? _this.replaceWith(values[key], process.values())
             : null;
         }.bind(this));
 
         //SECOND TURN
-        _query = _query.replace(/\:(\w+)/ig,
+        _query = _query.replace(/:(\w+)/ig,
           function (txt, key) {
             return values && key && values.hasOwnProperty(key)
               ? _this.replaceWith(values[key], process.values())

@@ -16,13 +16,13 @@ class mysqlExecutor extends Execution {
 
     function customQueryFormat(query, values) {
       if (!values) {
-        var queryResult = query.replace(/(\:\/)/ig, ':');
+        var queryResult = query.replace(/(:\/)/ig, ':');
         process.command_executed = queryResult;
         return queryResult;
       }
       else {
         //FIRST TURN
-        var _query = query.replace(/\:(\w+)/ig,
+        var _query = query.replace(/:(\w+)/ig,
           function (txt, key) {
             return values && key && values.hasOwnProperty(key)
               ? _this.replaceWith(values[key], process.values())
@@ -30,7 +30,7 @@ class mysqlExecutor extends Execution {
           }.bind(this));
 
         //SECOND TURN
-        _query = _query.replace(/\:(\w+)/ig,
+        _query = _query.replace(/:(\w+)/ig,
           function (txt, key) {
             return values && key && values.hasOwnProperty(key)
               ? _this.replaceWith(values[key], process.values())
