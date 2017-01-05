@@ -6,15 +6,7 @@ var logger = require("../../libs/utils.js").logger;
 var loadSQLFile = require("../../libs/utils.js").loadSQLFile;
 var replaceWith = require("../../libs/utils.js").replaceWith;
 
-var Execution = require("../../classes/execution.js");
-
-
-class mysqlExecutor extends Execution {
-  constructor(process) {
-    super(process);
-  }
-
-  exec(process) {
+module.exports.exec = function exec(process) {
 
   function customQueryFormat(query, values) {
     if (!values) {
@@ -38,9 +30,10 @@ class mysqlExecutor extends Execution {
             ? replaceWith(values[key], process.values())
             : null;
         }.bind(this));
-      process.command_executed = _query;
-      return _query;
     }
+
+    process.command_executed = _query;
+    return _query;
   }
 
   function executeQuery(process, configValues) {
@@ -184,8 +177,4 @@ class mysqlExecutor extends Execution {
       reject(process);
     }
   });
-}
-
-}
-
-module.exports = mysqlExecutor;
+};

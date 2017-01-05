@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "redis",
   "definitions": {
     "config":
@@ -7,7 +7,7 @@
         "required": ["id","type","password","host"],
         "properties":{
           "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "\\bredis\\b"},
+          "type": {"type": "string", "pattern": "redis"},
           "password": {"type": "string"},
           "crypted_password": {"type": "string"},
           "options": {"type": "object"},

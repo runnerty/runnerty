@@ -459,13 +459,22 @@ class Process {
             if (configValues.type) {
 
               if (executors[configValues.type]) {
-                executors[configValues.type].exec(_this)
+
+                //executors[configValues.type].exec(_this)
+                new executors[configValues.type](_this)
                   .then((res) => {
-                    resolve(res);
+                    res.exec(_this)
+                      .then((_res) => {
+                        resolve(_res);
+                      })
+                      .catch((err) => {
+                        reject(err);
+                      });
                   })
                   .catch((err) => {
                     reject(err);
                   });
+
               } else {
                 logger.log('error', `Executor ${_this.exec.id} type is not valid`);
                 _this.execute_err_return = `Executor ${_this.exec.id} type is not valid`;

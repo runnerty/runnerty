@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "wait",
   "definitions": {
     "config":
@@ -7,7 +7,7 @@
         "required": ["id","type"],
         "properties":{
           "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "\\bwait\\b"},
+          "type": {"type": "string", "pattern": "wait"},
           "seconds": {"type": ["string","number"]}
       }
     },

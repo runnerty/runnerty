@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "shell",
   "definitions": {
     "config":
@@ -7,7 +7,7 @@
         "required": ["id","type"],
         "properties":{
           "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "\\bshell\\b"}
+          "type": {"type": "string", "pattern": "shell"}
       }
     },
     "params":

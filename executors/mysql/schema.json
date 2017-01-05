@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "mysql",
   "definitions": {
     "config":
@@ -7,12 +7,12 @@
         "required": ["id","type","user","password","database","host"],
         "properties":{
           "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "\\bmysql\\b"},
+          "type": {"type": "string", "pattern": "mysql"},
           "user": {"type": "string"},
           "password": {"type": "string"},
           "crypted_password": {"type": "string"},
           "database": {"type": "string"},
-          "host": {"type": "hostname"},
+          "host": {"type": "string"},
           "port": {"type": "string"}
       }
     },

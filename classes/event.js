@@ -66,7 +66,7 @@ class Event {
 
                 Promise.all(notificationsPromises)
                   .then(function (res) {
-                    objEvent[name]['notifications'] = res;
+                    objEvent[name].notifications = res;
                     resolve(objEvent);
                   })
                   .catch(function (err) {

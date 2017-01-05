@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$schema": "http://json-schema.org/draft-06/schema#",
   "title": "s3",
   "definitions": {
     "config":
@@ -7,11 +7,11 @@
         "required": ["id","type","apiVersion","accessKeyId","secretAccessKey","bucket","method","region"],
         "properties":{
           "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "\\bs3\\b"},
+          "type": {"type": "string", "pattern": "s3"},
           "apiVersion": {"type": "string"},
           "accessKeyId": {"type": "string"},
           "secretAccessKey": {"type": "string"},
-          "bucket": {"type": "host"},
+          "bucket": {"type": "string"},
           "method": {"type": "string"},
           "region": {"type": "string"}
       }

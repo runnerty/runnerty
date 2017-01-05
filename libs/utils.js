@@ -11,22 +11,6 @@ var moment = require('moment');
 
 const algorithm = 'aes-256-ctr';
 
-// ADD NOTIFICATORS SCHEMAS:
-requireDir('/../notificators/', 'schema.json')
-  .then((res) => {
-    var keys = Object.keys(res);
-    var keysLength = keys.length;
-    while (keysLength--) {
-      configSchema.properties.config.properties.notificators.items.anyOf.push({"$ref": keys[keysLength] + "#/definitions/config"});
-      ajv.addSchema(res[keys[keysLength]], keys[keysLength]);
-    }
-    ajv.addSchema(configSchema, 'configSchema');
-  })
-  .catch((err) => {
-    ajv.addSchema(configSchema, 'configSchema');
-    throw err;
-  });
-
 var logger = new (winston.Logger)({
   transports: [
     new (winston.transports.Console)({colorize: 'all', level: 'info'}),
@@ -91,20 +75,76 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
                 throw newErr;
               }
 
-              var valid = ajv.validate('configSchema', fileParsed);
+              // ADD NOTIFICATORS SCHEMAS:
 
-              if (!valid) {
-                logger.log('error', `Invalid Config file:`, ajv.errors);
-                throw new Error(`Invalid Config file:`, ajv.errors);
-              }
-              var objConf = fileParsed.config;
+              var promiseNotificatorsSchemas =
+                requireDir('/../notificators/', 'schema.json')
+                  .then((res) => {
+                    //ajv.addSchema(configSchema, 'configSchema');
+                    return new Promise((resolve) => {
+                      var keys = Object.keys(res);
+                      var keysLength = keys.length;
+                      var items = {};
+                      items.anyOf = [];
+                      while (keysLength--) {
+                        items.anyOf.push({"$ref": keys[keysLength] + "#/definitions/config"});
+                        ajv.addSchema(res[keys[keysLength]], keys[keysLength]);
+                      }
+                      configSchema.properties.config.properties.notificators.items = items;
+                      resolve();
+                    });
+                  })
+                  .catch((err) => {
+                    //ajv.addSchema(configSchema, 'configSchema');
+                    throw err;
+                  });
 
+// ADD EXECUTORS SCHEMAS:
+
+              var promiseExecutorsSchemas =
+                requireDir('/../executors/', 'schema.json')
+                  .then((res) => {
+                    return new Promise((resolve) => {
+                      var keys = Object.keys(res);
+                      var keysLength = keys.length;
+                      var items = {};
+                      items.anyOf = [];
+                      while (keysLength--) {
+                        items.anyOf.push({"$ref": keys[keysLength] + "#/definitions/config"});
+                        console.log('>',keys[keysLength],res[keys[keysLength]].definitions.config);
+                        ajv.addSchema(res[keys[keysLength]], keys[keysLength]);
+                      }
+                      configSchema.properties.config.properties.executors.items = items;
+                      resolve();
+                      //ajv.addSchema(configSchema, 'configSchema');
+                    });
+                  })
+                  .catch((err) => {
+                    //ajv.addSchema(configSchema, 'configSchema');
+                    throw err;
+                  });
+
+              Promise.all([promiseNotificatorsSchemas, promiseExecutorsSchemas]).then(values => {
+                console.log('>>>>>>>>>>>>> ',configSchema.properties.config.properties.executors.items);
+                ajv.addSchema(configSchema, 'configSchema');
+
+                var valid = ajv.validate('configSchema', fileParsed);
+
+                if (!valid) {
+                  logger.log('error', `Invalid Config file:`, ajv.errors);
+                  throw new Error(`Invalid Config file:`, ajv.errors);
+                }
+                var objConf = fileParsed.config;
+                resolve(objConf);
+              });
+/*
               //TODO: INCLUIR TODOS LOS PARAMTEROS OBLIGATORIOS DE CONFIG EN ESTA VALIDACIÓN:
               if (objConf.hasOwnProperty('general')) {
                 resolve(objConf);
               } else {
                 throw new Error('Invalid Config file, general not found.', objConf);
               }
+              */
             }
           });
         } catch (err) {
