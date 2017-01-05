@@ -1,0 +1,8 @@
+{
+  "name": "runnerty-telegram",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "node-telegram-bot-api": "^0.24.0"
+  }
+}

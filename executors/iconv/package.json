@@ -1,0 +1,8 @@
+{
+  "name": "runnerty-iconv",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "iconv-lite": "^0.4.15"
+  }
+}

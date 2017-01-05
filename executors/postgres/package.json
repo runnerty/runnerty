@@ -1,0 +1,8 @@
+{
+  "name": "runnerty-postgres",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "pg": "^6.1.2"
+  }
+}

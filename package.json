@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "postinstall": "cd ./notificators && npm install && cd ../executors && npm install",
-    "postupdate": "cd ./notificators && npm update && cd ../executors && npm update"
+    "postinstall": "find ./notificators/* -name 'package.json' -maxdepth 1 -execdir npm install \\; && find ./executors/* -name 'package.json' -maxdepth 1 -execdir npm install \\;",
+    "_postupdate": "cd ./notificators && npm update && cd ../executors && npm update"
   },
   "dependencies": {
     "ajv": "^4.10.1",

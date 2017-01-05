@@ -1,0 +1,8 @@
+{
+  "name": "runnerty-s3",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.7.19"
+  }
+}
