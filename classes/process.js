@@ -256,10 +256,40 @@ class Process {
     return (this.status === 'error');
   }
 
+  stopChildChains() {
+    var _this = this;
+
+    //If have childs_chains
+    if(_this.childs_chains){
+      // Set All childs_chains to stopped
+      _this.childs_chains_status = 'stop';
+      var childsChainsLength = _this.childs_chains.length;
+      while (childsChainsLength--) {
+        _this.childs_chains[childsChainsLength].stop();
+      }
+    }
+
+  }
+
   stop() {
     var _this = this;
-    _this.status = 'stop';
-    _this.ended_at = new Date();
+
+    if (_this.exec.executor && !_this.isStopped() && !_this.isEnded() && !_this.isErrored()) {
+      _this.exec.executor.kill(_this)
+        .then((res) => {
+          _this.status = 'stop';
+          _this.ended_at = new Date();
+        })
+        .catch((err) => {
+          _this.status = 'stop';
+          _this.ended_at = new Date();
+          logger.log('error', `Stoping process ${_this.id}:`, err);
+        });
+    }else{
+      _this.status = 'stop';
+      _this.ended_at = new Date();
+    }
+    _this.stopChildChains();
   }
 
   end(notificate, writeOutput) {
@@ -291,17 +321,19 @@ class Process {
     _this.childs_chains_status = 'end';
 
     var globalPlanChains = global.runtimePlan.plan.chains;
-    var chainParentFound = getChainByUId(globalPlanChains, _this.parentUId);
 
-    if (chainParentFound) {
-      chainParentFound.refreshChainStatus()
-        .then(function (chainStatus) {
-        })
-        .catch(function (err) {
-          logger.log('error', 'Error in process refreshChainStatus:', err);
-        });
+    getChainByUId(globalPlanChains, _this.parentUId)
+      .then((chainParentFound) => {
+        if (chainParentFound) {
+          chainParentFound.refreshChainStatus()
+            .then(function (chainStatus) {
+            })
+            .catch(function (err) {
+              logger.log('error', 'Error in process refreshChainStatus:', err);
+            });
+        }
+      });
 
-    }
   }
 
   startChildChains() {
@@ -447,6 +479,8 @@ class Process {
     _this.status = 'running';
     _this.started_at = new Date();
 
+    console.log('>>> proccess running ',_this.id,_this.uId);
+
     if (!isRetry || isRetry === undefined) {
       _this.notificate('on_start');
     }
@@ -461,8 +495,9 @@ class Process {
               if (executors[configValues.type]) {
 
                 //executors[configValues.type].exec(_this)
-                new executors[configValues.type](_this)
+                 new executors[configValues.type](_this)
                   .then((res) => {
+                    _this.exec.executor = res;
                     res.exec(_this)
                       .then((_res) => {
                         resolve(_res);

@@ -370,7 +370,6 @@ function addGlobalValuesToObjParams(objParams) {
 
       } else {
         gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(intialValue, objParams, true);
-        ;
       }
     }
   }
@@ -380,30 +379,35 @@ function addGlobalValuesToObjParams(objParams) {
 
 module.exports.getChainByUId = function getChainByUId(chains, uId) {
 
-  var chainLength = chains.length;
+  return new Promise(function (resolve) {
+    var chainLength = chains.length;
 
-  var res = false;
+    var res = false;
 
-  while (chainLength-- && !res) {
-    var chain = chains[chainLength];
-    if (chain.uId === uId) {
-      res = chain;
-    } else {
-      if (chain.processes && chain.processes.length) {
-        var chainProcessesLength = chain.processes.length;
-        while (chainProcessesLength-- && !res) {
-          var process = chain.processes[chainProcessesLength];
-          if (process.childs_chains) {
-            var result = getChainByUId(process.childs_chains, uId);
-            if (result) {
-              res = result;
+    while (chainLength-- && !res) {
+      var chain = chains[chainLength];
+      if (chain.uId === uId) {
+        res = chain;
+      } else {
+        if (chain.processes && chain.processes.length) {
+          var chainProcessesLength = chain.processes.length;
+          while (chainProcessesLength-- && !res) {
+            var process = chain.processes[chainProcessesLength];
+            if (process.childs_chains) {
+              getChainByUId(process.childs_chains, uId)
+                .then((_res) => {
+                  if(_res){
+                    res = _res;
+                  }
+                });
             }
           }
         }
       }
     }
-  }
-  return res;
+    resolve(res);
+  });
+
 };
 
 module.exports.getProcessByUId = function getProcessByUId(chains, uId) {

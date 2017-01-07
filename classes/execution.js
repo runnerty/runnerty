@@ -78,7 +78,16 @@ class Execution {
       process.execute_return = '';
       process.error();
       reject(process);
+    });
+  }
 
+  kill(process) {
+    return new Promise(function (resolve) {
+      logger.log('error', 'Method kill (execution) must be rewrite in child class');
+      process.execute_err_return = `Method kill (execution) must be rewrite in child class`;
+      process.execute_return = '';
+      process.stop();
+      resolve();
     });
   }
 

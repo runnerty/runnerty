@@ -302,6 +302,12 @@ class Chain {
   stop() {
     var _this = this;
     _this.status = 'stop';
+
+    var processesLength = _this.processes.length;
+    while (processesLength--) {
+      _this.processes[processesLength].stop();
+    }
+
   }
 
   end() {
@@ -700,7 +706,6 @@ class Chain {
         });
     });
   }
-
 
   checkProcessActionToDo(process) {
     var _this = this;
