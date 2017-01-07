@@ -72,7 +72,7 @@ class Notification {
   }
 
   notificate() {
-    logger.log('warn', 'This method must be rewrite in child class');
+    logger.log('error', 'Method notificate (notificacion) must be rewrite in child class');
   }
 
 }

@@ -33,7 +33,6 @@ class iconvExecutor extends Execution {
                 var fileStreamOutput = fs.createWriteStream(_file_output);
                 var decoderStream = iconv.decodeStream(_decode_encoding);
 
-
                 fileStream
                   .pipe(decoderStream)
                   .pipe(iconv.encodeStream(_encode_encoding))

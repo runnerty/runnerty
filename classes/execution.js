@@ -71,8 +71,15 @@ class Execution {
     });
   }
 
-  exec() {
-    logger.log('warn', 'This method must be rewrite in child class');
+  exec(process) {
+    return new Promise(function (resolve, reject) {
+      logger.log('error', 'Method exec (execution) must be rewrite in child class');
+      process.execute_err_return = `Method exec (execution) must be rewrite in child class`;
+      process.execute_return = '';
+      process.error();
+      reject(process);
+
+    });
   }
 
 }
