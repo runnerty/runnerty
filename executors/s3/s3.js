@@ -15,25 +15,29 @@ class s3Executor extends Execution {
     var _this = this;
 
     return new Promise(function (resolve, reject) {
-      process.loadExecutorConfig()
-        .then((configValues) => {
+      _this.getValues(process)
+        .then((res) => {
 
-          var s3 = new AWS.S3(configValues);
+          var awsS3Config = {
+            apiVersion: res.apiVersion,
+            accessKeyId: res.accessKeyId,
+            secretAccessKey: res.secretAccessKey,
+            bucket: res.bucket,
+            method: res.method,
+            region: res.region
+          };
 
-          var method = _this.replaceWith(process.exec.method || configValues.method, process.values());
+          var s3 = new AWS.S3(awsS3Config);
 
-          if (method === 'upload') {
-
-            var bucket = _this.replaceWith(process.execute_args.bucket || configValues.bucket, process.values());
+          if (res.method === 'upload') {
 
             // call S3 to retrieve upload file to specified bucket
-            var uploadParams = {Bucket: bucket, Key: '', Body: ''};
-            var file = _this.replaceWith(process.exec.file, process.values());
-            var file_name = _this.replaceWith(process.exec.file_name || path.basename(file), process.values());
+            var uploadParams = {Bucket: res.bucket, Key: '', Body: ''};
+            var file_name = res.file_name || path.basename(res.file);
 
-            var fileStream = fs.createReadStream(file);
+            var fileStream = fs.createReadStream(res.file);
             fileStream.on('error', function (err) {
-              _this.logger.log('error', 'S3 upload reading file Error', file, err);
+              _this.logger.log('error', 'S3 upload reading file Error', res.file, err);
             });
 
             uploadParams.Body = fileStream;
@@ -61,6 +65,13 @@ class s3Executor extends Execution {
             process.error();
             reject(process);
           }
+        })
+        .catch((err) => {
+          _this.logger.log('error', `S3 Error getValues: ${err}`);
+          process.execute_err_return = `S3 Error getValues ${err}`;
+          process.execute_return = '';
+          process.error();
+          reject(process);
         });
     });
   }

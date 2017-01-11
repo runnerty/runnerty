@@ -11,24 +11,11 @@ class scpExecutor extends Execution {
 
   exec(process) {
     var _this = this;
-    return new Promise(function (resolve, reject) {
-      process.loadExecutorConfig()
-        .then((configValues) => {
-          // identityFile
-          var identityFile = _this.replaceWith(process.exec.identityFile || configValues.identityFile, process.values());
-          if (identityFile && identityFile !== '') {
-            identityFile = '-i ' + identityFile;
-          }
-          //localFile
-          var localFile = _this.replaceWith(process.exec.localFile, process.values());
-          //remoteUser
-          var remoteUser = _this.replaceWith(process.exec.remoteUser || configValues.remoteUser, process.values());
-          //remoteHost
-          var remoteHost = _this.replaceWith(process.exec.remoteHost || configValues.remoteHost, process.values());
-          //remoteFilePath
-          var remoteFilePath = _this.replaceWith(process.exec.remoteFilePath, process.values());
 
-          var scpCommand = `scp ${identityFile} ${localFile} ${remoteUser}@${remoteHost}:${remoteFilePath}`;
+    return new Promise(function (resolve, reject) {
+      _this.getValues(process)
+        .then((res) => {
+          var scpCommand = `scp ${(res.identityFile)?'-i':''} ${res.identityFile} ${res.localFile} ${res.remoteUser}@${res.remoteHost}:${res.remoteFilePath}`;
           var proc = spawn(scpCommand, [], {shell: true});
 
           var stderr = '';
@@ -51,6 +38,13 @@ class scpExecutor extends Execution {
                 resolve();
               }
             });
+        })
+        .catch((err) => {
+          _this.logger.log('error', `SCP Error getValues: ${err}`);
+          process.execute_err_return = `SCP Error getValues ${err}`;
+          process.execute_return = '';
+          process.error();
+          reject(process);
         });
     });
   }

@@ -11,6 +11,30 @@ class waitExecutor extends Execution {
     var _this = this;
 
     return new Promise(function (resolve, reject) {
+      _this.getValues(process)
+        .then((res) => {
+          var seconds = 60;
+
+          if (res.seconds) {
+            seconds = res.seconds;
+          }
+
+          setTimeout(function () {
+            process.end();
+            resolve();
+          }, seconds * 1000 || 0);
+        })
+        .catch((err) => {
+          _this.logger.log('error', `Wait Error getValues: ${err}`);
+          process.execute_err_return = `Wait Error getValues ${err}`;
+          process.execute_return = '';
+          process.error();
+          reject(process);
+        });
+    });
+
+    /*
+    return new Promise(function (resolve, reject) {
       process.loadExecutorConfig()
         .then((configValues) => {
 
@@ -46,7 +70,7 @@ class waitExecutor extends Execution {
           reject(process);
         });
     });
-
+*/
   }
 }
 

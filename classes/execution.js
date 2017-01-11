@@ -91,6 +91,51 @@ class Execution {
     });
   }
 
+  getValues(process) {
+    return new Promise(function (resolve, reject) {
+      process.loadExecutorConfig()
+        .then((configValues) => {
+          var values = Object.assign(configValues, process.exec);
+          var res = {};
+          var keys = Object.keys(values);
+          var keysLength = keys.length;
+          while (keysLength--) {
+            res[keys[keysLength]] = utilReplaceWith(values[keys[keysLength]], process.values());
+          }
+          resolve(res);
+        });
+    });
+  }
+
+  getParamValues(process) {
+    return new Promise(function (resolve) {
+      var values = process.exec;
+      var res = {};
+      var keys = Object.keys(values);
+      var keysLength = keys.length;
+      while (keysLength--) {
+        res[keys[keysLength]] = utilReplaceWith(values[keys[keysLength]], process.values());
+      }
+      resolve(res);
+    });
+  }
+
+  getConfigValues(process) {
+    return new Promise(function (resolve) {
+      process.loadExecutorConfig()
+        .then((configValues) => {
+          var values = Object.assign(configValues);
+          var res = {};
+          var keys = Object.keys(values);
+          var keysLength = keys.length;
+          while (keysLength--) {
+            res[keys[keysLength]] = utilReplaceWith(values[keys[keysLength]], process.values());
+          }
+          resolve(res);
+        });
+    });
+  }
+
 }
 
 module.exports = Execution;

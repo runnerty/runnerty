@@ -110,49 +110,41 @@ class redisExecutor extends Execution {
     }
 
     return new Promise(function (resolve, reject) {
+      _this.getValues(process)
+        .then((res) => {
+          if (res.command) {
 
-      if (process.exec.id) {
-        process.loadExecutorConfig()
-          .then((configValues) => {
-            if (process.exec.command) {
-
-              executeCommand(process, configValues)
-                .then(() => {
-                  process.execute_return = '';
-                  process.execute_err_return = '';
-                  process.end();
-                  resolve();
-                })
-                .catch(function (err) {
-                  _this.logger.log('error', `executeRedis executeCommand: ${err}`);
-                  process.execute_err_return = `executeRedis executeCommand: ${err}`;
-                  process.execute_return = '';
-                  process.error();
-                  reject(process);
-                });
-            } else {
-              _this.logger.log('error', `executeRedis: command not set for ${process.id}`);
-              process.execute_err_return = `executeRedis: command not set for ${process.id}`;
-              process.execute_return = '';
-              process.error();
-              reject(process);
-            }
-          })
-          .catch(function (err) {
-            _this.logger.log('error', `executeRedis loadExecutorConfig: ${err}`);
-            process.execute_err_return = `executeRedis loadExecutorConfig: ${err}`;
+            executeCommand(process, res)
+              .then(() => {
+                process.execute_return = '';
+                process.execute_err_return = '';
+                process.end();
+                resolve();
+              })
+              .catch(function (err) {
+                _this.logger.log('error', `executeRedis executeCommand: ${err}`);
+                process.execute_err_return = `executeRedis executeCommand: ${err}`;
+                process.execute_return = '';
+                process.error();
+                reject(process);
+              });
+          } else {
+            _this.logger.log('error', `executeRedis: command not set and command_file nor supported yet for ${process.id}`);
+            process.execute_err_return = `executeRedis: command not set and command_file nor supported yet for ${process.id}`;
             process.execute_return = '';
             process.error();
             reject(process);
-          });
-      } else {
-        _this.logger.log('error', `executeRedis: exec id not set for ${process.id}`);
-        process.execute_err_return = `executeRedis: exec id not set for ${process.id}`;
-        process.execute_return = '';
-        process.error();
-        reject(process);
-      }
+          }
+        })
+        .catch((err) => {
+          _this.logger.log('error', `redisExecutor Error getValues: ${err}`);
+          process.execute_err_return = `redisExecutor Error getValues ${err}`;
+          process.execute_return = '';
+          process.error();
+          reject(process);
+        });
     });
+
   }
 }
 
