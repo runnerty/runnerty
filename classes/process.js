@@ -479,8 +479,6 @@ class Process {
     _this.status = 'running';
     _this.started_at = new Date();
 
-    console.log('>>> proccess running ',_this.id,_this.uId);
-
     if (!isRetry || isRetry === undefined) {
       _this.notificate('on_start');
     }
