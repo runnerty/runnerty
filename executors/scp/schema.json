@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "scp",
+  "definitions": {
+    "config":
+      { "type": "object",
+        "required": ["id","type"],
+        "properties":{
+          "id": {"type": "string"},
+          "type": {"type": "string", "pattern": "scp"},
+          "identityFile": {"type": "string"},
+          "remoteUser": {"type": "string"},
+          "remoteHost": {"type": "string"}
+      }
+    },
+    "params":
+    { "type": "object",
+      "required": ["id","localFile"],
+      "properties":{
+        "id": {"type": "string"},
+        "identityFile": {"type": "string"},
+        "localFile": {"type": "string"},
+        "remoteFilePath": {"type": "string"},
+        "remoteUser": {"type": "string"},
+        "remoteHost": {"type": "string"}
+      }
+    }
+  }
+}
