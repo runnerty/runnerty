@@ -187,16 +187,25 @@ module.exports = function (config, logger, fp) {
 
     // GET A CHAIN
     router.get('/chain/:chainId', function (req, res) {
-      var chainId = req.params.chainId;
-      var chain   = fp.plan.getChainById(chainId);
-      if(chain){
-        res.json(chain);
-      }else{
-        res.status(404).send(`Chain "${chainId}" not found`);
+    var chainId = req.params.chainId;
+    var chain = fp.plan.getChainById(chainId);
+
+    let objectToResult = ['depends_chains','args','events','output','chain_values','schedule_interval','scheduleCancel','scheduleRepeater','parentUId','exec','depends_process','retries','retry_delay','end_on_fail','end_chain_on_fail'];
+    function excluderGetChain(key, value) {
+      if (objectToResult.indexOf(key) !== -1) {
+        return undefined;
       }
+      return value;
+    }
+
+    if (chain) {
+      res.send(JSON.stringify(chain,excluderGetChain));
+    } else {
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }
     });
 
-    // GET A CHAIN
+    // FORCE START CHAIN
     router.post('/chain/forceStart/:chainId', function (req, res) {
       var chainId = req.params.chainId;
       var chain   = fp.plan.getChainById(chainId);
