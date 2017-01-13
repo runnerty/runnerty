@@ -288,6 +288,23 @@ module.exports = function (config, logger, fp) {
       }
 
     });
+ 
+   // KILL A NO ITERABLE CHAIN INDICATE: chainId
+  router.post('/chain/stop/:chainId', function (req, res) {
+    var chainId = req.params.chainId;
+
+    logger.log('info', `Kill chain "${chainId}" by ${req.user}`);
+
+    var chain = fp.plan.getChainById(chainId);
+
+    if (chain) {
+      chain.stop();
+      res.json();
+    } else {
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }
+
+  });
 
     //GET A PROCESS OF CHAIN INDICATED IN PARAMETER chainId AND processId
     router.get('/process/:chainId/:processId', function (req, res) {
