@@ -174,7 +174,7 @@ class Plan{
     };
 
       console.log('CHAIN IS STOPPED',chain.isStopped());
-    if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStopped()))
+    if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStopped() || executeInmediate))
     {
       if(chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') || chain.iterable)){
 
