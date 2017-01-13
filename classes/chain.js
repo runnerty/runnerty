@@ -312,10 +312,16 @@ class Chain {
     var _this = this;
     return (_this.status === 'error');
   }
-
-  stop(){
+  
+  stop() {
     var _this = this;
     _this.status = 'stop';
+
+    var processesLength = _this.processes.length;
+    while (processesLength--) {
+      _this.processes[processesLength].stop();
+    }
+
   }
 
   end(){
