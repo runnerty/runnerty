@@ -169,16 +169,9 @@ class Plan{
 
     return new Promise((resolve) => {
         if((chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined) || executeInmediate){
-          console.log('CHAIN EJECUTADO CON executeInmediate PROCEDE A STOP.');
       chain.stop();
     };
-
-    console.log('> CHAIN '+chain.id+' IS STOPPED? ',chain.isStopped());
-    console.log('> CHAIN '+chain.id+' chain.end_date ',chain.end_date);
-    console.log('> CHAIN '+chain.id+' IS executeInmediate? ',executeInmediate);
-    console.log('> CHAIN '+chain.id+' IS new Date(chain.end_date)? ',new Date(chain.end_date));
-    console.log('> CHAIN '+chain.id+' IS new Date()? ',new Date());
-    if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStopped() || executeInmediate))
+    if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStopped()))
     {
       console.log('CHAIN '+chain.id+' ENTRA! ');
       if(chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') || chain.iterable)){
