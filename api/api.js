@@ -45,18 +45,9 @@ module.exports = function (config, logger, fp) {
       return value;
     }
  
-   function serializer(replacer, cycleReplacer) {
+  function serializer(replacer) {
     var stack = [];
     var keys = [];
-
-    if (cycleReplacer === null){
-      cycleReplacer = function(key, value) {
-        if (stack[0] === value){
-          return "[Circular ~]";
-        }
-        return "[Circular ~." + keys.slice(0, stack.indexOf(value)).join(".") + "]";
-      };
-    }
 
     return function(key, value) {
       if (stack.length > 0) {
@@ -64,7 +55,10 @@ module.exports = function (config, logger, fp) {
         ~thisPos ? stack.splice(thisPos + 1) : stack.push(this);
         ~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key);
         if (~stack.indexOf(value)){
-          value = cycleReplacer(key, value);
+          if (stack[0] === value){
+            value = "[Circular ~]";
+          }
+          value = "[Circular ~." + keys.slice(0, stack.indexOf(value)).join(".") + "]";
         }
       }
       else{
