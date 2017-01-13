@@ -15,7 +15,7 @@ ajv.addSchema(configSchema, 'configSchema');
 
 var logger = new (winston.Logger)({
   transports: [
-    new (winston.transports.Console)({colorize: 'all', level: 'debug'}),
+    new (winston.transports.Console)({colorize: 'all', level: 'info'}),
     // new (winston.transports.File)({name: 'info-file', filename: 'filelog-info.log', level: 'info'}),
     // new (winston.transports.File)({name: 'error-file',filename: 'filelog-error.log',level: 'error'}),
   ]
