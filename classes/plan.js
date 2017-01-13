@@ -173,9 +173,14 @@ class Plan{
       chain.stop();
     };
 
-      console.log('CHAIN IS STOPPED',chain.isStopped());
+    console.log('> CHAIN '+chain.id+' IS STOPPED? ',chain.isStopped());
+    console.log('> CHAIN '+chain.id+' chain.end_date ',chain.end_date);
+    console.log('> CHAIN '+chain.id+' IS executeInmediate? ',executeInmediate);
+    console.log('> CHAIN '+chain.id+' IS new Date(chain.end_date)? ',new Date(chain.end_date));
+    console.log('> CHAIN '+chain.id+' IS new Date()? ',new Date());
     if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStopped() || executeInmediate))
     {
+      console.log('CHAIN '+chain.id+' ENTRA! ');
       if(chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') || chain.iterable)){
 
         logger.log('debug', `SCHEDULED CHAIN ${chain.id} EN ${(new Date(chain.start_date))}`);
