@@ -234,7 +234,9 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
     while (monthsLength--) {
       var month = months[monthsLength].substr(1, 7);
       var monthLang = months[monthsLength].substr(6, 2);
-      objParams[month] = getDateString('MMMM', true, monthLang);
+      if(!objParams[month]){
+        objParams[month] = getDateString('MMMM', true, monthLang);
+      }
     }
   }
 
@@ -247,7 +249,9 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
     while (shortMonthsLength--) {
       var shortMonth = shortMonths[shortMonthsLength].substr(1, 6);
       var shortMonthLang = shortMonths[shortMonthsLength].substr(5, 2);
-      objParams[shortMonth] = getDateString('MMM', true, shortMonthLang);
+      if(!objParams[shortMonth]){
+        objParams[shortMonth] = getDateString('MMM', true, shortMonthLang);
+      }
     }
   }
 
@@ -260,7 +264,9 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
     while (daysLength--) {
       var day = days[daysLength].substr(1, 7);
       var lang = days[daysLength].substr(6, 2);
-      objParams[day] = getDateString('dddd', true, lang);
+      if(!objParams[day]){
+        objParams[day] = getDateString('dddd', true, lang);
+      }
     }
   }
 
@@ -273,7 +279,9 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
     while (shortDaysLength--) {
       var shortDay = shortDays[shortDaysLength].substr(1, 6);
       var lang = shortDays[shortDaysLength].substr(5, 2);
-      objParams[shortDay] = getDateString('ddd', true, lang);
+      if(!objParams[shortDay]){
+        objParams[shortDay] = getDateString('ddd', true, lang);
+      }
     }
   }
 

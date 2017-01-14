@@ -241,6 +241,7 @@ module.exports = function (config, logger, fp) {
 
         try {
           customValues = JSON.parse(req.body.customValues);
+          console.log(customValues);
         } catch (err) {
           var newErr = new Error('Problem reading JSON file');
           newErr.stack += '\nCaused by: ' + err.stack;
@@ -268,7 +269,7 @@ module.exports = function (config, logger, fp) {
 
       } else {
 
-        fp.plan.scheduleChain(chain, undefined, true);
+        fp.plan.scheduleChain(chain, undefined, true, undefined, customValues);
         res.json(`Chain "${chain.id}" starting.`);
       }
     } else {
