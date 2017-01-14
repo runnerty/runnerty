@@ -182,52 +182,60 @@ function replaceWith(text, objParams, ignoreGlobalValues){
   // MONTHS MMMM_[LANG]
   var months = text.toString().match(/\:MMMM_\w{2}/ig);
 
-  if(months){
+  if (months) {
     var monthsLength = months.length;
 
-    while (monthsLength--){
-      var month  = months[monthsLength].substr(1,7);
-      var lang   = months[monthsLength].substr(6,2);
-      objParams[month] = getDateString('MMMM',true,lang);
+    while (monthsLength--) {
+      var month = months[monthsLength].substr(1, 7);
+      var monthLang = months[monthsLength].substr(6, 2);
+      if(!objParams[month]){
+        objParams[month] = getDateString('MMMM', true, monthLang);
+      }
     }
   }
 
   // SHORT MONTHS MMM_[LANG]
   var shortMonths = text.toString().match(/\:MMM_\w{2}/ig);
 
-  if(shortMonths){
+  if (shortMonths) {
     var shortMonthsLength = shortMonths.length;
 
-    while (shortMonthsLength--){
-      var shortMonth = shortMonths[shortMonthsLength].substr(1,6);
-      var lang       = shortMonths[shortMonthsLength].substr(5,2);
-      objParams[shortMonth] = getDateString('MMM',true,lang);
+    while (shortMonthsLength--) {
+      var shortMonth = shortMonths[shortMonthsLength].substr(1, 6);
+      var shortMonthLang = shortMonths[shortMonthsLength].substr(5, 2);
+      if(!objParams[shortMonth]){
+        objParams[shortMonth] = getDateString('MMM', true, shortMonthLang);
+      }
     }
   }
 
   // DAYS DDDD_[LANG]
   var days = text.toString().match(/\:DDDD_\w{2}/ig);
 
-  if(days){
+  if (days) {
     var daysLength = days.length;
 
-    while (daysLength--){
-      var day  = days[daysLength].substr(1,7);
-      var lang = days[daysLength].substr(6,2);
-      objParams[day] = getDateString('dddd',true,lang);
+    while (daysLength--) {
+      var day = days[daysLength].substr(1, 7);
+      var lang = days[daysLength].substr(6, 2);
+      if(!objParams[day]){
+        objParams[day] = getDateString('dddd', true, lang);
+      }
     }
   }
 
   // SHORT DAYS DDD_[LANG]
   var shortDays = text.toString().match(/\:DDD_\w{2}/ig);
 
-  if(shortDays){
+  if (shortDays) {
     var shortDaysLength = shortDays.length;
 
-    while (shortDaysLength--){
-      var shortDay = shortDays[shortDaysLength].substr(1,6);
-      var lang       = shortDays[shortDaysLength].substr(5,2);
-      objParams[shortDay] = getDateString('ddd',true,lang);
+    while (shortDaysLength--) {
+      var shortDay = shortDays[shortDaysLength].substr(1, 6);
+      var lang = shortDays[shortDaysLength].substr(5, 2);
+      if(!objParams[shortDay]){
+        objParams[shortDay] = getDateString('ddd', true, lang);
+      }
     }
   }
 

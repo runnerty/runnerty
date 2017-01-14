@@ -336,15 +336,33 @@ class Plan{
               }
 
             }else{
-              chain.start(undefined,executeInmediate)
-                .then(function() {
-                  _this.scheduleChains();
-                  resolve();
-                })
-                .catch(function(e){
-                  logger.log('error','Error '+e);
-                  resolve();
-                });
+              if(customValues){
+                _this.loadChain(chain, undefined, customValues)
+                  .then(function (_chain) {
+                    _chain.start(undefined, executeInmediate)
+                      .then(function () {
+                        _this.scheduleChains();
+                        resolve();
+                      })
+                      .catch(function (err) {
+                        logger.log('error', 'Error ', err);
+                        resolve();
+                      });
+                  })
+                  .catch(function (err) {
+                    logger.log('error', `scheduleChain customsValues loadChain ${chain.id}. Error: `, err);
+                  });
+              }else{
+                chain.start(undefined, executeInmediate)
+                  .then(function () {
+                    _this.scheduleChains();
+                    resolve();
+                  })
+                  .catch(function (err) {
+                    logger.log('error', 'Error ', err);
+                    resolve();
+                  });
+              }
             }
           }
         }else{
