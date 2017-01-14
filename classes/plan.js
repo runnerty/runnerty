@@ -166,7 +166,7 @@ class Plan {
               process.childs_chains.push(res);
             })
             .catch(function (err) {
-              logger.log('error', `scheduleChain createChainSerie loadChain ${chain.id}. Error: `, err)
+              logger.log('error', `scheduleChain createChainSerie loadChain ${chain.id}. Error: `, err);
             });
         });
       });
