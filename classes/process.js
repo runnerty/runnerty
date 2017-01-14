@@ -5,6 +5,7 @@ var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var replaceWith = require("../libs/utils.js").replaceWith;
 var getChainByUId = require("../libs/utils.js").getChainByUId;
 var requireDir = require("../libs/utils.js").requireDir;
+var chronometer = require("../libs/utils.js").chronometer;
 var crypto = require("crypto");
 var bytes = require("bytes");
 var fs = require("fs-extra");
@@ -294,6 +295,9 @@ class Process {
 
   end(notificate, writeOutput) {
     var _this = this;
+    var duration = chronometer(_this.hr_started_time);
+    _this.duration_seconds = duration[0];
+    _this.duration_humnized = duration[1];
     notificate = notificate || true;
     writeOutput = writeOutput || true;
 
@@ -476,6 +480,7 @@ class Process {
 
   start(isRetry) {
     var _this = this;
+    _this.hr_started_time = chronometer();
     _this.status = 'running';
     _this.started_at = new Date();
 

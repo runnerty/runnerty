@@ -6,6 +6,7 @@ var logger = require("../libs/utils.js").logger;
 var crypto = require('crypto');
 var getProcessByUId = require("../libs/utils.js").getProcessByUId;
 var checkEvaluation = require("../libs/utils.js").checkEvaluation;
+var chronometer = require("../libs/utils.js").chronometer;
 
 var Process = require("./process.js");
 var Event = require("./event.js");
@@ -312,6 +313,9 @@ class Chain {
 
   end() {
     var _this = this;
+    var duration = chronometer(_this.hr_started_time);
+    _this.duration_seconds = duration[0];
+    _this.duration_humnized = duration[1];
 
     _this.ended_at = new Date();
     _this.status = 'end';
@@ -341,6 +345,8 @@ class Chain {
 
   running() {
     this.started_at = new Date();
+    this.hr_started_time = chronometer();
+
     this.notificate('on_start');
   }
 

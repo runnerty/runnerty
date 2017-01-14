@@ -241,7 +241,6 @@ module.exports = function (config, logger, fp) {
 
         try {
           customValues = JSON.parse(req.body.customValues);
-          console.log(customValues);
         } catch (err) {
           var newErr = new Error('Problem reading JSON file');
           newErr.stack += '\nCaused by: ' + err.stack;

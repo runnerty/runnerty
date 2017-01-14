@@ -515,5 +515,14 @@ function requireDir(directory, filename) {
     });
 
   });
-
 }
+
+module.exports.chronometer = function chronometer (start){
+  if(start){
+    var endTime = process.hrtime(start);
+    var duration = parseInt((endTime[0] * 1000) + (endTime[1]/1000000));
+    return [duration/1000, moment.duration(duration).humanize()];
+  }else{
+    return process.hrtime();
+  }
+};
