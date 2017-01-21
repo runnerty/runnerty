@@ -205,7 +205,17 @@ module.exports = function (config, logger, fp) {
 
   // GET ALL CHAINS
   router.get('/chains', function (req, res) {
-    res.json(fp.plan.chains);
+
+    let objectToResult = ['depends_chains','args','events','output','chain_values','schedule_interval','scheduleCancel','scheduleRepeater','parentUId','exec','depends_process','retries','retry_delay','end_on_fail','end_chain_on_fail'];
+    function excluderGetChain(key, value) {
+      return value;
+      if (objectToResult.indexOf(key) !== -1) {
+        return undefined;
+      }
+      return value;
+    }
+
+    res.send(JSON.stringify(fp.plan.chains,serializer(excluderGetChain)));
   });
 
   // GET A CHAIN
@@ -247,9 +257,8 @@ module.exports = function (config, logger, fp) {
           throw newErr;
         }
       }
-      ;
 
-      if (chain.hasOwnProperty('iterable')) {
+      if (chain.iterable) {
 
         crypto.randomBytes(16, function (err, buffer) {
           var vProcUId = chainId + '_VP_' + buffer.toString('hex');
@@ -262,14 +271,13 @@ module.exports = function (config, logger, fp) {
           dummy_process.uId = vProcUId;
           dummy_process.childs_chains = [];
           fp.plan.scheduleChain(chain, dummy_process, true, inputIterableValues, customValues);
-          res.json(`Chain "${chain.id}" starting.`);
+          res.json(`Chain iterable: "${chain.id}" starting.`);
 
         });
 
       } else {
-
         fp.plan.scheduleChain(chain, undefined, true, undefined, customValues);
-        res.json(`Chain "${chain.id}" starting.`);
+        res.json(`Chain ${chain.id}/${chain.uId} starting.`);
       }
     } else {
       res.status(404).send(`Chain "${chainId}" not found`);
