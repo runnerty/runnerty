@@ -248,7 +248,7 @@ module.exports = function (config, logger, fp) {
           }
         };
 
-        if(chain.hasOwnProperty('iterable')){
+        if(chain.iterable){
 
           crypto.randomBytes(16, function(err, buffer) {
             var vProcUId = chainId + '_VP_' + buffer.toString('hex');
