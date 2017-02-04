@@ -651,7 +651,7 @@ class Chain {
           if (chainStatus === 'running') {
 
             if (waitEndChilds) { //Serie
-              function execSerie (processes) {
+              function execSerie(processes) {
                 var sequence = Promise.resolve();
                 processes.forEach(function (itemProcess) {
                   sequence = sequence.then(function () {

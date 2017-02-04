@@ -45,7 +45,7 @@ loadGeneralConfig(configFilePath)
     new FilePlan(fileLoad, config)
       .then(function (plan) {
         global.runtimePlan = plan;
-        require('./api/api.js')(config.general, logger, global.runtimePlan);
+        require('./api/api.js')(config.general, logger);
       })
       .catch(function (err) {
         logger.log('error', 'FilePlan: ', err);

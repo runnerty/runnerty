@@ -14,15 +14,16 @@ var server = require('http').Server(app);
 var helmet = require('helmet');
 var util = require('util');
 var crypto = require('crypto');
-var replaceWith = require("../libs/utils.js").replaceWith;
+// var replaceWith = require("../libs/utils.js").replaceWith;
 var cors = require("cors");
 /*
  var lusca           = require('lusca');
  */
 
 //============================================
+var globalPlanChains = global.runtimePlan.plan;
 
-module.exports = function (config, logger, fp) {
+module.exports = function (config, logger) {
   //==============================================
   // SERVER
 
@@ -215,13 +216,13 @@ module.exports = function (config, logger, fp) {
       return value;
     }
 
-    res.send(JSON.stringify(fp.plan.chains,serializer(excluderGetChain)));
+    res.send(JSON.stringify(globalPlanChains.chains,serializer(excluderGetChain)));
   });
 
   // GET A CHAIN
   router.get('/chain/:chainId', function (req, res) {
     var chainId = req.params.chainId;
-    var chain = fp.plan.getChainById(chainId);
+    var chain = globalPlanChains.getChainById(chainId);
 
     let objectToResult = ['depends_chains','args','events','output','chain_values','schedule_interval','scheduleCancel','scheduleRepeater','parentUId','exec','depends_process','retries','retry_delay','end_on_fail','end_chain_on_fail'];
     function excluderGetChain(key, value) {
@@ -241,7 +242,7 @@ module.exports = function (config, logger, fp) {
   // GET A CHAIN
   router.post('/chain/forceStart/:chainId', function (req, res) {
     var chainId = req.params.chainId;
-    var chain = fp.plan.getChainById(chainId);
+    var chain = globalPlanChains.getChainById(chainId);
 
     if (chain) {
       var inputIterableValues;
@@ -270,13 +271,13 @@ module.exports = function (config, logger, fp) {
           var dummy_process = {};
           dummy_process.uId = vProcUId;
           dummy_process.childs_chains = [];
-          fp.plan.scheduleChain(chain, dummy_process, true, inputIterableValues, customValues);
+          globalPlanChains.scheduleChain(chain, dummy_process, true, inputIterableValues, customValues);
           res.json(`Chain iterable: "${chain.id}" starting.`);
 
         });
 
       } else {
-        fp.plan.scheduleChain(chain, undefined, true, undefined, customValues);
+        globalPlanChains.scheduleChain(chain, undefined, true, undefined, customValues);
         res.json(`Chain ${chain.id}/${chain.uId} starting.`);
       }
     } else {
@@ -288,7 +289,7 @@ module.exports = function (config, logger, fp) {
   //GET ALL PROCESSES OF CHAIN INDICATED IN PARAMETER chainId
   router.get('/processes/:chainId', function (req, res) {
     var chainId = req.params.chainId;
-    var chain = fp.plan.getChainById(chainId);
+    var chain = globalPlanChains.getChainById(chainId);
 
     if (chain) {
       res.json(chain.processes);
@@ -305,7 +306,7 @@ module.exports = function (config, logger, fp) {
 
     logger.log('info', `Kill chain "${chainId}" by ${req.user}`);
 
-    var chain = fp.plan.getChainById(chainId);
+    var chain = globalPlanChains.getChainById(chainId);
 
     if (chain) {
       chain.stop();
@@ -321,7 +322,7 @@ module.exports = function (config, logger, fp) {
   router.get('/process/:chainId/:processId', function (req, res) {
     var chainId = req.params.chainId;
     var processId = req.params.processId;
-    var chain = fp.plan.getChainById(chainId);
+    var chain = globalPlanChains.getChainById(chainId);
 
     if (chain) {
       var process = chain.getProcessById(processId);
@@ -345,7 +346,7 @@ module.exports = function (config, logger, fp) {
 
     logger.log('info', `Retrying process "${processId}" of chain "${chainId}" by ${req.user}`);
 
-    var chain = fp.plan.getChainById(chainId);
+    var chain = globalPlanChains.getChainById(chainId);
 
     if (chain) {
       var process = chain.getProcessById(processId);
@@ -378,7 +379,7 @@ module.exports = function (config, logger, fp) {
 
     logger.log('info', `Set end process "${processId}" of chain "${chainId}" by ${req.user}`);
 
-    var chain = fp.plan.getChainById(chainId);
+    var chain = globalPlanChains.getChainById(chainId);
 
     if (chain) {
       var process = chain.getProcessById(processId);
@@ -417,7 +418,7 @@ module.exports = function (config, logger, fp) {
 
     logger.log('info', `Kill process "${processId}" of chain "${chainId}" by ${req.user}`);
 
-    var chain = fp.plan.getChainById(chainId);
+    var chain = globalPlanChains.getChainById(chainId);
 
     if (chain) {
       var process = chain.getProcessById(processId);
@@ -446,9 +447,9 @@ module.exports = function (config, logger, fp) {
     var chainId = req.body.chainId;
     var planFile = req.body.planFile || config.planFilePath;
 
-    fp.loadFileContent(planFile)
+    globalPlanChains.loadFileContent(planFile)
       .then((fileRes) => {
-        fp.getChains(fileRes)
+        globalPlanChains.getChains(fileRes)
           .then((fileChains) => {
 
             var newChain = fileChains.find(function byId(chain) {
@@ -456,19 +457,17 @@ module.exports = function (config, logger, fp) {
             });
 
             if (newChain) {
-              fp.plan.loadChain(newChain)
+              globalPlanChains.loadChain(newChain)
                 .then(function (newChainObj) {
-                  console.log('>> CREADA CADENA:', newChainObj.id, newChainObj.uId, newChainObj.parentUId);
                   res.json();
-                  fp.plan.loadChainToPlan(newChainObj);
+                  globalPlanChains.loadChainToPlan(newChainObj);
                   // Force refresh binBackup
-                  fp.refreshBinBackup();
+                  globalPlanChains.refreshBinBackup();
                 })
                 .catch(function (err) {
                   res.status(500).send(`Error loading "${chainId}":` + err);
                   logger.log('error', 'FilePlan new Plan: ' + err);
-                })
-
+                });
             } else {
               res.status(404).send(`Chain "${chainId}" not found in file`);
             }
@@ -487,11 +486,11 @@ module.exports = function (config, logger, fp) {
   // REMOVE CHAIN
   router.post('/chain/remove', function (req, res) {
     var chainId = req.body.chainId;
-    var chain = fp.plan.getChainById(chainId);
+    var chain = globalPlanChains.getChainById(chainId);
     if (chain) {
       if (!chain.isEnded() && !chain.isRunning()) {
         res.json();
-        fp.plan.chains.splice(fp.plan.getIndexChainById(chainId), 1);
+        globalPlanChains.chains.splice(globalPlanChains.getIndexChainById(chainId), 1);
       } else {
         res.status(423).send(`Is not posible remove chain "${chainId}" because is ${chain.status}`);
       }
