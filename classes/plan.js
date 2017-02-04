@@ -336,7 +336,7 @@ class Plan{
               }
 
             }else{
-              if(customValues){
+              if(customValues && Object.keys(customValues).length !== 0){
                 _this.loadChain(chain, undefined, customValues)
                   .then(function (_chain) {
                     _chain.start(undefined, executeInmediate)
