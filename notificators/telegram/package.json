@@ -3,6 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "node-telegram-bot-api": "^0.24.0"
+    "node-telegram-bot-api": "^0.26.0"
   }
 }
