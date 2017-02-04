@@ -29,18 +29,21 @@ function sendMail(mail, callback) {
   var htmlTemplate = path.resolve(templateDir, 'html.html');
   var txtTemplate = path.resolve(templateDir, 'text.txt');
 
-  var attachments = [];
-  var attachmentsLength = mail.attachments.length;
 
-  while (attachmentsLength--) {
-    var keys = Object.keys(mail.attachments[attachmentsLength]);
-    var keysLength = keys.length;
-    var attAux = {};
-    if (keysLength > 0) {
-      while (keysLength--) {
-        attAux[keys[keysLength]] = mail.replaceWith(mail.attachments[attachmentsLength][keys[keysLength]], mail.params);
+  if(mail.attachments && mail.attachments.length > 0){
+    var attachments = [];
+    var attachmentsLength = mail.attachments.length;
+
+    while (attachmentsLength--) {
+      var keys = Object.keys(mail.attachments[attachmentsLength]);
+      var keysLength = keys.length;
+      var attAux = {};
+      if (keysLength > 0) {
+        while (keysLength--) {
+          attAux[keys[keysLength]] = mail.replaceWith(mail.attachments[attachmentsLength][keys[keysLength]], mail.params);
+        }
+        attachments.push(attAux);
       }
-      attachments.push(attAux);
     }
   }
 
@@ -113,45 +116,49 @@ class mailNotificator extends Notification {
 
     _this.params = values;
 
-    for (var i = 0, len = _this.recipients.length; i < len; i++) {
-      if (i) {
-        _this.to = _this.to + _this.recipients[i] + ((i < len - 1) ? ', ' : '');
-      }
-      else {
-        _this.to = _this.recipients[i] + ((i < len - 1) ? ', ' : '');
-      }
-    }
-
-    if (_this.recipients_cc) {
-      for (var i = 0, len = _this.recipients_cc.length; i < len; i++) {
+    if(_this.recipients){
+      for (var i = 0, len = _this.recipients.length; i < len; i++) {
         if (i) {
-          _this.cc = _this.cc + _this.recipients_cc[i] + ((i < len - 1) ? ', ' : '');
+          _this.to = _this.to + _this.recipients[i] + ((i < len - 1) ? ', ' : '');
         }
         else {
-          _this.cc = _this.recipients_cc[i] + ((i < len - 1) ? ', ' : '');
+          _this.to = _this.recipients[i] + ((i < len - 1) ? ', ' : '');
         }
       }
+
+      if (_this.recipients_cc) {
+        for (var i = 0, len = _this.recipients_cc.length; i < len; i++) {
+          if (i) {
+            _this.cc = _this.cc + _this.recipients_cc[i] + ((i < len - 1) ? ', ' : '');
+          }
+          else {
+            _this.cc = _this.recipients_cc[i] + ((i < len - 1) ? ', ' : '');
+          }
+        }
+      }
+
+      if (_this.recipients_cco) {
+        for (var i = 0, len = _this.recipients_cco.length; i < len; i++) {
+          if (i) {
+            _this.bcc = _this.bcc + _this.recipients_cco[i] + ((i < len - 1) ? ', ' : '');
+          }
+          else {
+            _this.bcc = _this.recipients_cco[i] + ((i < len - 1) ? ', ' : '');
+          }
+        }
+      }
+
+      _this.params.subject = _this.replaceWith(_this.title, values);
+      _this.params.message = _this.replaceWith(_this.message, values);
+
+      sendMail(_this, function (err, res) {
+        if (err) {
+          _this.logger.log('error', 'Error sending mail:', err);
+        }
+      });
+    }else{
+      _this.logger.log('error', 'Mail notificator, recipients is not set.');
     }
-
-    if (_this.recipients_cco) {
-      for (var i = 0, len = _this.recipients_cco.length; i < len; i++) {
-        if (i) {
-          _this.bcc = _this.bcc + _this.recipients_cco[i] + ((i < len - 1) ? ', ' : '');
-        }
-        else {
-          _this.bcc = _this.recipients_cco[i] + ((i < len - 1) ? ', ' : '');
-        }
-      }
-    }
-
-    _this.params.subject = _this.replaceWith(_this.title, values);
-    _this.params.message = _this.replaceWith(_this.message, values);
-
-    sendMail(_this, function (err, res) {
-      if (err) {
-        _this.logger.log('error', 'Error sending mail:', err);
-      }
-    });
   }
 }
 

@@ -11,7 +11,8 @@
           "from":{"type":"string"},
           "transport":{"type":"string"},
           "templateDir":{"type":"string"},
-          "template":{"type":"string"}
+          "template":{"type":"string"},
+          "recipients": {"type": "array"}
       }
     },
     "params":
@@ -21,7 +22,20 @@
         "id": {"type": "string"},
         "title": {"type": "string"},
         "recipients": {"type": "array"},
-        "attachments": {"type": "array"},
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "filename": {"type": "string"},
+              "content": {"type": "string"},
+              "path": {"type": "string"},
+              "contentType": {"type": "string"},
+              "encoding": {"type": "string"},
+              "raw": {"type": "string"}
+            }
+          }
+        },
         "message":{"type":"string"}
       }
     }
