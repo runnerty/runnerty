@@ -500,7 +500,7 @@ class Process {
                 //executors[configValues.type].exec(_this)
                  new executors[configValues.type](_this)
                   .then((res) => {
-                    _this.exec.executor = res;
+                    _this.executor = res;
                     res.exec(_this)
                       .then((_res) => {
                         resolve(_res);

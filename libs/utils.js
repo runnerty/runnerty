@@ -316,6 +316,60 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
 
 module.exports.replaceWith = replaceWith;
 
+
+function replaceWithSmart(inputObject, objParams, ignoreGlobalValues) {
+  return new Promise(function (resolve, reject) {
+    if(typeof inputObject === "string"){
+      resolve(replaceWith(inputObject, objParams, ignoreGlobalValues));
+    }else{
+      if(inputObject instanceof Array){
+        var len = inputObject.length;
+        var promArr = [];
+        while(len--){
+          promArr.push(replaceWithSmart(inputObject[len], objParams, ignoreGlobalValues));
+        }
+        Promise.all(promArr).then(values => {
+          resolve(values);
+        });
+      }else{
+        if(inputObject instanceof Object){
+          var keys = Object.keys(inputObject);
+
+          function execSerie(keys) {
+            var sequence = Promise.resolve();
+            keys.forEach(function (key) {
+              sequence = sequence.then(function () {
+                return replaceWithSmart(inputObject[key], objParams, ignoreGlobalValues)
+                  .then(function (res) {
+                    inputObject[key] = res;
+                  })
+                  .catch(function (err) {
+                    logger.log('error', 'replaceWithSmart function execSerie . Error ', err);
+                  });
+              });
+            });
+            return sequence;
+          }
+
+          execSerie(keys)
+            .then(function () {
+              resolve(inputObject);
+            })
+            .catch(function (err) {
+              logger.log('error', 'replaceWithSmart execSerie. Error ', err);
+              resolve(inputObject);
+            });
+        }else{
+          resolve(inputObject);
+        }
+      }
+    }
+  });
+}
+
+module.exports.replaceWithSmart = replaceWithSmart;
+
+
 function addGlobalValuesToObjParams(objParams) {
 
   var gvl = global.config.global_values.length;
@@ -508,7 +562,6 @@ function requireDir(directory, filename) {
               }
             }
           }
-
         }
       }
       resolve(container);

@@ -1,6 +1,7 @@
 "use strict";
 
-var utilReplaceWith = require("../libs/utils.js").replaceWith;
+var replaceWithSmart = require("../libs/utils.js").replaceWithSmart;
+var replaceWith = require("../libs/utils.js").replaceWith;
 var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var requireDir = require("../libs/utils.js").requireDir;
 var logger = require("../libs/utils.js").logger;
@@ -19,7 +20,7 @@ class Execution {
       _this[params[paramsLength]] = process.exec[params[paramsLength]];
     }
 
-    _this.replaceWith = utilReplaceWith;
+    _this.replaceWith = replaceWith;
     _this.logger = logger;
 
     return new Promise((resolve) => {
@@ -92,31 +93,38 @@ class Execution {
   }
 
   getValues(process) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
       process.loadExecutorConfig()
         .then((configValues) => {
           var values = Object.assign(configValues, process.exec);
-          var res = {};
-          var keys = Object.keys(values);
-          var keysLength = keys.length;
-          while (keysLength--) {
-            res[keys[keysLength]] = utilReplaceWith(values[keys[keysLength]], process.values());
-          }
-          resolve(res);
+          replaceWithSmart(values, process.values())
+            .then(function(res){
+              resolve(res);
+            })
+            .catch(function(err){
+              logger.log('error', 'Method getValues:',err);
+              process.execute_err_return = 'Method getValues:' + err;
+              process.execute_return = '';
+              process.error();
+              resolve();
+            });
         });
     });
   }
 
   getParamValues(process) {
     return new Promise(function (resolve) {
-      var values = process.exec;
-      var res = {};
-      var keys = Object.keys(values);
-      var keysLength = keys.length;
-      while (keysLength--) {
-        res[keys[keysLength]] = utilReplaceWith(values[keys[keysLength]], process.values());
-      }
-      resolve(res);
+      replaceWithSmart(process.exec, process.values())
+        .then(function(res){
+          resolve(res);
+        })
+        .catch(function(err){
+          logger.log('error', 'Method getParamValues:',err);
+          process.execute_err_return = 'Method getParamValues:' + err;
+          process.execute_return = '';
+          process.error();
+          resolve();
+        });
     });
   }
 
@@ -124,14 +132,17 @@ class Execution {
     return new Promise(function (resolve) {
       process.loadExecutorConfig()
         .then((configValues) => {
-          var values = Object.assign(configValues);
-          var res = {};
-          var keys = Object.keys(values);
-          var keysLength = keys.length;
-          while (keysLength--) {
-            res[keys[keysLength]] = utilReplaceWith(values[keys[keysLength]], process.values());
-          }
-          resolve(res);
+          replaceWithSmart(configValues, process.values())
+            .then(function(res){
+              resolve(res);
+            })
+            .catch(function(err){
+              logger.log('error', 'Method getConfigValues:',err);
+              process.execute_err_return = 'Method getConfigValues:' + err;
+              process.execute_return = '';
+              process.error();
+              resolve();
+            });
         });
     });
   }

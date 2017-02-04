@@ -1,0 +1,8 @@
+{
+  "name": "runnerty-executor-mail",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "nodemailer": "^3.0.2"
+  }
+}
