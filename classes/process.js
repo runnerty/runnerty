@@ -101,6 +101,8 @@ class Process {
       "PROCESS_EXEC_ERR_RETURN": _this.execute_err_return,
       "PROCESS_STARTED_AT": _this.started_at,
       "PROCESS_ENDED_AT": _this.ended_at,
+      "PROCESS_DURATION_SECONDS": _this.duration_seconds,
+      "PROCESS_DURATION_HUMANIZED": _this.duration_humnized,
       "PROCESS_RETRIES_COUNT": _this.retries_count,
       "PROCESS_RETRIES": _this.retries,
       "PROCESS_DEPENDS_FILES_READY": _this.depends_files_ready,
