@@ -172,6 +172,9 @@ class Process {
                 logger.log('error', 'Process loadEvents: ', err);
                 resolve();
               });
+          }else{
+            // Process without events
+            resolve();
           }
         }
       } else {
