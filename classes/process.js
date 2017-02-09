@@ -174,11 +174,12 @@ class Process {
               });
           }else{
             // Process without events
+            logger.log('warn', 'Process, without events');
             resolve();
           }
         }
       } else {
-        logger.log('error', 'Process, events is not object');
+        logger.log('warn', 'Process, events is not object');
         resolve();
       }
     });
