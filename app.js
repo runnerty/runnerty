@@ -2,6 +2,7 @@
 var program = require('commander');
 var logger = require("./libs/utils.js").logger;
 var loadGeneralConfig = require("./libs/utils.js").loadGeneralConfig;
+var mongoose = require('mongoose');
 
 var FilePlan = require("./classes/file_plan.js");
 
@@ -40,6 +41,16 @@ loadGeneralConfig(configFilePath)
     }
     else {
       fileLoad = config.general.binBackup;
+    }
+
+    if(config.general.history && config.general.history.mongodb && (config.general.history.disable !== true)){
+      mongoose.connect(`mongodb://${config.general.history.mongodb.host}:${config.general.history.mongodb.port}/runnerty`);
+      mongoose.connection.on('error',function (err) {
+        logger.log('error', `Mongodb connection error ${err}`);
+      });
+      global.config.historyEnabled = true;
+    }else{
+      global.config.historyEnabled = false;
     }
 
     new FilePlan(fileLoad, config)

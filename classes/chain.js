@@ -7,6 +7,7 @@ var crypto = require('crypto');
 var getProcessByUId = require("../libs/utils.js").getProcessByUId;
 var checkEvaluation = require("../libs/utils.js").checkEvaluation;
 var chronometer = require("../libs/utils.js").chronometer;
+var mongoChain = require("../mongodb-models/chain.js");
 
 var Process = require("./process.js");
 var Event = require("./event.js");
@@ -257,7 +258,9 @@ class Chain {
     var chain_values = {
       "CHAIN_ID": _this.id,
       "CHAIN_NAME": _this.name,
-      "CHAIN_STARTED_AT": _this.started_at
+      "CHAIN_STARTED_AT": _this.started_at,
+      "CHAIN_DURATION_SECONDS": _this.duration_seconds,
+      "CHAIN_DURATION_HUMANIZED": _this.duration_humnized
     };
 
     var values = Object.assign(chain_values, _this.execute_input);
@@ -277,6 +280,36 @@ class Chain {
           }
         }
       }
+    }
+  }
+
+  historicize(event) {
+    var _this = this;
+
+    if (global.config.historyEnabled){
+      var mChain = new mongoChain
+      ({
+        id : _this.id,
+        uId : _this.uId,
+        parentUId : _this.parentUId,
+        event : event || _this.status,
+        name : _this.name,
+        iterable : _this.iterable,
+        input : _this.input,
+        custom_values : _this.custom_values,
+        start_date : _this.start_date,
+        end_date : _this.end_date,
+        duration_seconds : _this.duration_seconds,
+        schedule_interval : _this.schedule_interval,
+        depends_chains : _this.depends_chains,
+        depends_chains_alt : _this.depends_chains_alt
+      });
+
+      mChain.save(function(err, res) {
+        if (err){
+          logger.log('error', `Error historicize ${event} chain ${_this.id}`, err);
+        }
+      });
     }
   }
 
@@ -320,6 +353,7 @@ class Chain {
     _this.ended_at = new Date();
     _this.status = 'end';
     _this.notificate('on_end');
+    _this.historicize();
 
     _this.refreshParentProcessChildsChainsStatus();
   }
@@ -348,11 +382,13 @@ class Chain {
     this.hr_started_time = chronometer();
 
     this.notificate('on_start');
+    this.historicize('start');
   }
 
   error() {
     this.status = 'error';
     this.notificate('on_fail');
+    this.historicize();
   }
 
   //Start Chain
