@@ -67,7 +67,6 @@ loadGeneralConfig(configFilePath)
     logger.log('error', `Config file ${configFilePath}: `,err);
   });
 
-
 //==================================================================
 //
 process.on('uncaughtException', function (err) {
@@ -76,4 +75,10 @@ process.on('uncaughtException', function (err) {
 
 process.on('exit', function (err) {
   logger.log('warn', '--> [R]unnerty stopped.', err);
+});
+
+process.on('SIGINT', function() {
+  mongoose.connection.close(function () {
+    process.exit(0);
+  });
 });

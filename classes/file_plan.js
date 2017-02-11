@@ -11,6 +11,29 @@ var ajv = new Ajv({allErrors: true});
 
 var Plan = require("./plan.js");
 
+function serializer() {
+  var stack = [];
+  var keys = [];
+
+  return function(key, value) {
+    if (stack.length > 0) {
+      var thisPos = stack.indexOf(this);
+      ~thisPos ? stack.splice(thisPos + 1) : stack.push(this);
+      ~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key);
+      if (~stack.indexOf(value)){
+        if (stack[0] === value){
+          value = "[Circular ~]";
+        }
+        value = "[Circular ~." + keys.slice(0, stack.indexOf(value)).join(".") + "]";
+      }
+    }
+    else{
+      stack.push(value);
+    }
+    return value;
+  };
+}
+
 ajv.addFormat('cron', /^(((([\*]{1}){1})|((\*\/){0,1}(([0-9]{1}){1}|(([1-5]{1}){1}([0-9]{1}){1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([0-9]{1}){1}|(([1]{1}){1}([0-9]{1}){1}){1}|([2]{1}){1}([0-3]{1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([1-9]{1}){1}|(([1-2]{1}){1}([0-9]{1}){1}){1}|([3]{1}){1}([0-1]{1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([1-9]{1}){1}|(([1-2]{1}){1}([0-9]{1}){1}){1}|([3]{1}){1}([0-1]{1}){1}))|(jan|feb|mar|apr|may|jun|jul|aug|sep|okt|nov|dec)) ((([\*]{1}){1})|((\*\/){0,1}(([0-7]{1}){1}))|(sun|mon|tue|wed|thu|fri|sat)))$/);
 ajv.addSchema(planSchema, 'planSchema');
 ajv.addSchema(processSchema, 'processSchema');
@@ -190,21 +213,10 @@ class FilePlan {
     try {
       objStr = JSON.stringify(plan);
     } catch (err) {
-      if (err.message.indexOf('circular') !== -1) {
-        logger.log('warn', err);
-        logger.log('warn', 'Retrying stringify plan.');
-        try {
-          objStr = {};
-          plan = _this.plan;
-          objStr = JSON.stringify(plan);
-        } catch (err) {
-          if (err.message.indexOf('circular') !== -1) {
-            logger.log('error', err);
-            logger.log('error', plan);
-            throw err;
-          }
-        }
-      } else {
+      try {
+        objStr = JSON.stringify(plan, serializer());
+      } catch (err) {
+        logger.log('error', err);
         throw err;
       }
     }
