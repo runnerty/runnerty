@@ -150,7 +150,16 @@ class mailExecutor extends Execution {
 
               sendMail(mail, function (err, res) {
                 if (err) {
-                  _this.logger.log('error', 'Error sending mail:', err);
+                  _this.logger.log('error', `Error Mail sendMail ${err}`);
+                  process.execute_err_return = err;
+                  process.execute_return = '';
+                  process.error();
+                  reject(process);
+                }else{
+                  process.execute_err_return = '';
+                  process.execute_return = '';
+                  process.end();
+                  resolve();
                 }
               });
 
