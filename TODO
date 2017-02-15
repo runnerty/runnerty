@@ -8,6 +8,7 @@
 
 > Forzar una ejecución a una fecha dada (lo admite por defecto el modulo que usamos node-schedule)
 
+> Permiitir que se aborte runnerty si no se consigue conexión con MongoDB mediante parametro
 
 
 
