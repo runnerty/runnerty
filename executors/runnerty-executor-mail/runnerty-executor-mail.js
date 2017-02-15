@@ -148,11 +148,10 @@ class mailExecutor extends Execution {
               }
 
               var procesValues = process.values();
-
               mail.params.subject = _this.replaceWith(res.title, procesValues);
               mail.params.message = _this.replaceWith(res.message, procesValues);
 
-              mail.params.args    = procesValues.PROCESS_ARGS || {};
+              mail.params.args    = process.args || {};
 
               sendMail(mail, function (err, res) {
                 if (err) {
