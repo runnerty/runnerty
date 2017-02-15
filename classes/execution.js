@@ -92,6 +92,7 @@ class Execution {
     });
   }
 
+  // Return config and params values:
   getValues(process) {
     return new Promise(function (resolve) {
       process.loadExecutorConfig()

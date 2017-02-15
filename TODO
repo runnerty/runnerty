@@ -6,7 +6,7 @@
 > DESPLANIFICAR UNA EJECUCIÓN PLANIFICADA CONCRETA VIA API
 
 
-
+> Forzar una ejecución a una fecha dada (lo admite por defecto el modulo que usamos node-schedule)
 
 
 

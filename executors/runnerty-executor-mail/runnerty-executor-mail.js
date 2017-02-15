@@ -72,10 +72,11 @@ class mailExecutor extends Execution {
             text_data = res[0].text.toString();
           }
 
+          var processValues = process.values();
           var html = _this.replaceWith(html_data, mail.params);
-          html = _this.replaceWith(html, mail.params.args);
+          html = _this.replaceWith(html, processValues);
           var text = _this.replaceWith(text_data, mail.params);
-          text = _this.replaceWith(text, mail.params.args);
+          text = _this.replaceWith(text, processValues);
 
           var mailOptions = {
             from: mail.from,
@@ -110,7 +111,6 @@ class mailExecutor extends Execution {
     return new Promise(function (resolve, reject) {
       _this.getValues(process)
         .then((res) => {
-
           var mail = res;
           mail.params = {};
 
