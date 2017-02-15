@@ -1,8 +1,8 @@
 {
-  "name": "runnerty-shell",
+  "name": "runnerty-executor-redis",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "ps-tree": "^1.1.0"
+    "redis": "^2.6.5"
   }
 }

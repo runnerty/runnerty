@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "iconv",
+  "title": "runnerty-executor-iconv",
   "definitions": {
     "config":
       { "type": "object",
         "required": ["id","type"],
         "properties":{
           "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "iconv"},
+          "type": {"type": "string", "pattern": "runnerty-executor-iconv"},
           "decode_encoding": {"type": "string"},
           "encode_encoding": {"type": "string"},
           "file_input": {"type": "string"},

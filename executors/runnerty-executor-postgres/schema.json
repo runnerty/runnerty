@@ -1,16 +1,17 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "redis",
+  "title": "runnerty-executor-postgres",
   "definitions": {
     "config":
       { "type": "object",
-        "required": ["id","type","password","host"],
+        "required": ["id","type","user","password","database","host"],
         "properties":{
           "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "redis"},
+          "type": {"type": "string", "pattern": "runnerty-executor-postgres"},
+          "user": {"type": "string"},
           "password": {"type": "string"},
           "crypted_password": {"type": "string"},
-          "options": {"type": "object"},
+          "database": {"type": "string"},
           "host": {"type": "string"},
           "port": {"type": "string"}
       }

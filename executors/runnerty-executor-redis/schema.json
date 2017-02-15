@@ -1,16 +1,16 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "mysql",
+  "title": "runnerty-executor-redis",
   "definitions": {
     "config":
       { "type": "object",
+        "required": ["id","type","password","host"],
         "properties":{
           "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "mysql"},
-          "user": {"type": "string"},
+          "type": {"type": "string", "pattern": "runnerty-executor-redis"},
           "password": {"type": "string"},
           "crypted_password": {"type": "string"},
-          "database": {"type": "string"},
+          "options": {"type": "object"},
           "host": {"type": "string"},
           "port": {"type": "string"}
       }

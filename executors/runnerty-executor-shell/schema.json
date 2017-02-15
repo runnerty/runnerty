@@ -1,22 +1,21 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "wait",
+  "title": "runnerty-executor-shell",
   "definitions": {
     "config":
       { "type": "object",
         "required": ["id","type"],
         "properties":{
           "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "wait"},
-          "seconds": {"type": ["string","number"]}
+          "type": {"type": "string", "pattern": "runnerty-executor-shell"}
       }
     },
     "params":
     { "type": "object",
-      "required": ["id"],
+      "required": ["id","command"],
       "properties":{
         "id": {"type": "string"},
-        "seconds": {"type": ["string","number"]}
+        "command": {"type": "string"}
       }
     }
   }

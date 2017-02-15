@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "scp",
+  "title": "runnerty-executor-scp",
   "definitions": {
     "config":
       { "type": "object",
         "required": ["id","type"],
         "properties":{
           "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "scp"},
+          "type": {"type": "string", "pattern": "runnerty-executor-scp"},
           "identityFile": {"type": "string"},
           "remoteUser": {"type": "string"},
           "remoteHost": {"type": "string"}

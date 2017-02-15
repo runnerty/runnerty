@@ -1,7 +1,8 @@
 {
-  "name": "runnerty-wait",
+  "name": "runnerty-executor-shell",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
+    "ps-tree": "^1.1.0"
   }
 }

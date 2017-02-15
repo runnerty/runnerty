@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "s3",
+  "title": "runnerty-executor-s3",
   "definitions": {
     "config":
       { "type": "object",
         "required": ["id","type","apiVersion","accessKeyId","secretAccessKey","bucket","method","region"],
         "properties":{
           "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "s3"},
+          "type": {"type": "string", "pattern": "runnerty-executor-s3"},
           "apiVersion": {"type": "string"},
           "accessKeyId": {"type": "string"},
           "secretAccessKey": {"type": "string"},

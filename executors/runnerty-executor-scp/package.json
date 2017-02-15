@@ -1,8 +1,7 @@
 {
-  "name": "runnerty-iconv",
+  "name": "runnerty-executor-scp",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "iconv-lite": "^0.4.15"
   }
 }

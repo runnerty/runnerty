@@ -1,5 +1,5 @@
 {
-  "name": "runnerty-scp",
+  "name": "runnerty-executor-wait",
   "version": "0.0.0",
   "private": true,
   "dependencies": {

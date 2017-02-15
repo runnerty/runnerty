@@ -1,8 +1,8 @@
 {
-  "name": "runnerty-postgres",
+  "name": "runnerty-executor-iconv",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "pg": "^6.1.2"
+    "iconv-lite": "^0.4.15"
   }
 }

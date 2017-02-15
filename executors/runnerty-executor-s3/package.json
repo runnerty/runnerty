@@ -1,8 +1,8 @@
 {
-  "name": "runnerty-redis",
+  "name": "runnerty-executor-s3",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "redis": "^2.6.5"
+    "aws-sdk": "^2.9.0"
   }
 }

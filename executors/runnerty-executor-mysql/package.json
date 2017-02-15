@@ -1,8 +1,8 @@
 {
-  "name": "runnerty-s3",
+  "name": "runnerty-executor-mysql",
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "aws-sdk": "^2.9.0"
+    "mysql": "^2.13.0"
   }
 }
