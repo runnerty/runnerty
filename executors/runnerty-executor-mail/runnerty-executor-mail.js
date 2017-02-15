@@ -73,7 +73,9 @@ class mailExecutor extends Execution {
           }
 
           var html = _this.replaceWith(html_data, mail.params);
+          html = _this.replaceWith(html, mail.params.args);
           var text = _this.replaceWith(text_data, mail.params);
+          text = _this.replaceWith(text, mail.params.args);
 
           var mailOptions = {
             from: mail.from,
@@ -145,8 +147,12 @@ class mailExecutor extends Execution {
                 }
               }
 
-              mail.params.subject = _this.replaceWith(res.title, process.values());
-              mail.params.message = _this.replaceWith(res.message, process.values());
+              var procesValues = process.values();
+
+              mail.params.subject = _this.replaceWith(res.title, procesValues);
+              mail.params.message = _this.replaceWith(res.message, procesValues);
+
+              mail.params.args    = procesValues.PROCESS_ARGS || {};
 
               sendMail(mail, function (err, res) {
                 if (err) {
