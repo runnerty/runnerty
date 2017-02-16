@@ -2,7 +2,6 @@
 
 var replaceWithSmart = require("../libs/utils.js").replaceWithSmart;
 var replaceWith = require("../libs/utils.js").replaceWith;
-var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var requireDir = require("../libs/utils.js").requireDir;
 var logger = require("../libs/utils.js").logger;
 var Ajv = require('ajv');
@@ -24,7 +23,7 @@ class Execution {
     _this.logger = logger;
 
     return new Promise((resolve) => {
-      loadConfigSection(global.config, 'executors', _this.id)
+      process.loadExecutorConfig()
         .then((configValues) => {
           if (!_this.type && configValues.type) {
             _this.type = configValues.type;
@@ -84,8 +83,8 @@ class Execution {
 
   kill(process) {
     return new Promise(function (resolve) {
-      logger.log('error', 'Method kill (execution) must be rewrite in child class');
-      process.execute_err_return = `Method kill (execution) must be rewrite in child class`;
+      logger.log('error', 'Execution - Method kill must be rewrite in child class');
+      process.execute_err_return = `Execution - Method kill must be rewrite in child class`;
       process.execute_return = '';
       process.stop();
       resolve();
@@ -103,8 +102,8 @@ class Execution {
               resolve(res);
             })
             .catch(function(err){
-              logger.log('error', 'Method getValues:',err);
-              process.execute_err_return = 'Method getValues:' + err;
+              logger.log('error', 'Execution - Method getValues:',err);
+              process.execute_err_return = 'Execution - Method getValues:' + err;
               process.execute_return = '';
               process.error();
               resolve();
@@ -120,8 +119,8 @@ class Execution {
           resolve(res);
         })
         .catch(function(err){
-          logger.log('error', 'Method getParamValues:',err);
-          process.execute_err_return = 'Method getParamValues:' + err;
+          logger.log('error', 'Execution - Method getParamValues:',err);
+          process.execute_err_return = 'Execution - Method getParamValues:' + err;
           process.execute_return = '';
           process.error();
           resolve();
@@ -138,8 +137,8 @@ class Execution {
               resolve(res);
             })
             .catch(function(err){
-              logger.log('error', 'Method getConfigValues:',err);
-              process.execute_err_return = 'Method getConfigValues:' + err;
+              logger.log('error', 'Execution - Method getConfigValues:',err);
+              process.execute_err_return = 'Execution - Method getConfigValues:' + err;
               process.execute_return = '';
               process.error();
               resolve();
