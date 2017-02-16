@@ -125,6 +125,7 @@ class mysqlExecutor extends Execution {
               loadSQLFile(res.command_file)
                 .then((fileContent) => {
                   process.exec.command = fileContent;
+                  res.command = fileContent;
                   executeQuery(process, res)
                     .then((res) => {
                       process.execute_return = '';
