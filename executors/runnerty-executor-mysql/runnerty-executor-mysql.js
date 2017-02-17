@@ -49,13 +49,17 @@ class mysqlExecutor extends Execution {
 
         var connection = mysql.createConnection({
           host: values.host,
+          socketPath: values.socketPath,
+          port: values.port,
+          ssl: values.ssl,
           user: values.user,
           password: values.password,
           database: values.database,
-          socketPath: values.socketPath,
-          port: values.port || "3306",
-          ssl: values.ssl,
-          multipleStatements: true,
+          multipleStatements: values.multipleStatements || true,
+          charset: values.charset,
+          timezone: values.timezone,
+          insecureAuth: values.insecureAuth,
+          debug: values.debug,
           queryFormat: customQueryFormat
         });
 

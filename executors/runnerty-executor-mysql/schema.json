@@ -12,7 +12,15 @@
           "crypted_password": {"type": "string"},
           "database": {"type": "string"},
           "host": {"type": "string"},
-          "port": {"type": "string"}
+          "port": {"type": "string"},
+          "socketPath": {"type": "string"},
+          "charset": {"type": "string"},
+          "timezone": {"type": "string"},
+          "insecureAuth": {"type": "boolean"},
+          "debug": {"type": "boolean"},
+          "flags": {"type": "string"},
+          "multipleStatements": {"type": "boolean"},
+          "ssl": {"type": "object"}
       }
     },
     "params":
