@@ -1,6 +1,8 @@
 "use strict";
 
 var nodemailer = require('nodemailer');
+var ejs = require('ejs');
+
 var path = require('path');
 var fs = require('fs');
 
@@ -77,6 +79,9 @@ class mailExecutor extends Execution {
           html = _this.replaceWith(html, processValues);
           var text = _this.replaceWith(text_data, mail.params);
           text = _this.replaceWith(text, processValues);
+
+          ejs.render(html);
+          ejs.render(text);
 
           var mailOptions = {
             from: mail.from,
