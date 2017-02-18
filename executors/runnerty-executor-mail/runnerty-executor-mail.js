@@ -80,8 +80,10 @@ class mailExecutor extends Execution {
           var text = _this.replaceWith(text_data, mail.params);
           text = _this.replaceWith(text, processValues);
 
-          ejs.render(html);
-          ejs.render(text);
+          if(mail.ejsRender){
+            html = ejs.render(html);
+            text = ejs.render(text);
+          }
 
           var mailOptions = {
             from: mail.from,

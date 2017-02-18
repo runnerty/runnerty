@@ -12,7 +12,8 @@
           "transport":{"type":"string"},
           "templateDir":{"type":"string"},
           "template":{"type":"string"},
-          "recipients": {"type": "array"}
+          "recipients": {"type": "array"},
+          "ejsRender": {"type": "boolean"}
       }
     },
     "params":
