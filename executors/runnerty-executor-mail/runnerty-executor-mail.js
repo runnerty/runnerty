@@ -88,6 +88,8 @@ class mailExecutor extends Execution {
           var mailOptions = {
             from: mail.from,
             to: mail.to,
+            cc: mail.cc,
+            bcc: mail.bcc,
             subject: mail.params.subject,
             text: text,
             html: html,
