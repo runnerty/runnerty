@@ -121,35 +121,35 @@ class mailExecutor extends Execution {
           var mail = res;
           mail.params = {};
 
-            if(res.recipients){
+            if(res.to){
 
-              for (var i = 0, len = res.recipients.length; i < len; i++) {
+              for (var i = 0, len = res.to.length; i < len; i++) {
                 if (i) {
-                  mail.to = mail.to + res.recipients[i] + ((i < len - 1) ? ', ' : '');
+                  mail.to = mail.to + res.to[i] + ((i < len - 1) ? ', ' : '');
                 }
                 else {
-                  mail.to = res.recipients[i] + ((i < len - 1) ? ', ' : '');
+                  mail.to = res.to[i] + ((i < len - 1) ? ', ' : '');
                 }
               }
 
-              if (res.recipients_cc) {
-                for (var i = 0, len = res.recipients_cc.length; i < len; i++) {
+              if (res.cc) {
+                for (var i = 0, len = res.cc.length; i < len; i++) {
                   if (i) {
-                    mail.cc = mail.cc + res.recipients_cc[i] + ((i < len - 1) ? ', ' : '');
+                    mail.cc = mail.cc + res.cc[i] + ((i < len - 1) ? ', ' : '');
                   }
                   else {
-                    mail.cc = res.recipients_cc[i] + ((i < len - 1) ? ', ' : '');
+                    mail.cc = res.cc[i] + ((i < len - 1) ? ', ' : '');
                   }
                 }
               }
 
-              if (res.recipients_cco) {
-                for (var i = 0, len = res.recipients_cco.length; i < len; i++) {
+              if (res.bcc) {
+                for (var i = 0, len = res.bcc.length; i < len; i++) {
                   if (i) {
-                    mail.bcc = mail.bcc + res.recipients_cco[i] + ((i < len - 1) ? ', ' : '');
+                    mail.bcc = mail.bcc + res.bcc[i] + ((i < len - 1) ? ', ' : '');
                   }
                   else {
-                    mail.bcc = res.recipients_cco[i] + ((i < len - 1) ? ', ' : '');
+                    mail.bcc = res.bcc[i] + ((i < len - 1) ? ', ' : '');
                   }
                 }
               }

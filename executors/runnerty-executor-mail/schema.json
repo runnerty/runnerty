@@ -12,7 +12,9 @@
           "transport":{"type":"string"},
           "templateDir":{"type":"string"},
           "template":{"type":"string"},
-          "recipients": {"type": "array"},
+          "to": {"type": "array"},
+          "cc": {"type": "array"},
+          "bcc": {"type": "array"},
           "ejsRender": {"type": "boolean"}
       }
     },
@@ -22,7 +24,9 @@
       "properties":{
         "id": {"type": "string"},
         "title": {"type": "string"},
-        "recipients": {"type": "array"},
+        "to": {"type": "array"},
+        "cc": {"type": "array"},
+        "bcc": {"type": "array"},
         "attachments": {
           "type": "array",
           "items": {
