@@ -12,31 +12,7 @@ class redisExecutor extends Execution {
   exec(process) {
     var _this = this;
 
-    function customQueryFormat(query, values) {
-      if (!values) {
-        return query.replace(/(:\/)/ig, ':');
-      }
-      else {
-        //FIRST TURN
-        var _query = query.replace(/:(\w+)/ig, function (txt, key) {
-          return values && key && values.hasOwnProperty(key)
-            ? _this.replaceWith(values[key], process.values())
-            : null;
-        }.bind(this)).replace(/(:\/)/ig, ':');
-
-        //SECOND TURN
-        _query = _query.replace(/:(\w+)/ig,
-          function (txt, key) {
-            return values && key && values.hasOwnProperty(key)
-              ? _this.replaceWith(values[key], process.values())
-              : null;
-          }.bind(this));
-
-        return _query;
-      }
-    }
-
-    function commandsFormat(commandsArr, args) {
+    function commandsFormat(commandsArr) {
       var commands = [];
 
       if ((commandsArr[0]) instanceof Array) {
@@ -55,7 +31,7 @@ class redisExecutor extends Execution {
 
         for (var i = 0; i < cmdLength; i++) {
           var cmdItem = cmd[i];
-          var cmdItemFormat = customQueryFormat(cmdItem, args);
+          var cmdItemFormat = cmdItem;
           cmdFormat.push(cmdItemFormat);
         }
         result.push(cmdFormat);
@@ -67,45 +43,57 @@ class redisExecutor extends Execution {
     function executeCommand(process, configValues) {
       return new Promise(function (resolve, reject) {
 
-        process.execute_arg = process.getArgs();
+        process.getArgs()
+          .then((res) => {
+            process.execute_arg = res;
 
-        var redisClient = redis.createClient(configValues.port || "6379", configValues.host, configValues.options), multi;
-        redisClient.auth(configValues.password);
+            var options = {
+              altValueReplace: 'null'
+            };
 
-        redisClient.on("error", function (err) {
-          _this.logger.log('error', `Could not connect to Redis: ` + err);
-          reject(`Could not connect to Redis: ` + err);
-        });
+            var repValues = Object.assign(process.values(), process.execute_arg);
 
-        redisClient.on("ready", function () {
-          var commands = commandsFormat(process.exec.command, process.execute_arg);
-          process.command_executed = commands;
+            _this.replaceWithSmart(process.exec.command, repValues, options)
+              .then((res) => {
+                var _query = res;
+                var redisClient = redis.createClient(configValues.port || "6379", configValues.host, configValues.options), multi;
+                redisClient.auth(configValues.password);
 
-          try {
-            redisClient
-              .batch(commands)
-              .exec(function (err, replies) {
-                if (err) {
-                  _this.logger.log('error', `Error query Redis (${commands}): ` + err);
-                  reject(`Error query Redis (${commands}): ` + err);
-                } else {
-                  process.execute_db_results = replies;
-                  process.execute_db_results_csv = '';
-                  process.execute_db_fieldCount = '';
-                  process.execute_db_affectedRows = '';
-                  process.execute_db_changedRows = '';
-                  process.execute_db_insertId = '';
-                  process.execute_db_warningCount = '';
-                  process.execute_db_message = '';
-                  resolve();
-                }
+                redisClient.on("error", function (err) {
+                  _this.logger.log('error', `Could not connect to Redis: ` + err);
+                  reject(`Could not connect to Redis: ` + err);
+                });
+
+                redisClient.on("ready", function () {
+                  var commands = _query;
+                  process.command_executed = commandsFormat(commands);
+
+                  try {
+                    redisClient
+                      .batch(commands)
+                      .exec(function (err, replies) {
+                        if (err) {
+                          _this.logger.log('error', `Error query Redis (${commands}): ` + err);
+                          reject(`Error query Redis (${commands}): ` + err);
+                        } else {
+                          process.execute_db_results = replies;
+                          process.execute_db_results_csv = '';
+                          process.execute_db_fieldCount = '';
+                          process.execute_db_affectedRows = '';
+                          process.execute_db_changedRows = '';
+                          process.execute_db_insertId = '';
+                          process.execute_db_warningCount = '';
+                          process.execute_db_message = '';
+                          resolve();
+                        }
+                      });
+                  } catch (err) {
+                    _this.logger.log('error', `Error query Redis, check commands: ` + commands, err);
+                    reject(`Error query Redis, check commands: ` + commands, err);
+                  }
+                });
               });
-          } catch (err) {
-            _this.logger.log('error', `Error query Redis, check commands: ` + commands, err);
-            reject(`Error query Redis, check commands: ` + commands, err);
-          }
-        });
-
+          });
       });
     }
 

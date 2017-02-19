@@ -2,7 +2,7 @@
 
 var logger = require("../libs/utils.js").logger;
 var loadConfigSection = require("../libs/utils.js").loadConfigSection;
-var replaceWith = require("../libs/utils.js").replaceWith;
+var replaceWithSmart = require("../libs/utils.js").replaceWithSmart;
 var getChainByUId = require("../libs/utils.js").getChainByUId;
 var requireDir = require("../libs/utils.js").requireDir;
 var chronometer = require("../libs/utils.js").chronometer;
@@ -195,43 +195,12 @@ class Process {
 
   getArgs() {
     var _this = this;
-
-    function repArg(arg) {
-      if (arg instanceof String) {
-        return replaceWith(arg, _this.values());
-      } else {
-        return arg;
-      }
-    }
-
-    //Value list: ["value0","value1",":YYYY"]
-    if (_this.args instanceof Array) {
-      return _this.args.map(repArg);
-    } else {
-      // Key/Value: {"key0":"value0", "key1","value1","key3":":YYYY"}
-      var rArgs = {};
-      if (_this.args instanceof Object) {
-        var keys = Object.keys(_this.args);
-        var keysLength = keys.length;
-
-        while (keysLength--) {
-          if (_this.args[keys[keysLength]] instanceof String) {
-            rArgs[keys[keysLength]] = replaceWith(_this.args[keys[keysLength]], _this.values());
-          } else {
-            if (_this.args[keys[keysLength]] instanceof Array) {
-              rArgs[keys[keysLength]] = _this.args[keys[keysLength]].map(repArg);
-            } else {
-              rArgs[keys[keysLength]] = _this.args[keys[keysLength]];
-            }
-          }
-        }
-        return rArgs;
-
-      } else {
-        return _this.args;
-      }
-    }
-
+    return new Promise(function (resolve) {
+      replaceWithSmart(_this.args, _this.values)
+        .then((res) => {
+          resolve(res);
+        });
+    });
   }
 
   notificate(event) {
@@ -493,19 +462,20 @@ class Process {
 
     if (_this.hasOwnProperty('output_share') && _this.output_share) {
 
-      _this.output_share.forEach(function (gVar) {
-        var values = _this.values();
-        var oh = {};
+      var options = {
+        ignoreGlobalValues: false,
+        keysUpperCase: false
+      };
 
-        var key = replaceWith(gVar.key, values).toUpperCase();
-        var name = replaceWith(gVar.name, values).toUpperCase();
-        var value = replaceWith(gVar.value, values);
-
-        oh[key] = {};
-        oh[key][name] = value;
-
-        global.config.global_values.push(oh);
-      });
+      replaceWithSmart(_this.output_share, _this.values(), options)
+        .then((res) => {
+          res.forEach(function (valOS) {
+            var _valOS = {};
+            _valOS[valOS.key.toUpperCase()] = {};
+            _valOS[valOS.key.toUpperCase()][valOS.name.toUpperCase()] = valOS.value;
+            global.config.global_values.push(_valOS);
+          });
+        });
     }
   }
 
@@ -612,10 +582,6 @@ class Process {
   write_output() {
     var _this = this;
 
-    function repArg(arg) {
-      return replaceWith(arg, _this.values());
-    }
-
     function writeFile(filePath, mode, os) {
 
       var dirname = path.dirname(filePath);
@@ -643,69 +609,72 @@ class Process {
 
     function generateOutput(output) {
 
-      if (output && output.file_name && output.write.length > 0) {
+      replaceWithSmart(output, _this.values())
+        .then((_output) => {
+          if (_output && _output.file_name && _output.write.length > 0) {
 
-        var filePath = replaceWith(output.file_name, _this.values());
-        var output_stream = output.write.map(repArg).filter(Boolean).join("\n");
+            var filePath = _output.file_name;
+            var output_stream = _output.write.filter(Boolean).join("\n");
 
-        if (output.maxsize) {
-          var maxSizeBytes = bytes(output.maxsize);
-          var output_stream_length = output_stream.length;
+            if (_output.maxsize) {
+              var maxSizeBytes = bytes(_output.maxsize);
+              var output_stream_length = output_stream.length;
 
-          if (output_stream_length > maxSizeBytes) {
-            output_stream = output_stream.slice(output_stream_length - maxSizeBytes, output_stream_length);
-            output_stream_length = maxSizeBytes;
-            logger.log('debug', `output_stream truncated output_stream_length (${output_stream_length}) > maxSizeBytes (${maxSizeBytes})`);
-          }
-        }
-
-        if (output.concat) {
-          if (output.maxsize) {
-            fs.stat(filePath, function (error, stats) {
-
-              var fileSizeInBytes = 0;
-              if (!error) {
-                fileSizeInBytes = stats.size;
+              if (output_stream_length > maxSizeBytes) {
+                output_stream = output_stream.slice(output_stream_length - maxSizeBytes, output_stream_length);
+                output_stream_length = maxSizeBytes;
+                logger.log('debug', `output_stream truncated output_stream_length (${output_stream_length}) > maxSizeBytes (${maxSizeBytes})`);
               }
-              //SI LA SUMA DEL TAMAÑO DEL FICHERO Y EL OUTPUT A ESCRIBIR DEL PROCESO SUPERAN EL MAXIMO PERMITIDO
-              var totalSizeToWrite = fileSizeInBytes + output_stream_length;
+            }
 
-              if (totalSizeToWrite > maxSizeBytes) {
-                //SE OBTIENE LA PARTE DEL FICHERO QUE JUNTO CON EL OUTPUT SUMAN EL TOTAL PERMITIDO PARA ESCRIBIRLO (SUSTIUYENDO EL FICHERO)
-                var positionFileRead = (totalSizeToWrite) - maxSizeBytes;
-                var lengthFileRead = (fileSizeInBytes) - positionFileRead;
+            if (_output.concat) {
+              if (_output.maxsize) {
+                fs.stat(filePath, function (error, stats) {
 
-                fs.open(filePath, 'r', function (error, fd) {
-                  if (lengthFileRead > 0) {
-                    var buffer = new Buffer(lengthFileRead);
+                  var fileSizeInBytes = 0;
+                  if (!error) {
+                    fileSizeInBytes = stats.size;
+                  }
+                  //SI LA SUMA DEL TAMAÑO DEL FICHERO Y EL OUTPUT A ESCRIBIR DEL PROCESO SUPERAN EL MAXIMO PERMITIDO
+                  var totalSizeToWrite = fileSizeInBytes + output_stream_length;
 
-                    fs.read(fd, buffer, 0, buffer.length, positionFileRead, function (error, bytesRead, buffer) {
-                      var data = buffer.toString("utf8", 0, buffer.length);
-                      data = data.concat("\n", output_stream);
-                      fs.close(fd, function (err) {
-                        if (err) {
-                          logger.log('error', `Closing file ${filePath} in ${_this.id}: `, err);
-                        }
-                        writeFile(filePath, 'w', data);
-                      });
+                  if (totalSizeToWrite > maxSizeBytes) {
+                    //SE OBTIENE LA PARTE DEL FICHERO QUE JUNTO CON EL OUTPUT SUMAN EL TOTAL PERMITIDO PARA ESCRIBIRLO (SUSTIUYENDO EL FICHERO)
+                    var positionFileRead = (totalSizeToWrite) - maxSizeBytes;
+                    var lengthFileRead = (fileSizeInBytes) - positionFileRead;
+
+                    fs.open(filePath, 'r', function (error, fd) {
+                      if (lengthFileRead > 0) {
+                        var buffer = new Buffer(lengthFileRead);
+
+                        fs.read(fd, buffer, 0, buffer.length, positionFileRead, function (error, bytesRead, buffer) {
+                          var data = buffer.toString("utf8", 0, buffer.length);
+                          data = data.concat("\n", output_stream);
+                          fs.close(fd, function (err) {
+                            if (err) {
+                              logger.log('error', `Closing file ${filePath} in ${_this.id}: `, err);
+                            }
+                            writeFile(filePath, 'w', data);
+                          });
+                        });
+                      } else {
+                        //SI NO SE VA A ESCRIBIR NADA DEL FICHERO ACTUAL
+                        writeFile(filePath, 'w', output_stream);
+                      }
                     });
                   } else {
-                    //SI NO SE VA A ESCRIBIR NADA DEL FICHERO ACTUAL
-                    writeFile(filePath, 'w', output_stream);
+                    writeFile(filePath, 'a+', output_stream);
                   }
                 });
               } else {
                 writeFile(filePath, 'a+', output_stream);
               }
-            });
-          } else {
-            writeFile(filePath, 'a+', output_stream);
-          }
 
-        } else {
-          writeFile(filePath, 'w+', output_stream);
-        }
-      }
+            } else {
+              writeFile(filePath, 'w+', output_stream);
+            }
+          }
+        });
     }
 
     if (_this.output instanceof Array) {

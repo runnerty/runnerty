@@ -70,6 +70,8 @@ function sendMail(mail, callback) {
       var mailOptions = {
         from: mail.from,
         to: mail.to,
+        cc: mail.cc,
+        bcc: mail.bcc,
         subject: mail.params.subject,
         text: text,
         html: html,
@@ -116,34 +118,34 @@ class mailNotificator extends Notification {
 
     _this.params = values;
 
-    if(_this.recipients){
-      for (var i = 0, len = _this.recipients.length; i < len; i++) {
+    if(_this.to){
+      for (var i = 0, len = _this.to.length; i < len; i++) {
         if (i) {
-          _this.to = _this.to + _this.recipients[i] + ((i < len - 1) ? ', ' : '');
+          _this.to = _this.to + _this.to[i] + ((i < len - 1) ? ', ' : '');
         }
         else {
-          _this.to = _this.recipients[i] + ((i < len - 1) ? ', ' : '');
+          _this.to = _this.to[i] + ((i < len - 1) ? ', ' : '');
         }
       }
 
-      if (_this.recipients_cc) {
-        for (var i = 0, len = _this.recipients_cc.length; i < len; i++) {
+      if (_this.cc) {
+        for (var i = 0, len = _this.cc.length; i < len; i++) {
           if (i) {
-            _this.cc = _this.cc + _this.recipients_cc[i] + ((i < len - 1) ? ', ' : '');
+            _this.cc = _this.cc + _this.cc[i] + ((i < len - 1) ? ', ' : '');
           }
           else {
-            _this.cc = _this.recipients_cc[i] + ((i < len - 1) ? ', ' : '');
+            _this.cc = _this.cc[i] + ((i < len - 1) ? ', ' : '');
           }
         }
       }
 
-      if (_this.recipients_cco) {
-        for (var i = 0, len = _this.recipients_cco.length; i < len; i++) {
+      if (_this.bcc) {
+        for (var i = 0, len = _this.bcc.length; i < len; i++) {
           if (i) {
-            _this.bcc = _this.bcc + _this.recipients_cco[i] + ((i < len - 1) ? ', ' : '');
+            _this.bcc = _this.bcc + _this.bcc[i] + ((i < len - 1) ? ', ' : '');
           }
           else {
-            _this.bcc = _this.recipients_cco[i] + ((i < len - 1) ? ', ' : '');
+            _this.bcc = _this.bcc[i] + ((i < len - 1) ? ', ' : '');
           }
         }
       }
@@ -157,7 +159,7 @@ class mailNotificator extends Notification {
         }
       });
     }else{
-      _this.logger.log('error', 'Mail notificator, recipients is not set.');
+      _this.logger.log('error', 'Mail notificator, to is not set.');
     }
   }
 }

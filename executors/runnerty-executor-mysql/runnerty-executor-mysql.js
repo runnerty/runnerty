@@ -14,103 +14,88 @@ class mysqlExecutor extends Execution {
   exec(process) {
     var _this = this;
 
-    function customQueryFormat(query, values) {
-      if (!values) {
-        var queryResult = query.replace(/(:\/)/ig, ':');
-        process.command_executed = queryResult;
-        return queryResult;
-      }
-      else {
-        //FIRST TURN
-        var _query = query.replace(/:(\w+)/ig,
-          function (txt, key) {
-            return values && key && values.hasOwnProperty(key)
-              ? _this.replaceWith(values[key], process.values())
-              : null;
-          }.bind(this));
-
-        //SECOND TURN
-        _query = _query.replace(/:(\w+)/ig,
-          function (txt, key) {
-            return values && key && values.hasOwnProperty(key)
-              ? _this.replaceWith(values[key], process.values())
-              : null;
-          }.bind(this));
-        process.command_executed = _query;
-        return _query;
-      }
-    }
-
     function executeQuery(process, values) {
 
       return new Promise(function (resolve, reject) {
 
-        process.execute_arg = process.getArgs();
+        process.getArgs()
+          .then((res) => {
+            process.execute_arg = res;
 
-        var connection = mysql.createConnection({
-          host: values.host,
-          socketPath: values.socketPath,
-          port: values.port,
-          ssl: values.ssl,
-          user: values.user,
-          password: values.password,
-          database: values.database,
-          multipleStatements: values.multipleStatements || true,
-          charset: values.charset,
-          timezone: values.timezone,
-          insecureAuth: values.insecureAuth,
-          debug: values.debug,
-          queryFormat: customQueryFormat
-        });
+            var options = {
+              altValueReplace: 'null'
+            };
 
-        connection.connect(function (err) {
-          if (err) {
-            _this.logger.log('error', 'Error connecting Mysql: ' + err);
-            process.execute_return = '';
-            process.execute_err_return = 'Error connecting Mysql: ' + err;
-            process.retries_count = process.retries_count + 1 || 1;
-            reject(err);
-          } else {
-            var command = values.command;
-            connection.query(command, process.execute_arg, function (err, results) {
-              if (err) {
-                _this.logger.log('error', `executeMysql query ${command}: ${err}`);
-                process.execute_err_return = `executeMysql query ${command}: ${err}`;
-                reject(err);
-              } else {
+            var repValues = Object.assign(process.values(), process.execute_arg);
 
-                if (results instanceof Array) {
-                  process.execute_db_results = JSON.stringify(results);
-                  process.execute_db_results_object = results;
-                  csv.writeToString(results, {headers: true}, function (err, data) {
-                    if (err) {
-                      _this.logger.log('error', `Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
-                    } else {
-                      process.execute_db_results_csv = data;
-                    }
-                    resolve();
-                  });
+            _this.replaceWithNew(values.command, repValues, options)
+              .then((res) => {
+                var _query = res;
 
-                } else {
+                var connection = mysql.createConnection({
+                  host: values.host,
+                  socketPath: values.socketPath,
+                  port: values.port,
+                  ssl: values.ssl,
+                  user: values.user,
+                  password: values.password,
+                  database: values.database,
+                  multipleStatements: values.multipleStatements || true,
+                  charset: values.charset,
+                  timezone: values.timezone,
+                  insecureAuth: values.insecureAuth,
+                  debug: values.debug
+                });
 
-                  if (results instanceof Object) {
-                    process.execute_db_results = '';
-                    process.execute_db_results_object = [];
-                    process.execute_db_results_csv = '';
-                    process.execute_db_fieldCount = results.fieldCount;
-                    process.execute_db_affectedRows = results.affectedRows;
-                    process.execute_db_changedRows = results.changedRows;
-                    process.execute_db_insertId = results.insertId;
-                    process.execute_db_warningCount = results.warningCount;
-                    process.execute_db_message = results.message;
+                connection.connect(function (err) {
+                  if (err) {
+                    _this.logger.log('error', 'Error connecting Mysql: ' + err);
+                    process.execute_return = '';
+                    process.execute_err_return = 'Error connecting Mysql: ' + err;
+                    process.retries_count = process.retries_count + 1 || 1;
+                    reject(err);
+                  } else {
+                    connection.query(_query, null, function (err, results) {
+                      if (err) {
+                        _this.logger.log('error', `executeMysql query ${_query}: ${err}`);
+                        process.execute_err_return = `executeMysql query ${_query}: ${err}`;
+                        reject(err);
+                      } else {
+
+                        if (results instanceof Array) {
+                          process.execute_db_results = JSON.stringify(results);
+                          process.execute_db_results_object = results;
+                          csv.writeToString(results, {headers: true}, function (err, data) {
+                            if (err) {
+                              _this.logger.log('error', `Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
+                            } else {
+                              process.execute_db_results_csv = data;
+                            }
+                            resolve();
+                          });
+
+                        } else {
+
+                          if (results instanceof Object) {
+                            process.execute_db_results = '';
+                            process.execute_db_results_object = [];
+                            process.execute_db_results_csv = '';
+                            process.execute_db_fieldCount = results.fieldCount;
+                            process.execute_db_affectedRows = results.affectedRows;
+                            process.execute_db_changedRows = results.changedRows;
+                            process.execute_db_insertId = results.insertId;
+                            process.execute_db_warningCount = results.warningCount;
+                            process.execute_db_message = results.message;
+                          }
+                          resolve();
+                        }
+                      }
+                    });
+                    connection.end();
                   }
-                  resolve();
-                }
-              }
-            });
-            connection.end();
-          }
-        });
+                });
+              });
+          });
       });
     }
 

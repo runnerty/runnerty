@@ -14,90 +14,78 @@ class postgresExecutor extends Execution {
   exec(process) {
     var _this = this;
 
-    function customQueryFormat(query, values) {
-      if (!values) {
-        return query.replace(/(:\/)/ig, ':');
-      }
-      else {
-        //FIRST TURN
-        var _query = query.replace(/:(\w+)/ig, function (txt, key) {
-          return values && key && values.hasOwnProperty(key)
-            ? _this.replaceWith(values[key], process.values())
-            : null;
-        }.bind(this));
-
-        //SECOND TURN
-        _query = _query.replace(/:(\w+)/ig,
-          function (txt, key) {
-            return values && key && values.hasOwnProperty(key)
-              ? _this.replaceWith(values[key], process.values())
-              : null;
-          }.bind(this));
-        return _query;
-      }
-    }
-
     function executeQuery(process, values) {
       return new Promise(function (resolve, reject) {
 
-        process.execute_arg = process.getArgs();
+        process.getArgs()
+          .then((res) => {
+            process.execute_arg = res;
 
-        var client = new pg.Client({
-          user: values.user,
-          password: values.password,
-          database: values.database,
-          host: values.host || values.socketPath,
-          port: values.port || "5432"
-        });
+            var options = {
+              altValueReplace: 'null'
+            };
 
-        client.connect(function (err) {
-          if (err) {
-            _this.logger.log('error', `Could not connect to Postgre: ` + err);
-            reject(err);
-          } else {
-            var command = values.command;
-            var finalQuery = customQueryFormat(command, process.execute_arg);
-            process.command_executed = finalQuery;
+            var repValues = Object.assign(process.values(), process.execute_arg);
 
-            client.query(finalQuery, null, function (err, results) {
-              if (err) {
-                _this.logger.log('error', `Error query Postgre (${finalQuery}): ` + err);
+            _this.replaceWithNew(values.command, repValues, options)
+              .then((res) => {
+                var _query = res;
+                var client = new pg.Client({
+                  user: values.user,
+                  password: values.password,
+                  database: values.database,
+                  host: values.host || values.socketPath,
+                  port: values.port
+                });
 
-                reject(`Error query Postgre (${finalQuery}): ` + err);
-              } else {
-                if (results.hasOwnProperty('rows') && results.rows.length > 0) {
+                client.connect(function (err) {
+                  if (err) {
+                    _this.logger.log('error', `Could not connect to Postgre: ` + err);
+                    reject(err);
+                  } else {
+                    process.command_executed = _query;
 
-                  process.execute_db_results = JSON.stringify(results.rows);
-                  process.execute_db_results_object = results.rows;
-                  csv.writeToString(results.rows, {headers: true}, function (err, data) {
-                    if (err) {
-                      _this.logger.log('error', `Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
-                    } else {
-                      process.execute_db_results_csv = data;
-                    }
-                    resolve();
-                  });
+                    client.query(_query, null, function (err, results) {
+                      if (err) {
+                        _this.logger.log('error', `Error query Postgre (${_query}): ` + err);
 
-                } else {
+                        reject(`Error query Postgre (${_query}): ` + err);
+                      } else {
+                        if (results.hasOwnProperty('rows') && results.rows.length > 0) {
 
-                  if (results instanceof Object) {
-                    process.execute_db_results = '';
-                    process.execute_db_results_csv = '';
-                    process.execute_db_results_object = [];
-                    process.execute_db_fieldCount = results.rowCount;
-                    process.execute_db_affectedRows = '';
-                    process.execute_db_changedRows = '';
-                    process.execute_db_insertId = results.oid;
-                    process.execute_db_warningCount = '';
-                    process.execute_db_message = '';
+                          process.execute_db_results = JSON.stringify(results.rows);
+                          process.execute_db_results_object = results.rows;
+                          csv.writeToString(results.rows, {headers: true}, function (err, data) {
+                            if (err) {
+                              _this.logger.log('error', `Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
+                            } else {
+                              process.execute_db_results_csv = data;
+                            }
+                            resolve();
+                          });
+
+                        } else {
+
+                          if (results instanceof Object) {
+                            process.execute_db_results = '';
+                            process.execute_db_results_csv = '';
+                            process.execute_db_results_object = [];
+                            process.execute_db_fieldCount = results.rowCount;
+                            process.execute_db_affectedRows = '';
+                            process.execute_db_changedRows = '';
+                            process.execute_db_insertId = results.oid;
+                            process.execute_db_warningCount = '';
+                            process.execute_db_message = '';
+                          }
+                          resolve();
+                        }
+                      }
+                      client.end();
+                    });
                   }
-                  resolve();
-                }
-              }
-              client.end();
-            });
-          }
-        });
+                });
+              });
+          });
       });
     }
 

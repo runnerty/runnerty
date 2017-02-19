@@ -1,7 +1,10 @@
 "use strict";
 
 var replaceWithSmart = require("../libs/utils.js").replaceWithSmart;
+
 var replaceWith = require("../libs/utils.js").replaceWith;
+var replaceWithNew = require("../libs/utils.js").replaceWithNew;
+
 var requireDir = require("../libs/utils.js").requireDir;
 var logger = require("../libs/utils.js").logger;
 var Ajv = require('ajv');
@@ -20,6 +23,8 @@ class Execution {
     }
 
     _this.replaceWith = replaceWith;
+    _this.replaceWithNew = replaceWithNew;
+    _this.replaceWithSmart = replaceWithSmart;
     _this.logger = logger;
 
     return new Promise((resolve) => {

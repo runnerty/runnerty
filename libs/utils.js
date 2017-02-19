@@ -234,7 +234,7 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
     while (monthsLength--) {
       var month = months[monthsLength].substr(1, 7);
       var monthLang = months[monthsLength].substr(6, 2);
-      if(!objParams[month]){
+      if (!objParams[month]) {
         objParams[month] = getDateString('MMMM', true, monthLang);
       }
     }
@@ -249,7 +249,7 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
     while (shortMonthsLength--) {
       var shortMonth = shortMonths[shortMonthsLength].substr(1, 6);
       var shortMonthLang = shortMonths[shortMonthsLength].substr(5, 2);
-      if(!objParams[shortMonth]){
+      if (!objParams[shortMonth]) {
         objParams[shortMonth] = getDateString('MMM', true, shortMonthLang);
       }
     }
@@ -264,7 +264,7 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
     while (daysLength--) {
       var day = days[daysLength].substr(1, 7);
       var lang = days[daysLength].substr(6, 2);
-      if(!objParams[day]){
+      if (!objParams[day]) {
         objParams[day] = getDateString('dddd', true, lang);
       }
     }
@@ -279,7 +279,7 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
     while (shortDaysLength--) {
       var shortDay = shortDays[shortDaysLength].substr(1, 6);
       var lang = shortDays[shortDaysLength].substr(5, 2);
-      if(!objParams[shortDay]){
+      if (!objParams[shortDay]) {
         objParams[shortDay] = getDateString('ddd', true, lang);
       }
     }
@@ -317,31 +317,186 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
 module.exports.replaceWith = replaceWith;
 
 
-function replaceWithSmart(inputObject, objParams, ignoreGlobalValues) {
+function replaceWithNew(text, objParams, options) {
+
+  //OPTIONS:
+  var ignoreGlobalValues = options?(options.ignoreGlobalValues || false):false;
+  var altValueReplace = options?(options.altValueReplace || ''):'';
+  var insensitiveCase = options?((options.insensitiveCase?'i':'') || ''):'';
+
   return new Promise(function (resolve, reject) {
-    if(typeof inputObject === "string"){
-      resolve(replaceWith(inputObject, objParams, ignoreGlobalValues));
-    }else{
-      if(inputObject instanceof Array){
+    text = text || '';
+
+    objParams = objParams || {};
+    text = text || '';
+
+    objParams = objParams || {};
+
+    if (global.config.global_values && !ignoreGlobalValues) {
+      objParams = addGlobalValuesToObjParams(objParams);
+    }
+
+    function pad(pad, str, padLeft) {
+      if (!padLeft) {
+        padLeft = true;
+      }
+      if (typeof str === 'undefined') {
+        return pad;
+      }
+      if (padLeft) {
+        return (pad + str).slice(-pad.length);
+      } else {
+        return (str + pad).substring(0, pad.length);
+      }
+    }
+
+    objParams.DD = objParams.DD || getDateString('DD');
+    objParams.MM = objParams.MM || getDateString('MM');
+    objParams.YY = objParams.YY || getDateString('YY');
+    objParams.YYYY = objParams.YYYY || getDateString('YYYY');
+    objParams.HH = objParams.HH || getDateString('HH');
+    objParams.HH12 = objParams.HH12 || getDateString('hh');
+    objParams.mm = objParams.mm || getDateString('mm');
+    objParams.ss = objParams.ss || getDateString('ss');
+
+// MONTHS MMMM_[LANG]
+    var months = text.toString().match(/\:MMMM_\w{2}/ig);
+
+    if (months) {
+      var monthsLength = months.length;
+
+      while (monthsLength--) {
+        var month = months[monthsLength].substr(1, 7);
+        var monthLang = months[monthsLength].substr(6, 2);
+        if (!objParams[month]) {
+          objParams[month] = getDateString('MMMM', true, monthLang);
+        }
+      }
+    }
+
+// SHORT MONTHS MMM_[LANG]
+    var shortMonths = text.toString().match(/\:MMM_\w{2}/ig);
+
+    if (shortMonths) {
+      var shortMonthsLength = shortMonths.length;
+
+      while (shortMonthsLength--) {
+        var shortMonth = shortMonths[shortMonthsLength].substr(1, 6);
+        var shortMonthLang = shortMonths[shortMonthsLength].substr(5, 2);
+        if (!objParams[shortMonth]) {
+          objParams[shortMonth] = getDateString('MMM', true, shortMonthLang);
+        }
+      }
+    }
+
+// DAYS DDDD_[LANG]
+    var days = text.toString().match(/\:DDDD_\w{2}/ig);
+
+    if (days) {
+      var daysLength = days.length;
+
+      while (daysLength--) {
+        var day = days[daysLength].substr(1, 7);
+        var lang = days[daysLength].substr(6, 2);
+        if (!objParams[day]) {
+          objParams[day] = getDateString('dddd', true, lang);
+        }
+      }
+    }
+
+// SHORT DAYS DDD_[LANG]
+    var shortDays = text.toString().match(/\:DDD_\w{2}/ig);
+
+    if (shortDays) {
+      var shortDaysLength = shortDays.length;
+
+      while (shortDaysLength--) {
+        var shortDay = shortDays[shortDaysLength].substr(1, 6);
+        var lang = shortDays[shortDaysLength].substr(5, 2);
+        if (!objParams[shortDay]) {
+          objParams[shortDay] = getDateString('ddd', true, lang);
+        }
+      }
+    }
+
+    var keys = Object.keys(objParams);
+
+    function orderByLength(a, b) {
+      if (a.length > b.length) {
+        return 1;
+      }
+      if (a.length < b.length) {
+        return -1;
+      }
+      return 0;
+    }
+
+    keys.sort(orderByLength);
+    var keysLengthFirst = keys.length;
+    var keysLengthSecond = keys.length;
+
+// FIRST TURN
+    while (keysLengthFirst--) {
+      text = text.toString().replace(new RegExp('\\:' + keys[keysLengthFirst], insensitiveCase + 'g'), objParams[keys[keysLengthFirst]] || altValueReplace);
+    }
+
+// SECOND TURN
+    while (keysLengthSecond--) {
+      text = text.toString().replace(new RegExp('\\:' + keys[keysLengthSecond], insensitiveCase + 'g'), objParams[keys[keysLengthSecond]] || altValueReplace);
+    }
+
+    if(altValueReplace){
+      text = text.toString().replace(new RegExp('\\:\\w+', insensitiveCase + 'g'), altValueReplace);
+    }
+
+    resolve(text);
+  });
+}
+
+module.exports.replaceWithNew = replaceWithNew;
+
+function replaceWithSmart(inputObject, objParams, options) {
+
+  //OPTIONS:
+  var keysUpperCase = options?(options.keysUpperCase || false):false;
+
+  return new Promise(function (resolve, reject) {
+    if (typeof inputObject === "string") {
+      replaceWithNew(inputObject, objParams, options)
+        .then((res) => {
+          resolve(res);
+        });
+    } else {
+      if (inputObject instanceof Array) {
         var len = inputObject.length;
         var promArr = [];
-        while(len--){
-          promArr.push(replaceWithSmart(inputObject[len], objParams, ignoreGlobalValues));
+        while (len--) {
+          promArr.push(replaceWithSmart(inputObject[len], objParams, options));
         }
         Promise.all(promArr).then(values => {
           resolve(values);
         });
-      }else{
-        if(inputObject instanceof Object){
+      } else {
+        if (inputObject instanceof Object) {
           var keys = Object.keys(inputObject);
+          var resObject = {};
 
           function execSerie(keys) {
             var sequence = Promise.resolve();
             keys.forEach(function (key) {
               sequence = sequence.then(function () {
-                return replaceWithSmart(inputObject[key], objParams, ignoreGlobalValues)
+                return replaceWithSmart(inputObject[key], objParams, options)
                   .then(function (res) {
-                    inputObject[key] = res;
+                    var _value = res;
+                    replaceWithNew(key, objParams, options)
+                      .then(function (res) {
+                        var _key = res;
+                        if(keysUpperCase){
+                          resObject[_key.toUpperCase()] = _value;
+                        }else{
+                          resObject[_key] = _value;
+                        }
+                      });
                   })
                   .catch(function (err) {
                     logger.log('error', 'replaceWithSmart function execSerie . Error ', err);
@@ -349,17 +504,17 @@ function replaceWithSmart(inputObject, objParams, ignoreGlobalValues) {
               });
             });
             return sequence;
-          }
+          };
 
           execSerie(keys)
             .then(function () {
-              resolve(inputObject);
+              resolve(resObject);
             })
             .catch(function (err) {
               logger.log('error', 'replaceWithSmart execSerie. Error ', err);
               resolve(inputObject);
             });
-        }else{
+        } else {
           resolve(inputObject);
         }
       }
@@ -369,9 +524,7 @@ function replaceWithSmart(inputObject, objParams, ignoreGlobalValues) {
 
 module.exports.replaceWithSmart = replaceWithSmart;
 
-
 function addGlobalValuesToObjParams(objParams) {
-
   var gvl = global.config.global_values.length;
   var gv = {};
 
@@ -458,7 +611,7 @@ module.exports.getChainByUId = function getChainByUId(chains, uId) {
             if (process.childs_chains) {
               getChainByUId(process.childs_chains, uId)
                 .then((_res) => {
-                  if(_res){
+                  if (_res) {
                     res = _res;
                   }
                 });
@@ -570,12 +723,12 @@ function requireDir(directory, filename) {
   });
 }
 
-module.exports.chronometer = function chronometer (start){
-  if(start){
+module.exports.chronometer = function chronometer(start) {
+  if (start) {
     var endTime = process.hrtime(start);
-    var duration = parseInt((endTime[0] * 1000) + (endTime[1]/1000000));
-    return [duration/1000, moment.duration(duration).humanize()];
-  }else{
+    var duration = parseInt((endTime[0] * 1000) + (endTime[1] / 1000000));
+    return [duration / 1000, moment.duration(duration).humanize()];
+  } else {
     return process.hrtime();
   }
 };
