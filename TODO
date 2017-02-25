@@ -1,3 +1,21 @@
+√ 0!! -- SEGUIR MIGRANDO LOS EXECUTORS A USO DEL METODO DE EXECUTION END Y ELIMINAR PASO DE PARAMETRO PROCESS A EXEC Y A GETVALUES:
+    HECHOS:
+        MAIL +PROBADO
+        ICONV +PROBADO
+        MYSQL +PROBADO
+        WAIT +PROBADO
+        S3 +PROBADO
+        SCP +PROBADO
+        SHELL (falta la parte de kill y comento la parte de retry para 0.3) +PROBADO
+        POSTGRES
+        REDIS
+
+
+√ 0.1! Llevar getArgs a Executor y mddificar los procesos que tiran de process.getArgs
+0.2! Ver como aislar el objeto process para que no se pueda hacer de toddo con el en los executors
+0.3! Llevar reintentos a la logica general de procesos / ejecución
+
+
 1 > LLEVAR A NOTIFICATIONS LOS CAMBIOS DE EXECUTIONS (GETVALUES)
 2 > SUSTITUIR POR COMPLETO REPLACEWITH CON REPLACEWITH O REPLACEWITHSMART.
 

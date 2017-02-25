@@ -7,11 +7,11 @@ class waitExecutor extends Execution {
     super(process);
   }
 
-  exec(process) {
+  exec() {
     var _this = this;
 
     return new Promise(function (resolve, reject) {
-      _this.getValues(process)
+      _this.getValues()
         .then((res) => {
           var seconds = 60;
 
@@ -20,16 +20,19 @@ class waitExecutor extends Execution {
           }
 
           setTimeout(function () {
-            process.end();
-            resolve();
+            var endOptions = {
+              end: 'end'
+            };
+            _this.end(endOptions, resolve, reject);
           }, seconds * 1000 || 0);
         })
         .catch((err) => {
-          _this.logger.log('error', `Wait Error getValues: ${err}`);
-          process.execute_err_return = `Wait Error getValues ${err}`;
-          process.execute_return = '';
-          process.error();
-          reject(process);
+          var endOptions = {
+            end: 'error',
+            messageLog: `Wait Error getValues: ${err}`,
+            execute_err_return: `Wait Error getValues: ${err}`
+          };
+          _this.end(endOptions, resolve, reject);
         });
     });
   }

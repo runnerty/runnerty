@@ -449,3 +449,39 @@ ENVIAR EN EL BODY:
  
 ### EVALUATE EN DEPENDS PROCESS:
 “depends_process”:[{”id”:"PROCESS_ODSI_DELETE_QUERY","evaluate":[{"oper_left":":VALOR_GLOBAL_X","condition":"!=","oper_right":"YES"}]}]
+
+## EXECUTORS:
+### exec:
+### getValues (Execution Class):
+### end (Execution Class):
+end(endOptions, resolve, reject)
+endOptions:
+    - end: values "end" or "error" (undefined/default is "end")
+    - messageLogType: values "debug", "info", "warn" or "error" (default "info"/default "error" when end is "error"  )
+    - messageLog: Message to send to log
+    - execute_err_return: Error messge process
+    - execute_return: Return process
+    - execute_db_results: DB result
+    - execute_db_results_object: DB result (JSON)
+    - execute_db_results_csv:  CSV format for output DB result
+    - execute_db_fieldCount: DB fieldCount
+    - execute_db_affectedRows: BD affectedRows
+    - execute_db_changedRows: BD changedRows
+    - execute_db_insertId: BD insert id
+    - execute_db_warningCount: BD warningCount
+    - execute_db_message: BD warningCount
+    
+resolve: resolve method exec promise return
+reject: reject method exec promise return
+    
+```
+          ;
+          var endOptions = {
+            end: 'error',
+            messageType: 'error',
+            message: `mailExecutor Error getValues: ${err}`,
+            execute_err_return: `mailExecutor Error getValues ${err}`,
+            execute_return: ''
+          };
+          _this.´
+´´

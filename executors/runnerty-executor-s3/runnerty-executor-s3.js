@@ -11,11 +11,11 @@ class s3Executor extends Execution {
     super(process);
   }
 
-  exec(process) {
+  exec() {
     var _this = this;
 
     return new Promise(function (resolve, reject) {
-      _this.getValues(process)
+      _this.getValues()
         .then((res) => {
 
           var awsS3Config = {
@@ -45,33 +45,37 @@ class s3Executor extends Execution {
 
             s3.upload(uploadParams, function (err, data) {
               if (err) {
-                _this.logger.log('error', `S3 upload file Error: ${err}`);
-                process.execute_err_return = `S3 upload file error: ${err}`;
-                process.execute_return = '';
-                process.error();
-                reject(process);
+                var endOptions = {
+                  end: 'error',
+                  messageLog: `S3 upload file Error: ${err}`,
+                  execute_err_return: `S3 upload file Error: ${err}`
+                };
+                _this.end(endOptions, resolve, reject);
               }
-              if (data) {
-                process.execute_err_return = '';
-                process.execute_return = JSON.stringify(data);
-                process.end();
-                resolve();
+              else {
+                var endOptions = {
+                  end: 'end',
+                  execute_return: JSON.stringify(data)
+                };
+                _this.end(endOptions, resolve, reject);
               }
             });
           } else {
-            _this.logger.log('error', `S3 method not accepted: ${method}`);
-            process.execute_err_return = `S3 method not accepted: ${method}`;
-            process.execute_return = '';
-            process.error();
-            reject(process);
+            var endOptions = {
+              end: 'error',
+              messageLog: `S3 method not accepted: ${method}`,
+              execute_err_return: `S3 method not accepted: ${method}`
+            };
+            _this.end(endOptions, resolve, reject);
           }
         })
         .catch((err) => {
-          _this.logger.log('error', `S3 Error getValues: ${err}`);
-          process.execute_err_return = `S3 Error getValues ${err}`;
-          process.execute_return = '';
-          process.error();
-          reject(process);
+          var endOptions = {
+            end: 'error',
+            messageLog: `S3 Error getValues: ${err}`,
+            execute_err_return: `S3 Error getValues: ${err}`
+          };
+          _this.end(endOptions, resolve, reject);
         });
     });
   }

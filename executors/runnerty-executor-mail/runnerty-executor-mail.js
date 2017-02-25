@@ -28,11 +28,11 @@ class mailExecutor extends Execution {
     super(process);
   }
 
-  exec(process) {
+  exec() {
     var _this = this;
 
     return new Promise(function (resolve, reject) {
-      _this.getValues(process)
+      _this.getValues()
         .then((res) => {
           var mail = res;
           mail.params = {};
@@ -73,98 +73,107 @@ class mailExecutor extends Execution {
             mail.params.subject = res.title;
             mail.params.message = res.message;
 
-            mail.params.args = process.args || {};
-
-            var filesReads = [];
             var templateDir = path.resolve(mail.templateDir, mail.template);
             var htmlTemplate = path.resolve(templateDir, 'html.html');
             var txtTemplate = path.resolve(templateDir, 'text.txt');
 
-            filesReads.push(readFilePromise('html', htmlTemplate));
-            filesReads.push(readFilePromise('text', txtTemplate));
+            Promise.all([
+              readFilePromise('html', htmlTemplate),
+              readFilePromise('text', txtTemplate)
+            ])
+              .then(
+                async function (res) {
 
-            Promise.all(filesReads)
-              .then(function (res) {
+                  var [html_data_file, text_data_file] = res;
 
-                var html_data;
-                var text_data;
+                  var html_data = html_data_file.html.toString();
+                  var text_data = text_data_file.text.toString();
 
-                if (res[0].hasOwnProperty('html')) {
-                  html_data = res[0].html.toString();
-                  text_data = res[1].text.toString();
-                } else {
-                  html_data = res[1].html.toString();
-                  text_data = res[0].text.toString();
-                }
+                  var options = {
+                    useArgsValues: true,
+                    useProcessValues: true,
+                    useGlobalValues: true,
+                    useExtraValue: mail.params
+                  };
+                  var [html, text] = await Promise.all([
+                    _this.paramsReplace(html_data, options),
+                    _this.paramsReplace(text_data, options)
+                  ]);
 
-                var valuesReplace = Object.assign(mail.params, process.values());
+                  if (mail.ejsRender) {
+                    html = ejs.render(html);
+                    text = ejs.render(text);
+                  }
 
-                _this.replaceWithNew(html_data, valuesReplace)
-                  .then((res) => {
-                    var html = res;
+                  var mailOptions = {
+                    from: mail.from,
+                    to: mail.to,
+                    cc: mail.cc,
+                    bcc: mail.bcc,
+                    subject: mail.params.subject,
+                    text: text,
+                    html: html,
+                    attachments: mail.attachments
+                  };
 
-                    _this.replaceWithNew(text_data, valuesReplace)
-                      .then((res) => {
-                        var text = res;
+                  if (mail.disable) {
+                    _this.logger.log('warn', 'Mail sender is disable.');
+                    var endOptions = {
+                      end: 'end',
+                      messageLogType: 'warn',
+                      messageLog:  'Mail sender is disable.',
+                      execute_err_return:  'Mail sender is disable.',
+                      execute_return: 'Mail sender is disable.'
+                    };
+                    _this.end(endOptions, resolve, reject);
+                  } else {
+                    var transport = nodemailer.createTransport(mail.transport);
 
-                        if (mail.ejsRender) {
-                          html = ejs.render(html);
-                          text = ejs.render(text);
-                        }
-
-                        var mailOptions = {
-                          from: mail.from,
-                          to: mail.to,
-                          cc: mail.cc,
-                          bcc: mail.bcc,
-                          subject: mail.params.subject,
-                          text: text,
-                          html: html,
-                          attachments: mail.attachments
-                        };
-
-                        if (mail.disable) {
-                          _this.logger.log('warn', 'Mail sender is disable.');
+                    transport.sendMail(mailOptions,
+                      function (err, res) {
+                        if (err) {
+                          var endOptions = {
+                            end: 'error',
+                            messageLog: `Error sending mail (sendMail): ${err}`,
+                            execute_err_return: `Error sending mail: ${err}`,
+                          };
+                          _this.end(endOptions, resolve, reject);
                         } else {
-                          var transport = nodemailer.createTransport(mail.transport);
-
-                          transport.sendMail(mailOptions,
-                            function (err, res) {
-                              if (err) {
-                                _this.logger.log('error', `Error Mail sendMail ${err}`);
-                                process.execute_err_return = err;
-                                process.execute_return = '';
-                                process.error();
-                                reject(process);
-                              } else {
-                                process.execute_err_return = '';
-                                process.execute_return = '';
-                                process.end();
-                                resolve();
-                              }
-                            });
+                          var endOptions = {
+                            end: 'end'
+                          };
+                          _this.end(endOptions, resolve, reject);
                         }
                       });
-                  });
-              })
-              .catch(function (e) {
-                _this.logger.log('error', 'Error sending mail:', e);
+                  }
+                })
+              .catch(function (err) {
+                var endOptions = {
+                  end: 'error',
+                  messageLog:  `Error sending mail: ${err}`,
+                  execute_err_return: `Error sending mail: ${err}`,
+                };
+                _this.end(endOptions, resolve, reject);
               });
 
           } else {
-            _this.logger.log('error', `Error Mail recipient not setted.`);
-            process.execute_err_return = `Error Mail recipient not setted.`;
-            process.execute_return = '';
-            process.error();
-            reject(process);
+            var endOptions = {
+              end: 'error',
+              messageLog:  `Error Mail recipient not setted.`,
+              execute_err_return:  `Error Mail recipient not setted.`,
+              execute_return: ''
+            };
+            _this.end(endOptions, resolve, reject);
           }
         })
         .catch((err) => {
-          _this.logger.log('error', `mailExecutor Error getValues: ${err}`);
-          process.execute_err_return = `mailExecutor Error getValues ${err}`;
-          process.execute_return = '';
-          process.error();
-          reject(process);
+          var endOptions = {
+            end: 'error',
+            messageLog: `mailExecutor Error getValues: ${err}`,
+            execute_err_return: `mailExecutor Error getValues ${err}`,
+            execute_return: ''
+          };
+          _this.end(endOptions, resolve, reject);
         });
     });
   }

@@ -603,11 +603,11 @@ class Chain {
                   });
 
               })
-              .catch(function (proc, err) {
-                err = err || proc.execute_err_return;
-                logger.log('error', 'Error in process.start: ', err);
+              .catch(function (err) {
+                err = err || process.execute_err_return;
+                logger.log('error', 'Error in process execution: ', err);
 
-                if (proc.end_chain_on_fail) {
+                if (process.end_chain_on_fail) {
                   _this.end();
 
                   _this.setChainToInitState()

@@ -5,8 +5,8 @@
       "name":"CADENA DE PRUEBA ITERABLE",
       "iterable":"parallel",
       "depends_chains":[{"chain_id":"CHAIN_UNO","process_id":"PROC_LAUNCHER"}],
+      "…events_iterations":{
       "input":[{"MY_VAR_ID":"id"},{"MY_VAR_NAME":"text"}],
-      "events_iterations":{
         "on_start":{
           "notifications":[
             {

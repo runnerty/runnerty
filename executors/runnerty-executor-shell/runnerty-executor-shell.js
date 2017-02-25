@@ -10,84 +10,78 @@ class shellExecutor extends Execution {
     super(process);
   }
 
-  exec(process) {
+  exec() {
     var _this = this;
+    var endOptions = {end: 'end'};
 
-    return new Promise(function (resolve, reject) {
-      _this.getValues(process)
-        .then((res) => {
-          var cmd = res.command;
+    return new Promise(async function (resolve, reject) {
 
-          var stdout = '';
-          var stderr = '';
+      var stdout = '';
+      var stderr = '';
+      var shell = {};
+      var [args, execValues] = await Promise.all([_this.getArgs(), _this.getValues()]);
 
-          process.getArgs()
-            .then((res) => {
-              process.execute_arg = res;
-              process.proc = spawn(cmd, process.execute_args, {shell: true});
-              process.command_executed = cmd + ' ' + process.execute_args;
+      var cmd = execValues.command;
+      shell.execute_args = args;
+      shell.proc = spawn(cmd, shell.execute_args, {shell: true});
+      shell.command_executed = cmd + ' ' + shell.execute_args;
+      endOptions.command_executed = shell.command_executed;
 
-              process.proc.stdout.on('data', function (chunk) {
-                stdout += chunk;
-              });
-              process.proc.stderr.on('data', function (chunk) {
-                stderr += chunk;
-              });
-              process.proc
-                .on('error', function () {
-                  //reject();
-                })
-                .on('close', function (code, signal) {
-                  if(signal !== 'SIGKILL'){
-                    if (code === 0) {
-                      process.execute_return = stdout;
-                      process.execute_err_return = stderr;
-                      process.end();
-                      resolve(stdout);
-                    } else {
-                      _this.logger.log('error', process.id + '(' + process.status + ')' + ' FIN: ' + code + ' - ' + stdout + ' - ' + stderr);
-
-                      process.execute_return = stdout;
-                      process.execute_err_return = stderr;
-                      process.retries_count = process.retries_count + 1 || 1;
-                      process.error();
-
-                      if (process.retries >= process.retries_count) {
-
-                        process.retry();
-
-                        setTimeout(function () {
-                          process.start(true)
-                            .then(function (res) {
-                              process.retries_count = 0;
-                              resolve(res);
-                            })
-                            .catch(function (err) {
-                              _this.logger.log('error', 'Retrying process:', err);
-                              resolve(err);
-                            });
-                        }, process.retry_delay * 1000 || 0);
-
-                      } else {
-                        if (process.end_on_fail) {
-                          process.end();
-                        }
-                        reject(process, stderr);
-                      }
-                    }
-                  }
-                });
-            });
+      shell.proc.stdout.on('data', function (chunk) {
+        stdout += chunk;
+      });
+      shell.proc.stderr.on('data', function (chunk) {
+        stderr += chunk;
+      });
+      shell.proc
+        .on('error', function () {
+          //reject();
         })
-        .catch((err) => {
-          _this.logger.log('error', `Shell Error getValues: ${err}`);
-          process.execute_err_return = `Shell Error getValues ${err}`;
-          process.execute_return = '';
-          process.error();
-          reject(process);
+        .on('close', function (code, signal) {
+          if (signal !== 'SIGKILL') {
+            if (code === 0) {
+              endOptions.end = 'end';
+              endOptions.execute_return = stdout;
+              endOptions.execute_err_return = stderr;
+              endOptions.execute_arg = shell.execute_arg;
+              _this.end(endOptions, resolve, reject);
+            } else {
+              endOptions.end = 'error';
+              endOptions.messageLog = ' FIN: ' + code + ' - ' + stdout + ' - ' + stderr;
+              endOptions.execute_err_return = stderr;
+              endOptions.execute_arg = shell.execute_arg;
+              endOptions.execute_return = stdout;
+              endOptions.retries_count = endOptions.retries_count + 1 || 1;
+              _this.end(endOptions, resolve, reject);
+              /*
+               if (process.retries >= process.retries_count) {
+
+               process.retry();
+
+               setTimeout(function () {
+               process.start(true)
+               .then(function (res) {
+               process.retries_count = 0;
+               resolve(res);
+               })
+               .catch(function (err) {
+               _this.logger.log('error', 'Retrying process:', err);
+               resolve(err);
+               });
+               }, process.retry_delay * 1000 || 0);
+
+               } else {
+               if (process.end_on_fail) {
+               process.end();
+               }
+               reject(process, stderr);
+               }
+               */
+            }
+          }
         });
     });
-  }
+  };
 
   kill(_process) {
     var _this = this;
@@ -96,7 +90,7 @@ class shellExecutor extends Execution {
       signal = signal || 'SIGKILL';
       killTree = killTree || true;
       return new Promise(function (resolve, reject) {
-        if (killTree && process.platform !== 'win32') {
+        if (killTree && _process.platform !== 'win32') {
           psTree(pid, function (err, children) {
             [pid].concat(
               children.map(function (p) {
@@ -104,7 +98,7 @@ class shellExecutor extends Execution {
               })
             ).forEach(function (tpid) {
               try {
-                process.kill(tpid, signal);
+                _process.kill(tpid, signal);
               }
               catch (ex) {
               }
@@ -115,7 +109,7 @@ class shellExecutor extends Execution {
         }
         else {
           try {
-            process.kill(pid, signal);
+            _process.kill(pid, signal);
           }
           catch (ex) {
           }
@@ -135,7 +129,6 @@ class shellExecutor extends Execution {
         });
     });
   }
-
 }
 
 module.exports = shellExecutor;

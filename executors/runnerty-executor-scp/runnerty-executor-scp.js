@@ -9,13 +9,15 @@ class scpExecutor extends Execution {
     super(process);
   }
 
-  exec(process) {
+  exec() {
     var _this = this;
+    var endOptions = {end: 'end'};
 
     return new Promise(function (resolve, reject) {
-      _this.getValues(process)
+      _this.getValues()
         .then((res) => {
-          var scpCommand = `scp ${(res.identityFile)?'-i':''} ${res.identityFile} ${res.localFile} ${res.remoteUser}@${res.remoteHost}:${res.remoteFilePath}`;
+          var scpCommand = `scp ${(res.identityFile) ? '-i' : ''} ${res.identityFile} ${res.localFile} ${res.remoteUser}@${res.remoteHost}:${res.remoteFilePath}`;
+          endOptions.command_executed = scpCommand;
           var proc = spawn(scpCommand, [], {shell: true});
 
           var stderr = '';
@@ -26,25 +28,21 @@ class scpExecutor extends Execution {
           proc
             .on('close', function (code, signal) {
               if (code) {
-                _this.logger.log('error', `SCP Error (${scpCommand}): ${signal} / ${stderr}`);
-                process.execute_err_return = `SCP Error (${scpCommand}): ${signal} / ${stderr}`;
-                process.execute_return = '';
-                process.error();
-                reject(process);
+                endOptions.end = 'error';
+                endOptions.messageLog = `SCP Error (${scpCommand}): ${signal} / ${stderr}`;
+                endOptions.execute_err_return = `SCP Error (${scpCommand}): ${signal} / ${stderr}`;
+                _this.end(endOptions, resolve, reject);
               } else {
-                process.execute_err_return = '';
-                process.execute_return = '';
-                process.end();
-                resolve();
+                endOptions.end = 'end';
+                _this.end(endOptions, resolve, reject);
               }
             });
         })
         .catch((err) => {
-          _this.logger.log('error', `SCP Error getValues: ${err}`);
-          process.execute_err_return = `SCP Error getValues ${err}`;
-          process.execute_return = '';
-          process.error();
-          reject(process);
+          endOptions.end = 'error';
+          endOptions.messageLog = `SCP Error getValues: ${err}`;
+          endOptions.execute_err_return = `SCP Error getValues: ${err}`;
+          _this.end(endOptions, resolve, reject);
         });
     });
   }

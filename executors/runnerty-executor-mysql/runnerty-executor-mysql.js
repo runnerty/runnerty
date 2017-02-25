@@ -11,156 +11,136 @@ class mysqlExecutor extends Execution {
     super(process);
   }
 
-  exec(process) {
+  exec() {
     var _this = this;
+    var endOptions = {end: 'end'};
 
-    function executeQuery(process, values) {
+    function executeQuery(values) {
 
-      return new Promise(function (resolve, reject) {
+      return new Promise(async function (resolve, reject) {
+        var options = {
+          useArgsValues: true,
+          useProcessValues: true,
+          useGlobalValues: true,
+          altValueReplace: 'null'
+        };
 
-        process.getArgs()
-          .then((res) => {
-            process.execute_arg = res;
+        var _query = await _this.paramsReplace(values.command, options);
+        endOptions.command_executed = _query;
 
-            var options = {
-              altValueReplace: 'null'
-            };
+        var connection = mysql.createConnection({
+          host: values.host,
+          socketPath: values.socketPath,
+          port: values.port,
+          ssl: values.ssl,
+          user: values.user,
+          password: values.password,
+          database: values.database,
+          multipleStatements: values.multipleStatements || true,
+          charset: values.charset,
+          timezone: values.timezone,
+          insecureAuth: values.insecureAuth,
+          debug: values.debug
+        });
 
-            var repValues = Object.assign(process.values(), process.execute_arg);
+        connection.connect(function (err) {
+          if (err) {
+            reject(new Error(`Error connecting Mysql: ${err}`));
+          } else {
+            connection.query(_query, null, function (err, results) {
+              connection.end();
+              if (err) {
+                throw new Error(`executeMysql query ${_query}: ${err}`);
+              } else {
+                resolve(results);
+              }
+            });
+          }
+        });
 
-            _this.replaceWithNew(values.command, repValues, options)
-              .then((res) => {
-                var _query = res;
-
-                var connection = mysql.createConnection({
-                  host: values.host,
-                  socketPath: values.socketPath,
-                  port: values.port,
-                  ssl: values.ssl,
-                  user: values.user,
-                  password: values.password,
-                  database: values.database,
-                  multipleStatements: values.multipleStatements || true,
-                  charset: values.charset,
-                  timezone: values.timezone,
-                  insecureAuth: values.insecureAuth,
-                  debug: values.debug
-                });
-
-                connection.connect(function (err) {
-                  if (err) {
-                    _this.logger.log('error', 'Error connecting Mysql: ' + err);
-                    process.execute_return = '';
-                    process.execute_err_return = 'Error connecting Mysql: ' + err;
-                    process.retries_count = process.retries_count + 1 || 1;
-                    reject(err);
-                  } else {
-                    connection.query(_query, null, function (err, results) {
-                      if (err) {
-                        _this.logger.log('error', `executeMysql query ${_query}: ${err}`);
-                        process.execute_err_return = `executeMysql query ${_query}: ${err}`;
-                        reject(err);
-                      } else {
-
-                        if (results instanceof Array) {
-                          process.execute_db_results = JSON.stringify(results);
-                          process.execute_db_results_object = results;
-                          csv.writeToString(results, {headers: true}, function (err, data) {
-                            if (err) {
-                              _this.logger.log('error', `Generating csv output for execute_db_results_csv. id: ${process.id}: ${err}. Results: ${results}`);
-                            } else {
-                              process.execute_db_results_csv = data;
-                            }
-                            resolve();
-                          });
-
-                        } else {
-
-                          if (results instanceof Object) {
-                            process.execute_db_results = '';
-                            process.execute_db_results_object = [];
-                            process.execute_db_results_csv = '';
-                            process.execute_db_fieldCount = results.fieldCount;
-                            process.execute_db_affectedRows = results.affectedRows;
-                            process.execute_db_changedRows = results.changedRows;
-                            process.execute_db_insertId = results.insertId;
-                            process.execute_db_warningCount = results.warningCount;
-                            process.execute_db_message = results.message;
-                          }
-                          resolve();
-                        }
-                      }
-                    });
-                    connection.end();
-                  }
-                });
-              });
-          });
       });
     }
 
+    function evaluateResults(results, resolve, reject) {
+      if (results instanceof Array) {
+
+        csv.writeToString(results, {headers: true}, function (err, data) {
+          if (err) {
+            _this.logger.log('error', `Generating csv output for execute_db_results_csv: ${err}. Results: ${results}`);
+          }
+          endOptions.execute_db_results = JSON.stringify(results);
+          endOptions.execute_db_results_object = results;
+          endOptions.execute_db_results_csv = data;
+          _this.end(endOptions, resolve, reject);
+        });
+
+      } else {
+
+        if (results instanceof Object) {
+          endOptions.execute_db_results = '';
+          endOptions.execute_db_results_object = [];
+          endOptions.execute_db_results_csv = '';
+          endOptions.execute_db_fieldCount = results.fieldCount;
+          endOptions.execute_db_affectedRows = results.affectedRows;
+          endOptions.execute_db_changedRows = results.changedRows;
+          endOptions.execute_db_insertId = results.insertId;
+          endOptions.execute_db_warningCount = results.warningCount;
+          endOptions.execute_db_message = results.message;
+        }
+        _this.end(endOptions, resolve, reject);
+      }
+
+    }
 
     return new Promise(function (resolve, reject) {
-      _this.getValues(process)
+      _this.getValues()
         .then((res) => {
-          if (!res.command) {
-            if (!res.command_file) {
-              _this.logger.log('error', `executeMysql dont have command or command_file`);
-              process.execute_err_return = `executeMysql dont have command or command_file`;
-              process.execute_return = '';
-              process.error();
-              reject(process);
-            } else {
+          if (res.command) {
+            executeQuery(res)
+              .then((results) => {
+                evaluateResults(results, resolve, reject);
+              })
+              .catch(function (err) {
+                endOptions.end = 'error';
+                endOptions.messageLog = `executeMysql executeQuery: ${err}`;
+                endOptions.execute_err_return = `executeMysql executeQuery: ${err}`;
+                _this.end(endOptions, resolve, reject);
+              });
+          } else {
+            if (res.command_file) {
               loadSQLFile(res.command_file)
                 .then((fileContent) => {
-                  process.exec.command = fileContent;
                   res.command = fileContent;
-                  executeQuery(process, res)
-                    .then((res) => {
-                      process.execute_return = '';
-                      process.execute_err_return = '';
-                      process.end();
-                      resolve();
+                  executeQuery(res)
+                    .then((results) => {
+                      evaluateResults(results, resolve, reject);
                     })
                     .catch(function (err) {
-                      _this.logger.log('error', `executeMysql executeQuery from file: ${err}`);
-                      process.execute_err_return = `executeMysql executeQuery from file: ${err}`;
-                      process.execute_return = '';
-                      process.error();
-                      reject(process);
+                      endOptions.end = 'error';
+                      endOptions.messageLog = `executeMysql executeQuery from file: ${err}`;
+                      endOptions.execute_err_return = `executeMysql executeQuery from file: ${err}`;
+                      _this.end(endOptions, resolve, reject);
                     });
                 })
                 .catch(function (err) {
-                  _this.logger.log('error', `executeMysql loadSQLFile: ${err}`);
-                  process.execute_err_return = `executeMysql loadSQLFile: ${err}`;
-                  process.execute_return = '';
-                  process.error();
-                  reject(process);
+                  endOptions.end = 'error';
+                  endOptions.messageLog = `executeMysql loadSQLFile: ${err}`;
+                  endOptions.execute_err_return = `executeMysql loadSQLFile: ${err}`;
+                  _this.end(endOptions, resolve, reject);
                 });
+            } else {
+              endOptions.end = 'error';
+              endOptions.messageLog = `executeMysql dont have command or command_file`;
+              endOptions.execute_err_return = `executeMysql dont have command or command_file`;
+              _this.end(endOptions, resolve, reject);
             }
-          } else {
-            executeQuery(process, res)
-              .then(() => {
-                process.execute_return = '';
-                process.execute_err_return = '';
-                process.end();
-                resolve();
-              })
-              .catch(function (err) {
-                _this.logger.log('error', `executeMysql executeQuery: ${err}`);
-                process.execute_err_return = `executeMysql executeQuery: ${err}`;
-                process.execute_return = '';
-                process.error();
-                reject(process);
-              });
           }
         })
         .catch((err) => {
-          _this.logger.log('error', `mysqlExecutor Error getValues: ${err}`);
-          process.execute_err_return = `mysqlExecutor Error getValues ${err}`;
-          process.execute_return = '';
-          process.error();
-          reject(process);
+          endOptions.end = 'error';
+          endOptions.messageLog = `mysqlExecutor Error getValues: ${err}`;
+          endOptions.execute_err_return = `mysqlExecutor Error getValues: ${err}`;
+          _this.end(endOptions, resolve, reject);
         });
     });
   }

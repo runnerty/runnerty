@@ -193,16 +193,6 @@ class Process {
     return loadConfigSection(global.config, 'executors', _this.exec.id);
   }
 
-  getArgs() {
-    var _this = this;
-    return new Promise(function (resolve) {
-      replaceWithSmart(_this.args, _this.values)
-        .then((res) => {
-          resolve(res);
-        });
-    });
-  }
-
   notificate(event) {
     var _this = this;
 
@@ -531,7 +521,7 @@ class Process {
                  new executors[configValues.type](_this)
                   .then((res) => {
                     _this.executor = res;
-                    res.exec(_this)
+                    res.exec()
                       .then((_res) => {
                         resolve(_res);
                       })
