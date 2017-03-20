@@ -515,7 +515,6 @@ class Plan {
                   if (planChains[planChainsLength].processes[planProccessLength].id === depends_chains[auxDependsChainsLength].process_id) {
                     var dep_process = planChains[planChainsLength].processes[planProccessLength];
                     var dep_process_values = dep_process.values();
-                    console.log('dep_process.output_iterable:',dep_process.output_iterable);
                     input = dep_process_values[dep_process.output_iterable];
                   }
                 }

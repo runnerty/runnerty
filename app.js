@@ -11,6 +11,9 @@ var config;
 
 var reloadPlan = false;
 
+global.notificatorList = {};
+global.notificationsList = {};
+
 // CHECK ARGS APP:
 program
   .version('0.0.1')

@@ -4,7 +4,7 @@ var logger = require("../libs/utils.js").logger;
 var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var requireDir = require("../libs/utils.js").requireDir;
 
-// REQUIRE EXECUTORS:
+// REQUIRE NOTIFICATORS:
 var notificators = {};
 requireDir('/../notificators/')
   .then((res) => {
@@ -15,10 +15,10 @@ requireDir('/../notificators/')
   });
 
 class Event {
-  constructor(name, process, notifications) {
+  constructor(name, notifications) {
 
     return new Promise((resolve) => {
-      this.loadEventsObjects(name, process, notifications)
+      this.loadEventsObjects(name, notifications)
         .then((events) => {
           resolve(events);
         })
@@ -43,7 +43,7 @@ class Event {
     });
   }
 
-  loadEventsObjects(name, process, notifications) {
+  loadEventsObjects(name, notifications) {
     var _this = this;
     return new Promise((resolve) => {
       var objEvent = {};
@@ -86,7 +86,7 @@ class Event {
           resolve(objEvent);
         }
       } else {
-        logger.log('error', 'Notifications, is not array', name, process, notifications);
+        logger.log('error', 'Notifications, is not array', name, notifications);
         resolve(objEvent);
       }
     });
