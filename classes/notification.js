@@ -20,7 +20,7 @@ function sendNotification(list, notification)
   setTimeout(function(){
     notificator.lastEndTime = chronometer();
     notificator.numberCurrentRunning = notificator.numberCurrentRunning - 1;
-    console.log('[4] Termina la notificacion:',notification);
+    console.log('>[4]< >>>>>>>>>>>> Termina la notificacion:',notification.message);
     checkNotificationsSends(list);
     }, 5001);
 }
@@ -150,6 +150,7 @@ class Notification {
   queue(listName, notifToQueue){
     var _this = this;
     var list = _this.id + (listName?'_'+listName:'');
+    console.log('[0 LQ] LLAMADA A queue!',notifToQueue.message);
 
     // NOTIFICATOR: Create list IF NOT EXISTS:
     if(!global.notificatorList.hasOwnProperty(list)){

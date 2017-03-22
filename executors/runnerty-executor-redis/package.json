@@ -3,6 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "redis": "^2.6.5"
+    "redis": "^2.7.1"
   }
 }

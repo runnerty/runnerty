@@ -10,6 +10,7 @@ class slackNotificator extends Notification {
     var _this = this;
     _this.getValues(values)
       .then((res) => {
+        console.log('[N-T] ANTES DE QUEUE:',_this.message);
         _this.queue(_this.channel, res);
       });
   }

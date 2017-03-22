@@ -44,7 +44,7 @@ class Chain {
               _this.loadEvents(events)
                 .then((events) => {
                   _this.events = events;
-                 // console.log(`CADENA ${this.uId} carga estos evento:`,JSON.stringify(events));
+                  console.log(`CADENA ${this.uId} carga estos evento:`,JSON.stringify(events));
                   resolve(_this);
                 })
                 .catch(function (err) {
@@ -346,6 +346,7 @@ class Chain {
   }
 
   end() {
+    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! END DE CHAIN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     var _this = this;
     var duration = chronometer(_this.hr_started_time);
     _this.duration_seconds = duration[0];
