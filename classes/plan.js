@@ -196,7 +196,7 @@ class Plan {
       if ((chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined) || executeInmediate) {
         chain.stop();
       }
-      if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStopped())) {
+      if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStopped()) && (chain.schedule_interval || executeInmediate)) {
         if (chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') || chain.iterable)) {
 
           logger.log('debug', `SCHEDULED CHAIN ${chain.id} EN ${(new Date(chain.start_date))}`);
