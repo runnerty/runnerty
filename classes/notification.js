@@ -128,13 +128,15 @@ class Notification {
   }
 
   notificate() {
-    logger.log('error', 'Method notificate (notificacion) must be rewrite in child class');
+    logger.log('error', 'Method notificate (notification) must be rewrite in child class');
   }
 
   getValues(values) {
     var _this = this;
     return new Promise(function (resolve) {
-      let notif = Object.assign(_this.config, _this);
+      let notif = {};
+      notif = Object.assign(notif, _this.config);
+      notif = Object.assign(notif, _this);
       delete notif.config;
       replaceWithSmart(notif, values)
         .then(function (res) {
