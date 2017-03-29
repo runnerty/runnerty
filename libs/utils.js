@@ -468,10 +468,9 @@ function replaceWithSmart(inputObject, objParams, options) {
         });
     } else {
       if (inputObject instanceof Array) {
-        var len = inputObject.length;
         var promArr = [];
-        while (len--) {
-          promArr.push(replaceWithSmart(inputObject[len], objParams, options));
+        for (var i = 0; i < inputObject.length; i++) {
+          promArr.push(replaceWithSmart(inputObject[i], objParams, options));
         }
         Promise.all(promArr).then(values => {
           resolve(values);
