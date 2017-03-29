@@ -171,7 +171,9 @@ class Execution {
     return new Promise(function (resolve) {
       _this.process.loadExecutorConfig()
         .then((configValues) => {
-          var values = Object.assign(configValues, _this.process.exec);
+          var values = {};
+          values = Object.assign(values, configValues);
+          values = Object.assign(values, _this.process.exec);
           replaceWithSmart(values, _this.process.values())
             .then(function(res){
               resolve(res);
