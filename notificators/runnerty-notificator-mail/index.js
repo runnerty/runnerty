@@ -97,8 +97,6 @@ class mailNotificator extends Notification {
                 attachments: attachments
               };
 
-              console.log(mailOptions);
-
               if (notification.disable) {
                 _this.logger('warn', 'Mail sender is disable.');
                 resolve();

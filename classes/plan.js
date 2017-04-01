@@ -138,7 +138,6 @@ class Plan {
 
   scheduleChains() {
     var _this = this;
-
     _this.chains.forEach(function (chain) {
       // IGNORE ITERABLE CHAINS. SCHEDULED IN PROCESS.END EVENT
       if (!chain.iterable) {
@@ -150,7 +149,7 @@ class Plan {
           });
       }
     });
-  };
+  }
 
   scheduleChain(chain, process, executeInmediate, inputIterableValues, customValues) {
     var _this = this;
