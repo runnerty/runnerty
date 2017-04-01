@@ -62,7 +62,6 @@ class Process {
           _this.loadEvents(events)
             .then((events) => {
               _this.events = events;
-              // console.log(`PROCESO ${this.uId} carga estos evento:`,JSON.stringify(events));
               resolve(this);
             })
             .catch(function (err) {
@@ -203,7 +202,6 @@ class Process {
         if (_this.events[event].hasOwnProperty('notifications')) {
           var notificationsLength = _this.events[event].notifications.length;
           while (notificationsLength--) {
-            console.log('> LLAMADA EN PROCESS POR ',_this.events[event].notifications[notificationsLength].uId,_this.id);
             _this.events[event].notifications[notificationsLength].notificate(_this.values());
           }
         }

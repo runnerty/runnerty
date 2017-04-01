@@ -44,7 +44,6 @@ class Chain {
               _this.loadEvents(events)
                 .then((events) => {
                   _this.events = events;
-                  console.log(`CADENA ${this.uId} carga estos evento:`,JSON.stringify(events));
                   resolve(_this);
                 })
                 .catch(function (err) {
@@ -276,7 +275,6 @@ class Chain {
         if (_this.events[event].hasOwnProperty('notifications')) {
           var notificationsLength = _this.events[event].notifications.length;
           while (notificationsLength--) {
-            console.log('> LLAMADA EN CHAIN POR ',_this.events[event].notifications[notificationsLength].uId,_this.id);
             _this.events[event].notifications[notificationsLength].notificate(_this.values());
           }
         }
@@ -346,7 +344,6 @@ class Chain {
   }
 
   end() {
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! END DE CHAIN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
     var _this = this;
     var duration = chronometer(_this.hr_started_time);
     _this.duration_seconds = duration[0];

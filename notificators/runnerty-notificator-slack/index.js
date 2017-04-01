@@ -1,5 +1,6 @@
 "use strict";
 var Notification = require("../../classes/notification.js");
+var IncomingWebhooks = require('@slack/client').IncomingWebhook;
 
 class slackNotificator extends Notification {
   constructor(notification) {
@@ -10,9 +11,29 @@ class slackNotificator extends Notification {
     var _this = this;
     _this.getValues(values)
       .then((res) => {
-        console.log('[N-T] ANTES DE QUEUE:',_this.message);
         _this.queue(_this.channel, res);
       });
+  }
+
+  send(notification) {
+    return new Promise((resolve) => {
+      var wh = new IncomingWebhooks(notification.webhookurl);
+      var data = {
+        text: notification.title,
+        channel: notification.channel,
+        iconEmoji: notification.bot_emoji,
+        username: notification.bot_name,
+        attachments: [
+          {
+            text: notification.message,
+            color: notification.color
+          }
+        ]
+      };
+      wh.send(data, function () {
+        resolve();
+      });
+    });
   }
 
 }

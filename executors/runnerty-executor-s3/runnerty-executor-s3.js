@@ -33,11 +33,11 @@ class s3Executor extends Execution {
 
             // call S3 to retrieve upload file to specified bucket
             var uploadParams = {Bucket: res.bucket, Key: '', Body: ''};
-            var file_name = res.file_name || path.basename(res.file);
+            var file_name = res.remote_file || path.basename(res.local_file);
 
-            var fileStream = fs.createReadStream(res.file);
+            var fileStream = fs.createReadStream(res.local_file);
             fileStream.on('error', function (err) {
-              _this.logger.log('error', 'S3 upload reading file Error', res.file, err);
+              _this.logger.log('error', 'S3 upload reading file Error', res.local_file, err);
             });
 
             uploadParams.Body = fileStream;

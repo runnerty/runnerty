@@ -574,11 +574,9 @@ function addGlobalValuesToObjParams(objParams) {
 
             if (intialValue.value instanceof Object || intialValue.value instanceof Array) {
               gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(JSON.stringify(intialValue.value), objParams, true);
-              ;
 
             } else {
               gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(intialValue.value, objParams, true);
-              ;
             }
           }
         }
@@ -662,10 +660,10 @@ module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, 
 
   switch (condition) {
     case '==':
-      return (oper_left == oper_right);
+      return (oper_left === oper_right);
       break;
     case '!=':
-      return (oper_left != oper_right);
+      return (oper_left !== oper_right);
       break;
     case '>=':
       return (oper_left >= oper_right);

@@ -12,59 +12,45 @@ var crypto = require("crypto");
 // PRUEBAS COLA DE NOTIFICACIONES:
 var chronometer = require("../libs/utils.js").chronometer;
 
-function sendNotification(list, notification)
+function sendNotification(list, notification, sender)
 {
   var notificator = global.notificatorList[list];
   notificator.numberCurrentRunning = notificator.numberCurrentRunning + 1;
-  console.log('[3] sendNotification: ',notificator.numberCurrentRunning);
-  setTimeout(function(){
-    notificator.lastEndTime = chronometer();
-    notificator.numberCurrentRunning = notificator.numberCurrentRunning - 1;
-    console.log('>[4]< >>>>>>>>>>>> Termina la notificacion:',notification.message);
-    checkNotificationsSends(list);
-    }, 5001);
+  sender(notification)
+    .then((res) => {
+      notificator.lastEndTime = chronometer();
+      notificator.numberCurrentRunning = notificator.numberCurrentRunning - 1;
+      checkNotificationsSends(list, sender);
+    })
+    .catch((err) => {
+      logger.log('error', `Notification Sender error:`, err);
+    });
 }
 
-function checkNotificationsSends(list)
+function checkNotificationsSends(list, sender)
 {
   var notificator = global.notificatorList[list];
-  console.log('[1] NOTIFICAR:', list);
 
   if (notificator){
-    if (notificator.sendType === 'parallel'){
-      if (notificator.maxParallels < notificator.numberCurrentRunning){
-
-      }
-    }else{
-      // SERIE:
       //Si no hay notificaciones en proceso:
-      console.log('[2] Notificaciones en proceso:',notificator.numberCurrentRunning);
-      if (notificator.numberCurrentRunning === 0){
+      if (notificator.maxParallels > notificator.numberCurrentRunning || notificator.maxParallels === 0){
         // Si ha pasado el intervalo minimo de tiempo o no ha habido ejecución antes:
-        if (notificator.lastEndTime === 0 || ((notificator.lastEndTime + notificator.minInterval) <= chronometer())){
-          //console.log('here! 1a');
+        var timeDiff = process.hrtime(notificator.lastEndTime);
+        var milisecondsDiff = (timeDiff[0] * 1000) + (timeDiff[1] / 1000000);
+
+        if (notificator.lastEndTime === [0,0] || (notificator.minInterval <= milisecondsDiff)){
           var notifications = global.notificationsList[list];
-          console.log('[2.1] antes de shift:',notifications);
           if(notifications && notifications.length){
             var notification = notifications.shift();
-            console.log('[2.2] despues de shift:',notifications);
-            sendNotification(list, notification);
-          }else{
-            console.log('> DE MOMENTO NO HAY MAS NOTIFICACIONES DE ',list);
+            sendNotification(list, notification, sender);
           }
-
         }else{
-          console.log('here! 2b', (notificator.lastEndTime + notificator.minInterval), chronometer());
           // Retry when minInterval expire:
-          // setTimeout(checkNotificationsSends(list), (notificator.lastEndTime + notificator.minInterval) - chronometer());
+          setTimeout(function(){
+            checkNotificationsSends(list, sender);
+          }, (notificator.minInterval-milisecondsDiff));
         }
-      }else{
-        console.log(' > HAY NOTIFICACIONES EN EJECUCION. SE ESPERA. ',list);
       }
-    }
-    //console.log('global.notificatorList:',global.notificatorList);
-    // console.log('global.notificationsList:',);
-
   }
 
 }
@@ -131,6 +117,11 @@ class Notification {
     logger.log('error', 'Method notificate (notification) must be rewrite in child class');
   }
 
+  send() {
+    logger.log('error', 'Method send (notification) must be rewrite in child class');
+  }
+
+
   getValues(values) {
     var _this = this;
     return new Promise(function (resolve) {
@@ -152,19 +143,16 @@ class Notification {
   queue(listName, notifToQueue){
     var _this = this;
     var list = _this.id + (listName?'_'+listName:'');
-    console.log('[0 LQ] LLAMADA A queue!',notifToQueue.message);
 
     // NOTIFICATOR: Create list IF NOT EXISTS:
     if(!global.notificatorList.hasOwnProperty(list)){
       global.notificatorList[list] = {
         "notificatorId": _this.id,
-        "sendType": _this.sendType || 'serie',
-        "minInterval": _this.config.minInterval || 0,
-        "maxParallels": _this.config.maxParallels || 0,
+        "minInterval": notifToQueue.minInterval || 0,
+        "maxParallels": notifToQueue.maxParallels || 0,
         "numberCurrentRunning": 0,
-        "lastEndTime": 0
+        "lastEndTime": [0,0]
       };
-      //TODO: Llamar al método de check-envio de notificciones con el nombre de la lista: ej. cs(list);
     }
     // NOTIFICATIONS: Create list IF NOT EXISTS:
     if(!global.notificationsList.hasOwnProperty(list)){
@@ -172,8 +160,7 @@ class Notification {
     }
 
     global.notificationsList[list].push(notifToQueue);
-    console.log('[0] en queue:',global.notificationsList[list]);
-    checkNotificationsSends(list);
+    checkNotificationsSends(list, _this.send);
   }
 
   setUid() {

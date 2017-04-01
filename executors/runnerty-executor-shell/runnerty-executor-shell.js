@@ -22,9 +22,17 @@ class shellExecutor extends Execution {
       var [args, execValues] = await Promise.all([_this.getArgs(), _this.getValues()]);
 
       var cmd = execValues.command;
-      shell.execute_args = args;
+      shell.execute_args = [];
+      shell.execute_args_line = '';
+
+      if (args instanceof Array){
+        shell.execute_args = args;
+        for (var i = 0; i < args.length; i++) {
+          shell.execute_args_line = (shell.execute_args?shell.execute_args + ' ':'') + args[i];
+        }
+      }
       shell.proc = spawn(cmd, shell.execute_args, {shell: true});
-      shell.command_executed = cmd + ' ' + shell.execute_args;
+      shell.command_executed = cmd + ' ' + shell.execute_args_line;
       endOptions.command_executed = shell.command_executed;
 
       shell.proc.stdout.on('data', function (chunk) {

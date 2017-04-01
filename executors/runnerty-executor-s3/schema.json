@@ -3,17 +3,17 @@
   "title": "runnerty-executor-s3",
   "definitions": {
     "config":
-      { "type": "object",
-        "required": ["id","type","apiVersion","accessKeyId","secretAccessKey","bucket","method","region"],
-        "properties":{
-          "id": {"type": "string"},
-          "type": {"type": "string", "pattern": "runnerty-executor-s3"},
-          "apiVersion": {"type": "string"},
-          "accessKeyId": {"type": "string"},
-          "secretAccessKey": {"type": "string"},
-          "bucket": {"type": "string"},
-          "method": {"type": "string"},
-          "region": {"type": "string"}
+    { "type": "object",
+      "required": ["id","type","apiVersion","accessKeyId","secretAccessKey","bucket","method","region"],
+      "properties":{
+        "id": {"type": "string"},
+        "type": {"type": "string", "pattern": "runnerty-executor-s3"},
+        "apiVersion": {"type": "string"},
+        "accessKeyId": {"type": "string"},
+        "secretAccessKey": {"type": "string"},
+        "bucket": {"type": "string"},
+        "method": {"type": "string"},
+        "region": {"type": "string"}
       }
     },
     "params":
@@ -21,8 +21,8 @@
       "required": ["id","file"],
       "properties":{
         "id": {"type": "string"},
-        "file": {"type": "string"},
-        "file_name": {"type": "string"},
+        "local_file": {"type": "string"},
+        "remote_file": {"type": "string"},
         "method": {"type": "string"},
         "bucket": {"type": "string"}
       }
