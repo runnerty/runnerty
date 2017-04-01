@@ -1,6 +1,5 @@
 "use strict";
 
-var utilReplaceWith = require("../libs/utils.js").replaceWith;
 var replaceWithSmart = require("../libs/utils.js").replaceWithSmart;
 // var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var requireDir = require("../libs/utils.js").requireDir;
@@ -16,7 +15,7 @@ function sendNotification(list, notification, sender)
 {
   var notificator = global.notificatorList[list];
   notificator.numberCurrentRunning = notificator.numberCurrentRunning + 1;
-  sender(notification)
+  sender.send(notification)
     .then((res) => {
       notificator.lastEndTime = chronometer();
       notificator.numberCurrentRunning = notificator.numberCurrentRunning - 1;
@@ -64,9 +63,6 @@ class Notification {
     while (propertiesLength--) {
       _this[properties[propertiesLength]] = notification[properties[propertiesLength]];
     }
-
-    //_this.replaceWith = utilReplaceWith;
-    //_this.replaceWithSmart = replaceWithSmart;
 
     return new Promise((resolve) => {
       var configValues = notification.config;
@@ -121,7 +117,6 @@ class Notification {
     logger.log('error', 'Method send (notification) must be rewrite in child class');
   }
 
-
   getValues(values) {
     var _this = this;
     return new Promise(function (resolve) {
@@ -160,7 +155,7 @@ class Notification {
     }
 
     global.notificationsList[list].push(notifToQueue);
-    checkNotificationsSends(list, _this.send);
+    checkNotificationsSends(list, _this);
   }
 
   setUid() {
@@ -175,6 +170,10 @@ class Notification {
 
   logger(type, menssage){
     logger.log(type, menssage);
+  }
+
+  replaceWith(object, values){
+    return replaceWithSmart(object, values);
   }
 
 }

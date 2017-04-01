@@ -12,16 +12,16 @@
           "transport":{"type":"string"},
           "templateDir":{"type":"string"},
           "template":{"type":"string"},
-          "recipients": {"type": "array"}
+          "to": {"type": "array"}
       }
     },
     "params":
     { "type": "object",
-      "required": ["id","message","title"],
+      "required": ["id","message","subject"],
       "properties":{
         "id": {"type": "string"},
-        "title": {"type": "string"},
-        "recipients": {"type": "array"},
+        "subject": {"type": "string"},
+        "to": {"type": "array"},
         "attachments": {
           "type": "array",
           "items": {
