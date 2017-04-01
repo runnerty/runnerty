@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "runnerty-executor-iterable",
+  "definitions": {
+    "config":
+    { "type": "object",
+      "required": ["id","type"],
+      "properties":{
+        "id": {"type": "string"},
+        "type": {"type": "string", "pattern": "runnerty-executor-iterable"}
+
+      }
+    },
+    "params":
+    { "type": "object",
+      "required": ["id", "objects"],
+      "properties":{
+        "id": {"type": "string"},
+        "objects":{"type":"array"}
+      }
+    }
+  }
+}
