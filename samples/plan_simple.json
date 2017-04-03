@@ -1,130 +1,79 @@
 {
-  "chains":[{
-    "id":"CHAIN_UNO",
-    "name":"Cadena uno",
-    "start_date":"2016-08-01T00:00:00.000Z",
-    "end_date":"2099-11-01T00:00:00.000Z",
-    "schedule_interval":"*/1 * * * *",
-    "depends_chains":[],
-    "events":{"on_start":{
-              "notifications":[
-              {
-                "type":"slack",
-                "id":"slack_default",
-                "bot_emoji": ":rabbit2:",
-                "channel": "mlm",
-                "message":"> *INICIO* DE LA CADENA *:CHAIN_NAME*"
-              }
-            ]
-      },"on_end":{
-               "notifications":[
-              {
-                "type":"slack",
-                "id":"slack_default",
-                "bot_emoji": ":rabbit2:",
-                "channel": "mlm",
-                "message":"> *FIN* DE LA CADENA *:CHAIN_NAME*"
-              }
-            ]
-        }, "on_waiting_dependencies":{}, "on_exceeded_limited_time_end":{}},
-    "processes":[
-       {"id":"PROCESS_ONE",
-        "name":"Process ONE",
-        "depends_process":[],
-        "exec":{"command":"/etc/runnerty/sleeper.sh"},
-        "args": ["HELLO FROM :PROCESS_NAME"],
-        "retries":0,
-        "retry_delay":0,
-        "end_chain_on_fail":true,
-        "output":[{"file_name":"/etc/runnerty/test.log", "write":["[!] EJECUCIÓN :DD-:MM-:YY :HH::mm::ss -","PROCESS_EXEC_DB_RETURN\n :PROCESS_EXEC_DB_RETURN","PROCESS_EXEC_DB_AFFECTEDROWS:\n :PROCESS_EXEC_DB_AFFECTEDROWS"], "concat":true, "maxsize":"1mb"},
-          {"file_name":"/etc/runnerty/RES_MYSQL.log", "write":[":PROCESS_EXEC_DB_RETURN"], "concat":false, "maxsize":"1mb"},
-          {"file_name":"/etc/runnerty/RES_MYSQL.csv", "write":[":PROCESS_EXEC_DB_RETURN_CSV"], "concat":false, "maxsize":"1mb"}],
-        "events":{
-          "on_start":{
-            "notifications":[
-              {
-                "id":"slack_default",
-                "bot_emoji": ":rabbit2:",
-                "channel": "mlm",
-                "message":">> *INICIO* DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
-              }
-            ]
-          },
-          "on_fail":{
-            "notifications":[
-              {
-                "id":"slack_default",
-                "bot_emoji": ":see_no_evil:",
-                "channel": "mlm",
-                "message":"  ------> [PROC-E] ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA ITERABLE :CHAIN_ID - :PROCESS_EXEC_ERR_RETURN / :PROCESS_EXEC_RETURN"
-              }
-            ]
-          },
-          "on_retry":{},
-          "on_end":{
-            "notifications":[
-              {
-                "id":"slack_default",
-                "bot_emoji": ":rabbit2:",
-                "channel": "mlm",
-                "message":"<< *FIN* DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
-              }
-            ]
-          },
-          "on_waiting_dependencies":{},
-          "on_exceeded_limited_time_end":{}
-        }
-      },
+  "chains":[
     {
-      "id":"PROCESS_TWO",
-      "name":"Concatenador de CSVs",
-      "depends_process":["PROCESS_ONE"],
-      "exec":{"command":"SELECT * FROM test", "id":"postgres_default"},
-      "args": {"idg":"3", "pop":":PROCESS_ID"},
-      "retries":0,
-      "retry_delay":0,
-      "end_chain_on_fail":true,
-      "output":[{"file_name":"/etc/runnerty/test.log", "write":["[!] EJECUCIÓN :DD-:MM-:YY :HH::mm::ss -","PROCESS_EXEC_DB_RETURN\n :PROCESS_EXEC_DB_RETURN","PROCESS_EXEC_DB_AFFECTEDROWS:\n :PROCESS_EXEC_DB_AFFECTEDROWS"], "concat":true, "maxsize":"1mb"},
-        {"file_name":"/etc/runnerty/RES_MYSQL.log", "write":[":PROCESS_EXEC_DB_RETURN"], "concat":false, "maxsize":"1mb"},
-        {"file_name":"/etc/runnerty/RES_MYSQL.csv", "write":[":PROCESS_EXEC_DB_RETURN_CSV"], "concat":false, "maxsize":"1mb"}],
-      "output_iterable":"PROCESS_EXEC_DB_RETURN",
+      "id":"CHAIN_ONE",
+      "name":"Chain one sample",
+      "start_date":"2017-04-01T00:00:00.00Z",
+      "end_date":"2099-11-01T00:00:00.00Z",
+      "schedule_interval":"*/1 * * * *",
+      "depends_chains":[],
       "events":{
         "on_start":{
           "notifications":[
             {
-              "id":"slack_default",
-              "bot_emoji": ":rabbit2:",
-              "channel": "mlm",
-              "message":">> *INICIO* DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID"
+              "id":"mail_default",
+              "subject":"RUNNERTY SAMPLE",
+              "message":"CHAIN :CHAIN_NAME START"
             }
           ]
         },
-        "on_fail":{
-          "notifications":[
-            {
-              "id":"slack_default",
-              "bot_emoji": ":see_no_evil:",
-              "channel": "mlm",
-              "message":"ERROR EN EL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXEC_ERR_RETURN / :PROCESS_EXEC_RETURN"
-            }
-          ]
-        },
-        "on_retry":{},
         "on_end":{
           "notifications":[
             {
-              "id":"slack_default",
-              "bot_emoji": ":see_no_evil:",
-              "channel": "mlm",
-              "message":"<< *FIN* DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXEC_ERR_RETURN / :PROCESS_EXEC_RETURN"
+              "id":"mail_default",
+              "subject":"RUNNERTY SAMPLE",
+              "message":"CHAIN :CHAIN_NAME END"
             }
           ]
-        },
-        "on_waiting_dependencies":{},
-        "on_exceeded_limited_time_end":{}
-      }
+        }
+      },
+      "processes":[
+        {
+          "id":"PROCESS_ONE",
+          "name":"Proccess One",
+          "depends_process":[],
+          "exec":{
+            "id":"shell_default",
+            "command":"echo hello word!"
+          },
+          "args":[],
+          "retries":0,
+          "retry_delay":0,
+          "end_chain_on_fail":true,
+          "output":[
+            {
+              "file_name":"/etc/runnerty/test.log",
+              "write":[
+                "> EXEC :PROCESS_ID - :DD-:MM-:YY :HH::mm::ss: RETURN: :PROCESS_EXEC_RETURN"
+              ],
+              "concat":true,
+              "maxsize":"10mb"
+            }
+          ],
+          "events":{
+            "on_start":{
+              "notifications":[
+                {
+                  "id":"mail_default",
+                  "subject":"RUNNERTY SAMPLE",
+                  "message":"PROCESS :PROCESS_NAME START"
+                }
+              ]
+            },
+            "on_fail":{},
+            "on_retry":{},
+            "on_end":{
+              "notifications":[
+                {
+                  "id":"mail_default",
+                  "subject":"RUNNERTY SAMPLE",
+                  "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_RETURN"
+                }
+              ]
+            }
+          }
+        }
+      ]
     }
-    ]
-  }
   ]
 }

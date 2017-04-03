@@ -1,5 +1,6 @@
 "use strict";
 var program = require('commander');
+var redis = require('redis');
 var logger = require("./libs/utils.js").logger;
 var loadGeneralConfig = require("./libs/utils.js").loadGeneralConfig;
 var mongoose = require('mongoose');
@@ -46,6 +47,7 @@ loadGeneralConfig(configFilePath)
       fileLoad = config.general.binBackup;
     }
 
+    // MONGODB HISTORY:
     if(config.general.history && config.general.history.mongodb && (config.general.history.disable !== true)){
       mongoose.connect(`mongodb://${config.general.history.mongodb.host}:${config.general.history.mongodb.port}/runnerty`);
       mongoose.connection.on('error',function (err) {
@@ -54,6 +56,24 @@ loadGeneralConfig(configFilePath)
       global.config.historyEnabled = true;
     }else{
       global.config.historyEnabled = false;
+    }
+
+    // QUEUE NOTIFICATIONS:
+    if(global.config.general.queue_notifications && global.config.general.queue_notifications.queue){
+      // REDIS QUEUE NOTIFICATIONS:
+      if(global.config.general.queue_notifications.queue = 'redis'){
+        var redisClient = redis.createClient(global.config.general.queue_notifications.port || "6379", global.config.general.queue_notifications.host, global.config.general.queue_notifications.options), multi;
+        redisClient.auth(global.config.general.queue_notifications.password);
+
+        redisClient.on("error", function (err) {
+          logger.log('error', `Could not connect to Redis (Queue): ${err}`);
+        });
+
+        redisClient.on("ready", function () {
+          global.queueRedisCli = redisClient;
+          global.config.queueNotificationsExternal = 'redis';
+        });
+      }
     }
 
     new FilePlan(fileLoad, config)

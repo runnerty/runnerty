@@ -473,9 +473,9 @@ endOptions:
     
 resolve: resolve method exec promise return
 reject: reject method exec promise return
-    
+
 ```
-          ;
+          `
           var endOptions = {
             end: 'error',
             messageType: 'error',
@@ -484,4 +484,24 @@ reject: reject method exec promise return
             execute_return: ''
           };
           _this.´
-´´
+```
+
+## NOTIFICATORS:
+### QUEUE (COLAS)
+Configuración general:
+queue_notifications:
+- Si no se indica la gestión de cola se realizará en memoria.
+- Puede indicarse configuración a redis para su gestión en redis:
+```
+// conf.json: config/general:
+        "queue_notifications":{
+            "queue":"redis",
+            "host": "127.0.0.1",
+            "port": "6379",
+            "password": "",
+            "options": {}
+        }```
+Parámetros:
+maxParallels
+minInterval
+

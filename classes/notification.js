@@ -1,58 +1,12 @@
 "use strict";
-
 var replaceWithSmart = require("../libs/utils.js").replaceWithSmart;
-// var loadConfigSection = require("../libs/utils.js").loadConfigSection;
 var requireDir = require("../libs/utils.js").requireDir;
 var logger = require("../libs/utils.js").logger;
+var qnm = require("../libs/queue-notifications-memory.js");
+var qnr = require("../libs/queue-notifications-redis.js");
 var Ajv = require('ajv');
 var ajv = new Ajv({allErrors: true});
 var crypto = require("crypto");
-
-// PRUEBAS COLA DE NOTIFICACIONES:
-var chronometer = require("../libs/utils.js").chronometer;
-
-function sendNotification(list, notification, sender)
-{
-  var notificator = global.notificatorList[list];
-  notificator.numberCurrentRunning = notificator.numberCurrentRunning + 1;
-  sender.send(notification)
-    .then((res) => {
-      notificator.lastEndTime = chronometer();
-      notificator.numberCurrentRunning = notificator.numberCurrentRunning - 1;
-      checkNotificationsSends(list, sender);
-    })
-    .catch((err) => {
-      logger.log('error', `Notification Sender error:`, err);
-    });
-}
-
-function checkNotificationsSends(list, sender)
-{
-  var notificator = global.notificatorList[list];
-
-  if (notificator){
-      //Si no hay notificaciones en proceso:
-      if (notificator.maxParallels > notificator.numberCurrentRunning || notificator.maxParallels === 0){
-        // Si ha pasado el intervalo minimo de tiempo o no ha habido ejecución antes:
-        var timeDiff = process.hrtime(notificator.lastEndTime);
-        var milisecondsDiff = (timeDiff[0] * 1000) + (timeDiff[1] / 1000000);
-
-        if (notificator.lastEndTime === [0,0] || (notificator.minInterval <= milisecondsDiff)){
-          var notifications = global.notificationsList[list];
-          if(notifications && notifications.length){
-            var notification = notifications.shift();
-            sendNotification(list, notification, sender);
-          }
-        }else{
-          // Retry when minInterval expire:
-          setTimeout(function(){
-            checkNotificationsSends(list, sender);
-          }, (notificator.minInterval-milisecondsDiff));
-        }
-      }
-  }
-
-}
 
 class Notification {
   constructor(notification) {
@@ -138,24 +92,14 @@ class Notification {
   queue(listName, notifToQueue){
     var _this = this;
     var list = _this.id + (listName?'_'+listName:'');
-
-    // NOTIFICATOR: Create list IF NOT EXISTS:
-    if(!global.notificatorList.hasOwnProperty(list)){
-      global.notificatorList[list] = {
-        "notificatorId": _this.id,
-        "minInterval": notifToQueue.minInterval || 0,
-        "maxParallels": notifToQueue.maxParallels || 0,
-        "numberCurrentRunning": 0,
-        "lastEndTime": [0,0]
-      };
+    // QUEUE REDIS;
+    if(global.config.queueNotificationsExternal && global.config.queueNotificationsExternal === 'redis'){
+      //REDIS QUEUE:
+      qnr.queue(_this, notifToQueue, list);
+    }else{
+      //MEMORY QUEUE:
+      qnm.queue(_this, notifToQueue, list);
     }
-    // NOTIFICATIONS: Create list IF NOT EXISTS:
-    if(!global.notificationsList.hasOwnProperty(list)){
-      global.notificationsList[list] = [];
-    }
-
-    global.notificationsList[list].push(notifToQueue);
-    checkNotificationsSends(list, _this);
   }
 
   setUid() {
