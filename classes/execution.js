@@ -125,7 +125,6 @@ class Execution {
   paramsReplace(input, options){
     var _this = this;
     var useGlobalValues = options.useGlobalValues || true;
-    var useArgsValues = options.useArgsValues || false;
     var useProcessValues = options.useProcessValues || false;
     var altValueReplace = options.altValueReplace || '';
     var useExtraValue = options.useExtraValue || false;
@@ -141,10 +140,6 @@ class Execution {
       //Process values
       if(useProcessValues){
         replacerValues =  Object.assign(replacerValues, _this.process.values());
-      }
-      //Params args process
-      if(useArgsValues){
-        replacerValues =  Object.assign(replacerValues, await _this.getArgs());
       }
       // Custom object values:
       if(useExtraValue){
@@ -185,17 +180,6 @@ class Execution {
               _this.process.error();
               resolve();
             });
-        });
-    });
-  }
-
-  getArgs() {
-    var _this = this;
-    return new Promise(function (resolve) {
-      replaceWithSmart(_this.process.args, _this.process.values())
-        .then((res) => {
-          _this.process.execute_arg = res;
-          resolve(res);
         });
     });
   }

@@ -15,7 +15,8 @@
       "required": ["id","command"],
       "properties":{
         "id": {"type": "string"},
-        "command": {"type": "string"}
+        "command": {"type": "string"},
+        "args": {"type": "array"}
       }
     }
   }

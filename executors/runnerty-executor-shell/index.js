@@ -19,18 +19,20 @@ class shellExecutor extends Execution {
       var stdout = '';
       var stderr = '';
       var shell = {};
-      var [args, execValues] = await Promise.all([_this.getArgs(), _this.getValues()]);
+
+      var execValues = await _this.getValues();
 
       var cmd = execValues.command;
       shell.execute_args = [];
       shell.execute_args_line = '';
 
-      if (args instanceof Array){
-        shell.execute_args = args;
-        for (var i = 0; i < args.length; i++) {
-          shell.execute_args_line = (shell.execute_args?shell.execute_args + ' ':'') + args[i];
+      if (execValues.args instanceof Array){
+        shell.execute_args = execValues.args;
+        for (var i = 0; i < execValues.args.length; i++) {
+          shell.execute_args_line = (shell.execute_args_line?shell.execute_args_line + ' ':'') + execValues.args[i];
         }
       }
+
       shell.proc = spawn(cmd, shell.execute_args, {shell: true});
       shell.command_executed = cmd + ' ' + shell.execute_args_line;
       endOptions.command_executed = shell.command_executed;
@@ -51,45 +53,19 @@ class shellExecutor extends Execution {
               endOptions.end = 'end';
               endOptions.execute_return = stdout;
               endOptions.execute_err_return = stderr;
-              endOptions.execute_arg = shell.execute_arg;
               _this.end(endOptions, resolve, reject);
             } else {
               endOptions.end = 'error';
               endOptions.messageLog = ' FIN: ' + code + ' - ' + stdout + ' - ' + stderr;
               endOptions.execute_err_return = stderr;
-              endOptions.execute_arg = shell.execute_arg;
               endOptions.execute_return = stdout;
               endOptions.retries_count = endOptions.retries_count + 1 || 1;
               _this.end(endOptions, resolve, reject);
-              /*
-               if (process.retries >= process.retries_count) {
-
-               process.retry();
-
-               setTimeout(function () {
-               process.start(true)
-               .then(function (res) {
-               process.retries_count = 0;
-               resolve(res);
-               })
-               .catch(function (err) {
-               _this.logger.log('error', 'Retrying process:', err);
-               resolve(err);
-               });
-               }, process.retry_delay * 1000 || 0);
-
-               } else {
-               if (process.end_on_fail) {
-               process.end();
-               }
-               reject(process, stderr);
-               }
-               */
             }
           }
         });
     });
-  };
+  }
 
   kill(_process) {
     var _this = this;

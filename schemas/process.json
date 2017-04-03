@@ -18,7 +18,6 @@
             "type": "string"}
         }
       },
-      "args": {"type": ["array","object"]},
       "retries": {"type": "number"},
       "retry_delay": {"type": "number"},
       "end_chain_on_fail": {"type": "boolean"},

@@ -119,7 +119,6 @@ class Chain {
       process.depends_process,
       process.depends_process_alt,
       process.exec,
-      process.args,
       process.retries,
       process.retry_delay,
       process.limited_time_end,

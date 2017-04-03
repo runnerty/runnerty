@@ -36,7 +36,6 @@
             "id":"shell_default",
             "command":"echo hello word!"
           },
-          "args":[],
           "retries":0,
           "retry_delay":0,
           "end_chain_on_fail":true,

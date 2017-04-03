@@ -26,7 +26,7 @@ requireDir('/../executors/')
 var Event = require("./event.js");
 
 class Process {
-  constructor(id, name, parentUId, depends_process, depends_process_alt, exec, args, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, output_share, custom_values, chain_values) {
+  constructor(id, name, parentUId, depends_process, depends_process_alt, exec, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, output_share, custom_values, chain_values) {
     this.id = id;
     this.name = name;
     this.uId = '';
@@ -34,7 +34,6 @@ class Process {
     this.depends_process = depends_process;
     this.depends_process_alt = depends_process_alt;
     this.exec = exec;
-    this.args = args;
     this.retries = retries;
     this.retry_delay = retry_delay;
     this.limited_time_end = limited_time_end;
@@ -97,8 +96,6 @@ class Process {
       "PROCESS_EXEC_COMMAND": (_this.exec instanceof Object) ? _this.exec.command : _this.exec,
       "PROCESS_EXEC_ID": (_this.exec instanceof Object) ? _this.exec.id : '',
       "PROCESS_EXEC_COMMAND_EXECUTED": _this.command_executed,
-      "PROCESS_ARGS": _this.args,
-      "PROCESS_EXEC_ARGS": _this.execute_args,
       "PROCESS_EXEC_RETURN": _this.execute_return,
       "PROCESS_EXEC_ERR_RETURN": _this.execute_err_return,
       "PROCESS_STARTED_AT": _this.started_at,
@@ -222,7 +219,6 @@ class Process {
         date : _this.date,
         name : _this.name,
         exec : _this.exec,
-        args : _this.args,
         depends_process : _this.depends_process,
         depends_process_alt : _this.depends_process_alt,
         retries : _this.retries,
@@ -231,7 +227,6 @@ class Process {
         end_on_fail : _this.end_on_fail,
         end_chain_on_fail : _this.end_chain_on_fail,
         command_executed : _this.command_executed,
-        args_executed : _this.args_executed,
         retries_count : _this.retries_count,
         output : _this.output,
         output_iterable : _this.output_iterable,

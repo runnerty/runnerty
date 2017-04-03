@@ -2,7 +2,6 @@
 
 var nodemailer = require('nodemailer');
 var ejs = require('ejs');
-
 var path = require('path');
 var fs = require('fs');
 
