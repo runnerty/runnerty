@@ -8,12 +8,13 @@ var getProcessByUId = require("../libs/utils.js").getProcessByUId;
 var checkEvaluation = require("../libs/utils.js").checkEvaluation;
 var chronometer = require("../libs/utils.js").chronometer;
 var mongoChain = require("../mongodb-models/chain.js");
+var mongoose = require('mongoose');
 
 var Process = require("./process.js");
 var Event = require("./event.js");
 
 class Chain {
-  constructor(id, name, parentUId, iterable, input, custom_values, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at) {
+  constructor(id, name, parentUId, iterable, input, custom_values, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at, calendars) {
     this.id = id;
     this.name = name;
     this.uId = '';
@@ -26,6 +27,7 @@ class Chain {
     this.schedule_interval = schedule_interval;
     this.depends_chains = depends_chains;
     this.depends_chains_alt = depends_chains_alt;
+    this.calendars = calendars;
     this.events = {};
 
     this.status = status || "stop";

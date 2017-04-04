@@ -8,6 +8,9 @@ var Ajv = require('ajv');
 var ajv = new Ajv({allErrors: true});
 var crypto = require('crypto');
 var moment = require('moment');
+var ics = require('ical2json');
+var redis = require('redis');
+var mongoose = require('mongoose');
 
 const algorithm = 'aes-256-ctr';
 
@@ -728,4 +731,128 @@ module.exports.chronometer = function chronometer(start) {
   } else {
     return process.hrtime();
   }
+};
+
+function isDateInEvents(date, events){
+  return new Promise((resolve) => {
+    var evDate = parseInt(date.toISOString().slice(0,10).replace(/-/g,""));
+    var lengthEvents = Object.keys(events).length;
+    var found = false;
+    while(lengthEvents-- && !found){
+      let key = Object.keys(events)[lengthEvents];
+      let event = events[key];
+      if(evDate >= event.start && evDate <=event.end){
+        found = true;
+      }
+    }
+    resolve(found);
+  });
+}
+
+module.exports.checkCalendar = function checkCalendar(calendars, execDate) {
+  return new Promise(async function (resolve, reject) {
+    if(!execDate){
+      execDate = new Date();
+    }
+
+    var chainMustRun = true;
+    if(calendars.enable && calendars.enable !== ''){
+      if(global.calendars[calendars.enable]){
+        var enableEvents = global.calendars[calendars.enable];
+        chainMustRun = await isDateInEvents(execDate, enableEvents);
+      }else{
+        logger.log('error', `Calendar enable ${calendars.enable} not found`);
+      }
+    }
+
+    if(calendars.disable && calendars.disable !== '' && chainMustRun){
+      if(global.calendars[calendars.disable]){
+        var disableEvents = global.calendars[calendars.disable];
+        chainMustRun = !await isDateInEvents(execDate, disableEvents);
+      }else{
+        logger.log('error', `Calendar disable ${calendars.disable} not found`);
+      }
+    }
+    resolve(chainMustRun);
+  });
+};
+
+
+function generateCalendar(file){
+  return new Promise((resolve) => {
+    var fileName = path.parse(file).name;
+    var fileExt = path.parse(file).ext;
+    if (fileExt === '.ics') {
+      var filePath = path.join(global.config.general.calendarsPath, file);
+      var parsedCal = {};
+      fs.readFile(filePath, {encoding: "utf8"}, function (err, data) {
+        if (err) {
+          logger.log('error', 'Calendars readFile: ', err);
+        } else {
+          parsedCal = ics.convert(data).VCALENDAR[0].VEVENT;
+          var calEvents = [];
+          for (var i = 0; i < parsedCal.length; i++) {
+            var event = {};
+            event.start = parseInt(parsedCal[i]['DTSTART;VALUE=DATE']);
+            event.end = parseInt(parsedCal[i]['DTEND;VALUE=DATE']);
+            event.summary = parsedCal[i]['SUMMARY'];
+            calEvents.push(event);
+          }
+          global.calendars[fileName] = calEvents;
+          resolve();
+        }
+      });
+    }
+  });
+}
+
+module.exports.loadCalendars = function loadCalendars() {
+  global.calendars = {};
+  if(global.config.general.calendarsPath){
+    fs.readdir(global.config.general.calendarsPath, (err, files) => {
+      for(var i=0; i < files.length; i++){
+        generateCalendar(files[i]);
+      }
+    });
+  }
+};
+
+module.exports.loadQueueNotifications = function loadQueueNotifications() {
+  global.notificatorList = {};
+  global.notificationsList = {};
+  if(global.config.general.queue_notifications && global.config.general.queue_notifications.queue){
+    // REDIS QUEUE NOTIFICATIONS:
+    if(global.config.general.queue_notifications.queue = 'redis'){
+      var redisClient = redis.createClient(global.config.general.queue_notifications.port || "6379", global.config.general.queue_notifications.host, global.config.general.queue_notifications.options), multi;
+      if(global.config.general.queue_notifications.password && global.config.general.queue_notifications.password !== ''){
+        redisClient.auth(global.config.general.queue_notifications.password);
+      }
+      redisClient.on("error", function (err) {
+        logger.log('error', `Could not connect to Redis (Queue): ${err}`);
+      });
+
+      redisClient.on("ready", function () {
+        global.queueRedisCli = redisClient;
+        global.config.queueNotificationsExternal = 'redis';
+      });
+    }
+  }
+};
+
+module.exports.loadMongoHistory = function loadMongoHistory() {
+  if (config.general.history && config.general.history.mongodb && (config.general.history.disable !== true)) {
+    mongoose.connect(`mongodb://${config.general.history.mongodb.host}:${config.general.history.mongodb.port}/runnerty`);
+    mongoose.connection.on('error', function (err) {
+      logger.log('error', `Mongodb connection error ${err}`);
+    });
+    global.config.historyEnabled = true;
+  } else {
+    global.config.historyEnabled = false;
+  }
+};
+
+module.exports.mongooseCloseConnection = function mongooseCloseConnection() {
+  mongoose.connection.close(function () {
+    process.exit(0);
+  });
 };

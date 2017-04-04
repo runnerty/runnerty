@@ -3,6 +3,7 @@
 var schedule = require('node-schedule');
 var chokidar = require('chokidar');
 var logger = require("../libs/utils.js").logger;
+var checkCalendar = require("../libs/utils.js").checkCalendar;
 var Chain = require("./chain.js");
 
 class Plan {
@@ -66,7 +67,8 @@ class Plan {
   }
 
   loadChain(chain, parentUId, custom_values) {
-    return new Chain(chain.id,
+    return new Chain(
+      chain.id,
       chain.name,
       parentUId,
       chain.iterable,
@@ -81,7 +83,8 @@ class Plan {
       chain.processes,
       chain.status,
       chain.started_at,
-      chain.ended_at);
+      chain.ended_at,
+      chain.calendars);
   }
 
   loadChainFileDependencies(chain) {
@@ -222,6 +225,16 @@ class Plan {
 
 
             logger.log('debug', `TRYING START CHAIN ${chain.id} IN ${(new Date(chain.start_date))}`);
+
+            if(chain.calendars){
+              checkCalendar(chain.calendars)
+                .then((res) => {
+                  console.log('Calendario Check:',res);
+                })
+                .catch((err) => {
+                  logger.log('error', `CheckCalendar error ${err}`);
+                });
+            }
 
             if (!executeInmediate && _this.hasDependenciesBlocking(chain)) {
               chain.waiting_dependencies();

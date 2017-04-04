@@ -1,9 +1,11 @@
 "use strict";
 var program = require('commander');
-var redis = require('redis');
 var logger = require("./libs/utils.js").logger;
 var loadGeneralConfig = require("./libs/utils.js").loadGeneralConfig;
-var mongoose = require('mongoose');
+var loadCalendars = require("./libs/utils.js").loadCalendars;
+var loadQueueNotifications = require("./libs/utils.js").loadQueueNotifications;
+var loadMongoHistory = require("./libs/utils.js").loadMongoHistory;
+var mongooseCloseConnection = require("./libs/utils.js").mongooseCloseConnection;
 
 var FilePlan = require("./classes/file_plan.js");
 
@@ -11,9 +13,6 @@ var configFilePath = '/etc/runnerty/conf.json';
 var config;
 
 var reloadPlan = false;
-
-global.notificatorList = {};
-global.notificationsList = {};
 
 // CHECK ARGS APP:
 program
@@ -48,33 +47,13 @@ loadGeneralConfig(configFilePath)
     }
 
     // MONGODB HISTORY:
-    if(config.general.history && config.general.history.mongodb && (config.general.history.disable !== true)){
-      mongoose.connect(`mongodb://${config.general.history.mongodb.host}:${config.general.history.mongodb.port}/runnerty`);
-      mongoose.connection.on('error',function (err) {
-        logger.log('error', `Mongodb connection error ${err}`);
-      });
-      global.config.historyEnabled = true;
-    }else{
-      global.config.historyEnabled = false;
-    }
+    loadMongoHistory();
 
     // QUEUE NOTIFICATIONS:
-    if(global.config.general.queue_notifications && global.config.general.queue_notifications.queue){
-      // REDIS QUEUE NOTIFICATIONS:
-      if(global.config.general.queue_notifications.queue = 'redis'){
-        var redisClient = redis.createClient(global.config.general.queue_notifications.port || "6379", global.config.general.queue_notifications.host, global.config.general.queue_notifications.options), multi;
-        redisClient.auth(global.config.general.queue_notifications.password);
+    loadQueueNotifications();
 
-        redisClient.on("error", function (err) {
-          logger.log('error', `Could not connect to Redis (Queue): ${err}`);
-        });
-
-        redisClient.on("ready", function () {
-          global.queueRedisCli = redisClient;
-          global.config.queueNotificationsExternal = 'redis';
-        });
-      }
-    }
+    //CALENDARS
+    loadCalendars();
 
     new FilePlan(fileLoad, config)
       .then(function (plan) {
@@ -101,7 +80,5 @@ process.on('exit', function (err) {
 });
 
 process.on('SIGINT', function() {
-  mongoose.connection.close(function () {
-    process.exit(0);
-  });
+  mongooseCloseConnection();
 });
