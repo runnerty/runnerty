@@ -6,6 +6,7 @@ var logger = require("../libs/utils.js").logger;
 var crypto = require('crypto');
 var getProcessByUId = require("../libs/utils.js").getProcessByUId;
 var checkEvaluation = require("../libs/utils.js").checkEvaluation;
+var checkCalendar = require("../libs/utils.js").checkCalendar;
 var chronometer = require("../libs/utils.js").chronometer;
 var mongoChain = require("../mongodb-models/chain.js");
 var mongoose = require('mongoose');
@@ -392,18 +393,17 @@ class Chain {
   }
 
   //Start Chain
-  start(inputIteration, executeInmediate, /* for serie executions*/ waitEndChilds) {
+  start(options) {
     var chain = this;
 
-    if (inputIteration) {
-
+    if (options.inputIteration) {
       var inputLength = chain.input.length;
       chain.execute_input = {};
 
       while (inputLength--) {
         var key = Object.keys(chain.input[inputLength])[0];
         var value = chain.input[inputLength][key];
-        chain.execute_input[key] = inputIteration[value];
+        chain.execute_input[key] = options.inputIteration[value];
       }
     }
 
@@ -412,41 +412,44 @@ class Chain {
       if (chain.hasOwnProperty('processes')) {
         if (chain.processes instanceof Array && chain.processes.length > 0) {
           // Initialize Chain
-          if (chain.schedule_interval && !executeInmediate) {
-
-            chain.scheduleRepeater = schedule.scheduleJob(chain.schedule_interval, function (chain) {
-
+          if (chain.schedule_interval && !options.executeInmediate) {
+            chain.scheduleRepeater = schedule.scheduleJob(chain.schedule_interval, async function (chain) {
               if ((new Date(chain.end_date)) < (new Date())) {
                 chain.scheduleRepeater.cancel();
               }
-
-              if (chain.isStopped() || chain.isEnded()) {
-                chain.setChainToInitState()
-                  .then(function () {
-                    chain.startProcesses(waitEndChilds)
-                      .then(function () {
-                        //chain.end();
-                        resolve();
-                      })
-                      .catch(function (err) {
-                        logger.log('error', 'Error in startProcesses:', err);
-                        resolve();
-                      });
-                  })
-                  .catch(function (err) {
-                    logger.log('error', 'Error setChainToInitState: ', err);
-                    resolve();
-                  });
-              } else {
-                logger.log('warn', `Trying start processes of ${chain.id} but this is running`);
-                resolve();
+              var chainCalendarEnable = true;
+              if(chain.calendars){
+                chainCalendarEnable = await checkCalendar(chain.calendars);
               }
+              if(chainCalendarEnable){
+                if (chain.isStopped() || chain.isEnded()) {
+                  chain.setChainToInitState()
+                    .then(function () {
+                      chain.startProcesses(options.waitEndChilds)
+                        .then(function () {
+                          global.runtimePlan.plan.scheduleChains();
+                        })
+                        .catch(function (err) {
+                          logger.log('error', 'Error in startProcesses:', err);
+                        });
+                    })
+                    .catch(function (err) {
+                      logger.log('error', 'Error setChainToInitState: ', err);
+                    });
+                } else {
+                  logger.log('warn', `Trying start processes of ${chain.id} but this is running`);
+                }
+              }else{
+                logger.log('warn', `Running chain ${chain.id} disable in calendar`);
+              }
+
             }.bind(null, chain));
+            resolve();
 
           } else {
-            chain.startProcesses(waitEndChilds)
+            chain.startProcesses(options.waitEndChilds)
               .then(function () {
-                //if (inputIteration) chain.end();
+                global.runtimePlan.plan.scheduleChains();
                 resolve();
               })
               .catch(function (err) {
@@ -457,12 +460,10 @@ class Chain {
         } else {
           logger.log('error', `Chain ${chain.id} dont have processes`);
           throw new Error(`Chain ${chain.id} dont have processes`);
-          //resolve();
         }
       } else {
         logger.log('error', `Invalid chain ${chain.id}, processes property not found.`);
         throw new Error(`Invalid chain ${chain.id}, processes property not found.`);
-        //resolve();
       }
     });
   }

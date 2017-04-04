@@ -156,8 +156,6 @@ class Plan {
 
   scheduleChain(chain, process, executeInmediate, inputIterableValues, customValues) {
     var _this = this;
-    // Cuando llega una cadena con running pero sin scheduleRepeater la cadena debe volver a empezar
-    // Espero que se den por ejecutados los procesos con estado "end" y así continue la ejecución por donde debe:
 
     function createChainSerie (inputIterable) {
       var sequence = Promise.resolve();
@@ -180,8 +178,9 @@ class Plan {
       var i = 0;
       chains.forEach(function (chain) {
         sequence = sequence.then(function () {
-          var waitEndChilds = true;
-          return chain.start(inputIterable[i], undefined, waitEndChilds)
+          var options = {"inputIteration":inputIterable[i],
+                         "waitEndChilds":true};
+          return chain.start(options)
             .then(function () {
               i = i+1;
             })
@@ -223,18 +222,7 @@ class Plan {
             //console.log('- chain.!chain.end_date:',!chain.end_date);
             //console.log('- chain.hasOwnProperty(end_date):',chain.hasOwnProperty('end_date'));
 
-
             logger.log('debug', `TRYING START CHAIN ${chain.id} IN ${(new Date(chain.start_date))}`);
-
-            if(chain.calendars){
-              checkCalendar(chain.calendars)
-                .then((res) => {
-                  console.log('Calendario Check:',res);
-                })
-                .catch((err) => {
-                  logger.log('error', `CheckCalendar error ${err}`);
-                });
-            }
 
             if (!executeInmediate && _this.hasDependenciesBlocking(chain)) {
               chain.waiting_dependencies();
@@ -285,7 +273,8 @@ class Plan {
                       .then(function () {
                         var chainsToExecLength = process.childs_chains.length;
                         while (chainsToExecLength--) {
-                          process.childs_chains.push(process.childs_chains[chainsToExecLength].start(inputIterable[chainsToExecLength]));
+                          var options = {"inputIteration":inputIterable[chainsToExecLength]};
+                          process.childs_chains.push(process.childs_chains[chainsToExecLength].start(options));
                         }
 
                         Promise.all(process.childs_chains)
@@ -325,9 +314,10 @@ class Plan {
                 if(customValues && Object.keys(customValues).length !== 0){
                   _this.loadChain(chain, undefined, customValues)
                     .then(function (_chain) {
-                      _chain.start(undefined, executeInmediate)
+                      var options = {"executeInmediate":executeInmediate};
+                      _chain.start(options)
                         .then(function () {
-                          _this.scheduleChains();
+                          //_this.scheduleChains();
                           resolve();
                         })
                         .catch(function (err) {
@@ -339,9 +329,10 @@ class Plan {
                       logger.log('error', `scheduleChain customsValues loadChain ${chain.id}. Error: `, err);
                     });
                 }else{
-                  chain.start(undefined, executeInmediate)
+                  var options = {"executeInmediate":executeInmediate};
+                  chain.start(options)
                     .then(function () {
-                      _this.scheduleChains();
+                      //_this.scheduleChains();
                       resolve();
                     })
                     .catch(function (err) {
@@ -362,7 +353,7 @@ class Plan {
                 logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
                 chain.start()
                   .then(function () {
-                    _this.scheduleChains();
+                    //_this.scheduleChains();
                     resolve();
                   })
                   .catch(function (err) {
