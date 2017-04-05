@@ -1,5 +1,6 @@
 "use strict";
-var Notification = require("../../classes/notification.js");
+
+var Notification = global.NotificationClass;
 var nodemailer = require('nodemailer');
 var path = require('path');
 var fs = require('fs');

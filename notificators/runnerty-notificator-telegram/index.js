@@ -1,6 +1,6 @@
 "use strict";
 
-var Notification = require("../../classes/notification.js");
+var Notification = global.NotificationClass;
 var TelegramBot = require('node-telegram-bot-api');
 
 class telegramNotificator extends Notification {

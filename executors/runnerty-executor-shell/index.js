@@ -2,8 +2,7 @@
 
 var spawn = require("child_process").spawn;
 var psTree = require('ps-tree');
-
-var Execution = require("../../classes/execution.js");
+var Execution = global.ExecutionClass;
 
 class shellExecutor extends Execution {
   constructor(process) {

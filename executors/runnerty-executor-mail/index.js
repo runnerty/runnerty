@@ -5,7 +5,7 @@ var ejs = require('ejs');
 var path = require('path');
 var fs = require('fs');
 
-var Execution = require("../../classes/execution.js");
+var Execution = global.ExecutionClass;
 
 function readFilePromise(type, file) {
   return new Promise(function (resolve, reject) {

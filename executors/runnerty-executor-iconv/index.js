@@ -4,7 +4,7 @@ var iconv = require('iconv-lite');
 var fs = require('fs');
 var path = require('path');
 
-var Execution = require("../../classes/execution.js");
+var Execution = global.ExecutionClass;
 
 class iconvExecutor extends Execution {
   constructor(process) {

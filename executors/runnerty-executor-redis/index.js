@@ -2,7 +2,7 @@
 
 var redis = require('redis');
 
-var Execution = require("../../classes/execution.js");
+var Execution = global.ExecutionClass;
 
 class redisExecutor extends Execution {
   constructor(process) {

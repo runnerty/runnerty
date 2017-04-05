@@ -1,5 +1,5 @@
 "use strict";
-var Notification = require("../../classes/notification.js");
+var Notification = global.NotificationClass;
 var IncomingWebhooks = require('@slack/client').IncomingWebhook;
 
 class slackNotificator extends Notification {

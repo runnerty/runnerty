@@ -4,7 +4,7 @@ var AWS = require('aws-sdk');
 var fs = require('fs');
 var path = require('path');
 
-var Execution = require("../../classes/execution.js");
+var Execution = global.ExecutionClass;
 
 class s3Executor extends Execution {
   constructor(process) {

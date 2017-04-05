@@ -1,11 +1,17 @@
 "use strict";
 var program = require('commander');
-var logger = require("./libs/utils.js").logger;
-var loadGeneralConfig = require("./libs/utils.js").loadGeneralConfig;
-var loadCalendars = require("./libs/utils.js").loadCalendars;
-var loadQueueNotifications = require("./libs/utils.js").loadQueueNotifications;
-var loadMongoHistory = require("./libs/utils.js").loadMongoHistory;
-var mongooseCloseConnection = require("./libs/utils.js").mongooseCloseConnection;
+var utils = require("./libs/utils.js");
+var logger = utils.logger;
+var loadGeneralConfig = utils.loadGeneralConfig;
+var loadCalendars = utils.loadCalendars;
+var loadQueueNotifications = utils.loadQueueNotifications;
+var loadMongoHistory = utils.loadMongoHistory;
+var mongooseCloseConnection = utils.mongooseCloseConnection;
+
+//Global classes:
+global.ExecutionClass = require("./classes/execution.js");
+global.NotificationClass = require("./classes/notification.js");
+global.libUtils = utils;
 
 var FilePlan = require("./classes/file_plan.js");
 

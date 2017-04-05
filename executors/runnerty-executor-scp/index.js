@@ -2,7 +2,7 @@
 
 var spawn = require("child_process").spawn;
 
-var Execution = require("../../classes/execution.js");
+var Execution = global.ExecutionClass;
 
 class scpExecutor extends Execution {
   constructor(process) {

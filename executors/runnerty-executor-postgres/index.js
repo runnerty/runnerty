@@ -2,9 +2,10 @@
 
 var pg = require('pg'); //PostgreSQL
 var csv = require("fast-csv");
-var loadSQLFile = require("../../libs/utils.js").loadSQLFile;
+//var loadSQLFile = require("../../libs/utils.js").loadSQLFile;
+var loadSQLFile = global.libUtils.loadSQLFile;
 
-var Execution = require("../../classes/execution.js");
+var Execution = global.ExecutionClass;
 
 class postgresExecutor extends Execution {
   constructor(process) {

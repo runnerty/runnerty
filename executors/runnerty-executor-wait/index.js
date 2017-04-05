@@ -1,6 +1,6 @@
 "use strict";
 
-var Execution = require("../../classes/execution.js");
+var Execution = global.ExecutionClass;
 
 class waitExecutor extends Execution {
   constructor(process) {
