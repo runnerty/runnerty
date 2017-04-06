@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "pg": "^6.1.5"
+    "pg": "^6.1.5",
+    "fast-csv": "^2.4.0"
   }
 }

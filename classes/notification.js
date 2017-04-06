@@ -1,7 +1,8 @@
 "use strict";
-var replaceWithSmart = require("../libs/utils.js").replaceWithSmart;
-var requireDir = require("../libs/utils.js").requireDir;
-var logger = require("../libs/utils.js").logger;
+var utils = require("../libs/utils.js");
+var replaceWithSmart = utils.replaceWithSmart;
+var requireDir = utils.requireDir;
+var logger = utils.logger;
 var qnm = require("../libs/queue-notifications-memory.js");
 var qnr = require("../libs/queue-notifications-redis.js");
 var Ajv = require('ajv');

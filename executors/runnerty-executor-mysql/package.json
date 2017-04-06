@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "dependencies": {
-    "mysql": "^2.13.0"
+    "mysql": "^2.13.0",
+    "fast-csv": "^2.4.0"
   }
 }

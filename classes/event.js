@@ -1,18 +1,8 @@
 "use strict";
 
-var logger = require("../libs/utils.js").logger;
-var loadConfigSection = require("../libs/utils.js").loadConfigSection;
-var requireDir = require("../libs/utils.js").requireDir;
-
-// REQUIRE NOTIFICATORS:
-var notificators = {};
-requireDir('/../notificators/')
-  .then((res) => {
-    notificators = res;
-  })
-  .catch((err) => {
-    throw err;
-  });
+var utils = require("../libs/utils.js");
+var logger = utils.logger;
+var loadConfigSection = utils.loadConfigSection;
 
 class Event {
   constructor(name, notifications) {
@@ -62,7 +52,7 @@ class Event {
 
                 var type = notificationAndConfig.config.type;
 
-                notificationsPromises.push(new notificators[type](notificationAndConfig));
+                notificationsPromises.push(new global.notificators[type](notificationAndConfig));
 
                 Promise.all(notificationsPromises)
                   .then(function (res) {

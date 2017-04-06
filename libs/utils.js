@@ -79,6 +79,8 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
               }
 
               // ADD NOTIFICATORS SCHEMAS:
+              var promiseNotificatorsSchemas = loadNotificators(fileParsed.config.general.notificatorsPath, fileParsed.config.notificators);
+              /*
               var promiseNotificatorsSchemas =
                 requireDir('/../notificators/', 'schema.json')
                   .then((res) => {
@@ -99,27 +101,9 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
                   .catch((err) => {
                     throw err;
                   });
-
+*/
               // ADD EXECUTORS SCHEMAS:
-              var promiseExecutorsSchemas =
-                requireDir('/../executors/', 'schema.json')
-                  .then((res) => {
-                    return new Promise((resolve) => {
-                      var keys = Object.keys(res);
-                      var keysLength = keys.length;
-                      var items = {};
-                      items.anyOf = [];
-                      while (keysLength--) {
-                        items.anyOf.push({"$ref": keys[keysLength] + "#/definitions/config"});
-                        ajv.addSchema(res[keys[keysLength]], keys[keysLength]);
-                      }
-                      configSchema.properties.config.properties.executors.items = items;
-                      resolve();
-                    });
-                  })
-                  .catch((err) => {
-                    throw err;
-                  });
+              var promiseExecutorsSchemas = loadExecutors(fileParsed.config.general.executorsPath, fileParsed.config.executors);
 
               Promise.all([promiseNotificatorsSchemas, promiseExecutorsSchemas]).then(values => {
                 ajv.addSchema(configSchema, 'configSchema');
@@ -723,6 +707,50 @@ function requireDir(directory, filename) {
   });
 }
 
+
+function requireDir2(directory, filename) {
+
+  // REQUIRE DIRECTORY:
+  var container = {};
+  var containerDirectory = directory;
+  var excludes = ['node_modules', 'git', 'snv'];
+
+  return new Promise((resolve, reject) => {
+    fs.readdir(containerDirectory, function (err, items) {
+      if (err) {
+        reject(err);
+      }
+
+      var dirs = items ? items.filter(function (i) {
+        return !excludes.includes(i);
+      }) : [];
+
+      var dirsLength = dirs.length;
+      while (dirsLength--) {
+        if (fs.statSync(containerDirectory + dirs[dirsLength]).isDirectory()) {
+
+          if (filename) {
+            if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], filename))) {
+              container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], filename));
+            }
+          } else {
+            if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'))) {
+              container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'));
+            } else {
+              if (path.join(containerDirectory, dirs[dirsLength], 'index.js')) {
+                container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], 'index.js'));
+              }
+            }
+          }
+        }
+      }
+      resolve(container);
+    });
+
+  });
+}
+module.exports.requireDir2 = requireDir2;
+
 module.exports.chronometer = function chronometer(start) {
   if (start) {
     var endTime = process.hrtime(start);
@@ -856,3 +884,81 @@ module.exports.mongooseCloseConnection = function mongooseCloseConnection() {
     process.exit(0);
   });
 };
+
+function loadExecutors(executorsPath, executors) {
+   return new Promise((resolve) => {
+     var requireDir = require("./utils.js").requireDir2;
+     global.executors = {};
+     requireDir(executorsPath)
+       .then((res) => {
+         let executorsInConfig = {};
+         var e = executors;
+         var items = {};
+         items.anyOf = [];
+         for (var i = 0; i < e.length; i++) {
+           let ex = e[i].type;
+           if (res[ex]) {
+             let exSchema = path.join(executorsPath, ex, 'schema.json');
+             if (fs.existsSync(exSchema)) {
+               executorsInConfig[ex] = res[ex];
+               let schemaContent = require(exSchema);
+               let x = {};
+               x[ex] = schemaContent;
+               items.anyOf.push({"$ref": ex + "#/definitions/config"});
+               ajv.addSchema(schemaContent, ex);
+             } else {
+               logger.log('error', `Schema not found in executor ${ex}`);
+             }
+           } else {
+             logger.log('error', `Executor type ${ex} in config not found in executors path: ${executorsPath}`);
+           }
+         }
+         configSchema.properties.config.properties.executors.items = items;
+         global.executors = executorsInConfig;
+         resolve();
+       })
+       .catch((err) => {
+         throw err;
+       });
+   });
+};
+module.exports.loadExecutors = loadExecutors;
+
+function loadNotificators(notificatorsPath, notificators) {
+  return new Promise((resolve) => {
+    var requireDir = require("./utils.js").requireDir2;
+    global.notificators = {};
+    requireDir(notificatorsPath)
+      .then((res) => {
+        let notificatorsInConfig = {};
+        var n = notificators;
+        var items = {};
+        items.anyOf = [];
+        for (var i = 0; i < n.length; i++) {
+          let no = n[i].type;
+          if (res[no]) {
+            let noSchema = path.join(notificatorsPath, no, 'schema.json');
+            if (fs.existsSync(noSchema)) {
+              notificatorsInConfig[no] = res[no];
+              let schemaContent = require(noSchema);
+              let x = {};
+              x[no] = schemaContent;
+              items.anyOf.push({"$ref": no + "#/definitions/config"});
+              ajv.addSchema(schemaContent, no);
+            } else {
+              logger.log('error', `Schema not found in executor ${no}`);
+            }
+          } else {
+            logger.log('error', `Notificators type ${no} in config not found in notificators path: ${notificatorsPath}`);
+          }
+        }
+        configSchema.properties.config.properties.notificators.items = items;
+        global.notificators = notificatorsInConfig;
+        resolve();
+      })
+      .catch((err) => {
+        throw err;
+      });
+  });
+};
+module.exports.loadNotificators = loadNotificators;

@@ -1,27 +1,16 @@
 "use strict";
-
-var logger = require("../libs/utils.js").logger;
-var loadConfigSection = require("../libs/utils.js").loadConfigSection;
-var replaceWithSmart = require("../libs/utils.js").replaceWithSmart;
-var getChainByUId = require("../libs/utils.js").getChainByUId;
-var requireDir = require("../libs/utils.js").requireDir;
-var chronometer = require("../libs/utils.js").chronometer;
+var utils = require("../libs/utils.js");
+var logger = utils.logger;
+var loadConfigSection = utils.loadConfigSection;
+var replaceWithSmart = utils.replaceWithSmart;
+var getChainByUId = utils.getChainByUId;
+var chronometer = utils.chronometer;
 var mongoProcess = require("../mongodb-models/process.js");
 
 var crypto = require("crypto");
 var bytes = require("bytes");
 var fs = require("fs-extra");
 var path = require("path");
-
-// REQUIRE EXECUTORS:
-var executors = {};
-requireDir('/../executors/')
-  .then((res) => {
-    executors = res;
-  })
-  .catch((err) => {
-    throw err;
-  });
 
 var Event = require("./event.js");
 
@@ -510,8 +499,9 @@ class Process {
         _this.loadExecutorConfig()
           .then((configValues) => {
             if (configValues.type) {
-              if (executors[configValues.type]) {
-                 new executors[configValues.type](_this)
+
+              if (global.executors[configValues.type]) {
+                 new global.executors[configValues.type](_this)
                   .then((res) => {
                     _this.executor = res;
                     res.exec()
