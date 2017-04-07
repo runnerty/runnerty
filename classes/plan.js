@@ -3,7 +3,6 @@
 var schedule = require('node-schedule');
 var chokidar = require('chokidar');
 var logger = require("../libs/utils.js").logger;
-var checkCalendar = require("../libs/utils.js").checkCalendar;
 var Chain = require("./chain.js");
 
 class Plan {
