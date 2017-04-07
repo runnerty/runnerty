@@ -2,6 +2,14 @@
   "name": "runnerty",
   "version": "0.0.0",
   "private": true,
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Coderty/runnerty.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Coderty/runnerty/issues"
+  },
   "scripts": {
     "postinstall": "find ./notificators/* -name 'package.json' -maxdepth 1 -execdir npm install \\; && find ./executors/* -name 'package.json' -maxdepth 1 -execdir npm install \\;",
     "postupdate": "find ./notificators/* -name 'package.json' -maxdepth 1 -execdir npm update \\; && find ./executors/* -name 'package.json' -maxdepth 1 -execdir npm update \\;"
@@ -29,6 +37,18 @@
     "passport": "^0.3.2",
     "redis": "^2.7.1",
     "winston": "^2.3.1"
+  },
+  "keywords": [
+    "runnerty",
+    "scheduler",
+    "task",
+    "task manager",
+    "job",
+    "notifications",
+    "executions"
+  ],
+  "engines": {
+    "node" : ">=7.7.1"
   },
   "devDependencies": {
     "cors": "^2.8.3"
