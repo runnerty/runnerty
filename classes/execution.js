@@ -1,10 +1,8 @@
 "use strict";
-
-var replaceWithSmart = require("../libs/utils.js").replaceWithSmart;
-var requireDir = require("../libs/utils.js").requireDir;
-var logger = require("../libs/utils.js").logger;
-var Ajv = require('ajv');
-var ajv = new Ajv({allErrors: true});
+var utils = require("../libs/utils.js");
+var replaceWithSmart = utils.replaceWithSmart;
+var logger = utils.logger;
+var checkExecutorParams = utils.checkExecutorParams;
 
 class Execution {
   constructor(process) {
@@ -23,7 +21,7 @@ class Execution {
     _this.processName = process.name;
     _this.processUId = process.uId;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       process.loadExecutorConfig()
         .then((configValues) => {
           if (!_this.type && configValues.type) {
@@ -31,7 +29,16 @@ class Execution {
           }
           _this.config = configValues;
 
-          // ADD NOTIFICATORS SCHEMAS:
+          checkExecutorParams(_this)
+            .then((res) => {
+              resolve(_this);
+            })
+            .catch((err) => {
+              logger.log('error', 'Executor checkExecutorParams ', err);
+              reject();
+            });
+
+          /*
           requireDir('/../executors/', 'schema.json')
             .then((res) => {
               var keys = Object.keys(res);
@@ -42,6 +49,8 @@ class Execution {
                   if (res[keys[keysLength]].hasOwnProperty('definitions') && res[keys[keysLength]].definitions.hasOwnProperty('params')) {
 
                     if (!ajv.getSchema('exec_' + keys[keysLength])) {
+                      console.log('-----> 2 NO EXISTE ','exec_' + keys[keysLength]);
+                      //console.log('ADD:',res[keys[keysLength]].definitions.params,'exec_' + keys[keysLength]);
                       ajv.addSchema(res[keys[keysLength]].definitions.params, 'exec_' + keys[keysLength]);
                     }
 
@@ -63,6 +72,7 @@ class Execution {
               logger.log('warning', `Schema params for executor ${_this.type} not found`, err);
               resolve(_this);
             });
+          */
         })
         .catch(function (err) {
           logger.log('error', 'Executor loadConfig ', err);

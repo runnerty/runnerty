@@ -892,20 +892,22 @@ function loadExecutors(executorsPath, executors) {
      requireDir(executorsPath)
        .then((res) => {
          let executorsInConfig = {};
-         var e = executors;
          var items = {};
          items.anyOf = [];
-         for (var i = 0; i < e.length; i++) {
-           let ex = e[i].type;
+         for (var i = 0; i < executors.length; i++) {
+           let ex = executors[i].type;
            if (res[ex]) {
              let exSchema = path.join(executorsPath, ex, 'schema.json');
              if (fs.existsSync(exSchema)) {
                executorsInConfig[ex] = res[ex];
                let schemaContent = require(exSchema);
-               let x = {};
-               x[ex] = schemaContent;
                items.anyOf.push({"$ref": ex + "#/definitions/config"});
                ajv.addSchema(schemaContent, ex);
+
+               if (!ajv.getSchema('exec_' + ex)) {
+                 ajv.addSchema(schemaContent.definitions.params, 'exec_' + ex);
+               }
+
              } else {
                logger.log('error', `Schema not found in executor ${ex}`);
              }
@@ -931,20 +933,22 @@ function loadNotificators(notificatorsPath, notificators) {
     requireDir(notificatorsPath)
       .then((res) => {
         let notificatorsInConfig = {};
-        var n = notificators;
         var items = {};
         items.anyOf = [];
-        for (var i = 0; i < n.length; i++) {
-          let no = n[i].type;
+        for (var i = 0; i < notificators.length; i++) {
+          let no = notificators[i].type;
           if (res[no]) {
             let noSchema = path.join(notificatorsPath, no, 'schema.json');
             if (fs.existsSync(noSchema)) {
               notificatorsInConfig[no] = res[no];
               let schemaContent = require(noSchema);
-              let x = {};
-              x[no] = schemaContent;
               items.anyOf.push({"$ref": no + "#/definitions/config"});
               ajv.addSchema(schemaContent, no);
+
+              if (!ajv.getSchema('notif_' + no)) {
+                ajv.addSchema(schemaContent.definitions.params, 'notif_' + no);
+              }
+
             } else {
               logger.log('error', `Schema not found in executor ${no}`);
             }
@@ -962,3 +966,49 @@ function loadNotificators(notificatorsPath, notificators) {
   });
 };
 module.exports.loadNotificators = loadNotificators;
+
+function checkExecutorParams(executor) {
+  return new Promise((resolve) => {
+
+    let executorId = executor.type;
+
+    if (ajv.getSchema('exec_' + executorId)) {
+
+      var valid = ajv.validate('exec_' + executorId, executor);
+      if (!valid) {
+        logger.log('error', `Invalid params for executor ${executor.type}:`, ajv.errors);
+        throw new Error(`Invalid params for executor ${executor.type}:`, ajv.errors);
+      } else {
+        resolve();
+      }
+
+    }else{
+      logger.log('error', `Schema of params not found in executor ${executorId}`);
+      resolve();
+    }
+  });
+};
+module.exports.checkExecutorParams = checkExecutorParams;
+
+function checkNotificatorParams(notification) {
+  return new Promise((resolve) => {
+
+    let notificatorId = notification.type;
+
+    if (ajv.getSchema('notif_' + notificatorId)) {
+
+      var valid = ajv.validate('notif_' + notificatorId, notification);
+      if (!valid) {
+        logger.log('error', `Invalid params for notificator ${notification.type}:`, ajv.errors);
+        throw new Error(`Invalid params for notificator ${notification.type}:`, ajv.errors);
+      } else {
+        resolve();
+      }
+
+    }else{
+      logger.log('error', `Schema of params not found in notificator ${notificatorId}`);
+      resolve();
+    }
+  });
+};
+module.exports.checkNotificatorParams = checkNotificatorParams;

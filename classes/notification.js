@@ -1,12 +1,10 @@
 "use strict";
 var utils = require("../libs/utils.js");
 var replaceWithSmart = utils.replaceWithSmart;
-var requireDir = utils.requireDir;
+var checkNotificatorParams = utils.checkNotificatorParams;
 var logger = utils.logger;
 var qnm = require("../libs/queue-notifications-memory.js");
 var qnr = require("../libs/queue-notifications-redis.js");
-var Ajv = require('ajv');
-var ajv = new Ajv({allErrors: true});
 var crypto = require("crypto");
 
 class Notification {
@@ -28,37 +26,13 @@ class Notification {
 
       _this.setUid()
         .then(() => {
-          // ADD NOTIFICATORS SCHEMAS:
-          requireDir('/../notificators/', 'schema.json')
+          checkNotificatorParams(_this)
             .then((res) => {
-              var keys = Object.keys(res);
-              var keysLength = keys.length;
-              while (keysLength--) {
-                if (_this.type === keys[keysLength]) {
-
-                  if (res[keys[keysLength]].hasOwnProperty('definitions') && res[keys[keysLength]].definitions.hasOwnProperty('params')) {
-
-                    if (!ajv.getSchema('notif_' + keys[keysLength])) {
-                      ajv.addSchema(res[keys[keysLength]].definitions.params, 'notif_' + keys[keysLength]);
-                    }
-
-                    var valid = ajv.validate('notif_' + keys[keysLength], _this);
-                    if (!valid) {
-                      logger.log('error', `Invalid params for notificator ${_this.type}:`, ajv.errors);
-                      throw new Error(`Invalid params for notificator ${_this.type}:`, ajv.errors);
-                      //resolve();
-                    } else {
-                      resolve(_this);
-                    }
-                    keysLength = 0;
-                  }
-                }
-              }
               resolve(_this);
             })
             .catch((err) => {
-              logger.log('warning', `Schema params for notificator ${_this.type} not found`, err);
-              resolve(_this);
+              logger.log('error', 'Notificator checkNotificatorParams ', err);
+              reject();
             });
         });
     });
