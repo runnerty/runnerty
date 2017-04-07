@@ -1,7 +1,23 @@
 {
   "name": "runnerty-executor-redis",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "Runnerty module: Redis executor",
+  "author": "Coderty",
+  "license": "ISC",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Coderty/runnerty-executor-redis.git"
+  },
+  "keywords": [
+    "runnerty",
+    "executor",
+    "redis"
+  ],
+  "bugs": {
+    "url": "https://github.com/Coderty/runnerty-executor-redis/issues"
+  },
+  "homepage": "https://github.com/Coderty/runnerty-executor-redis#readme",
   "dependencies": {
     "redis": "^2.7.1"
   }

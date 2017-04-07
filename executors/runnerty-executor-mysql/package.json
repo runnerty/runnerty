@@ -1,7 +1,23 @@
 {
   "name": "runnerty-executor-mysql",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "Runnerty module: MySql executor",
+  "author": "Coderty",
+  "license": "ISC",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Coderty/runnerty-executor-mysql.git"
+  },
+  "keywords": [
+    "runnerty",
+    "executor",
+    "mysql"
+  ],
+  "bugs": {
+    "url": "https://github.com/Coderty/runnerty-executor-mysql/issues"
+  },
+  "homepage": "https://github.com/Coderty/runnerty-executor-mysql#readme",
   "dependencies": {
     "mysql": "^2.13.0",
     "fast-csv": "^2.4.0"
