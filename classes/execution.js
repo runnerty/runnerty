@@ -37,42 +37,6 @@ class Execution {
               logger.log('error', 'Executor checkExecutorParams ', err);
               reject();
             });
-
-          /*
-          requireDir('/../executors/', 'schema.json')
-            .then((res) => {
-              var keys = Object.keys(res);
-              var keysLength = keys.length;
-              while (keysLength--) {
-                if (_this.type === keys[keysLength]) {
-
-                  if (res[keys[keysLength]].hasOwnProperty('definitions') && res[keys[keysLength]].definitions.hasOwnProperty('params')) {
-
-                    if (!ajv.getSchema('exec_' + keys[keysLength])) {
-                      console.log('-----> 2 NO EXISTE ','exec_' + keys[keysLength]);
-                      //console.log('ADD:',res[keys[keysLength]].definitions.params,'exec_' + keys[keysLength]);
-                      ajv.addSchema(res[keys[keysLength]].definitions.params, 'exec_' + keys[keysLength]);
-                    }
-
-                    var valid = ajv.validate('exec_' + keys[keysLength], _this);
-                    if (!valid) {
-                      logger.log('error', `Invalid params for executor ${_this.type}:`, ajv.errors);
-                      throw new Error(`Invalid params for executor ${_this.type}:`, ajv.errors);
-                      //resolve();
-                    } else {
-                      resolve(_this);
-                    }
-                    keysLength = 0;
-                  }
-                }
-              }
-              resolve(_this);
-            })
-            .catch((err) => {
-              logger.log('warning', `Schema params for executor ${_this.type} not found`, err);
-              resolve(_this);
-            });
-          */
         })
         .catch(function (err) {
           logger.log('error', 'Executor loadConfig ', err);

@@ -80,28 +80,7 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
 
               // ADD NOTIFICATORS SCHEMAS:
               var promiseNotificatorsSchemas = loadNotificators(fileParsed.config.general.notificatorsPath, fileParsed.config.notificators);
-              /*
-              var promiseNotificatorsSchemas =
-                requireDir('/../notificators/', 'schema.json')
-                  .then((res) => {
-                    //ajv.addSchema(configSchema, 'configSchema');
-                    return new Promise((resolve) => {
-                      var keys = Object.keys(res);
-                      var keysLength = keys.length;
-                      var items = {};
-                      items.anyOf = [];
-                      while (keysLength--) {
-                        items.anyOf.push({"$ref": keys[keysLength] + "#/definitions/config"});
-                        ajv.addSchema(res[keys[keysLength]], keys[keysLength]);
-                      }
-                      configSchema.properties.config.properties.notificators.items = items;
-                      resolve();
-                    });
-                  })
-                  .catch((err) => {
-                    throw err;
-                  });
-*/
+
               // ADD EXECUTORS SCHEMAS:
               var promiseExecutorsSchemas = loadExecutors(fileParsed.config.general.executorsPath, fileParsed.config.executors);
 
@@ -663,52 +642,7 @@ module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, 
   }
 };
 
-module.exports.requireDir = requireDir;
-
 function requireDir(directory, filename) {
-
-  // REQUIRE DIRECTORY:
-  var container = {};
-  var containerDirectory = path.join(__dirname, directory);
-  var excludes = ['node_modules', 'git', 'snv'];
-
-  return new Promise((resolve, reject) => {
-    fs.readdir(containerDirectory, function (err, items) {
-      if (err) {
-        reject(err);
-      }
-
-      var dirs = items ? items.filter(function (i) {
-        return !excludes.includes(i);
-      }) : [];
-
-      var dirsLength = dirs.length;
-      while (dirsLength--) {
-        if (fs.statSync(containerDirectory + dirs[dirsLength]).isDirectory()) {
-
-          if (filename) {
-            if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], filename))) {
-              container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], filename));
-            }
-          } else {
-            if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'))) {
-              container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'));
-            } else {
-              if (path.join(containerDirectory, dirs[dirsLength], 'index.js')) {
-                container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], 'index.js'));
-              }
-            }
-          }
-        }
-      }
-      resolve(container);
-    });
-
-  });
-}
-
-
-function requireDir2(directory, filename) {
 
   // REQUIRE DIRECTORY:
   var container = {};
@@ -749,7 +683,7 @@ function requireDir2(directory, filename) {
 
   });
 }
-module.exports.requireDir2 = requireDir2;
+module.exports.requireDir = requireDir;
 
 module.exports.chronometer = function chronometer(start) {
   if (start) {
@@ -887,7 +821,6 @@ module.exports.mongooseCloseConnection = function mongooseCloseConnection() {
 
 function loadExecutors(executorsPath, executors) {
    return new Promise((resolve) => {
-     var requireDir = require("./utils.js").requireDir2;
      global.executors = {};
      requireDir(executorsPath)
        .then((res) => {
@@ -928,7 +861,6 @@ module.exports.loadExecutors = loadExecutors;
 
 function loadNotificators(notificatorsPath, notificators) {
   return new Promise((resolve) => {
-    var requireDir = require("./utils.js").requireDir2;
     global.notificators = {};
     requireDir(notificatorsPath)
       .then((res) => {
