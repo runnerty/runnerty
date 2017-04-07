@@ -421,6 +421,6 @@ queue_notifications:
             "options": {}
         }```
 Parámetros:
-maxParallels
+maxConcurrents
 minInterval
 

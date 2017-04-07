@@ -115,7 +115,7 @@
         "webhookurl":"https://hooks.slack.com/services/ABC123/ABC123/ABC123",
         "bot_name": "Runnerty-Sentinel",
         "channel": "my_runnerty_channel",
-        "maxParallels": 1,
+        "maxConcurrents": 1,
         "minInterval": 0
       },
       {

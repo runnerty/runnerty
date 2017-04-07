@@ -21,7 +21,7 @@ function checkNotificationsSends(list, sender, redisCli) {
 
   if (notificator) {
     //Si no hay notificaciones en proceso:
-    if (notificator.maxParallels > notificator.numberCurrentRunning || notificator.maxParallels === 0) {
+    if (notificator.maxConcurrents > notificator.numberCurrentRunning || notificator.maxConcurrents === 0) {
       // Si ha pasado el intervalo minimo de tiempo o no ha habido ejecución antes:
       var timeDiff = process.hrtime(notificator.lastEndTime);
       var milisecondsDiff = (timeDiff[0] * 1000) + (timeDiff[1] / 1000000);
@@ -58,7 +58,7 @@ function queue(notification, notifToQueue, list) {
     global.notificatorList[list] = {
       "notificatorId": notification.id,
       "minInterval": notifToQueue.minInterval || 0,
-      "maxParallels": notifToQueue.maxParallels || 0,
+      "maxConcurrents": notifToQueue.maxConcurrents || 0,
       "numberCurrentRunning": 0,
       "lastEndTime": [0, 0]
     };
