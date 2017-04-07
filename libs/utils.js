@@ -79,11 +79,11 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
               }
 
               // ADD NOTIFICATORS SCHEMAS:
-              var notificatorsPath = fileParsed.config.general.notificatorsPath || path.join(process.cwd(), 'node_modules');
+              var notificatorsPath = fileParsed.config.general.notificatorsPath || path.join(path.dirname(configFilePath), 'node_modules');
               var promiseNotificatorsSchemas = loadNotificators(notificatorsPath, fileParsed.config.notificators);
 
               // ADD EXECUTORS SCHEMAS:
-              var executorsPath = fileParsed.config.general.executorsPath || path.join(process.cwd(), 'node_modules');
+              var executorsPath = fileParsed.config.general.executorsPath || path.join(path.dirname(configFilePath), 'node_modules');
               var promiseExecutorsSchemas = loadExecutors(executorsPath, fileParsed.config.executors);
 
               Promise.all([promiseNotificatorsSchemas, promiseExecutorsSchemas]).then(values => {
