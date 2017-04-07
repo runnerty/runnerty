@@ -1,6 +1,7 @@
 "use strict";
 var program = require('commander');
 var utils = require("./libs/utils.js");
+var path = require('path');
 var logger = utils.logger;
 var loadGeneralConfig = utils.loadGeneralConfig;
 var loadCalendars = utils.loadCalendars;
@@ -15,7 +16,8 @@ global.libUtils = utils;
 
 var FilePlan = require("./classes/file_plan.js");
 
-var configFilePath = '/etc/runnerty/conf.json';
+
+var configFilePath = path.join(process.cwd(), 'conf.json');
 var config;
 
 var reloadPlan = false;

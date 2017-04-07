@@ -79,10 +79,12 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
               }
 
               // ADD NOTIFICATORS SCHEMAS:
-              var promiseNotificatorsSchemas = loadNotificators(fileParsed.config.general.notificatorsPath, fileParsed.config.notificators);
+              var notificatorsPath = fileParsed.config.general.notificatorsPath || path.join(process.cwd(), 'node_modules');
+              var promiseNotificatorsSchemas = loadNotificators(notificatorsPath, fileParsed.config.notificators);
 
               // ADD EXECUTORS SCHEMAS:
-              var promiseExecutorsSchemas = loadExecutors(fileParsed.config.general.executorsPath, fileParsed.config.executors);
+              var executorsPath = fileParsed.config.general.executorsPath || path.join(process.cwd(), 'node_modules');
+              var promiseExecutorsSchemas = loadExecutors(executorsPath, fileParsed.config.executors);
 
               Promise.all([promiseNotificatorsSchemas, promiseExecutorsSchemas]).then(values => {
                 ajv.addSchema(configSchema, 'configSchema');
@@ -661,7 +663,7 @@ function requireDir(directory, filename) {
 
       var dirsLength = dirs.length;
       while (dirsLength--) {
-        if (fs.statSync(containerDirectory + dirs[dirsLength]).isDirectory()) {
+        if (fs.statSync(path.join(containerDirectory, dirs[dirsLength])).isDirectory()) {
 
           if (filename) {
             if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], filename))) {
