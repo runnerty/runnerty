@@ -19,6 +19,8 @@
   "bugs": {
     "url": "https://github.com/Coderty/runnerty/issues"
   },
+  "homepage": "http://www.coderty.com/",
+  "description": "",
   "scripts": {
   },
   "dependencies": {
