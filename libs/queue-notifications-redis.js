@@ -58,7 +58,7 @@ function queue(notification, notifToQueue, list) {
     global.notificatorList[list] = {
       "notificatorId": notification.id,
       "minInterval": notifToQueue.minInterval || 0,
-      "maxConcurrents": notifToQueue.maxConcurrents || 0,
+      "maxConcurrents": notifToQueue.maxConcurrents || 1,
       "numberCurrentRunning": 0,
       "lastEndTime": [0, 0]
     };
