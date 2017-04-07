@@ -13,8 +13,6 @@
     "url": "https://github.com/Coderty/runnerty/issues"
   },
   "scripts": {
-    "postinstall": "find ./notificators/* -name 'package.json' -maxdepth 1 -execdir npm install \\; && find ./executors/* -name 'package.json' -maxdepth 1 -execdir npm install \\;",
-    "postupdate": "find ./notificators/* -name 'package.json' -maxdepth 1 -execdir npm update \\; && find ./executors/* -name 'package.json' -maxdepth 1 -execdir npm update \\;"
   },
   "dependencies": {
     "ajv": "^4.11.5",
