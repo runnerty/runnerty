@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "main": "app.js",
+  "license": "ISC",
+  "author": "Coderty",
   "repository": {
     "type": "git",
     "url": "git@github.com:Coderty/runnerty.git"
