@@ -161,7 +161,7 @@ class Process {
                 logger.log('error', 'Process loadEvents: ', err);
                 resolve();
               });
-          }else{
+          } else {
             // Process without events
             logger.log('warn', 'Process, without events');
             resolve();
@@ -198,44 +198,44 @@ class Process {
   historicize(event) {
     var _this = this;
 
-    if (global.config.historyEnabled){
+    if (global.config.historyEnabled) {
       var mProcess = new mongoProcess
       ({
-        id : _this.id,
-        uId : _this.uId,
-        parentUId : _this.parentUId,
-        event : event || _this.status,
-        date : _this.date,
-        name : _this.name,
-        exec : _this.exec,
-        depends_process : _this.depends_process,
-        depends_process_alt : _this.depends_process_alt,
-        retries : _this.retries,
-        retry_delay : _this.retry_delay,
-        limited_time_end : _this.limited_time_end,
-        end_on_fail : _this.end_on_fail,
-        end_chain_on_fail : _this.end_chain_on_fail,
-        command_executed : _this.command_executed,
-        retries_count : _this.retries_count,
-        output : _this.output,
-        output_iterable : _this.output_iterable,
-        custom_values : _this.custom_values,
-        output_share : _this.output_share,
-        execute_return : _this.execute_return,
-        execute_err_return : _this.execute_err_return,
-        started_at : _this.started_at,
-        ended_at : _this.ended_at,
-        duration_seconds : _this.duration_seconds,
-        execute_db_fieldCount : _this.execute_db_fieldCount,
-        execute_db_affectedRows : _this.execute_db_affectedRows,
-        execute_db_changedRows : _this.execute_db_changedRows,
-        execute_db_insertId : _this.execute_db_insertId,
-        execute_db_warningCount : _this.execute_db_warningCount,
-        execute_db_message : _this.execute_db_message
+        id: _this.id,
+        uId: _this.uId,
+        parentUId: _this.parentUId,
+        event: event || _this.status,
+        date: _this.date,
+        name: _this.name,
+        exec: _this.exec,
+        depends_process: _this.depends_process,
+        depends_process_alt: _this.depends_process_alt,
+        retries: _this.retries,
+        retry_delay: _this.retry_delay,
+        limited_time_end: _this.limited_time_end,
+        end_on_fail: _this.end_on_fail,
+        end_chain_on_fail: _this.end_chain_on_fail,
+        command_executed: _this.command_executed,
+        retries_count: _this.retries_count,
+        output: _this.output,
+        output_iterable: _this.output_iterable,
+        custom_values: _this.custom_values,
+        output_share: _this.output_share,
+        execute_return: _this.execute_return,
+        execute_err_return: _this.execute_err_return,
+        started_at: _this.started_at,
+        ended_at: _this.ended_at,
+        duration_seconds: _this.duration_seconds,
+        execute_db_fieldCount: _this.execute_db_fieldCount,
+        execute_db_affectedRows: _this.execute_db_affectedRows,
+        execute_db_changedRows: _this.execute_db_changedRows,
+        execute_db_insertId: _this.execute_db_insertId,
+        execute_db_warningCount: _this.execute_db_warningCount,
+        execute_db_message: _this.execute_db_message
       });
 
-      mProcess.save(function(err, res) {
-        if (err){
+      mProcess.save(function (err, res) {
+        if (err) {
           logger.log('error', `Error historicize ${event} process ${_this.id}`, err);
         }
       });
@@ -262,7 +262,7 @@ class Process {
     var _this = this;
 
     //If have childs_chains
-    if(_this.childs_chains){
+    if (_this.childs_chains) {
       // Set All childs_chains to stopped
       _this.childs_chains_status = 'stop';
       var childsChainsLength = _this.childs_chains.length;
@@ -287,7 +287,7 @@ class Process {
           _this.ended_at = new Date();
           logger.log('error', `Stoping process ${_this.id}:`, err);
         });
-    }else{
+    } else {
       _this.status = 'stop';
       _this.ended_at = new Date();
     }
@@ -501,7 +501,7 @@ class Process {
             if (configValues.type) {
 
               if (global.executors[configValues.type]) {
-                 new global.executors[configValues.type](_this)
+                new global.executors[configValues.type](_this)
                   .then((res) => {
                     _this.executor = res;
                     res.exec()

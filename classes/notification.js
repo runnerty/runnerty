@@ -32,7 +32,7 @@ class Notification {
             })
             .catch((err) => {
               logger.log('error', 'Notificator checkNotificatorParams ', err);
-              reject();
+              resolve();
             });
         });
     });
@@ -64,14 +64,14 @@ class Notification {
     });
   }
 
-  queue(listName, notifToQueue){
+  queue(listName, notifToQueue) {
     var _this = this;
-    var list = _this.id + (listName?'_'+listName:'');
+    var list = _this.id + (listName ? '_' + listName : '');
     // QUEUE REDIS;
-    if(global.config.queueNotificationsExternal && global.config.queueNotificationsExternal === 'redis'){
+    if (global.config.queueNotificationsExternal && global.config.queueNotificationsExternal === 'redis') {
       //REDIS QUEUE:
       qnr.queue(_this, notifToQueue, list);
-    }else{
+    } else {
       //MEMORY QUEUE:
       qnm.queue(_this, notifToQueue, list);
     }
@@ -87,11 +87,11 @@ class Notification {
     });
   }
 
-  logger(type, menssage){
+  logger(type, menssage) {
     logger.log(type, menssage);
   }
 
-  replaceWith(object, values){
+  replaceWith(object, values) {
     return replaceWithSmart(object, values);
   }
 

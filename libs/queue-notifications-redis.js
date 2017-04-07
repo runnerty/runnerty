@@ -6,15 +6,14 @@ function sendNotification(list, notification, sender, redisCli) {
   notificator.numberCurrentRunning = notificator.numberCurrentRunning + 1;
   sender.send(notification)
     .then((res) => {
-    notificator.lastEndTime = process.hrtime();
-  notificator.numberCurrentRunning = notificator.numberCurrentRunning - 1;
-  checkNotificationsSends(list, sender, redisCli);
-})
-.catch((err) => {
-    logger.log('error', `Notification Sender error: ${err}`);
-});
+      notificator.lastEndTime = process.hrtime();
+      notificator.numberCurrentRunning = notificator.numberCurrentRunning - 1;
+      checkNotificationsSends(list, sender, redisCli);
+    })
+    .catch((err) => {
+      logger.log('error', `Notification Sender error: ${err}`);
+    });
 }
-
 
 function checkNotificationsSends(list, sender, redisCli) {
   var notificator = global.notificatorList[list];

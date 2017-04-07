@@ -7,8 +7,6 @@ var loadCalendars = utils.loadCalendars;
 var loadQueueNotifications = utils.loadQueueNotifications;
 var loadMongoHistory = utils.loadMongoHistory;
 var mongooseCloseConnection = utils.mongooseCloseConnection;
-var loadExecutors = utils.loadExecutors;
-var loadNotificators = utils.loadNotificators;
 
 //Global classes:
 global.ExecutionClass = require("./classes/execution.js");

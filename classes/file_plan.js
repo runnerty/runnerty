@@ -15,19 +15,19 @@ function serializer() {
   var stack = [];
   var keys = [];
 
-  return function(key, value) {
+  return function (key, value) {
     if (stack.length > 0) {
       var thisPos = stack.indexOf(this);
       ~thisPos ? stack.splice(thisPos + 1) : stack.push(this);
       ~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key);
-      if (~stack.indexOf(value)){
-        if (stack[0] === value){
+      if (~stack.indexOf(value)) {
+        if (stack[0] === value) {
           value = "[Circular ~]";
         }
         value = "[Circular ~." + keys.slice(0, stack.indexOf(value)).join(".") + "]";
       }
     }
-    else{
+    else {
       stack.push(value);
     }
     return value;

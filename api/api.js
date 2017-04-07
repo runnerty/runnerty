@@ -50,19 +50,19 @@ module.exports = function (config, logger) {
     var stack = [];
     var keys = [];
 
-    return function(key, value) {
+    return function (key, value) {
       if (stack.length > 0) {
         var thisPos = stack.indexOf(this);
         ~thisPos ? stack.splice(thisPos + 1) : stack.push(this);
         ~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key);
-        if (~stack.indexOf(value)){
-          if (stack[0] === value){
+        if (~stack.indexOf(value)) {
+          if (stack[0] === value) {
             value = "[Circular ~]";
           }
           value = "[Circular ~." + keys.slice(0, stack.indexOf(value)).join(".") + "]";
         }
       }
-      else{
+      else {
         stack.push(value);
       }
       return replacer === null ? value : replacer(key, value);
@@ -207,7 +207,8 @@ module.exports = function (config, logger) {
   // GET ALL CHAINS
   router.get('/chains', function (req, res) {
 
-    let objectToResult = ['depends_chains','args','events','output','chain_values','schedule_interval','scheduleCancel','scheduleRepeater','parentUId','exec','depends_process','retries','retry_delay','end_on_fail','end_chain_on_fail'];
+    let objectToResult = ['depends_chains', 'args', 'events', 'output', 'chain_values', 'schedule_interval', 'scheduleCancel', 'scheduleRepeater', 'parentUId', 'exec', 'depends_process', 'retries', 'retry_delay', 'end_on_fail', 'end_chain_on_fail'];
+
     function excluderGetChain(key, value) {
       return value;
       if (objectToResult.indexOf(key) !== -1) {
@@ -216,7 +217,7 @@ module.exports = function (config, logger) {
       return value;
     }
 
-    res.send(JSON.stringify(globalPlanChains.chains,serializer(excluderGetChain)));
+    res.send(JSON.stringify(globalPlanChains.chains, serializer(excluderGetChain)));
   });
 
   // GET A CHAIN
@@ -224,7 +225,8 @@ module.exports = function (config, logger) {
     var chainId = req.params.chainId;
     var chain = globalPlanChains.getChainById(chainId);
 
-    let objectToResult = ['depends_chains','args','events','output','chain_values','schedule_interval','scheduleCancel','scheduleRepeater','parentUId','exec','depends_process','retries','retry_delay','end_on_fail','end_chain_on_fail'];
+    let objectToResult = ['depends_chains', 'args', 'events', 'output', 'chain_values', 'schedule_interval', 'scheduleCancel', 'scheduleRepeater', 'parentUId', 'exec', 'depends_process', 'retries', 'retry_delay', 'end_on_fail', 'end_chain_on_fail'];
+
     function excluderGetChain(key, value) {
       if (objectToResult.indexOf(key) !== -1) {
         return undefined;
@@ -233,7 +235,7 @@ module.exports = function (config, logger) {
     }
 
     if (chain) {
-      res.send(JSON.stringify(chain,serializer(excluderGetChain)));
+      res.send(JSON.stringify(chain, serializer(excluderGetChain)));
     } else {
       res.status(404).send(`Chain "${chainId}" not found`);
     }

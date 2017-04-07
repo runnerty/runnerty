@@ -1,13 +1,14 @@
 "use strict";
 
+var utils = require("../libs/utils.js");
+var logger = utils.logger;
+var getProcessByUId = utils.getProcessByUId;
+var checkEvaluation = utils.checkEvaluation;
+var checkCalendar = utils.checkCalendar;
+var chronometer = utils.chronometer;
 var schedule = require('node-schedule');
 var anymatch = require('anymatch');
-var logger = require("../libs/utils.js").logger;
 var crypto = require('crypto');
-var getProcessByUId = require("../libs/utils.js").getProcessByUId;
-var checkEvaluation = require("../libs/utils.js").checkEvaluation;
-var checkCalendar = require("../libs/utils.js").checkCalendar;
-var chronometer = require("../libs/utils.js").chronometer;
 var mongoChain = require("../mongodb-models/chain.js");
 var mongoose = require('mongoose');
 
@@ -156,7 +157,7 @@ class Chain {
                 event.notifications
               ));
             } else {
-              logger.log('warn',`Chain ${_this.id} Events without procces and notifications`);
+              logger.log('warn', `Chain ${_this.id} Events without procces and notifications`);
             }
           }
 
@@ -287,27 +288,27 @@ class Chain {
   historicize(event) {
     var _this = this;
 
-    if (global.config.historyEnabled){
+    if (global.config.historyEnabled) {
       var mChain = new mongoChain
       ({
-        id : _this.id,
-        uId : _this.uId,
-        parentUId : _this.parentUId,
-        event : event || _this.status,
-        name : _this.name,
-        iterable : _this.iterable,
-        input : _this.input,
-        custom_values : _this.custom_values,
-        start_date : _this.start_date,
-        end_date : _this.end_date,
-        duration_seconds : _this.duration_seconds,
-        schedule_interval : _this.schedule_interval,
-        depends_chains : _this.depends_chains,
-        depends_chains_alt : _this.depends_chains_alt
+        id: _this.id,
+        uId: _this.uId,
+        parentUId: _this.parentUId,
+        event: event || _this.status,
+        name: _this.name,
+        iterable: _this.iterable,
+        input: _this.input,
+        custom_values: _this.custom_values,
+        start_date: _this.start_date,
+        end_date: _this.end_date,
+        duration_seconds: _this.duration_seconds,
+        schedule_interval: _this.schedule_interval,
+        depends_chains: _this.depends_chains,
+        depends_chains_alt: _this.depends_chains_alt
       });
 
-      mChain.save(function(err, res) {
-        if (err){
+      mChain.save(function (err, res) {
+        if (err) {
           logger.log('error', `Error historicize ${event} chain ${_this.id}`, err);
         }
       });
@@ -418,10 +419,10 @@ class Chain {
                 chain.scheduleRepeater.cancel();
               }
               var chainCalendarEnable = true;
-              if(chain.calendars){
+              if (chain.calendars) {
                 chainCalendarEnable = await checkCalendar(chain.calendars);
               }
-              if(chainCalendarEnable){
+              if (chainCalendarEnable) {
                 if (chain.isStopped() || chain.isEnded()) {
                   chain.setChainToInitState()
                     .then(function () {
@@ -439,7 +440,7 @@ class Chain {
                 } else {
                   logger.log('warn', `Trying start processes of ${chain.id} but this is running`);
                 }
-              }else{
+              } else {
                 logger.log('warn', `Running chain ${chain.id} disable in calendar`);
               }
 

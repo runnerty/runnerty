@@ -156,7 +156,7 @@ class Plan {
   scheduleChain(chain, process, executeInmediate, inputIterableValues, customValues) {
     var _this = this;
 
-    function createChainSerie (inputIterable) {
+    function createChainSerie(inputIterable) {
       var sequence = Promise.resolve();
       inputIterable.forEach(function (item) {
         sequence = sequence.then(function () {
@@ -177,14 +177,16 @@ class Plan {
       var i = 0;
       chains.forEach(function (chain) {
         sequence = sequence.then(function () {
-          var options = {"inputIteration":inputIterable[i],
-                         "waitEndChilds":true};
+          var options = {
+            "inputIteration": inputIterable[i],
+            "waitEndChilds": true
+          };
           return chain.start(options)
             .then(function () {
-              i = i+1;
+              i = i + 1;
             })
             .catch(function (err) {
-              i = i+1;
+              i = i + 1;
               logger.log('error', 'scheduleChain execSerie Error ', err);
             });
         });
@@ -213,13 +215,6 @@ class Plan {
           if ((new Date(chain.start_date)) <= (new Date()) || (chain.hasOwnProperty('iterable') || chain.iterable)) {
 
             logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
-
-            //.log('- - - - - - - - - - - - - - - - - - - - - - - - ',chain.id,' - - - - - - - - - - - - - - - - - - - - - - - -');
-            //console.log('- chain.id:',chain.id);
-            //console.log('- chain.status:',chain.status);
-            //console.log('- chain.end_date:',chain.end_date);
-            //console.log('- chain.!chain.end_date:',!chain.end_date);
-            //console.log('- chain.hasOwnProperty(end_date):',chain.hasOwnProperty('end_date'));
 
             logger.log('debug', `TRYING START CHAIN ${chain.id} IN ${(new Date(chain.start_date))}`);
 
@@ -264,15 +259,13 @@ class Plan {
 
                   if (execMode === 'parallel') {
 
-                    //console.log('EMPIEZA EJECUCION EN PARALELO! ',chain.id,inputIterable);
-
                     process.childs_chains = [];
 
                     createChainSerie(inputIterable)
                       .then(function () {
                         var chainsToExecLength = process.childs_chains.length;
                         while (chainsToExecLength--) {
-                          var options = {"inputIteration":inputIterable[chainsToExecLength]};
+                          var options = {"inputIteration": inputIterable[chainsToExecLength]};
                           process.childs_chains.push(process.childs_chains[chainsToExecLength].start(options));
                         }
 
@@ -310,10 +303,10 @@ class Plan {
 
               } else {
 
-                if(customValues && Object.keys(customValues).length !== 0){
+                if (customValues && Object.keys(customValues).length !== 0) {
                   _this.loadChain(chain, undefined, customValues)
                     .then(function (_chain) {
-                      var options = {"executeInmediate":executeInmediate};
+                      var options = {"executeInmediate": executeInmediate};
                       _chain.start(options)
                         .then(function () {
                           //_this.scheduleChains();
@@ -327,11 +320,10 @@ class Plan {
                     .catch(function (err) {
                       logger.log('error', `scheduleChain customsValues loadChain ${chain.id}. Error: `, err);
                     });
-                }else{
-                  var options = {"executeInmediate":executeInmediate};
+                } else {
+                  var options = {"executeInmediate": executeInmediate};
                   chain.start(options)
                     .then(function () {
-                      //_this.scheduleChains();
                       resolve();
                     })
                     .catch(function (err) {
@@ -470,14 +462,12 @@ class Plan {
                       if (planChains[planChainsLength].processes[planProccessLength].id === depends_chains[auxDependsChainsLength].process_id) {
                         if (planChains[planChainsLength].processes[planProccessLength].isEnded()) {
                         } else {
-                          //console.log('NO SE EJECUTA PORQUE EL PROCESO ',planChains[planChainsLength].processes[planProccessLength].id,' ESTA A ',planChains[planChainsLength].processes[planProccessLength].status);
                           chainsDependencies.push(planChains[planChainsLength]);
                         }
                       }
                     }
                   } else {
                     chainsDependencies.push(planChains[planChainsLength]);
-                    //hasDependencies = true;
                   }
                 }
               }

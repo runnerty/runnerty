@@ -67,9 +67,9 @@ class Execution {
     });
   }
 
-  end(options, resolve, reject){
+  end(options, resolve, reject) {
     var _this = this;
-    _this.process.execute_arg =options.execute_arg;
+    _this.process.execute_arg = options.execute_arg;
     _this.process.command_executed = options.command_executed;
     _this.process.execute_err_return = options.execute_err_return || '';
     _this.process.execute_return = options.execute_return || '';
@@ -96,7 +96,7 @@ class Execution {
     }
   }
 
-  paramsReplace(input, options){
+  paramsReplace(input, options) {
     var _this = this;
     var useGlobalValues = options.useGlobalValues || true;
     var useProcessValues = options.useProcessValues || false;
@@ -112,12 +112,12 @@ class Execution {
 
       var replacerValues = {};
       //Process values
-      if(useProcessValues){
-        replacerValues =  Object.assign(replacerValues, _this.process.values());
+      if (useProcessValues) {
+        replacerValues = Object.assign(replacerValues, _this.process.values());
       }
       // Custom object values:
-      if(useExtraValue){
-        replacerValues =  Object.assign(replacerValues, useExtraValue);
+      if (useExtraValue) {
+        replacerValues = Object.assign(replacerValues, useExtraValue);
       }
 
       replaceWithSmart(input, replacerValues, _options)
@@ -144,11 +144,11 @@ class Execution {
           values = Object.assign(values, configValues);
           values = Object.assign(values, _this.process.exec);
           replaceWithSmart(values, _this.process.values())
-            .then(function(res){
+            .then(function (res) {
               resolve(res);
             })
-            .catch(function(err){
-              logger.log('error', 'Execution - Method getValues:',err);
+            .catch(function (err) {
+              logger.log('error', 'Execution - Method getValues:', err);
               _this.process.execute_err_return = 'Execution - Method getValues:' + err;
               _this.process.execute_return = '';
               _this.process.error();
@@ -161,11 +161,11 @@ class Execution {
   getParamValues() {
     return new Promise(function (resolve) {
       replaceWithSmart(_this.process.exec, _this.process.values())
-        .then(function(res){
+        .then(function (res) {
           resolve(res);
         })
-        .catch(function(err){
-          logger.log('error', 'Execution - Method getParamValues:',err);
+        .catch(function (err) {
+          logger.log('error', 'Execution - Method getParamValues:', err);
           _this.process.execute_err_return = 'Execution - Method getParamValues:' + err;
           _this.process.execute_return = '';
           _this.process.error();
@@ -179,11 +179,11 @@ class Execution {
       _this.process.loadExecutorConfig()
         .then((configValues) => {
           replaceWithSmart(configValues, _this.process.values())
-            .then(function(res){
+            .then(function (res) {
               resolve(res);
             })
-            .catch(function(err){
-              logger.log('error', 'Execution - Method getConfigValues:',err);
+            .catch(function (err) {
+              logger.log('error', 'Execution - Method getConfigValues:', err);
               _this.process.execute_err_return = 'Execution - Method getConfigValues:' + err;
               _this.process.execute_return = '';
               _this.process.error();
