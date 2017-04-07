@@ -1,0 +1,10 @@
+{
+  "name": "runnerty-modules",
+  "version": "0.0.0",
+  "private": false,
+  "dependencies": {
+    "runnerty-notificator-mail": "^1.0.0",
+    "runnerty-notificator-slack": "^1.0.0",
+    "runnerty-notificator-telegram": "^1.0.0"
+  }
+}
