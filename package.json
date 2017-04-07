@@ -6,6 +6,7 @@
   "main": "app.js",
   "license": "ISC",
   "author": "Coderty",
+  "homepage": "http://www.runnerty.io/",
   "directories": {
     "bin": "./bin"
   },
@@ -19,7 +20,6 @@
   "bugs": {
     "url": "https://github.com/Coderty/runnerty/issues"
   },
-  "homepage": "http://www.coderty.com/",
   "description": "",
   "scripts": {
   },
