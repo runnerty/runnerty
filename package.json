@@ -1,10 +1,17 @@
 {
   "name": "runnerty",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
+  "preferGlobal": true,
   "main": "app.js",
   "license": "ISC",
   "author": "Coderty",
+  "directories": {
+    "bin": "./bin"
+  },
+  "bin": {
+    "runnerty": "./bin/runnerty"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:Coderty/runnerty.git"
@@ -45,7 +52,20 @@
     "task manager",
     "job",
     "notifications",
-    "executions"
+    "executions",
+    "sysadmin",
+    "tools",
+    "logs",
+    "log",
+    "reload",
+    "programmatic",
+    "production",
+    "monitoring",
+    "process manager",
+    "profiling",
+    "cron",
+    "devops",
+    "dev ops"
   ],
   "engines": {
     "node" : ">=7.7.1"
