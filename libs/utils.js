@@ -628,19 +628,14 @@ module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, 
   switch (condition) {
     case '==':
       return (oper_left === oper_right);
-      break;
     case '!=':
       return (oper_left !== oper_right);
-      break;
     case '>=':
       return (oper_left >= oper_right);
-      break;
     case '<=':
       return (oper_left <= oper_right);
-      break;
     default:
       return false;
-      break;
   }
 };
 
@@ -869,7 +864,7 @@ function loadNotificators(notificatorsPath, notificators) {
         let notificatorsInConfig = {};
         var items = {};
         items.anyOf = [];
-        for (var i = 0; i < notificators.length; i++) {
+        for (var i = 0; i < notificators.length;) {
           let no = notificators[i].type;
           if (res[no]) {
             let noSchema = path.join(notificatorsPath, no, 'schema.json');
@@ -886,7 +881,9 @@ function loadNotificators(notificatorsPath, notificators) {
             } else {
               logger.log('error', `Schema not found in executor ${no}`);
             }
+            i++;
           } else {
+            notificators.splice(i,1);
             logger.log('error', `Notificators type ${no} in config not found in notificators path: ${notificatorsPath}`);
           }
         }
@@ -946,3 +943,10 @@ function checkNotificatorParams(notification) {
   });
 };
 module.exports.checkNotificatorParams = checkNotificatorParams;
+
+function loadAPI() {
+  if(global.config.general.api && global.config.general.api.port && global.config.general.users){
+    require('./api/api.js')();
+  }
+};
+module.exports.loadAPI = loadAPI;

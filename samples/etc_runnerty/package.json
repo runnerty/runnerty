@@ -5,6 +5,16 @@
   "dependencies": {
     "runnerty-notificator-mail": "^1.0.0",
     "runnerty-notificator-slack": "^1.0.0",
-    "runnerty-notificator-telegram": "^1.0.0"
+    "runnerty-notificator-telegram": "^1.0.0",
+    "runnerty-executor-shell": "^1.0.0",
+    "runnerty-executor-wait": "^1.0.0",
+    "runnerty-executor-iterable": "^1.0.1",
+    "runnerty-executor-mail": "^1.0.0",
+    "runnerty-executor-mysql": "^1.0.0",
+    "runnerty-executor-redis": "^1.0.0",
+    "runnerty-executor-postgres": "^1.0.0",
+    "runnerty-executor-scp": "^1.0.0",
+    "runnerty-executor-iconv": "^1.0.0",
+    "runnerty-executor-s3": "^1.0.0"
   }
 }

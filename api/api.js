@@ -12,10 +12,12 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var helmet = require('helmet');
-var util = require('util');
+//var util = require('util');
+var utils = require("../libs/utils.js");
+var logger = utils.logger;
 var crypto = require('crypto');
-// var replaceWith = require("../libs/utils.js").replaceWith;
 var cors = require("cors");
+var config = global.config;
 /*
  var lusca           = require('lusca');
  */
@@ -23,7 +25,7 @@ var cors = require("cors");
 //============================================
 var globalPlanChains = global.runtimePlan.plan;
 
-module.exports = function (config, logger) {
+module.exports = function () {
   //==============================================
   // SERVER
 

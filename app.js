@@ -1,12 +1,13 @@
 "use strict";
 var program = require('commander');
 var utils = require("./libs/utils.js");
-var path = require('path');
 var logger = utils.logger;
+var path = require('path');
 var loadGeneralConfig = utils.loadGeneralConfig;
 var loadCalendars = utils.loadCalendars;
 var loadQueueNotifications = utils.loadQueueNotifications;
 var loadMongoHistory = utils.loadMongoHistory;
+var loadAPI = utils.loadAPI;
 var mongooseCloseConnection = utils.mongooseCloseConnection;
 
 //Global classes:
@@ -66,7 +67,7 @@ loadGeneralConfig(configFilePath)
     new FilePlan(fileLoad, config)
       .then(function (plan) {
         global.runtimePlan = plan;
-        require('./api/api.js')(config.general, logger);
+        loadAPI();
       })
       .catch(function (err) {
         logger.log('error', 'FilePlan: ', err);
