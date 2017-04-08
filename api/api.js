@@ -17,7 +17,7 @@ var utils = require("../libs/utils.js");
 var logger = utils.logger;
 var crypto = require('crypto');
 var cors = require("cors");
-var config = global.config;
+var config = global.config.general;
 /*
  var lusca           = require('lusca');
  */

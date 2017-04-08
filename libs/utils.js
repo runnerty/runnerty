@@ -945,8 +945,8 @@ function checkNotificatorParams(notification) {
 module.exports.checkNotificatorParams = checkNotificatorParams;
 
 function loadAPI() {
-  if(global.config.general.api && global.config.general.api.port && global.config.general.users){
-    require('./api/api.js')();
+  if(global.config.general.api && global.config.general.api.port && global.config.general.api.users){
+    require('../api/api.js')();
   }
 };
 module.exports.loadAPI = loadAPI;
