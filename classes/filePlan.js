@@ -57,7 +57,9 @@ class FilePlan {
                 .then(function (plan) {
                   _this.plan = plan;
                   _this.plan.scheduleChains();
-                  _this.startAutoRefreshBinBackup();
+                  if(global.planRestored){
+                    _this.startAutoRefreshBinBackup();
+                  }
                   resolve(_this);
                 })
                 .catch(function (err) {

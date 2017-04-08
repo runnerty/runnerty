@@ -4,7 +4,6 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var router = express.Router();
 var morgan = require('morgan');
-var passport = require('passport');
 var jwt = require('jsonwebtoken');
 var expressJwt = require('express-jwt');
 var app = express();
@@ -12,12 +11,12 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var helmet = require('helmet');
-//var util = require('util');
 var utils = require("../libs/utils.js");
 var logger = utils.logger;
 var crypto = require('crypto');
 var cors = require("cors");
 var config = global.config.general;
+const port = config.api.port;
 /*
  var lusca           = require('lusca');
  */
@@ -28,10 +27,9 @@ var globalPlanChains = global.runtimePlan.plan;
 module.exports = function () {
   //==============================================
   // SERVER
-
-  server.listen(config.api.port, function (err, res) {
+  server.listen(port, function (err, res) {
     //TODO CATCH ERRORS:
-    logger.log('info', 'Listening on port ' + config.api.port);
+    logger.log('info', 'Listening on port [' + port + ']');
   });
 
   app.use(cors());
@@ -182,7 +180,6 @@ module.exports = function () {
     if (!user) {
       res.json({success: false, message: 'Authentication failed. User not found.'});
     } else if (user) {
-      // console.log('user:',user,'password:',password);
 
       function checkAcces(up) {
         return (up.user === user && up.password === password);

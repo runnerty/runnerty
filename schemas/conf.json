@@ -7,7 +7,6 @@
     "properties": {
       "general": {
         "type": "object",
-        "required": ["binBackup", "planFilePath", "refreshIntervalBinBackup", "api"],
         "properties": {
           "binBackup": {"type": "string"},
           "planFilePath": {"type": "string"},

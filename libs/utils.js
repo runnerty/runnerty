@@ -11,6 +11,7 @@ var moment = require('moment');
 var ics = require('ical2json');
 var redis = require('redis');
 var mongoose = require('mongoose');
+var lodash = require('lodash');
 
 const algorithm = 'aes-256-ctr';
 
@@ -69,34 +70,59 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
               resolve();
             } else {
 
-              var fileParsed;
-              try {
-                fileParsed = JSON.parse(res);
-              } catch (err) {
-                var newErr = new Error('Problem reading JSON file');
-                newErr.stack += '\nCaused by: ' + err.stack;
-                throw newErr;
-              }
+              // CONFIG DEFAULTS:
+              fs.readFile(path.join(__dirname,'../config/defaults.json'), 'utf8', function (err, defaults) {
+                var fileParsed;
+                var defaultsFileParsed;
+                var configLoad;
 
-              // ADD NOTIFICATORS SCHEMAS:
-              var notificatorsPath = fileParsed.config.general.notificatorsPath || path.join(path.dirname(configFilePath), 'node_modules');
-              var promiseNotificatorsSchemas = loadNotificators(notificatorsPath, fileParsed.config.notificators);
-
-              // ADD EXECUTORS SCHEMAS:
-              var executorsPath = fileParsed.config.general.executorsPath || path.join(path.dirname(configFilePath), 'node_modules');
-              var promiseExecutorsSchemas = loadExecutors(executorsPath, fileParsed.config.executors);
-
-              Promise.all([promiseNotificatorsSchemas, promiseExecutorsSchemas]).then(values => {
-                ajv.addSchema(configSchema, 'configSchema');
-
-                var valid = ajv.validate('configSchema', fileParsed);
-
-                if (!valid) {
-                  logger.log('error', `Invalid Config file:`, ajv.errors);
-                  throw new Error(`Invalid Config file:`, ajv.errors);
+                if(err){
+                  logger.log('warn', `Default config file not found error:`,err);
+                }else{
+                  if(defaults){
+                    try {
+                      defaultsFileParsed = JSON.parse(defaults);
+                    } catch (err) {
+                      var newErr = new Error('Problem reading JSON file');
+                      newErr.stack += '\nCaused by: ' + err.stack;
+                      throw newErr;
+                    }
+                  }
                 }
-                var objConf = fileParsed.config;
-                resolve(objConf);
+
+                try {
+                  fileParsed = JSON.parse(res);
+                  if (defaultsFileParsed){
+                    configLoad = lodash.defaultsDeep(fileParsed,defaultsFileParsed);
+                  }else{
+                    configLoad = fileParsed;
+                  }
+                } catch (err) {
+                  var newErr = new Error('Problem reading JSON file');
+                  newErr.stack += '\nCaused by: ' + err.stack;
+                  throw newErr;
+                }
+
+                // ADD NOTIFICATORS SCHEMAS:
+                var notificatorsPath = configLoad.config.general.notificatorsPath || path.join(path.dirname(configFilePath), 'node_modules');
+                var promiseNotificatorsSchemas = loadNotificators(notificatorsPath, configLoad.config.notificators);
+
+                // ADD EXECUTORS SCHEMAS:
+                var executorsPath = configLoad.config.general.executorsPath || path.join(path.dirname(configFilePath), 'node_modules');
+                var promiseExecutorsSchemas = loadExecutors(executorsPath, configLoad.config.executors);
+
+                Promise.all([promiseNotificatorsSchemas, promiseExecutorsSchemas]).then(values => {
+                  ajv.addSchema(configSchema, 'configSchema');
+
+                  var valid = ajv.validate('configSchema', configLoad);
+
+                  if (!valid) {
+                    logger.log('error', `Invalid Config file:`, ajv.errors);
+                    throw new Error(`Invalid Config file:`, ajv.errors);
+                  }
+                  var objConf = configLoad.config;
+                  resolve(objConf);
+                });
               });
             }
           });

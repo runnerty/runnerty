@@ -15,13 +15,13 @@ global.ExecutionClass = require("./classes/execution.js");
 global.NotificationClass = require("./classes/notification.js");
 global.libUtils = utils;
 
-var FilePlan = require("./classes/file_plan.js");
+var FilePlan = require("./classes/filePlan.js");
 
 
 var configFilePath = path.join(process.cwd(), 'conf.json');
 var config;
 
-var reloadPlan = false;
+var restorePlan = false;
 
 // CHECK ARGS APP:
 program
@@ -29,8 +29,8 @@ program
   .option('-c, --config <path>', `set config path. defaults to ${configFilePath}`, function (filePath) {
     configFilePath = filePath;
   })
-  .option('-r, --reload', 'reload plan', function () {
-    reloadPlan = true;
+  .option('-r, --restore', 'restore backup plan (experimental)', function () {
+    restorePlan = true;
   })
   .option('-p, --password <password>', 'Password cryptor', function (argCryptoPassword) {
     global.cryptoPassword = argCryptoPassword;
@@ -45,14 +45,24 @@ loadGeneralConfig(configFilePath)
   .then(function (fileConfig) {
     config = fileConfig;
     global.config = config;
+    if (!config.general.planFilePath){
+      config.general.planFilePath = path.join(path.dirname(configFilePath), 'plan.json');
+    }
 
     var fileLoad;
-    if (reloadPlan) {
-      fileLoad = config.general.planFilePath;
-      logger.log('warn', `Reloading plan from ${fileLoad}`);
+    if (restorePlan) {
+      if (config.general.binBackup){
+        fileLoad = config.general.binBackup;
+        global.planRestored = true;
+        logger.log('warn', `Retoring plan from ${fileLoad}`);
+      }else{
+        logger.log('error', `Restoring: binBackup is not set in config`);
+        fileLoad = config.general.planFilePath;
+        logger.log('warn', `Reloading plan from ${fileLoad}`);
+      }
     }
     else {
-      fileLoad = config.general.binBackup;
+      fileLoad = config.general.planFilePath;
     }
 
     // MONGODB HISTORY:
