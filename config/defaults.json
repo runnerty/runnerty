@@ -13,6 +13,9 @@
             "depends_files_ready"
           ]
       }
-    }
+    },
+    "executors": [],
+    "notificators": [],
+    "global_values":[]
   }
 }

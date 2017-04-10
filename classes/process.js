@@ -448,6 +448,9 @@ class Process {
             var _valOS = {};
             _valOS[valOS.key.toUpperCase()] = {};
             _valOS[valOS.key.toUpperCase()][valOS.name.toUpperCase()] = valOS.value;
+            if(!global.config.global_values){
+              global.config.global_values = [];
+            }
             global.config.global_values.push(_valOS);
           });
         });
