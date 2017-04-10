@@ -1,5 +1,7 @@
 {
   "name": "runnerty-modules",
+  "description":"Runnerty modules sample",
+  "license": "ISC",
   "version": "0.0.0",
   "private": false,
   "dependencies": {
