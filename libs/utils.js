@@ -665,12 +665,20 @@ module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, 
   }
 };
 
-function requireDir(directory, filename) {
+function requireDir(directory, modules) {
+
+  var modulesTypes = [];
+  if(modules){
+    for (var i = 0; i < modules.length; i++) {
+      if(modules[i].type){
+        modulesTypes.push(modules[i].type);
+      }
+    }
+  }
 
   // REQUIRE DIRECTORY:
   var container = {};
   var containerDirectory = directory;
-  var excludes = ['node_modules', 'git', 'snv'];
 
   return new Promise((resolve, reject) => {
     fs.readdir(containerDirectory, function (err, items) {
@@ -679,24 +687,17 @@ function requireDir(directory, filename) {
       }
 
       var dirs = items ? items.filter(function (i) {
-        return !excludes.includes(i);
+        return modulesTypes.includes(i);
       }) : [];
 
       var dirsLength = dirs.length;
       while (dirsLength--) {
         if (fs.statSync(path.join(containerDirectory, dirs[dirsLength])).isDirectory()) {
-
-          if (filename) {
-            if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], filename))) {
-              container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], filename));
-            }
+          if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'))) {
+            container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'));
           } else {
-            if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'))) {
-              container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'));
-            } else {
-              if (path.join(containerDirectory, dirs[dirsLength], 'index.js')) {
-                container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], 'index.js'));
-              }
+            if (path.join(containerDirectory, dirs[dirsLength], 'index.js')) {
+              container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], 'index.js'));
             }
           }
         }
@@ -845,7 +846,7 @@ module.exports.mongooseCloseConnection = function mongooseCloseConnection() {
 function loadExecutors(executorsPath, executors) {
    return new Promise((resolve) => {
      global.executors = {};
-     requireDir(executorsPath)
+     requireDir(executorsPath, executors)
        .then((res) => {
          let executorsInConfig = {};
          var items = {};
@@ -885,7 +886,7 @@ module.exports.loadExecutors = loadExecutors;
 function loadNotificators(notificatorsPath, notificators) {
   return new Promise((resolve) => {
     global.notificators = {};
-    requireDir(notificatorsPath)
+    requireDir(notificatorsPath, notificators)
       .then((res) => {
         let notificatorsInConfig = {};
         var items = {};
