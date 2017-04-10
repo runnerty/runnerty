@@ -3,73 +3,14 @@
     {
       "id":"CHAIN_ONE",
       "name":"Chain one sample",
-      "start_date":"2017-04-01T00:00:00.00Z",
-      "end_date":"2099-11-01T00:00:00.00Z",
       "schedule_interval":"*/1 * * * *",
-      "depends_chains":[],
-      "events":{
-        "on_start":{
-          "notifications":[
-            {
-              "id":"mail_default",
-              "subject":"RUNNERTY SAMPLE",
-              "message":"CHAIN :CHAIN_NAME START"
-            }
-          ]
-        },
-        "on_end":{
-          "notifications":[
-            {
-              "id":"mail_default",
-              "subject":"RUNNERTY SAMPLE",
-              "message":"CHAIN :CHAIN_NAME END"
-            }
-          ]
-        }
-      },
       "processes":[
         {
           "id":"PROCESS_ONE",
-          "name":"Proccess One",
-          "depends_process":[],
+          "name":"Process one sample",
           "exec":{
             "id":"shell_default",
             "command":"echo hello word!"
-          },
-          "retries":0,
-          "retry_delay":0,
-          "end_chain_on_fail":true,
-          "output":[
-            {
-              "file_name":"/etc/runnerty/test.log",
-              "write":[
-                "> EXEC :PROCESS_ID - :DD-:MM-:YY :HH::mm::ss: RETURN: :PROCESS_EXEC_RETURN"
-              ],
-              "concat":true,
-              "maxsize":"10mb"
-            }
-          ],
-          "events":{
-            "on_start":{
-              "notifications":[
-                {
-                  "id":"mail_default",
-                  "subject":"RUNNERTY SAMPLE",
-                  "message":"PROCESS :PROCESS_NAME START"
-                }
-              ]
-            },
-            "on_fail":{},
-            "on_retry":{},
-            "on_end":{
-              "notifications":[
-                {
-                  "id":"mail_default",
-                  "subject":"RUNNERTY SAMPLE",
-                  "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_RETURN"
-                }
-              ]
-            }
           }
         }
       ]

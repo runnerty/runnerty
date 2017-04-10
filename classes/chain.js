@@ -27,7 +27,7 @@ class Chain {
     this.start_date = start_date;
     this.end_date = end_date;
     this.schedule_interval = schedule_interval;
-    this.depends_chains = depends_chains;
+    this.depends_chains = depends_chains || [];
     this.depends_chains_alt = depends_chains_alt;
     this.calendars = calendars;
     this.events = {};
@@ -182,7 +182,7 @@ class Chain {
           resolve();
         }
       } else {
-        logger.log('warn', `Chain ${_this.id} events is not object`);
+        logger.log('warn', `Chain ${_this.id} events is not set`);
         resolve();
       }
     });

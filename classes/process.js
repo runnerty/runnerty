@@ -20,7 +20,7 @@ class Process {
     this.name = name;
     this.uId = '';
     this.parentUId = parentUId;
-    this.depends_process = depends_process;
+    this.depends_process = depends_process || [];
     this.depends_process_alt = depends_process_alt;
     this.exec = exec;
     this.retries = retries;
@@ -168,7 +168,7 @@ class Process {
           }
         }
       } else {
-        logger.log('warn', 'Process, events is not object');
+        logger.log('warn', 'Process, events is not set');
         resolve();
       }
     });
