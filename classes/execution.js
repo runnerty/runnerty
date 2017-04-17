@@ -13,7 +13,11 @@ class Execution {
     var paramsLength = params.length;
 
     while (paramsLength--) {
-      _this[params[paramsLength]] = process.exec[params[paramsLength]];
+      if(params[paramsLength] === 'type'){
+        logger.log('error', `Params of "${process.id}" contains no allowed "type" parameter, will be ignored.`);
+      }else{
+        _this[params[paramsLength]] = process.exec[params[paramsLength]];
+      }
     }
     _this.logger = logger;
     _this.process = process;
@@ -143,6 +147,11 @@ class Execution {
           var values = {};
           values = Object.assign(values, configValues);
           values = Object.assign(values, _this.process.exec);
+
+          if(_this.process.exec.type && configValues.type){
+            values.type = configValues.type;
+          }
+
           replaceWithSmart(values, _this.process.values())
             .then(function (res) {
               resolve(res);
