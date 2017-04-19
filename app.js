@@ -26,7 +26,7 @@ var restorePlan = false;
 
 // CHECK ARGS APP:
 program
-  .version('0.0.1')
+  .version('Runnerty v' + require('./package.json').version)
   .option('-c, --config <path>', `set config path. defaults to ${configFilePath}`, function (filePath) {
     configFilePath = filePath;
   })
