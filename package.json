@@ -1,7 +1,6 @@
 {
   "name": "runnerty",
-  "version": "1.0.0",
-  "private": true,
+  "version": "0.0.1",
   "preferGlobal": true,
   "main": "app.js",
   "license": "ISC",
