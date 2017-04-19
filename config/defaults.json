@@ -1,0 +1,21 @@
+{
+  "config": {
+    "general": {
+        "api": {
+          "port": 3456,
+          "secret": "RUNNERTY_BY_CODERTY",
+          "limite_req": "20mb",
+          "propertiesExcludesInResponse": [
+            "proc",
+            "scheduleCancel",
+            "scheduleRepeater",
+            "file_watchers",
+            "depends_files_ready"
+          ]
+      }
+    },
+    "executors": [],
+    "notificators": [],
+    "global_values":[]
+  }
+}

@@ -9,7 +9,7 @@
         "users": [
           {
             "user": "coderty",
-            "password": "runnerty"
+            "password": "password_runnerty"
           },
           {
             "user": "usr_test",
@@ -25,73 +25,134 @@
           "file_watchers",
           "depends_files_ready"
         ]
-      }
-    },
-    "db_connections": [
-      {
-        "id": "mysql_default",
-        "type": "mysql",
-        "user": "root",
-        "__password": "nesoca..mysql",
-        "crypted_password": "nesoca..mysql",
-        "database": "CORE",
-        "host": "devintranetdb.c47prwzsptxu.eu-west-1.rds.amazonaws.com",
-        "port": "3306"
       },
-      {
-        "id": "postgres_default",
-        "type": "postgres",
-        "user": "postgres",
-        "password": "test",
-        "database": "postgres",
-        "host": "localhost",
-        "port": "5432",
-        "protocol": "TPC"
+      "history": {
+        "disable":true,
+        "mongodb":{
+          "host":"localhost",
+          "port":"32769"
+        }
       },
-      {
-        "id": "redis_default",
-        "type": "redis",
-        "host": "redishost",
-        "port": "6379",
-        "password": "redis",
+      "queue_notifications":{
+        "queue":"redis",
+        "host": "127.0.0.1",
+        "port": "32768",
+        "password": "redis_password",
         "options": {}
       }
-    ],
-    "notificators_connections": [
+    },
+    "executors": [
       {
-        "id": "slack_default",
-        "type": "slack",
-        "webhookurl": "https://hooks.slack.com/services/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",
-        "bot_name": "Runnerty-Sentinel",
-        "bot_emoji": ":v:",
-        "channel": "mlm"
+        "id":"scp_default",
+        "type":"runnerty-executor-scp",
+        "identityFile": "/.ssh/my.pem"
       },
       {
-        "id": "telegram_default",
-        "type": "telegram",
-        "token": "298463760:AAG3qnkKhdPMwrSLJWVmJAN6MnLH_zPGO_8",
-        "chat_id": "@RUNNERTY"
+        "id":"s3_default",
+        "type":"runnerty-executor-s3",
+        "apiVersion": "2006-03-01",
+        "accessKeyId": "ABC123",
+        "secretAccessKey": "ABC123",
+        "bucket":"my.s3bucket.com",
+        "method":"upload",
+        "region": "eu-west-1"
       },
       {
         "id": "mail_default",
-        "type": "mail",
+        "type": "runnerty-executor-mail",
         "disable": false,
-        "from": "Runnerty <desawc@gmail.com>",
-        "transport": "smtps://desawc%40gmail.com:nesoca..gmail@smtp.gmail.com/?pool=true",
+        "from": "Runnerty <my@mail.com>",
+        "transport": "smtps://my%40mail.com:mypass@smtp.mail.com/?pool=true",
         "templateDir": "/etc/runnerty/templates",
-        "template": "alerts"
+        "template": "alerts",
+        "to": ["to@mail.com"],
+        "ejsRender": true
+      },
+      {
+        "id": "iconv_default",
+        "type": "runnerty-executor-iconv"
+      },
+      {
+        "id": "shell_default",
+        "type": "runnerty-executor-shell"
+      },
+      {
+        "id": "wait_default",
+        "type": "runnerty-executor-wait",
+        "seconds": "60"
+      },
+      {
+        "id": "mysql_default",
+        "type": "runnerty-executor-mysql",
+        "user": "mysql_user",
+        "password": "mysql_password",
+        "_crypted_password": "mysql_crypted_password",
+        "database": "MYDB",
+        "host": "mysqlhost.com",
+        "port": "3306"
+      },
+      {"id":"postgres_default",
+        "type":"runnerty-executor-postgres",
+        "user":"postgres_user",
+        "password":"postgres_password",
+        "database":"MYDB",
+        "host":"postgreshost.com",
+        "port":"5439"
+      },
+      {
+        "id": "redis_default",
+        "type": "runnerty-executor-redis",
+        "password": "redis_password",
+        "host": "redishost.com",
+        "port": "6379",
+        "options": {}
+      }
+    ],
+    "notificators": [
+      {
+        "id": "slack_default",
+        "type": "runnerty-notificator-slack",
+        "webhookurl":"https://hooks.slack.com/services/ABC123/ABC123/ABC123",
+        "bot_name": "Runnerty-Sentinel",
+        "channel": "my_runnerty_channel",
+        "maxConcurrents": 1,
+        "minInterval": 0
+      },
+      {
+        "id": "mail_default",
+        "type": "runnerty-notificator-mail",
+        "disable": false,
+        "from": "Runnerty <my@mail.com>",
+        "transport": "smtps://my%40mail.com:mypass@smtp.mail.com/?pool=true",
+        "templateDir": "/etc/runnerty/templates",
+        "template": "alerts",
+        "to": ["to@mail.com"],
+        "ejsRender": true
+      },
+      {
+        "id": "telegram_default",
+        "type": "runnerty-notificator-telegram",
+        "token": "ABC123",
+        "chat_id": "ABC123"
       }
     ],
     "global_values": [
       {
         "myparams": {
-          "host": "coderty.com",
-          "port": "5123"
+          "sample": "coderty.com"
         }
       },
       {
         "myothersparams": {
-          "host": "google.com"
+          "other_sample": "runnerty"
+        }
+      },
+      {
+        "MY_LISTS": {
+          "LIST_ZERO": {"value":[":YYYY","-CA-",":MM","-TO-",":DD"], "format":"text"},
+          "LIST_ONE": {"value":["VAL1","VAL2:MM","VAL3"], "format":"text", "delimiter":",", "quotechar":"\""},
+          "LIST_TWO": {"value":["VAL1","VAL2","VAL3"], "format":"json"},
+          "LIST_THREE": {"value":[{"KEY1": "VAL1", "KEY2": "VAL2"}, {"KEY1": "VAL1", "KEY2": "VAL2"}], "format":"json"}
         }
       }
     ]

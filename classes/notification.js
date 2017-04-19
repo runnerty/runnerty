@@ -1,31 +1,99 @@
 "use strict";
-
-var utilReplaceWith   = require("../libs/utils.js").replaceWith;
-var loadConfigSection = require("../libs/utils.js").loadConfigSection;
-var logger            = require("../libs/utils.js").logger;
+var utils = require("../libs/utils.js");
+var replaceWithSmart = utils.replaceWithSmart;
+var checkNotificatorParams = utils.checkNotificatorParams;
+var logger = utils.logger;
+var qnm = require("../libs/queue-notifications-memory.js");
+var qnr = require("../libs/queue-notifications-redis.js");
+var crypto = require("crypto");
 
 class Notification {
-  constructor(type, id, title, message, recipients, recipients_cc, recipients_cco) {
-    this.type = type;
-    this.id = id;
-    this.title = title;
-    this.message = message;
-    this.recipients = recipients;
-    this.recipients_cc = recipients_cc;
-    this.recipients_cco = recipients_cco;
-    this.replaceWith = utilReplaceWith;
-    this.logger = logger;
-  }
-
-  notificate(){
-    logger.log('warn','This method must be rewrite in child class');
-  }
-
-  loadConfig(){
+  constructor(notification) {
     var _this = this;
-    return loadConfigSection(global.config, 'notificators_connections', _this.id);
+    var properties = Object.keys(notification);
+    var propertiesLength = properties.length;
+
+    while (propertiesLength--) {
+      _this[properties[propertiesLength]] = notification[properties[propertiesLength]];
+    }
+
+    return new Promise((resolve) => {
+      var configValues = notification.config;
+      if (!_this.type && configValues.type) {
+        _this.type = configValues.type;
+      }
+      _this.config = configValues;
+
+      _this.setUid()
+        .then(() => {
+          checkNotificatorParams(_this)
+            .then((res) => {
+              resolve(_this);
+            })
+            .catch((err) => {
+              logger.log('error', 'Notificator checkNotificatorParams ', err);
+              resolve();
+            });
+        });
+    });
   }
 
+  notificate() {
+    logger.log('error', 'Method notificate (notification) must be rewrite in child class');
+  }
+
+  send() {
+    logger.log('error', 'Method send (notification) must be rewrite in child class');
+  }
+
+  getValues(values) {
+    var _this = this;
+    return new Promise(function (resolve) {
+      let notif = {};
+      notif = Object.assign(notif, _this.config);
+      notif = Object.assign(notif, _this);
+      delete notif.config;
+      replaceWithSmart(notif, values)
+        .then(function (res) {
+          resolve(res);
+        })
+        .catch(function (err) {
+          logger.log('error', 'Notification - Method getValues:', err);
+          resolve();
+        });
+    });
+  }
+
+  queue(listName, notifToQueue) {
+    var _this = this;
+    var list = _this.id + (listName ? '_' + listName : '');
+    // QUEUE REDIS;
+    if (global.config.queueNotificationsExternal && global.config.queueNotificationsExternal === 'redis') {
+      //REDIS QUEUE:
+      qnr.queue(_this, notifToQueue, list);
+    } else {
+      //MEMORY QUEUE:
+      qnm.queue(_this, notifToQueue, list);
+    }
+  }
+
+  setUid() {
+    var _this = this;
+    return new Promise((resolve) => {
+      crypto.randomBytes(16, function (err, buffer) {
+        _this.uId = _this.id + '_' + buffer.toString('hex');
+        resolve();
+      });
+    });
+  }
+
+  logger(type, menssage) {
+    logger.log(type, menssage);
+  }
+
+  replaceWith(object, values) {
+    return replaceWithSmart(object, values);
+  }
 
 }
 

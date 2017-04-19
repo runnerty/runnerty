@@ -8,6 +8,13 @@
     "end_date": {"type": "string", "format": "date-time"},
     "_schedule_interval": {"type": "string", "format": "cron"},
     "schedule_interval": {"type": "string"},
+    "calendars": {
+      "type": "object",
+      "properties": {
+        "enable":{"type": "string"},
+        "disable":{"type": "string"}
+      }
+    },
     "depends_chains": {"type": ["array","object"]},
     "events": {
       "type": "object",
@@ -59,131 +66,6 @@
         }
       }
     },
-    "processes":{
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["id","name","exec"],
-        "properties": {
-          "id": {"type": "string"},
-          "name": {"type": "string"},
-          "exec": {"type": ["string","object"]},
-          "args": {"type": ["array","object"]},
-          "retries": {"type": "number"},
-          "retry_delay": {"type": "number"},
-          "end_chain_on_fail": {"type": "boolean"},
-          "output": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["file_name","write"],
-              "properties": {
-                "file_name": {"type": "string"},
-                "write": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "concat": {"type": "boolean"},
-                "maxsize": {"type": "string"}
-              }
-            }
-          },
-          "output_share": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["key","name","value"],
-              "properties": {
-                "key": {"type": "string"},
-                "name": {"type": "string"},
-                "value": {"type": "string"}
-              }
-            }
-          },
-          "events": {
-            "type": "object",
-            "properties": {
-              "on_start": {
-                "type": "object",
-                "properties":{
-                  "notifications":{
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": ["id"],
-                      "properties": {
-                        "id": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              },
-              "on_end": {
-                "type": "object",
-                "properties":{
-                  "notifications":{
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": ["id"],
-                      "properties": {
-                        "id": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              },
-              "on_fail": {
-                "type": "object",
-                "properties":{
-                  "notifications":{
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": ["id"],
-                      "properties": {
-                        "id": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              },
-              "on_retry": {
-                "type": "object",
-                "properties":{
-                  "notifications":{
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": ["id"],
-                      "properties": {
-                        "id": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              },
-              "on_waiting_dependencies": {
-                "type": "object",
-                "properties":{
-                  "notifications":{
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": ["id"],
-                      "properties": {
-                        "id": {"type": "string"}
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    "processes": {"$ref": "processSchema"}
  }
 }

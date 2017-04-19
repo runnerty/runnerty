@@ -1,69 +1,104 @@
+#!/usr/bin/env node
 "use strict";
-var program           = require('commander');
-var logger            = require("./libs/utils.js").logger;
-var loadGeneralConfig = require("./libs/utils.js").loadGeneralConfig;
+var program = require('commander');
+var utils = require("./libs/utils.js");
+var logger = utils.logger;
+var path = require('path');
+var loadGeneralConfig = utils.loadGeneralConfig;
+var loadCalendars = utils.loadCalendars;
+var loadQueueNotifications = utils.loadQueueNotifications;
+var loadMongoHistory = utils.loadMongoHistory;
+var loadAPI = utils.loadAPI;
+var mongooseCloseConnection = utils.mongooseCloseConnection;
 
-var FilePlan          = require("./classes/file_plan.js");
+//Global classes:
+global.ExecutionClass = require("./classes/execution.js");
+global.NotificationClass = require("./classes/notification.js");
+global.libUtils = utils;
 
-var configFilePath    = '/etc/runnerty/conf.json';
+var FilePlan = require("./classes/filePlan.js");
+
+
+var configFilePath = path.join(process.cwd(), 'conf.json');
 var config;
 
-//var runtimePlan;
-var reloadPlan = false;
+var restorePlan = false;
 
 // CHECK ARGS APP:
 program
   .version('0.0.1')
-  .option('-c, --config <path>', `set config path. defaults to ${configFilePath}`,function(filePath){
+  .option('-c, --config <path>', `set config path. defaults to ${configFilePath}`, function (filePath) {
     configFilePath = filePath;
   })
-  .option('-r, --reload', 'reload plan', function(){
-    reloadPlan = true;
+  .option('-r, --restore', 'restore backup plan (experimental)', function () {
+    restorePlan = true;
   })
-  .option('-p, --password <password>', 'Password cryptor', function(argCryptoPassword){
+  .option('-p, --password <password>', 'Password cryptor', function (argCryptoPassword) {
     global.cryptoPassword = argCryptoPassword;
-  })
+  });
 
 program.parse(process.argv);
 
-logger.log('info',`RUNNERTY RUNNING - TIME...: ${new Date()}`);
+logger.log('info', `RUNNERTY RUNNING - TIME...: ${new Date()}`);
 
 //LOAD GENERAL CONFIG:
 loadGeneralConfig(configFilePath)
-  .then(function(fileConfig){
+  .then(function (fileConfig) {
     config = fileConfig;
     global.config = config;
+    if (!config.general.planFilePath){
+      config.general.planFilePath = path.join(path.dirname(configFilePath), 'plan.json');
+    }
 
     var fileLoad;
-    if(reloadPlan){
-      fileLoad = config.general.planFilePath;
-      logger.log('warn',`Reloading plan from ${fileLoad}`);
+    if (restorePlan) {
+      if (config.general.binBackup){
+        fileLoad = config.general.binBackup;
+        global.planRestored = true;
+        logger.log('warn', `Retoring plan from ${fileLoad}`);
+      }else{
+        logger.log('error', `Restoring: binBackup is not set in config`);
+        fileLoad = config.general.planFilePath;
+        logger.log('warn', `Reloading plan from ${fileLoad}`);
+      }
     }
-    else{
-      fileLoad = config.general.binBackup;
+    else {
+      fileLoad = config.general.planFilePath;
     }
 
+    // MONGODB HISTORY:
+    loadMongoHistory();
+
+    // QUEUE NOTIFICATIONS:
+    loadQueueNotifications();
+
+    //CALENDARS
+    loadCalendars();
+
     new FilePlan(fileLoad, config)
-      .then(function(plan){
+      .then(function (plan) {
         global.runtimePlan = plan;
-        require('./api/api.js')(config.general, logger, global.runtimePlan);
+        loadAPI();
       })
-      .catch(function(e){
-        logger.log('error','FilePlan: '+e);
+      .catch(function (err) {
+        logger.log('error', 'FilePlan: ', err);
       });
 
   })
-  .catch(function(e){
-    logger.log('error',`Config file ${configFilePath}: `+e);
+  .catch(function (err) {
+    logger.log('error', `Config file ${configFilePath}: `,err);
   });
-
 
 //==================================================================
 //
 process.on('uncaughtException', function (err) {
-  logger.log('error',err.stack);
+  logger.log('error', err.stack);
 });
 
 process.on('exit', function (err) {
-  logger.log('warn','--> [R]unnerty stopped.', err);
+  logger.log('warn', '--> [R]unnerty stopped.', err);
+});
+
+process.on('SIGINT', function() {
+  mongooseCloseConnection();
 });

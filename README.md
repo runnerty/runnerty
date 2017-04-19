@@ -79,7 +79,7 @@ Example:
       }
     ],
     // Conexiones de Notificaciones
-    "notificators_connections": [
+    "notificators": [
       {
         "id": "slack_default",
         "type": "slack",
@@ -159,88 +159,7 @@ El inicio de las ejecuciones de las cadenas puede darse por una planificación t
 
 Ejemplo:
 ```javascript
-{
-  "id":"CHAIN_SAMPLE",
-  "name":"MY CHAIN SAMPLE",
-  "start_date":"2016-01-01T00:00:00",
-  "end_date":"2099-12-01T00:00:00",
-  "schedule_interval":"*/1 * * * *",
-  "depends_chains":[],
-  "events":{"on_start":{}, "on_end":{}, "on_fail":{}, "on_waiting_dependencies":{}},
-  "processes":[{
-    "id":"PROC_SAMPLE_ONE",
-    "name":"THE PROCESS SAMPLE ONE",
-    "depends_process":[],
-    "exec":"echo",
-    "args":["Hello world"],
-    "end_chain_on_fail":false,
-    "events":{
-      "on_start":{
-        "notifications":[
-          {
-            "id":"slack_default",
-            "bot_emoji": ":rabbit2:",
-            "channel": "mlm",
-            "message":"PROCESS *:PROCESS_ID* OF CHAIN :CHAIN_ID IS STARTED"
-          }
-        ]
-      },
-      "on_fail":{
-        "notifications":[
-          {
-            "id":"slack_default",
-            "bot_emoji": ":see_no_evil:",
-            "channel": "mlm",
-            "message":"ERROR IN PROCESS *:PROCESS_ID* OF CHAIN :CHAIN_ID - :PROCESS_EXEC_ERR_RETURN / :PROCESS_EXEC_RETURN"
-          }
-        ]
-      },
-      "on_end":{},
-      "on_waiting_dependencies":{},
-    }
-    },
-    {
-      "id":"PROC_2_SAMPLE",
-      "name":"PROCESS SAMPLE TWO",
-      "depends_process":[{"id":"PROC_SAMPLE_ONE"}],
-      "exec":"echo",
-      "args":["Sample 2"],
-      "events":{
-        "on_start":{
-          "notifications":[
-             {
-               "id":"slack_default",
-               "bot_emoji": ":rabbit2:",
-               "channel": "mlm",
-               "message":"PROCESS *:PROCESS_ID* OF CHAIN :CHAIN_ID IS STARTED"
-             }
-           ]
-         },
-         "on_fail":{
-           "notifications":[
-             {
-               "id":"slack_default",
-               "bot_emoji": ":see_no_evil:",
-               "channel": "mlm",
-               "message":"ERROR IN PROCESS *:PROCESS_ID* OF CHAIN :CHAIN_ID - :PROCESS_EXEC_ERR_RETURN / :PROCESS_EXEC_RETURN"
-             }
-           ]
-         },
-        "on_end":{
-          "notifications":[
-            {
-              "id":"slack_default",
-              "bot_emoji": ":v:",
-              "channel": "mlm",
-              "message":"FIN DEL PROCESO *:PROCESS_ID* DE LA CADENA :CHAIN_ID - :PROCESS_EXEC_RETURN"
-            }
-          ]
-        },
-        "on_waiting_dependencies":{}
-      }
-    }
-  ]
-}
+{}
 ```
 
 #### Valores globales de una cadena
@@ -396,28 +315,36 @@ Además podemos crear dependencias filewarcher de cualquiera de estos eventos (a
 #### Valores globales de un proceso
 Estos valores pueden tomar valor antes, durante o despues de la ejecución del proceso y pueden ser utilizadas anteponiendo ":" en las propiedades "args", "command", "output" y "notifications".
 ```
+CHAIN_ID
+CHAIN_NAME
+CHAIN_STARTED_AT
 PROCESS_ID
 PROCESS_NAME
-PROCESS_COMMAND
+PROCESS_EXEC_COMMAND
+PROCESS_EXEC_ID
+PROCESS_EXEC_COMMAND_EXECUTED
 PROCESS_ARGS
 PROCESS_EXEC_ARGS
-PROCESS_EXEC_RETURN (Shell command)
-PROCESS_EXEC_ERR_RETURN (Shell command, MySQL/Postgres or Redis)
+PROCESS_EXEC_RETURN
+PROCESS_EXEC_ERR_RETURN
 PROCESS_STARTED_AT
 PROCESS_ENDED_AT
+PROCESS_DURATION_SECONDS
+PROCESS_DURATION_HUMANIZED
 PROCESS_RETRIES_COUNT
 PROCESS_RETRIES
 PROCESS_DEPENDS_FILES_READY
 PROCESS_FIRST_DEPEND_FILE_READY
 PROCESS_LAST_DEPEND_FILE_READY
-PROCESS_EXEC_DB_RETURN (MySQL/Postgres or Redis (JSON Array))
-PROCESS_EXEC_DB_RETURN_CSV (MySQL/Postgres)
-PROCESS_EXEC_DB_FIELDCOUNT  (MySQL/Postgres)
-PROCESS_EXEC_DB_AFFECTEDROWS  (MySQL/Postgres)
-PROCESS_EXEC_DB_CHANGEDROWS  (MySQL/Postgres)
-PROCESS_EXEC_DB_INSERTID  (MySQL/Postgres)
-PROCESS_EXEC_DB_WARNINGCOUNT  (MySQL/Postgres)
-PROCESS_EXEC_DB_MESSAGE  (MySQL/Postgres)
+PROCESS_EXEC_DB_RETURN
+PROCESS_EXEC_DB_RETURN_CSV
+PROCESS_EXEC_DB_RETURN_FIRSTROW
+PROCESS_EXEC_DB_FIELDCOUNT
+PROCESS_EXEC_DB_AFFECTEDROWS
+PROCESS_EXEC_DB_CHANGEDROWS
+PROCESS_EXEC_DB_INSERTID
+PROCESS_EXEC_DB_WARNINGCOUNT
+PROCESS_EXEC_DB_MESSAGE
 ```
 
 
@@ -441,3 +368,59 @@ ENVIAR EN EL BODY:
  
 ### EVALUATE EN DEPENDS PROCESS:
 “depends_process”:[{”id”:"PROCESS_ODSI_DELETE_QUERY","evaluate":[{"oper_left":":VALOR_GLOBAL_X","condition":"!=","oper_right":"YES"}]}]
+
+## EXECUTORS:
+### exec:
+### getValues (Execution Class):
+### end (Execution Class):
+end(endOptions, resolve, reject)
+endOptions:
+    - end: values "end" or "error" (undefined/default is "end")
+    - messageLogType: values "debug", "info", "warn" or "error" (default "info"/default "error" when end is "error"  )
+    - messageLog: Message to send to log
+    - execute_err_return: Error messge process
+    - execute_return: Return process
+    - execute_db_results: DB result
+    - execute_db_results_object: DB result (JSON)
+    - execute_db_results_csv:  CSV format for output DB result
+    - execute_db_fieldCount: DB fieldCount
+    - execute_db_affectedRows: BD affectedRows
+    - execute_db_changedRows: BD changedRows
+    - execute_db_insertId: BD insert id
+    - execute_db_warningCount: BD warningCount
+    - execute_db_message: BD warningCount
+    
+resolve: resolve method exec promise return
+reject: reject method exec promise return
+
+```
+          `
+          var endOptions = {
+            end: 'error',
+            messageType: 'error',
+            message: `mailExecutor Error getValues: ${err}`,
+            execute_err_return: `mailExecutor Error getValues ${err}`,
+            execute_return: ''
+          };
+          _this.´
+```
+
+## NOTIFICATORS:
+### QUEUE (COLAS)
+Configuración general:
+queue_notifications:
+- Si no se indica la gestión de cola se realizará en memoria.
+- Puede indicarse configuración a redis para su gestión en redis:
+```
+// conf.json: config/general:
+        "queue_notifications":{
+            "queue":"redis",
+            "host": "127.0.0.1",
+            "port": "6379",
+            "password": "",
+            "options": {}
+        }```
+Parámetros:
+maxConcurrents
+minInterval
+

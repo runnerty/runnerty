@@ -1,35 +1,77 @@
 {
   "name": "runnerty",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "postinstall": "cd notificators && npm install"
+  "preferGlobal": true,
+  "main": "app.js",
+  "license": "ISC",
+  "author": "Coderty",
+  "homepage": "http://www.runnerty.io/",
+  "directories": {
+    "bin": "./bin"
   },
+  "bin": {
+    "runnerty": "./app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Coderty/runnerty.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Coderty/runnerty/issues"
+  },
+  "description": "",
+  "scripts": {},
   "dependencies": {
-    "ajv": "^4.10.0",
+    "ajv": "^4.11.7",
     "anymatch": "^1.3.0",
-    "body-parser": "^1.15.2",
-    "bytes": "^2.4.0",
+    "body-parser": "^1.17.1",
+    "bytes": "^2.5.0",
     "chokidar": "^1.6.1",
     "commander": "^2.9.0",
     "crypto": "0.0.3",
     "debug": "~2.2.0",
-    "express": "^4.14.0",
+    "express": "^4.15.2",
     "express-jwt": "^3.4.0",
-    "fast-csv": "^2.1.0",
+    "fast-csv": "^2.4.0",
+    "fs-extra": "^1.0.0",
     "helmet": "^2.1.2",
-    "jsonwebtoken": "^7.2.1",
-    "moment": "^2.17.1",
-    "morgan": "^1.7.0",
-    "mysql": "^2.12.0",
-    "node-schedule": "^1.2.0",
-    "passport": "^0.3.2",
-    "pg": "^6.1.2",
-    "redis": "^2.6.3",
-    "require-dir": "^0.3.1",
-    "winston": "^2.3.0"
+    "ical2json": "^1.0.0",
+    "jsonwebtoken": "^7.3.0",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.0",
+    "mongoose": "^4.9.5",
+    "morgan": "^1.8.1",
+    "node-schedule": "^1.2.1",
+    "redis": "^2.7.1",
+    "winston": "^2.3.1"
+  },
+  "keywords": [
+    "runnerty",
+    "scheduler",
+    "task",
+    "task manager",
+    "job",
+    "notifications",
+    "executions",
+    "sysadmin",
+    "tools",
+    "logs",
+    "log",
+    "reload",
+    "programmatic",
+    "production",
+    "monitoring",
+    "process manager",
+    "profiling",
+    "cron",
+    "devops",
+    "dev ops"
+  ],
+  "engines": {
+    "node": ">=7.7.1"
   },
   "devDependencies": {
-    "cors": "^2.8.1"
+    "cors": "^2.8.3"
   }
 }
