@@ -1,6 +1,6 @@
 {
   "name": "runnerty",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "preferGlobal": true,
   "main": "app.js",
   "license": "MIT",
@@ -69,8 +69,5 @@
   ],
   "engines": {
     "node": ">=7.7.1"
-  },
-  "devDependencies": {
-    "cors": "^2.8.3"
   }
 }

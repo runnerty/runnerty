@@ -14,7 +14,6 @@ var helmet = require('helmet');
 var utils = require("../libs/utils.js");
 var logger = utils.logger;
 var crypto = require('crypto');
-var cors = require("cors");
 var config = global.config.general;
 const port = config.api.port;
 /*
@@ -31,8 +30,6 @@ module.exports = function () {
     //TODO CATCH ERRORS:
     logger.log('info', 'Listening on port [' + port + ']');
   });
-
-  app.use(cors());
 
   app.use(function (req, res, next) {
     res.header("Content-Type", 'application/json');
