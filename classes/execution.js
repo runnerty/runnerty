@@ -112,16 +112,16 @@ class Execution {
       altValueReplace: altValueReplace
     };
 
-    return new Promise(async function (resolve) {
+    return new Promise(function (resolve) {
 
       var replacerValues = {};
       //Process values
       if (useProcessValues) {
-        replacerValues = Object.assign(replacerValues, _this.process.values());
+        Object.assign(replacerValues, _this.process.values());
       }
       // Custom object values:
       if (useExtraValue) {
-        replacerValues = Object.assign(replacerValues, useExtraValue);
+        Object.assign(replacerValues, useExtraValue);
       }
 
       replaceWithSmart(input, replacerValues, _options)
@@ -145,8 +145,8 @@ class Execution {
       _this.process.loadExecutorConfig()
         .then((configValues) => {
           var values = {};
-          values = Object.assign(values, configValues);
-          values = Object.assign(values, _this.process.exec);
+          Object.assign(values, configValues);
+          Object.assign(values, _this.process.exec);
 
           if(_this.process.exec.type && configValues.type){
             values.type = configValues.type;

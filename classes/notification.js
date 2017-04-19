@@ -50,8 +50,8 @@ class Notification {
     var _this = this;
     return new Promise(function (resolve) {
       let notif = {};
-      notif = Object.assign(notif, _this.config);
-      notif = Object.assign(notif, _this);
+      Object.assign(notif, _this.config);
+      Object.assign(notif, _this);
       delete notif.config;
       replaceWithSmart(notif, values)
         .then(function (res) {

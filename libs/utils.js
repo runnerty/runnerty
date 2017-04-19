@@ -580,7 +580,9 @@ function addGlobalValuesToObjParams(objParams) {
     }
   }
 
-  return Object.assign(gv, objParams);
+  Object.assign(gv, objParams);
+
+  return gv;
 }
 
 module.exports.getChainByUId = function getChainByUId(chains, uId) {

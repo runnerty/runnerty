@@ -265,9 +265,9 @@ class Chain {
       "CHAIN_DURATION_HUMANIZED": _this.duration_humnized
     };
     var values = {};
-    values = Object.assign(values, chain_values);
-    values = Object.assign(values, _this.execute_input);
-    values = Object.assign(values, _this.custom_values);
+    Object.assign(values, chain_values);
+    Object.assign(values, _this.execute_input);
+    Object.assign(values, _this.custom_values);
     return values;
   }
 

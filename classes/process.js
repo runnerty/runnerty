@@ -121,9 +121,9 @@ class Process {
     }
 
     var values = {};
-    values = Object.assign(values, process_values);
-    values = Object.assign(values, _this.execute_input);
-    values = Object.assign(values, _this.custom_values);
+    Object.assign(values, process_values);
+    Object.assign(values, _this.execute_input);
+    Object.assign(values, _this.custom_values);
     return values;
   }
 
