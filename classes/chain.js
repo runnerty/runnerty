@@ -1,874 +1,503 @@
 "use strict";
 
+var express = require('express');
+var bodyParser = require('body-parser');
+var router = express.Router();
+var morgan = require('morgan');
+var jwt = require('jsonwebtoken');
+var expressJwt = require('express-jwt');
+var app = express();
+var express = require('express');
+var app = express();
+var server = require('http').Server(app);
+var helmet = require('helmet');
 var utils = require("../libs/utils.js");
 var logger = utils.logger;
-var getProcessByUId = utils.getProcessByUId;
-var checkEvaluation = utils.checkEvaluation;
-var checkCalendar = utils.checkCalendar;
-var chronometer = utils.chronometer;
-var schedule = require('node-schedule');
-var anymatch = require('anymatch');
 var crypto = require('crypto');
-var mongoChain = require("../mongodb-models/chain.js");
-var mongoose = require('mongoose');
+var cors = require("cors");
+var config = global.config.general;
+const port = config.api.port;
+/*
+ var lusca           = require('lusca');
+ */
 
-var Process = require("./process.js");
-var Event = require("./event.js");
+//============================================
+var globalPlanChains = global.runtimePlan.plan;
 
-class Chain {
-  constructor(id, name, parentUId, iterable, input, custom_values, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at, calendars) {
-    this.id = id;
-    this.name = name;
-    this.uId = '';
-    this.iterable = iterable;
-    this.parentUId = parentUId;
-    this.input = input;
-    this.custom_values = custom_values;
-    this.start_date = start_date;
-    this.end_date = end_date;
-    this.schedule_interval = schedule_interval;
-    this.depends_chains = depends_chains || [];
-    this.depends_chains_alt = depends_chains_alt;
-    this.calendars = calendars;
-    this.events = {};
+module.exports = function () {
+  //==============================================
+  // SERVER
+  server.listen(port, function (err, res) {
+    //TODO CATCH ERRORS:
+    logger.log('info', 'Listening on port [' + port + ']');
+  });
 
-    this.status = status || "stop";
-    this.started_at = started_at;
-    this.ended_at = ended_at;
-    this.processes = {};
+  app.use(cors());
 
-    return new Promise((resolve) => {
-      var _this = this;
+  app.use(function (req, res, next) {
+    res.header("Content-Type", 'application/json');
+    next();
+  });
 
-      _this.setUid()
-        .then(() => {
-          _this.loadProcesses(processes)
-            .then((processes) => {
-              _this.processes = processes;
-              _this.loadEvents(events)
-                .then((events) => {
-                  _this.events = events;
-                  resolve(_this);
-                })
-                .catch(function (err) {
-                  logger.log('error', `Chain ${_this.id} loadEvents: ` + err);
-                  resolve();
-                });
-            })
-            .catch(function (err) {
-              logger.log('error', `Chain ${_this.id} loadProcesses: ` + err);
-              resolve();
-            });
-        })
-        .catch(function (err) {
-          logger.log('error', `Chain ${_this.id} setUid: ` + err);
-          resolve();
-        });
-    });
-  };
-
-  setUid() {
-    var _this = this;
-    return new Promise((resolve) => {
-      crypto.randomBytes(16, function (err, buffer) {
-        _this.uId = _this.id + '_' + buffer.toString('hex');
-        resolve();
-      });
-    });
-  }
-
-  // Executed in construction:
-  loadProcesses(processes) {
-    var _this = this;
-    return new Promise((resolve) => {
-      var chainProcessPromises = [];
-      var processesLength = processes.length;
-      if (processes instanceof Array) {
-        if (processesLength > 0) {
-
-          while (processesLength--) {
-            var process = processes[processesLength];
-            chainProcessPromises.push(_this.loadProcess(process, _this.uId, _this.custom_values));
-          }
-
-          Promise.all(chainProcessPromises)
-            .then(function (processes) {
-              var processesLength = processes.length;
-              while (processesLength--) {
-                _this.loadProcessFileDependencies(processes[processesLength]);
-              }
-              resolve(processes);
-            })
-            .catch(function (err) {
-              logger.log('error', `Chain ${_this.id} loadProcesses:`, err);
-              resolve();
-            });
-
-        } else {
-          resolve();
-        }
-      } else {
-        logger.log('error', `Chain ${_this.id} processes is not array`);
-        resolve();
-      }
-    });
-  }
-
-  loadProcess(process, parentUId, custom_values) {
-    var _this = this;
-    return new Process(
-      process.id,
-      process.name,
-      parentUId,
-      process.depends_process,
-      process.depends_process_alt,
-      process.exec,
-      process.retries,
-      process.retry_delay,
-      process.limited_time_end,
-      process.end_on_fail,
-      process.end_chain_on_fail,
-      process.events,
-      process.status,
-      process.execute_return,
-      process.execute_err_return,
-      process.started_at,
-      process.ended_at,
-      process.output,
-      process.output_iterable,
-      process.output_share,
-      custom_values,
-      _this.values());
-  }
-
-  loadEvents(events) {
-    var _this = this;
-    return new Promise((resolve) => {
-      var processEventsPromises = [];
-
-      if (events instanceof Object) {
-        var keys = Object.keys(events);
-        var keysLength = keys.length;
-        if (keysLength > 0) {
-          while (keysLength--) {
-            var event = events[keys[keysLength]];
-            if (event.hasOwnProperty('notifications')) {
-              processEventsPromises.push(new Event(keys[keysLength],
-                event.notifications
-              ));
-            } else {
-              logger.log('warn', `Chain ${_this.id} Events without procces and notifications`);
-            }
-          }
-
-          Promise.all(processEventsPromises)
-            .then(function (eventsArr) {
-              var events = {};
-              var eventsArrLength = eventsArr.length;
-              while (eventsArrLength--) {
-                var e = eventsArr[eventsArrLength];
-                var key = Object.keys(e);
-                events[key[0]] = e[key[0]];
-              }
-              resolve(events);
-            })
-            .catch(function (err) {
-              logger.log('error', `Chain ${_this.id} events: ` + err);
-              resolve();
-            });
-
-        } else {
-          logger.log('warn', `Chain ${_this.id} events is empty`);
-          resolve();
-        }
-      } else {
-        logger.log('warn', `Chain ${_this.id} events is not set`);
-        resolve();
-      }
-    });
-  }
-
-  loadProcessFileDependencies(process) {
-    var _this = this;
-
-    var depends_process = process.depends_process;
-    var dependsProcessLength = depends_process.length;
-
-    if (dependsProcessLength > 0) {
-      while (dependsProcessLength--) {
-        var dependence = depends_process[dependsProcessLength];
-
-        if (dependence instanceof Object) {
-          if (dependence.hasOwnProperty('file_name') && dependence.hasOwnProperty('condition')) {
-
-            //TODO: VALIDATE CONDITIONS VALUES
-
-            var watcher = chokidar.watch(dependence.file_name, {
-              ignored: /[\/\\](\.|\~)/,
-              persistent: true,
-              usePolling: true,
-              awaitWriteFinish: {
-                stabilityThreshold: 2000,
-                pollInterval: 150
-              }
-            });
-
-            watcher.on(dependence.condition, function (pathfile) {
-              if (process.depends_files_ready) {
-                process.depends_files_ready.push(pathfile);
-              } else {
-                process.depends_files_ready = [pathfile];
-              }
-
-              // If chain is running try execute processes:
-              if (_this.isRunning()) {
-                _this.startProcesses()
-                  .then(function (res) {
-                    //chain.end();
-                  })
-                  .catch(function (err) {
-                    logger.log('error', 'Error in loadProcessFileDependencies startProcesses:', err);
-                  });
-              }
-            });
-
-            if (process.file_watchers) {
-              process.file_watchers.push(watcher);
-            } else {
-              process.file_watchers = [watcher];
-            }
-
-          }
-        }
-      }
+  function excluder(key, value) {
+    if (config.api.propertiesExcludesInResponse.indexOf(key) !== -1) {
+      return undefined;
     }
+    return value;
   }
 
-  getProcessById(processId) {
-    var _this = this;
+  function serializer(replacer) {
+    var stack = [];
+    var keys = [];
 
-    function byId(process) {
-      return process.id === processId;
-    }
-
-    return _this.processes.find(byId);
-  }
-
-  values() {
-    var _this = this;
-
-    var chain_values = {
-      "CHAIN_ID": _this.id,
-      "CHAIN_NAME": _this.name,
-      "CHAIN_STARTED_AT": _this.started_at,
-      "CHAIN_DURATION_SECONDS": _this.duration_seconds,
-      "CHAIN_DURATION_HUMANIZED": _this.duration_humnized
+    return function (key, value) {
+      if (stack.length > 0) {
+        var thisPos = stack.indexOf(this);
+        ~thisPos ? stack.splice(thisPos + 1) : stack.push(this);
+        ~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key);
+        if (~stack.indexOf(value)) {
+          if (stack[0] === value) {
+            value = "[Circular ~]";
+          }
+          value = "[Circular ~." + keys.slice(0, stack.indexOf(value)).join(".") + "]";
+        }
+      }
+      else {
+        stack.push(value);
+      }
+      return replacer === null ? value : replacer(key, value);
     };
-    var values = {};
-    values = Object.assign(values, chain_values);
-    values = Object.assign(values, _this.execute_input);
-    values = Object.assign(values, _this.custom_values);
-    return values;
   }
 
-  notificate(event) {
-    var _this = this;
-    if (_this.hasOwnProperty('events') && _this.events !== undefined) {
-      if (_this.events.hasOwnProperty(event)) {
-        if (_this.events[event].hasOwnProperty('notifications')) {
-          var notificationsLength = _this.events[event].notifications.length;
-          while (notificationsLength--) {
-            _this.events[event].notifications[notificationsLength].notificate(_this.values());
-          }
-        }
+  app.set('json replacer', excluder);
+
+
+  app.use(bodyParser.urlencoded({extended: true}));
+  app.use(bodyParser.json({limit: config.api.limite_req}));
+
+  //==============================================
+  // SECURITY
+  app.use(helmet());
+  app.disable('x-powered-by');
+  /*
+   app.use(lusca({
+   csp: {},
+   xframe: 'SAMEORIGIN',
+   hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
+   xssProtection: true
+   }));
+   */
+  /*
+   app.use(function(req, res, next) {
+   if (config.CSRF_EXCLUDE.indexOf(req.path) === -1) {
+   lusca.csrf({angular:true})(req, res, next);
+   } else {
+   next();
+   }
+   });
+   */
+
+  //JSON Vulnerability Protection (Angular):
+  /*
+   app.use(function (req, res, next){
+
+   var actualSend = res.send;
+   res.send = function (data) {
+
+   var excludeJSONProtect = false;
+   for (var i = 0; i < config.global.excludeJSONProtectURLs.length; i++) {
+   if (req.originalUrl.indexOf(config.global.excludeJSONProtectURLs[i]) !== -1)
+   {
+   excludeJSONProtect = true;
+   }
+   };
+
+   if (typeof data === "object" && !excludeJSONProtect) {
+   var strData = ")]}',\n" + JSON.stringify(data);
+   res.set('Content-Type', 'text/json');
+   actualSend.call (res, strData);
+   } else {
+   actualSend.call (res, data);
+   }
+   };
+   next();
+   });
+   */
+  /*
+   app.use(function (req, res, next) {
+
+   // Website you wish to allow to connect
+   res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3030');
+
+   // Request methods you wish to allow
+   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+   // Request headers you wish to allow
+   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+   // Set to true if you need the website to include cookies in the requests sent
+   // to the API (e.g. in case you use sessions)
+   res.setHeader('Access-Control-Allow-Credentials', true);
+
+   // Pass to next layer of middleware
+   next();
+   });
+   */
+  //==================================================================
+  // API
+
+  app.use(morgan('dev'));
+
+  app.use(bodyParser.json());
+
+  app.use(expressJwt({
+    secret: config.api.secret,
+    getToken: function fromHeaderOrQuerystring(req) {
+      if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        return req.headers.authorization.split(' ')[1];
+      } else if (req.query && req.query.token) {
+        return req.query.token;
       }
+      return null;
     }
-  }
+  }).unless({
+    path: ['/auth']
+  }));
 
-  historicize(event) {
-    var _this = this;
-
-    if (global.config.historyEnabled) {
-      var mChain = new mongoChain
-      ({
-        id: _this.id,
-        uId: _this.uId,
-        parentUId: _this.parentUId,
-        event: event || _this.status,
-        name: _this.name,
-        iterable: _this.iterable,
-        input: _this.input,
-        custom_values: _this.custom_values,
-        start_date: _this.start_date,
-        end_date: _this.end_date,
-        duration_seconds: _this.duration_seconds,
-        schedule_interval: _this.schedule_interval,
-        depends_chains: _this.depends_chains,
-        depends_chains_alt: _this.depends_chains_alt
-      });
-
-      mChain.save(function (err, res) {
-        if (err) {
-          logger.log('error', `Error historicize ${event} chain ${_this.id}`, err);
-        }
-      });
+  app.use(function (err, req, res, next) {
+    if (err.name === 'UnauthorizedError') {
+      res.status(401).send('Unauthorized');
     }
-  }
+  });
 
-  isStopped() {
-    var _this = this;
-    return (_this.status === 'stop');
-  }
+  app.use('/', router);
 
-  isEnded() {
-    var _this = this;
-    return (_this.status === 'end');
-  }
+  router.post('/auth', function (req, res) {
 
-  isRunning() {
-    var _this = this;
-    return (_this.status === 'running');
-  }
+    var user = req.body.user;
+    var password = req.body.password;
 
-  isErrored() {
-    var _this = this;
-    return (_this.status === 'error');
-  }
+    if (!user) {
+      res.json({success: false, message: 'Authentication failed. User not found.'});
+    } else if (user) {
 
-  stop() {
-    var _this = this;
-    _this.status = 'stop';
+      function checkAcces(up) {
+        return (up.user === user && up.password === password);
+      }
 
-    var processesLength = _this.processes.length;
-    while (processesLength--) {
-      _this.processes[processesLength].stop();
-    }
+      if (config.api.users.findIndex(checkAcces) !== -1) {
 
-  }
-
-  end() {
-    var _this = this;
-    var duration = chronometer(_this.hr_started_time);
-    _this.duration_seconds = duration[0];
-    _this.duration_humnized = duration[1];
-
-    _this.ended_at = new Date();
-    _this.status = 'end';
-    _this.notificate('on_end');
-    _this.historicize();
-
-    _this.refreshParentProcessChildsChainsStatus();
-  }
-
-  refreshParentProcessChildsChainsStatus() {
-    var _this = this;
-    var globalPlanChains = global.runtimePlan.plan.chains;
-
-    var processParentFound = getProcessByUId(globalPlanChains, _this.parentUId);
-
-    if (processParentFound) {
-      processParentFound.refreshProcessChildsChainsStatus()
-        .then(function (processChildsChainsStatus) {
-          if (processChildsChainsStatus === 'end') {
-            processParentFound.endChildChains();
-          }
-        })
-        .catch(function (err) {
-          logger.log('error', 'Error in chain refreshParentProcessChildsChainsStatus:', err);
+        var token = jwt.sign(user, config.api.secret, {
+          // expiresIn: "10h" // 8 hours
         });
-    }
-  }
 
-  running() {
-    this.started_at = new Date();
-    this.hr_started_time = chronometer();
-
-    this.notificate('on_start');
-    this.historicize('start');
-  }
-
-  error() {
-    this.status = 'error';
-    this.notificate('on_fail');
-    this.historicize();
-  }
-
-  //Start Chain
-  start(options) {
-    var chain = this;
-
-    if (options.inputIteration) {
-      var inputLength = chain.input.length;
-      chain.execute_input = {};
-
-      while (inputLength--) {
-        var key = Object.keys(chain.input[inputLength])[0];
-        var value = chain.input[inputLength][key];
-        chain.execute_input[key] = options.inputIteration[value];
-      }
-    }
-
-    return new Promise((resolve) => {
-
-      if (chain.hasOwnProperty('processes')) {
-        if (chain.processes instanceof Array && chain.processes.length > 0) {
-          // Initialize Chain
-          if (chain.schedule_interval && !options.executeInmediate) {
-            chain.scheduleRepeater = schedule.scheduleJob(chain.schedule_interval, async function (chain) {
-              if ((new Date(chain.end_date)) < (new Date())) {
-                chain.scheduleRepeater.cancel();
-              }
-              var chainCalendarEnable = true;
-              if (chain.calendars) {
-                chainCalendarEnable = await checkCalendar(chain.calendars);
-              }
-              if (chainCalendarEnable) {
-                if (chain.isStopped() || chain.isEnded()) {
-                  chain.setChainToInitState()
-                    .then(function () {
-                      chain.startProcesses(options.waitEndChilds)
-                        .then(function () {
-                          global.runtimePlan.plan.scheduleChains();
-                        })
-                        .catch(function (err) {
-                          logger.log('error', 'Error in startProcesses:', err);
-                        });
-                    })
-                    .catch(function (err) {
-                      logger.log('error', 'Error setChainToInitState: ', err);
-                    });
-                } else {
-                  logger.log('warn', `Trying start processes of ${chain.id} but this is running`);
-                }
-              } else {
-                logger.log('warn', `Running chain ${chain.id} disable in calendar`);
-              }
-
-            }.bind(null, chain));
-            resolve();
-
-          } else {
-            chain.startProcesses(options.waitEndChilds)
-              .then(function () {
-                global.runtimePlan.plan.scheduleChains();
-                resolve();
-              })
-              .catch(function (err) {
-                logger.log('error', 'Error in startProcesses:', err);
-                resolve();
-              });
-          }
-        } else {
-          logger.log('error', `Chain ${chain.id} dont have processes`);
-          throw new Error(`Chain ${chain.id} dont have processes`);
-        }
-      } else {
-        logger.log('error', `Invalid chain ${chain.id}, processes property not found.`);
-        throw new Error(`Invalid chain ${chain.id}, processes property not found.`);
-      }
-    });
-  }
-
-  waiting_dependencies() {
-    var _this = this;
-    _this.notificate('on_waiting_dependencies');
-  }
-
-  setChainToInitState() {
-    var _this = this;
-
-    if (_this.isRunning() || _this.isErrored()) {
-      _this.end();
-    }
-
-    return new Promise((resolve) => {
-      // Clear depends_files_ready
-      // TODO: REVISAR ESTO - PROBLEMAS SI EXISTEN FICHEROS Y NO SE VUELVE A METER EN depends_files_ready
-      _this.depends_files_ready = [];
-      _this.execute_input = {};
-      //Warning
-      if (_this.isRunning()) {
-        logger.log('warn', `This chain ${_this.id} is running yet and is being initialized`)
-      }
-      // Set All Process to stopped
-      var processesLength = _this.processes.length;
-      while (processesLength--) {
-        _this.processes[processesLength].stop();
-      }
-      resolve();
-    });
-  }
-
-  refreshChainStatus() {
-    return new Promise((resolve) => {
-
-      var processesLength = this.processes.length;
-      var statusChain = 'end';
-
-      var processesError = 0;
-      var processesEnd = 0;
-      var processesRunning = 0;
-      var processesStop = 0;
-
-      while (processesLength--) {
-        switch (this.processes[processesLength].status) {
-          case 'stop'   :
-            processesStop += 1;
-            break;
-          case 'end'    :
-            processesEnd += 1;
-            break;
-          case 'running':
-            processesRunning += 1;
-            break;
-          case 'error'  :
-            processesError += 1;
-            break;
-        }
-      }
-
-      processesLength = this.processes.length;
-      while (processesLength--) {
-        switch (this.processes[processesLength].childs_chains_status) {
-          case 'stop'   :
-            processesStop += 1;
-            break;
-          case 'end'    :
-            processesEnd += 1;
-            break;
-          case 'running':
-            processesRunning += 1;
-            break;
-          case 'error'  :
-            processesError += 1;
-            break;
-        }
-      }
-
-      //Set Chain Status
-      if (processesRunning > 0 || processesStop > 0) {
-        statusChain = 'running';
-      } else {
-        if (processesError > 0) {
-          statusChain = 'error';
-        } else {
-          statusChain = 'end';
-        }
-      }
-
-      this.status = statusChain;
-      resolve(statusChain);
-    });
-  }
-
-
-  startProcess(process, waitEndChilds) {
-    var _this = this;
-
-    return new Promise(function (resolve, reject) {
-      process.execute_input = _this.execute_input;
-
-      if (process.isStopped()) {
-        logger.log('debug', `Process ${process.id} scheduled`);
-
-        var processMustDo = _this.checkProcessActionToDo(process);
-
-        switch (processMustDo) {
-          case 'run':
-
-            logger.log('debug', `Starting ${process.id}`);
-
-            process.start()
-              .then(function () {
-
-                process.startChildChainsDependients(waitEndChilds)
-                  .then(function (res) {
-                    _this.startProcesses(waitEndChilds)
-                      .then(function (res) {
-                        resolve();
-                      })
-                      .catch(function (err) {
-                        logger.log('error', 'Error in startProcess:', err);
-                        resolve();
-                      });
-                  })
-                  .catch(function (err) {
-                    logger.log('error', 'Error in startProcess:', err);
-                    _this.startProcesses(waitEndChilds)
-                      .then(function (res) {
-                        resolve();
-                      })
-                      .catch(function (err) {
-                        logger.log('error', 'Error in startProcess:', err);
-                        resolve();
-                      });
-                  });
-
-              })
-              .catch(function (err) {
-                err = err || process.execute_err_return;
-                logger.log('error', 'Error in process execution: ', err);
-
-                if (process.end_chain_on_fail) {
-                  _this.end();
-
-                  _this.setChainToInitState()
-                    .then(function () {
-                      logger.log('debug', 'setChainToInitState end_chain_on_fail');
-                      resolve();
-                    })
-                    .catch(function (err) {
-                      logger.log('error', 'Error setChainToInitState on end_chain_on_fail: ', err);
-                      resolve();
-                    });
-
-                } else {
-                  // Aun cuando hay error puede que haya procesos que tengan que ejecutarse:
-                  _this.startProcesses(waitEndChilds)
-                    .then(function () {
-                      resolve();
-                    })
-                    .catch(function (err) {
-                      logger.log('error', 'Error in startProcesses (prev errored):', err);
-                      resolve();
-                    });
-                }
-              });
-
-            break;
-          case 'wait':
-            process.waiting_dependencies();
-            resolve();
-            break;
-          case 'end':
-            logger.log('debug', `Ignored: Only executed on_fail ${process.id}`);
-            var notificateEnd = false;
-            process.end(notificateEnd);
-
-            _this.startProcesses(waitEndChilds)
-              .then(function (res) {
-                resolve();
-              })
-              .catch(function (err) {
-                logger.log('error', 'Error in startProcesses (end errored):', err);
-                resolve();
-              });
-
-            break;
-        }
-
-      } else {
-        // SI TODOS LOS PROCESOS DE LA CADENA ESTAN EN ESTADO DISTINTO DE STOP - RESOLVE - ELSE NO HACER NADA
-        function checkAnyNotEnded(proc) {
-          return !proc.isEnded();
-        }
-
-        if (!_this.processes.find(checkAnyNotEnded)) {
-          resolve();
-        } else {
-          resolve();
-        }
-      }
-    });
-  }
-
-  startProcesses(waitEndChilds) {
-    var _this = this;
-
-    var runningBeforeRefresh = _this.isRunning();
-
-    return new Promise(function (resolve, reject) {
-      _this.refreshChainStatus()
-        .then(function (chainStatus) {
-
-          if (chainStatus === 'running' && !runningBeforeRefresh) {
-            _this.running();
-          }
-
-          // If Chains is running:
-          if (chainStatus === 'running') {
-
-            if (waitEndChilds) { //Serie
-              function execSerie(processes) {
-                var sequence = Promise.resolve();
-                processes.forEach(function (itemProcess) {
-                  sequence = sequence.then(function () {
-                    return _this.startProcess(itemProcess, waitEndChilds)
-                      .then(function (res) {
-                      })
-                      .catch(function (err) {
-                        logger.log('error', 'chain startProcesses execSerie  startProcesses waitEndChilds. Error ', err);
-                      });
-                  });
-                });
-                return sequence;
-              }
-
-              execSerie(_this.processes)
-                .then(function () {
-                  resolve();
-                })
-                .catch(function (err) {
-                  logger.log('error', 'chain startProcesses execSerie waitEndChilds. Error ', err);
-                  resolve();
-                });
-
-            } else {
-
-              var processRuns = [];
-              var processesLength = _this.processes.length;
-
-              while (processesLength--) {
-                processRuns.push(_this.startProcess(_this.processes[processesLength], waitEndChilds));
-              }
-
-              Promise.all(processRuns)
-                .then(function () {
-                  resolve();
-                })
-                .catch(function (err) {
-                  logger.log('error', `chain startProcesses:`, err)
-                  resolve();
-                });
-            }
-
-          } else {
-            if (chainStatus === 'end') {
-              _this.end();
-              resolve();
-            } else {
-              if (chainStatus === 'error') {
-                _this.error();
-                resolve();
-              }
-            }
-          }
-        })
-        .catch(function (err) {
-          logger.log('error', 'Error en chain startProcesses refreshChainStatus: ', err);
-          resolve();
+        res.json({
+          success: true,
+          message: 'Run your token!',
+          token: token
         });
-    });
-  }
 
-  checkProcessActionToDo(process) {
-    var _this = this;
-    var action = 'run';
-
-    if (process.hasOwnProperty('depends_process') && process.depends_process.length > 0) {
-      var depends_process = process.depends_process;
-      var planProcess = _this.processes;
-
-      var dependsprocessLength = depends_process.length;
-
-      //File dependences:
-      // Check process dependencies
-      while (dependsprocessLength--) {
-        if (typeof depends_process[dependsprocessLength]) {
-          if (depends_process[dependsprocessLength].hasOwnProperty('file_name')) {
-            // If any depends files is ready
-            if (process.depends_files_ready) {
-
-              // Check if all process depends files is ready
-              var depends_files_ready_length = process.depends_files_ready.length;
-              var dependenceFound = false;
-
-              while (depends_files_ready_length--) {
-                // Using anumatch to check regular expression glob:
-                if (anymatch([depends_process[dependsprocessLength].file_name], process.depends_files_ready[depends_files_ready_length])) {
-                  dependenceFound = true;
-                }
-              }
-
-              if (!dependenceFound) {
-                action = 'wait';
-              }
-
-            } else {
-              action = 'wait';
-            }
-          }
-        }
+      } else {
+        res.json({success: false, message: 'Authentication failed.'});
       }
+    }
+  });
 
-      //Process dependences:
-      var planProcessLength = _this.processes.length;
-      dependsprocessLength = depends_process.length;
+  // GET ALL CHAINS
+  router.get('/chains', function (req, res) {
 
-      while (planProcessLength--) {
-        var auxDependsprocessLength = dependsprocessLength;
+    let objectToResult = ['depends_chains', 'args', 'events', 'output', 'chain_values', 'schedule_interval', 'scheduleCancel', 'scheduleRepeater', 'parentUId', 'exec', 'depends_process', 'retries', 'retry_delay', 'end_on_fail', 'end_chain_on_fail'];
 
-        while (auxDependsprocessLength--) {
-          switch (typeof depends_process[auxDependsprocessLength]) {
-            case 'string':
-
-              if (depends_process[auxDependsprocessLength] === planProcess[planProcessLength].id) {
-                if (!planProcess[planProcessLength].isEnded()) {
-                  action = 'wait';
-                } else {
-                  if (planProcess[planProcessLength].isErrored()) {
-                    action = 'wait';
-                  } else {
-                    action = 'run';
-                  }
-                }
-              }
-
-              break;
-            case 'object':
-              if (!depends_process[auxDependsprocessLength].hasOwnProperty('file_name')) {
-
-                if (depends_process[auxDependsprocessLength].id === planProcess[planProcessLength].id) {
-
-                  if (!planProcess[planProcessLength].isEnded() && !planProcess[planProcessLength].isErrored()) {
-                    action = 'wait';
-                  } else {
-
-                    //CHECK ON_FAIL
-                    var on_fail = false;
-                    if (depends_process[auxDependsprocessLength].hasOwnProperty('on_fail')) {
-                      on_fail = depends_process[auxDependsprocessLength].on_fail;
-                    }
-
-                    if (planProcess[planProcessLength].isErrored()) {
-                      if (on_fail) {
-                        action = 'run';
-                      } else {
-                        action = 'wait';
-                      }
-                    } else {
-                      if (on_fail) {
-                        action = 'end';
-                      } else {
-                        action = 'run';
-                      }
-                    }
-
-                    // CHECK EVALUATE
-                    if (action === 'run' && depends_process[auxDependsprocessLength].hasOwnProperty('evaluate')) {
-                      var evaluate = depends_process[auxDependsprocessLength].evaluate;
-                      var evaluateLength = evaluate.length;
-                      var _eval = {};
-
-                      while (evaluateLength--) {
-                        _eval = evaluate[evaluateLength];
-                        if (!checkEvaluation(_eval.oper_left, _eval.condition, _eval.oper_right, process.values())) {
-                          action = 'wait';
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-              break;
-          }
-        }
+    function excluderGetChain(key, value) {
+      return value;
+      if (objectToResult.indexOf(key) !== -1) {
+        return undefined;
       }
-      return action;
+      return value;
+    }
+
+    res.send(JSON.stringify(globalPlanChains.chains, serializer(excluderGetChain)));
+  });
+
+  // GET A CHAIN
+  router.get('/chain/:chainId', function (req, res) {
+    var chainId = req.params.chainId;
+    var chain = globalPlanChains.getChainById(chainId);
+
+    let objectToResult = ['depends_chains', 'args', 'events', 'output', 'chain_values', 'schedule_interval', 'scheduleCancel', 'scheduleRepeater', 'parentUId', 'exec', 'depends_process', 'retries', 'retry_delay', 'end_on_fail', 'end_chain_on_fail'];
+
+    function excluderGetChain(key, value) {
+      if (objectToResult.indexOf(key) !== -1) {
+        return undefined;
+      }
+      return value;
+    }
+
+    if (chain) {
+      res.send(JSON.stringify(chain, serializer(excluderGetChain)));
     } else {
-      return action;
+      res.status(404).send(`Chain "${chainId}" not found`);
     }
-  }
-}
+  });
 
-module.exports = Chain;
+  // GET A CHAIN
+  router.post('/chain/forceStart/:chainId', function (req, res) {
+    var chainId = req.params.chainId;
+    var chain = globalPlanChains.getChainById(chainId);
+
+    if (chain) {
+      var inputIterableValues;
+
+      var customValues = {};
+      if (req.body.hasOwnProperty('customValues')) {
+
+        try {
+          customValues = JSON.parse(req.body.customValues);
+        } catch (err) {
+          var newErr = new Error('Problem reading JSON file');
+          newErr.stack += '\nCaused by: ' + err.stack;
+          throw newErr;
+        }
+      }
+
+      if (chain.iterable) {
+
+        crypto.randomBytes(16, function (err, buffer) {
+          var vProcUId = chainId + '_VP_' + buffer.toString('hex');
+
+          if (req.body.hasOwnProperty('inputIterableValues')) {
+            inputIterableValues = req.body.inputIterableValues;
+          }
+
+          var dummy_process = {};
+          dummy_process.uId = vProcUId;
+          dummy_process.childs_chains = [];
+          globalPlanChains.scheduleChain(chain, dummy_process, true, inputIterableValues, customValues);
+          res.json(`Chain iterable: "${chain.id}" starting.`);
+
+        });
+
+      } else {
+        globalPlanChains.scheduleChain(chain, undefined, true, undefined, customValues);
+        res.json(`Chain ${chain.id}/${chain.uId} starting.`);
+      }
+    } else {
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }
+
+  });
+
+  //GET ALL PROCESSES OF CHAIN INDICATED IN PARAMETER chainId
+  router.get('/processes/:chainId', function (req, res) {
+    var chainId = req.params.chainId;
+    var chain = globalPlanChains.getChainById(chainId);
+
+    if (chain) {
+      res.json(chain.processes);
+    } else {
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }
+
+  });
+
+
+  // KILL A NO ITERABLE CHAIN INDICATE: chainId
+  router.post('/chain/stop/:chainId', function (req, res) {
+    var chainId = req.params.chainId;
+
+    logger.log('info', `Kill chain "${chainId}" by ${req.user}`);
+
+    var chain = globalPlanChains.getChainById(chainId);
+
+    if (chain) {
+      chain.stop();
+      res.json();
+    } else {
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }
+
+  });
+
+
+  //GET A PROCESS OF CHAIN INDICATED IN PARAMETER chainId AND processId
+  router.get('/process/:chainId/:processId', function (req, res) {
+    var chainId = req.params.chainId;
+    var processId = req.params.processId;
+    var chain = globalPlanChains.getChainById(chainId);
+
+    if (chain) {
+      var process = chain.getProcessById(processId);
+      if (process) {
+        res.json(process);
+      } else {
+        res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
+      }
+    } else {
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }
+
+  });
+
+  // RETRY A PROCESS OF A CHAIN INDICATE: chainId, processId AND once (TRUE FOR ONCE RETRY FALSE FOR CONFIGURED RETRIES)
+  router.post('/process/retry', function (req, res) {
+
+    var chainId = req.body.chainId;
+    var processId = req.body.processId;
+    var once = req.body.once || false;
+
+    logger.log('info', `Retrying process "${processId}" of chain "${chainId}" by ${req.user}`);
+
+    var chain = globalPlanChains.getChainById(chainId);
+
+    if (chain) {
+      var process = chain.getProcessById(processId);
+      if (process) {
+        if (process.isErrored()) {
+          res.json();
+          process.start(true, once)
+            .then(function (res) {
+            })
+            .catch(function (e) {
+              logger.log('error', 'Retrying process:' + e)
+            })
+        } else {
+          res.status(423).send(`Process "${processId}" of chain "${chainId}" is not in errored status`);
+        }
+      } else {
+        res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
+      }
+    } else {
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }
+
+  });
+
+  // SET END A PROCESS OF A CHAIN INDICATE: chainId, processId
+  router.post('/process/end', function (req, res) {
+    var chainId = req.body.chainId;
+    var processId = req.body.processId;
+    var continueChain = req.body.continueChain || false;
+
+    logger.log('info', `Set end process "${processId}" of chain "${chainId}" by ${req.user}`);
+
+    var chain = globalPlanChains.getChainById(chainId);
+
+    if (chain) {
+      var process = chain.getProcessById(processId);
+      if (process) {
+        if (!process.isEnded() && !process.isRunning()) {
+          res.json();
+
+          process.execute_return = '';
+          process.execute_err_return = '';
+          process.end();
+
+          if (continueChain) {
+            chain.startProcesses()
+              .then(function (res) {
+              })
+              .catch(function (e) {
+                logger.log('error', `Error in startProcesses next to set end process "${processId}" of chain "${chainId}"  by ${req.user}:` + e);
+              })
+          }
+        } else {
+          res.status(423).send(`Is not posible set process "${processId}" of chain "${chainId}" to end because is ${process.status}`);
+        }
+      } else {
+        res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
+      }
+    } else {
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }
+
+  });
+
+  // KILL A PROCESS OF A CHAIN INDICATE: chainId, processId
+  router.post('/process/kill', function (req, res) {
+    var chainId = req.body.chainId;
+    var processId = req.body.processId;
+
+    logger.log('info', `Kill process "${processId}" of chain "${chainId}" by ${req.user}`);
+
+    var chain = globalPlanChains.getChainById(chainId);
+
+    if (chain) {
+      var process = chain.getProcessById(processId);
+      if (process) {
+        if (process.isRunning()) {
+          res.json();
+
+          process.proc.kill('SIGINT');
+          process.stop();
+
+        } else {
+          res.status(423).send(`Is not posible kill process "${processId}" of chain "${chainId}" to end because is ${process.status}`);
+        }
+      } else {
+        res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
+      }
+    } else {
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }
+
+  });
+
+  // LOAD/REALOAD CHAIN
+  router.post('/chain/load', function (req, res) {
+
+    var chainId = req.body.chainId;
+    var planFile = req.body.planFile || config.planFilePath;
+
+    globalPlanChains.loadFileContent(planFile)
+      .then((fileRes) => {
+        globalPlanChains.getChains(fileRes)
+          .then((fileChains) => {
+
+            var newChain = fileChains.find(function byId(chain) {
+              return chain.id === chainId;
+            });
+
+            if (newChain) {
+              globalPlanChains.loadChain(newChain)
+                .then(function (newChainObj) {
+                  res.json();
+                  globalPlanChains.loadChainToPlan(newChainObj);
+                  // Force refresh binBackup
+                  globalPlanChains.refreshBinBackup();
+                })
+                .catch(function (err) {
+                  res.status(500).send(`Error loading "${chainId}":` + err);
+                  logger.log('error', 'FilePlan new Plan: ' + err);
+                });
+            } else {
+              res.status(404).send(`Chain "${chainId}" not found in file`);
+            }
+          })
+          .catch(function (err) {
+            res.status(500).send(`Error loading file chain "${chainId}":` + err);
+            logger.log('error', 'FilePlan loadFileContent getChains: ' + err);
+          });
+      })
+      .catch(function (e) {
+        res.status(500).send(`Error loading "${chainId}" (loading file):` + err);
+        logger.log('error', 'File Plan, constructor:' + e)
+      });
+  });
+
+  // REMOVE CHAIN
+  router.post('/chain/remove', function (req, res) {
+    var chainId = req.body.chainId;
+    var chain = globalPlanChains.getChainById(chainId);
+    if (chain) {
+      if (!chain.isEnded() && !chain.isRunning()) {
+        res.json();
+        globalPlanChains.chains.splice(globalPlanChains.getIndexChainById(chainId), 1);
+      } else {
+        res.status(423).send(`Is not posible remove chain "${chainId}" because is ${chain.status}`);
+      }
+    } else {
+      res.status(404).send(`Chain "${chainId}" not found`);
+    }
+  });
+
+};
