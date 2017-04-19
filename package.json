@@ -11,7 +11,7 @@
     "bin": "./bin"
   },
   "bin": {
-    "runnerty": "./bin/runnerty"
+    "runnerty": "./app.js"
   },
   "repository": {
     "type": "git",
