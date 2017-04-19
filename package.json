@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "preferGlobal": true,
   "main": "app.js",
-  "license": "ISC",
+  "license": "MIT",
   "author": "Coderty",
   "homepage": "http://www.runnerty.io/",
   "directories": {
