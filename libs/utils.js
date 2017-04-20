@@ -26,19 +26,23 @@ var logger = new (winston.Logger)({
 module.exports.logger = logger;
 
 
-function encrypt(text) {
-  var cipher = crypto.createCipher(algorithm, global.cryptoPassword);
+function encrypt(text, password) {
+  var cipher = crypto.createCipher(algorithm, password || global.cryptoPassword);
   var crypted = cipher.update(text, 'utf8', 'hex');
   crypted += cipher.final('hex');
   return crypted;
 }
 
-function decrypt(text) {
-  var decipher = crypto.createDecipher(algorithm, global.cryptoPassword);
+module.exports.encrypt = encrypt;
+
+function decrypt(text, password) {
+  var decipher = crypto.createDecipher(algorithm, password || global.cryptoPassword);
   var dec = decipher.update(text, 'hex', 'utf8');
   dec += decipher.final('utf8');
   return dec;
 }
+
+module.exports.decrypt = decrypt;
 
 function getDateString(format, uppercase, lang) {
   if (lang) {

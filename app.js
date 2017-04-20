@@ -9,6 +9,7 @@ var loadCalendars = utils.loadCalendars;
 var loadQueueNotifications = utils.loadQueueNotifications;
 var loadMongoHistory = utils.loadMongoHistory;
 var loadAPI = utils.loadAPI;
+var encrypt = utils.encrypt;
 var mongooseCloseConnection = utils.mongooseCloseConnection;
 
 //Global classes:
@@ -21,8 +22,8 @@ var FilePlan = require("./classes/filePlan.js");
 
 var configFilePath = path.join(process.cwd(), 'conf.json');
 var config;
-
 var restorePlan = false;
+var argCryptoPassword;
 
 // CHECK ARGS APP:
 program
@@ -33,11 +34,23 @@ program
   .option('-r, --restore', 'restore backup plan (experimental)', function () {
     restorePlan = true;
   })
-  .option('-p, --password <password>', 'Password cryptor', function (argCryptoPassword) {
-    global.cryptoPassword = argCryptoPassword;
-  });
+  .option('-p, --password <password>', 'Master cryptor password')
+  .option('-e, --encrypt <password_to_encrypt>', 'Util: Encrypt password (to use crypted_password in config instead of literal password)');
 
 program.parse(process.argv);
+if(program.password){
+  global.cryptoPassword = program.password;
+}
+
+if(program.encrypt){
+  if(!program.password){
+    logger.log('warn', `Please set --password and --encrypt for encrypt yor password.`);
+  }else{
+    console.log('Your cryped password is: ',encrypt(program.encrypt, program.password));
+  }
+  process.exit();
+}
+
 
 logger.log('info', `RUNNERTY RUNNING - TIME...: ${new Date()}`);
 
