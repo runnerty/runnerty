@@ -37,7 +37,7 @@ class Chain {
     this.ended_at = ended_at;
     this.processes = {};
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       var _this = this;
 
       _this.setUid()
@@ -51,18 +51,15 @@ class Chain {
                   resolve(_this);
                 })
                 .catch(function (err) {
-                  logger.log('error', `Chain ${_this.id} loadEvents: ` + err);
-                  resolve();
+                  reject(err);
                 });
             })
             .catch(function (err) {
-              logger.log('error', `Chain ${_this.id} loadProcesses: ` + err);
-              resolve();
+              reject(err);
             });
         })
         .catch(function (err) {
-          logger.log('error', `Chain ${_this.id} setUid: ` + err);
-          resolve();
+          reject(`Chain ${_this.id} setUid: ` + err);
         });
     });
   };
@@ -80,7 +77,7 @@ class Chain {
   // Executed in construction:
   loadProcesses(processes) {
     var _this = this;
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       var chainProcessPromises = [];
       var processesLength = processes.length;
       if (processes instanceof Array) {
@@ -100,16 +97,14 @@ class Chain {
               resolve(processes);
             })
             .catch(function (err) {
-              logger.log('error', `Chain ${_this.id} loadProcesses:`, err);
-              resolve();
+              reject(err);
             });
 
         } else {
           resolve();
         }
       } else {
-        logger.log('error', `Chain ${_this.id} processes is not array`);
-        resolve();
+        reject(`Chain ${_this.id} processes is not array`);
       }
     });
   }
@@ -125,7 +120,7 @@ class Chain {
       process.exec,
       process.retries,
       process.retry_delay,
-      process.limited_time_end,
+      process.timeout,
       process.end_on_fail,
       process.end_chain_on_fail,
       process.events,
@@ -143,7 +138,7 @@ class Chain {
 
   loadEvents(events) {
     var _this = this;
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       var processEventsPromises = [];
 
       if (events instanceof Object) {
@@ -153,11 +148,9 @@ class Chain {
           while (keysLength--) {
             var event = events[keys[keysLength]];
             if (event.hasOwnProperty('notifications')) {
-              processEventsPromises.push(new Event(keys[keysLength],
-                event.notifications
-              ));
+              processEventsPromises.push(new Event(keys[keysLength], event.notifications));
             } else {
-              logger.log('warn', `Chain ${_this.id} Events without procces and notifications`);
+              logger.log('debug', `Chain ${_this.id} Events without procces and notifications`);
             }
           }
 
@@ -173,16 +166,16 @@ class Chain {
               resolve(events);
             })
             .catch(function (err) {
-              logger.log('error', `Chain ${_this.id} events: ` + err);
-              resolve();
+              //logger.log('error', `Chain ${_this.id} events: ` + err);
+              reject(err);
             });
 
         } else {
-          logger.log('warn', `Chain ${_this.id} events is empty`);
+          logger.log('debug', `Chain ${_this.id} events is empty`);
           resolve();
         }
       } else {
-        logger.log('warn', `Chain ${_this.id} events is not set`);
+        logger.log('debug', `Chain ${_this.id} events is not set`);
         resolve();
       }
     });
@@ -438,10 +431,10 @@ class Chain {
                       logger.log('error', 'Error setChainToInitState: ', err);
                     });
                 } else {
-                  logger.log('warn', `Trying start processes of ${chain.id} but this is running`);
+                  logger.log('debug', `Trying start processes of ${chain.id} but this is running`);
                 }
               } else {
-                logger.log('warn', `Running chain ${chain.id} disable in calendar`);
+                logger.log('debug', `Running chain ${chain.id} disable in calendar`);
               }
 
             }.bind(null, chain));
@@ -607,7 +600,7 @@ class Chain {
               })
               .catch(function (err) {
                 err = err || process.execute_err_return;
-                logger.log('error', 'Error in process execution: ', err);
+                logger.log('error', 'Process ' + process.id, err);
 
                 if (process.end_chain_on_fail) {
                   _this.end();

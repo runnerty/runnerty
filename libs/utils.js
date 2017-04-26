@@ -58,53 +58,52 @@ function getDateString(format, uppercase, lang) {
 }
 
 module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     var filePath = configFilePath;
 
-    fs.stat(filePath, function (err, res) {
-      if (err) {
-        logger.log('error', `Load General conf file ${filePath} not exists.`, err);
-        throw new Error(`Load General conf file ${filePath} not found.`);
+    fs.stat(filePath, function (err, stats) {
+
+      if (err || !stats.isFile()) {
+        if (stats && !stats.isFile()) {
+          reject(`Conf.json must be file but is set ${filePath}`);
+        } else {
+          reject(`Load General conf file ${filePath} not exists.`);
+        }
       } else {
 
         try {
           fs.readFile(filePath, 'utf8', function (err, res) {
             if (err) {
-              logger.log('error', 'Load General conf loadConfig readFile: ', err);
-              resolve();
+              reject(`Loading general configuration: ${err}`);
             } else {
 
               // CONFIG DEFAULTS:
-              fs.readFile(path.join(__dirname,'../config/defaults.json'), 'utf8', function (err, defaults) {
+              fs.readFile(path.join(__dirname, '../config/defaults.json'), 'utf8', function (err, defaults) {
                 var fileParsed;
                 var defaultsFileParsed;
                 var configLoad;
 
-                if(err){
-                  logger.log('warn', `Default config file not found error:`,err);
-                }else{
-                  if(defaults){
+                if (err) {
+                  logger.log('warn', `Loading default config file `, err);
+                } else {
+                  if (defaults) {
                     try {
                       defaultsFileParsed = JSON.parse(defaults);
                     } catch (err) {
-                      var newErr = new Error('Problem reading JSON file');
-                      newErr.stack += '\nCaused by: ' + err.stack;
-                      throw newErr;
+                      logger.log('error', `Parsing default configuration: ${err} ${err.stack}`);
                     }
                   }
                 }
 
                 try {
                   fileParsed = JSON.parse(res);
-                  if (defaultsFileParsed){
-                    configLoad = lodash.defaultsDeep(fileParsed,defaultsFileParsed);
-                  }else{
+                  if (defaultsFileParsed) {
+                    configLoad = lodash.defaultsDeep(fileParsed, defaultsFileParsed);
+                  } else {
                     configLoad = fileParsed;
                   }
                 } catch (err) {
-                  var newErr = new Error('Problem reading JSON file');
-                  newErr.stack += '\nCaused by: ' + err.stack;
-                  throw newErr;
+                  reject(`Parsing general configuration: ${err} ${err.stack}`);
                 }
 
                 // ADD NOTIFICATORS SCHEMAS:
@@ -118,20 +117,19 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
                 Promise.all([promiseNotificatorsSchemas, promiseExecutorsSchemas]).then(values => {
                   ajv.addSchema(configSchema, 'configSchema');
 
-                  var valid = ajv.validate('configSchema', configLoad);
+                  ajv.validate('configSchema', configLoad);
 
-                  if (!valid) {
-                    logger.log('error', `Invalid Config file:`, ajv.errors);
-                    throw new Error(`Invalid Config file:`, ajv.errors);
-                  }
                   var objConf = configLoad.config;
                   resolve(objConf);
-                });
+                })
+                  .catch((err) => {
+                    reject(`Invalid Config file: ${err}`);
+                  });
               });
             }
           });
         } catch (err) {
-          throw new Error('Invalid Config file, incorrect JSON format: ' + err.message, err);
+          reject(`Invalid Config file, incorrect JSON format: ${err} ${err.message}`);
         }
       }
     });
@@ -170,17 +168,14 @@ module.exports.loadConfigSection = function loadConfigSection(config, section, i
 };
 
 module.exports.loadSQLFile = function loadSQLFile(filePath) {
-  return new Promise((resolve) => {
-
-    fs.stat(filePath, function (err, res) {
+  return new Promise((resolve, reject) => {
+    fs.stat(filePath, function (err, stats) {
       if (err) {
-        logger.log('error', `Load SQL file ${filePath} not exists.`, err);
-        throw new Error(`Load SQL file ${filePath} not found.`);
+        reject(`Load SQL file: ${err}`);
       } else {
         fs.readFile(filePath, 'utf8', function (err, res) {
           if (err) {
-            logger.log('error', 'Load SQL file readFile: ', err);
-            resolve();
+            reject(`Load SQL file readFile: ${err}`);
           } else {
             resolve(res);
           }
@@ -318,9 +313,9 @@ module.exports.replaceWith = replaceWith;
 function replaceWithNew(text, objParams, options) {
 
   //OPTIONS:
-  var ignoreGlobalValues = options?(options.ignoreGlobalValues || false):false;
-  var altValueReplace = options?(options.altValueReplace || ''):'';
-  var insensitiveCase = options?((options.insensitiveCase?'i':'') || ''):'';
+  var ignoreGlobalValues = options ? (options.ignoreGlobalValues || false) : false;
+  var altValueReplace = options ? (options.altValueReplace || '') : '';
+  var insensitiveCase = options ? ((options.insensitiveCase ? 'i' : '') || '') : '';
 
   return new Promise(function (resolve, reject) {
     text = text || '';
@@ -443,7 +438,7 @@ function replaceWithNew(text, objParams, options) {
       text = text.toString().replace(new RegExp('\\:' + keys[keysLengthSecond], insensitiveCase + 'g'), objParams[keys[keysLengthSecond]] || altValueReplace);
     }
 
-    if(altValueReplace){
+    if (altValueReplace) {
       text = text.toString().replace(new RegExp('\\:\\w+', insensitiveCase + 'g'), altValueReplace);
     }
 
@@ -456,7 +451,7 @@ module.exports.replaceWithNew = replaceWithNew;
 function replaceWithSmart(inputObject, objParams, options) {
 
   //OPTIONS:
-  var keysUpperCase = options?(options.keysUpperCase || false):false;
+  var keysUpperCase = options ? (options.keysUpperCase || false) : false;
 
   return new Promise(function (resolve, reject) {
     if (typeof inputObject === "string") {
@@ -488,9 +483,9 @@ function replaceWithSmart(inputObject, objParams, options) {
                     replaceWithNew(key, objParams, options)
                       .then(function (res) {
                         var _key = res;
-                        if(keysUpperCase){
+                        if (keysUpperCase) {
                           resObject[_key.toUpperCase()] = _value;
-                        }else{
+                        } else {
                           resObject[_key] = _value;
                         }
                       });
@@ -674,9 +669,9 @@ module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, 
 function requireDir(directory, modules) {
 
   var modulesTypes = [];
-  if(modules){
+  if (modules) {
     for (var i = 0; i < modules.length; i++) {
-      if(modules[i].type){
+      if (modules[i].type) {
         modulesTypes.push(modules[i].type);
       }
     }
@@ -725,15 +720,15 @@ module.exports.chronometer = function chronometer(start) {
   }
 };
 
-function isDateInEvents(date, events){
+function isDateInEvents(date, events) {
   return new Promise((resolve) => {
-    var evDate = parseInt(date.toISOString().slice(0,10).replace(/-/g,""));
+    var evDate = parseInt(date.toISOString().slice(0, 10).replace(/-/g, ""));
     var lengthEvents = Object.keys(events).length;
     var found = false;
-    while(lengthEvents-- && !found){
+    while (lengthEvents-- && !found) {
       let key = Object.keys(events)[lengthEvents];
       let event = events[key];
-      if(evDate >= event.start && evDate <=event.end){
+      if (evDate >= event.start && evDate <= event.end) {
         found = true;
       }
     }
@@ -743,25 +738,25 @@ function isDateInEvents(date, events){
 
 module.exports.checkCalendar = function checkCalendar(calendars, execDate) {
   return new Promise(async function (resolve, reject) {
-    if(!execDate){
+    if (!execDate) {
       execDate = new Date();
     }
 
     var chainMustRun = true;
-    if(calendars.enable && calendars.enable !== ''){
-      if(global.calendars[calendars.enable]){
+    if (calendars.enable && calendars.enable !== '') {
+      if (global.calendars[calendars.enable]) {
         var enableEvents = global.calendars[calendars.enable];
         chainMustRun = await isDateInEvents(execDate, enableEvents);
-      }else{
+      } else {
         logger.log('error', `Calendar enable ${calendars.enable} not found`);
       }
     }
 
-    if(calendars.disable && calendars.disable !== '' && chainMustRun){
-      if(global.calendars[calendars.disable]){
+    if (calendars.disable && calendars.disable !== '' && chainMustRun) {
+      if (global.calendars[calendars.disable]) {
         var disableEvents = global.calendars[calendars.disable];
         chainMustRun = !await isDateInEvents(execDate, disableEvents);
-      }else{
+      } else {
         logger.log('error', `Calendar disable ${calendars.disable} not found`);
       }
     }
@@ -770,7 +765,7 @@ module.exports.checkCalendar = function checkCalendar(calendars, execDate) {
 };
 
 
-function generateCalendar(file){
+function generateCalendar(file) {
   return new Promise((resolve) => {
     var fileName = path.parse(file).name;
     var fileExt = path.parse(file).ext;
@@ -800,9 +795,9 @@ function generateCalendar(file){
 
 module.exports.loadCalendars = function loadCalendars() {
   global.calendars = {};
-  if(global.config.general.calendarsPath){
+  if (global.config.general.calendarsPath) {
     fs.readdir(global.config.general.calendarsPath, (err, files) => {
-      for(var i=0; i < files.length; i++){
+      for (var i = 0; i < files.length; i++) {
         generateCalendar(files[i]);
       }
     });
@@ -812,11 +807,11 @@ module.exports.loadCalendars = function loadCalendars() {
 module.exports.loadQueueNotifications = function loadQueueNotifications() {
   global.notificatorList = {};
   global.notificationsList = {};
-  if(global.config.general.queue_notifications && global.config.general.queue_notifications.queue){
+  if (global.config.general.queue_notifications && global.config.general.queue_notifications.queue) {
     // REDIS QUEUE NOTIFICATIONS:
-    if(global.config.general.queue_notifications.queue = 'redis'){
+    if (global.config.general.queue_notifications.queue = 'redis') {
       var redisClient = redis.createClient(global.config.general.queue_notifications.port || "6379", global.config.general.queue_notifications.host, global.config.general.queue_notifications.options), multi;
-      if(global.config.general.queue_notifications.password && global.config.general.queue_notifications.password !== ''){
+      if (global.config.general.queue_notifications.password && global.config.general.queue_notifications.password !== '') {
         redisClient.auth(global.config.general.queue_notifications.password);
       }
       redisClient.on("error", function (err) {
@@ -850,135 +845,139 @@ module.exports.mongooseCloseConnection = function mongooseCloseConnection() {
 };
 
 function loadExecutors(executorsPath, executors) {
-   return new Promise((resolve) => {
-     global.executors = {};
-     requireDir(executorsPath, executors)
-       .then((res) => {
-         let executorsInConfig = {};
-         var items = {};
-         items.anyOf = [];
-         for (var i = 0; i < executors.length; i++) {
-           let ex = executors[i].type;
-           if (res[ex]) {
-             let exSchema = path.join(executorsPath, ex, 'schema.json');
-             if (fs.existsSync(exSchema)) {
-               executorsInConfig[ex] = res[ex];
-               let schemaContent = require(exSchema);
-               items.anyOf.push({"$ref": ex + "#/definitions/config"});
-               ajv.addSchema(schemaContent, ex);
+  return new Promise((resolve, reject) => {
+    global.executors = {};
+    requireDir(executorsPath, executors)
+      .then((res) => {
+        if (Object.keys(res).length !== 0) {
+          let executorsInConfig = {};
+          var items = {};
+          items.anyOf = [];
+          for (var i = 0; i < executors.length; i++) {
+            let ex = executors[i].type;
+            if (res[ex]) {
+              let exSchema = path.join(executorsPath, ex, 'schema.json');
+              if (fs.existsSync(exSchema)) {
+                executorsInConfig[ex] = res[ex];
+                let schemaContent = require(exSchema);
+                items.anyOf.push({"$ref": ex + "#/definitions/config"});
+                ajv.addSchema(schemaContent, ex);
 
-               if (!ajv.getSchema('exec_' + ex)) {
-                 ajv.addSchema(schemaContent.definitions.params, 'exec_' + ex);
-               }
+                if (!ajv.getSchema('exec_' + ex)) {
+                  ajv.addSchema(schemaContent.definitions.params, 'exec_' + ex);
+                }
 
-             } else {
-               logger.log('error', `Schema not found in executor ${ex}`);
-             }
-           } else {
-             logger.log('error', `Executor type ${ex} in config not found in executors path: ${executorsPath}`);
-           }
-         }
-         configSchema.properties.config.properties.executors.items = items;
-         global.executors = executorsInConfig;
-         resolve();
-       })
-       .catch((err) => {
-         throw err;
-       });
-   });
+              } else {
+                logger.log('error', `Schema not found in executor ${ex}`);
+              }
+            } else {
+              logger.log('error', `Executor type ${ex} in config not found in executors path: ${executorsPath}`);
+            }
+          }
+          configSchema.properties.config.properties.executors.items = items;
+          global.executors = executorsInConfig;
+        }
+        resolve();
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
 };
 module.exports.loadExecutors = loadExecutors;
 
 function loadNotificators(notificatorsPath, notificators) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     global.notificators = {};
     requireDir(notificatorsPath, notificators)
       .then((res) => {
-        let notificatorsInConfig = {};
-        var items = {};
-        items.anyOf = [];
-        for (var i = 0; i < notificators.length;) {
-          let no = notificators[i].type;
-          if (res[no]) {
-            let noSchema = path.join(notificatorsPath, no, 'schema.json');
-            if (fs.existsSync(noSchema)) {
-              notificatorsInConfig[no] = res[no];
-              let schemaContent = require(noSchema);
-              items.anyOf.push({"$ref": no + "#/definitions/config"});
-              ajv.addSchema(schemaContent, no);
+        if (Object.keys(res).length !== 0) {
+          let notificatorsInConfig = {};
+          var items = {};
+          items.anyOf = [];
+          for (var i = 0; i < notificators.length;) {
+            let no = notificators[i].type;
+            if (res[no]) {
+              let noSchema = path.join(notificatorsPath, no, 'schema.json');
+              if (fs.existsSync(noSchema)) {
+                notificatorsInConfig[no] = res[no];
+                let schemaContent = require(noSchema);
+                items.anyOf.push({"$ref": no + "#/definitions/config"});
+                ajv.addSchema(schemaContent, no);
 
-              if (!ajv.getSchema('notif_' + no)) {
-                ajv.addSchema(schemaContent.definitions.params, 'notif_' + no);
+                if (!ajv.getSchema('notif_' + no)) {
+                  ajv.addSchema(schemaContent.definitions.params, 'notif_' + no);
+                }
+
+              } else {
+                logger.log('error', `Schema not found in executor ${no}`);
               }
-
+              i++;
             } else {
-              logger.log('error', `Schema not found in executor ${no}`);
+              notificators.splice(i, 1);
+              logger.log('error', `Notificators type ${no} in config not found in notificators path: ${notificatorsPath}`);
             }
-            i++;
-          } else {
-            notificators.splice(i,1);
-            logger.log('error', `Notificators type ${no} in config not found in notificators path: ${notificatorsPath}`);
           }
+          configSchema.properties.config.properties.notificators.items = items;
+          global.notificators = notificatorsInConfig;
         }
-        configSchema.properties.config.properties.notificators.items = items;
-        global.notificators = notificatorsInConfig;
         resolve();
       })
       .catch((err) => {
-        throw err;
+        reject(err);
       });
   });
 };
 module.exports.loadNotificators = loadNotificators;
 
 function checkExecutorParams(executor) {
-  return new Promise((resolve) => {
-
+  return new Promise((resolve, reject) => {
     let executorId = executor.type;
 
     if (ajv.getSchema('exec_' + executorId)) {
-
-      var valid = ajv.validate('exec_' + executorId, executor);
-      if (!valid) {
-        logger.log('error', `Invalid params for executor ${executor.type}:`, ajv.errors);
-        throw new Error(`Invalid params for executor ${executor.type}:`, ajv.errors);
-      } else {
-        resolve();
+      var valid = false;
+      try{
+        valid = ajv.validate('exec_' + executorId, executor);
+        if(valid){
+          resolve();
+        }else{
+          reject(ajv.errors);
+        }
+      }catch(err){
+        reject(`Executor params: ${err}`);
       }
-
-    }else{
-      logger.log('error', `Schema of params not found in executor ${executorId}`);
-      resolve();
+    } else {
+      reject(`Schema of params not found in executor ${executorId}`);
     }
   });
 };
 module.exports.checkExecutorParams = checkExecutorParams;
 
 function checkNotificatorParams(notification) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
 
     let notificatorId = notification.type;
-
     if (ajv.getSchema('notif_' + notificatorId)) {
-
-      var valid = ajv.validate('notif_' + notificatorId, notification);
-      if (!valid) {
-        logger.log('error', `Invalid params for notificator ${notification.type}:`, ajv.errors);
-        throw new Error(`Invalid params for notificator ${notification.type}:`, ajv.errors);
-      } else {
-        resolve();
+      var valid = false;
+      try{
+        valid = ajv.validate('notif_' + notificatorId, notification);
+        if(valid){
+          resolve();
+        }else{
+          reject(ajv.errors);
+        }
+      }catch(err){
+        reject(`Notificator params: ${err}`);
       }
-
-    }else{
-      logger.log('error', `Schema of params not found in notificator ${notificatorId}`);
-      resolve();
+    } else {
+      reject(`Schema of params not found in notificator ${notificatorId}`);
     }
   });
 };
 module.exports.checkNotificatorParams = checkNotificatorParams;
 
 function loadAPI() {
-  if(global.config.general.api && global.config.general.api.port && global.config.general.api.users){
+  if (global.config.general.api && global.config.general.api.port && global.config.general.api.users) {
     require('../api/api.js')();
   }
 };

@@ -17,7 +17,7 @@ class Notification {
       _this[properties[propertiesLength]] = notification[properties[propertiesLength]];
     }
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       var configValues = notification.config;
       if (!_this.type && configValues.type) {
         _this.type = configValues.type;
@@ -31,8 +31,7 @@ class Notification {
               resolve(_this);
             })
             .catch((err) => {
-              logger.log('error', 'Notificator checkNotificatorParams ', err);
-              resolve();
+              reject(err);
             });
         });
     });
@@ -48,7 +47,7 @@ class Notification {
 
   getValues(values) {
     var _this = this;
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
       let notif = {};
       Object.assign(notif, _this.config);
       Object.assign(notif, _this);
@@ -58,8 +57,7 @@ class Notification {
           resolve(res);
         })
         .catch(function (err) {
-          logger.log('error', 'Notification - Method getValues:', err);
-          resolve();
+          reject(err);
         });
     });
   }
@@ -79,10 +77,14 @@ class Notification {
 
   setUid() {
     var _this = this;
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       crypto.randomBytes(16, function (err, buffer) {
-        _this.uId = _this.id + '_' + buffer.toString('hex');
-        resolve();
+        if(err){
+          reject(err);
+        }else{
+          _this.uId = _this.id + '_' + buffer.toString('hex');
+          resolve();
+        }
       });
     });
   }

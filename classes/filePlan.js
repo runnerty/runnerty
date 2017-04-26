@@ -46,7 +46,7 @@ class FilePlan {
     this.lastHashPlan = '';
     this.plan = {};
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       var _this = this;
       _this.loadFileContent(filePath, 'planSchema')
         .then((res) => {
@@ -56,69 +56,59 @@ class FilePlan {
               new Plan('', chains)
                 .then(function (plan) {
                   _this.plan = plan;
-                  _this.plan.scheduleChains();
                   if(global.planRestored){
                     _this.startAutoRefreshBinBackup();
                   }
                   resolve(_this);
                 })
                 .catch(function (err) {
-                  logger.log('error', 'FilePlan new Plan getChains: ' + err);
-                  return new Error(`FilePlan new Plan getChains:` + err);
+                  reject(err);
                 });
             })
             .catch(function (err) {
-              logger.log('error', 'FilePlan loadFileContent getChains: ', err);
-              return new Error(`FilePlan new Plan:`, err);
+              reject(err);
             });
         })
         .catch(function (err) {
-          logger.log('error', 'File Plan, constructor:', err);
-          resolve(this);
+          reject(err);
         });
     });
 
   }
 
   loadFileContent(filePath, schema) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       fs.stat(filePath, function (err, res) {
         if (err) {
-          logger.log('error', `File ${filePath} not exists.`, err);
-          throw new Error(`File ${filePath} not found.`);
-          //resolve();
+          reject(`File ${filePath} not exists: ${err}`);
         } else {
           try {
             fs.readFile(filePath, 'utf8', function (err, res) {
               if (err) {
-                logger.log('error', `File loadFileContent (${filePath}) readFile: `, err);
-                resolve();
+                reject(`File loadFileContent (${filePath}) readFile: ${err}`);
               } else {
-
                 var fileParsed;
                 try {
                   fileParsed = JSON.parse(res);
                 } catch (err) {
-                  var newErr = new Error(`Invalid file (${filePath}), incorrect JSON`);
-                  newErr.stack += '\nCaused by: ' + err.stack;
-                  throw newErr;
+                  reject(`Invalid file (${filePath}), incorrect JSON: ${err}`);
                 }
 
-                var valid = ajv.validate(schema, fileParsed);
-
-                if (!valid) {
-                  logger.log('error', `Invalid file (${filePath}) for schema ${schema}:`, ajv.errors);
-                  throw new Error(`Invalid file (${filePath}) for schema ${schema}:`, ajv.errors);
-                  //resolve();
-                } else {
-                  resolve(fileParsed);
+                var valid = false;
+                try{
+                  valid = ajv.validate(schema, fileParsed);
+                  if(valid){
+                    resolve(fileParsed);
+                  }else{
+                    reject(ajv.errors);
+                  }
+                }catch(err){
+                  reject(err);
                 }
-
               }
             });
           } catch (err) {
-            throw new Error(`Invalid file (${filePath}), incorrect JSON format: ` + err.message, err);
-            //resolve();
+            reject(err);
           }
         }
       });
@@ -128,7 +118,7 @@ class FilePlan {
   getChains(json) {
     var _this = this;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (json.hasOwnProperty('chains')) {
         if (json.chains instanceof Array) {
 
@@ -145,17 +135,14 @@ class FilePlan {
               resolve(res);
             })
             .catch(function (err) {
-              logger.log('error', 'getChains error: ', err);
-              return new Error(`getChains error: ` + err);
+              reject(err);
             });
 
         } else {
-          return new Error('Invalid PlanFile, chain is not an array.');
-          //resolve();
+          reject('Invalid PlanFile, chain is not an array.');
         }
       } else {
-        return new Error('Invalid PlanFile, chain property not found.');
-        //resolve();
+        reject('Invalid PlanFile, chain property not found.');
       }
 
     });
@@ -173,19 +160,17 @@ class FilePlan {
                 resolve(res);
               })
               .catch(function (err) {
-                logger.log('error', 'External chain error: ', err, chain);
-                reject();
+                reject(err);
               });
           })
           .catch(function (err) {
-            logger.log('error', 'External chain file error: ', err, chain);
-            reject();
+            reject(err);
           });
       } else {
         if (_this.chainIsValid(chain, false)) {
           resolve(chain);
         } else {
-          reject();
+          reject(`Chain ${chain.id} is not valid.`);
         }
       }
 
@@ -194,15 +179,22 @@ class FilePlan {
 
   chainIsValid(chain, silent) {
 
-    var valid = ajv.validate('chainSchema', chain);
-
-    if (!valid) {
+    var valid = false;
+    try{
+      valid = ajv.validate('chainSchema', chain);
+      if (!valid) {
+        if (!silent) {
+          logger.log('error', `Invalid chain, id ${chain.id} for schema chainSchema:`, ajv.errors);
+        }
+        return false;
+      } else {
+        return true;
+      }
+    }catch(err){
       if (!silent) {
-        logger.log('error', `Invalid chain, id ${chain.id} for schema chainSchema:`, ajv.errors);
+        logger.log('error', `Invalid chain, id ${chain.id} for schema chainSchema:`, err);
       }
       return false;
-    } else {
-      return true;
     }
   };
 

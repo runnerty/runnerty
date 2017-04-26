@@ -4,6 +4,7 @@ var replaceWithSmart = utils.replaceWithSmart;
 var logger = utils.logger;
 var checkExecutorParams = utils.checkExecutorParams;
 
+
 class Execution {
   constructor(process) {
 
@@ -38,41 +39,43 @@ class Execution {
               resolve(_this);
             })
             .catch((err) => {
-              logger.log('error', 'Executor checkExecutorParams ', err);
-              reject();
+              reject(err);
             });
         })
         .catch(function (err) {
-          logger.log('error', 'Executor loadConfig ', err);
-          resolve();
+          reject(err);
         });
     });
   }
 
-  exec(process) {
+  exec() {
     var _this = this;
     return new Promise(function (resolve, reject) {
       logger.log('error', 'Method exec (execution) must be rewrite in child class');
       _this.process.execute_err_return = `Method exec (execution) must be rewrite in child class`;
       _this.process.execute_return = '';
       _this.process.error();
-      reject();
+      reject('Method exec (execution) must be rewrite in child class');
     });
   }
 
-  kill(process) {
+  kill() {
     var _this = this;
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
       logger.log('warn', 'Execution - Method kill must be rewrite in child class');
       _this.process.execute_err_return = `Execution - Method kill must be rewrite in child class`;
       _this.process.execute_return = '';
-      _this.process.stop();
-      resolve();
+      reject('Execution - Method kill must be rewrite in child class');
     });
   }
 
   end(options, resolve, reject) {
     var _this = this;
+
+    if(_this.runtime_timeout){
+      clearTimeout(_this.runtime_timeout);
+    }
+
     _this.process.execute_arg = options.execute_arg;
     _this.process.command_executed = options.command_executed;
     _this.process.execute_err_return = options.execute_err_return || '';
@@ -112,7 +115,7 @@ class Execution {
       altValueReplace: altValueReplace
     };
 
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
 
       var replacerValues = {};
       //Process values
@@ -133,7 +136,7 @@ class Execution {
           _this.process.execute_err_return = 'Execution - Method getValues:' + err;
           _this.process.execute_return = '';
           _this.process.error();
-          resolve();
+          reject(err);
         });
     });
   }
@@ -141,7 +144,7 @@ class Execution {
   // Return config and params values:
   getValues() {
     var _this = this;
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
       _this.process.loadExecutorConfig()
         .then((configValues) => {
           var values = {};
@@ -161,14 +164,21 @@ class Execution {
               _this.process.execute_err_return = 'Execution - Method getValues:' + err;
               _this.process.execute_return = '';
               _this.process.error();
-              resolve();
+              reject(err);
             });
+        })
+        .catch(function (err) {
+          logger.log('error', 'Execution - Method getValues / loadExecutorConfig:', err);
+          _this.process.execute_err_return = 'Execution - Method getValues / loadExecutorConfig:' + err;
+          _this.process.execute_return = '';
+          _this.process.error();
+          reject(err);
         });
     });
   }
 
   getParamValues() {
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
       replaceWithSmart(_this.process.exec, _this.process.values())
         .then(function (res) {
           resolve(res);
@@ -178,7 +188,7 @@ class Execution {
           _this.process.execute_err_return = 'Execution - Method getParamValues:' + err;
           _this.process.execute_return = '';
           _this.process.error();
-          resolve();
+          reject(err);
         });
     });
   }
@@ -198,6 +208,13 @@ class Execution {
               _this.process.error();
               resolve();
             });
+        })
+        .catch(function (err) {
+          logger.log('error', 'Execution - Method getConfigValues / loadExecutorConfig:', err);
+          _this.process.execute_err_return = 'Execution - Method getConfigValues / loadExecutorConfig:' + err;
+          _this.process.execute_return = '';
+          _this.process.error();
+          reject(err);
         });
     });
   }

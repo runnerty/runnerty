@@ -9,15 +9,14 @@ class Plan {
   constructor(version, chains) {
     this.version = version;
     this.chains = {};
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.loadChains(chains)
         .then((chains) => {
           this.chains = chains;
           resolve(this);
         })
         .catch(function (err) {
-          logger.log('error', 'Plan constructor:', err);
-          resolve(this);
+          reject(err);
         });
     });
   }
@@ -25,7 +24,7 @@ class Plan {
   loadChains(chains) {
     var _this = this;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (chains instanceof Array) {
         var chainLength = chains.length;
         if (chainLength > 0) {
@@ -50,17 +49,17 @@ class Plan {
               resolve(chains);
             })
             .catch(function (err) {
-              logger.log('error', 'Loading chains:', err);
-              resolve();
+              //logger.log('error', 'Loading chains:', err);
+              reject(err);
             });
 
         } else {
           logger.log('error', 'Plan have not Chains');
-          resolve();
+          reject();
         }
       } else {
         logger.log('error', 'Chain, processes is not array');
-        resolve();
+        reject();
       }
     });
   }
@@ -89,53 +88,56 @@ class Plan {
   loadChainFileDependencies(chain) {
     var _this = this;
 
-    var depends_chain = chain.depends_chains;
-    var dependsChainLength = depends_chain.length;
+    if(chain.depends_chains){
+      var depends_chain = chain.depends_chains;
+      var dependsChainLength = depends_chain.length;
 
-    if (dependsChainLength > 0) {
-      while (dependsChainLength--) {
-        var dependence = depends_chain[dependsChainLength];
+      if (dependsChainLength > 0) {
+        while (dependsChainLength--) {
+          var dependence = depends_chain[dependsChainLength];
 
-        if (dependence instanceof Object) {
-          if (dependence.hasOwnProperty('file_name') && dependence.hasOwnProperty('condition')) {
+          if (dependence instanceof Object) {
+            if (dependence.hasOwnProperty('file_name') && dependence.hasOwnProperty('condition')) {
 
-            var watcher = chokidar.watch(dependence.file_name, {
-              ignored: /[\/\\](\.|\~)/,
-              persistent: true,
-              usePolling: true,
-              awaitWriteFinish: {
-                stabilityThreshold: 2000,
-                pollInterval: 150
-              }
-            });
+              var watcher = chokidar.watch(dependence.file_name, {
+                ignored: /[\/\\](\.|\~)/,
+                persistent: true,
+                usePolling: true,
+                awaitWriteFinish: {
+                  stabilityThreshold: 2000,
+                  pollInterval: 150
+                }
+              });
 
-            watcher.on(dependence.condition, function (pathfile) {
-              if (chain.depends_files_ready) {
-                chain.depends_files_ready.push(pathfile);
+              watcher.on(dependence.condition, function (pathfile) {
+                if (chain.depends_files_ready) {
+                  chain.depends_files_ready.push(pathfile);
+                } else {
+                  chain.depends_files_ready = [pathfile];
+                }
+
+                if (!chain.isRunning() && !chain.isErrored()) {
+                  _this.scheduleChain(chain)
+                    .then(function (res) {
+                    })
+                    .catch(function (err) {
+                      logger.log('error', 'loadChainFileDependencies scheduleChain', err);
+                    });
+                }
+              });
+
+              if (process.file_watchers) {
+                process.file_watchers.push(watcher);
               } else {
-                chain.depends_files_ready = [pathfile];
+                process.file_watchers = [watcher];
               }
 
-              if (!chain.isRunning() && !chain.isErrored()) {
-                _this.scheduleChain(chain)
-                  .then(function (res) {
-                  })
-                  .catch(function (err) {
-                    logger.log('error', 'loadChainFileDependencies scheduleChain', err);
-                  });
-              }
-            });
-
-            if (process.file_watchers) {
-              process.file_watchers.push(watcher);
-            } else {
-              process.file_watchers = [watcher];
             }
-
           }
         }
       }
     }
+
   }
 
   scheduleChains() {
@@ -194,7 +196,7 @@ class Plan {
       return sequence;
     }
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if ((chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined) || executeInmediate) {
         chain.stop();
       }
@@ -215,15 +217,13 @@ class Plan {
           if ((new Date(chain.start_date)) <= (new Date()) || (chain.hasOwnProperty('iterable') || chain.iterable)) {
 
             logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
-
             logger.log('debug', `TRYING START CHAIN ${chain.id} IN ${(new Date(chain.start_date))}`);
 
             if (!executeInmediate && _this.hasDependenciesBlocking(chain)) {
               chain.waiting_dependencies();
-              logger.log('warn', `Ejecutar cadena ${chain.id} -> on_waiting_dependencies`);
+              logger.log('debug', `${chain.id} -> on_waiting_dependencies`);
             } else {
 
-              //console.log('SIN BLOQUEOS PARA LA EJECUCION! ',chain.id);
               if (chain.hasOwnProperty('iterable') && chain.iterable && chain.iterable !== '') {
 
                 if (!inputIterableValues) {
@@ -247,10 +247,7 @@ class Plan {
                     inputIterable = JSON.parse(inputIterableValues);
                     inputIterableLength = inputIterable.length;
                   } catch (err) {
-                    var newErr = new Error(`Invalid input (${inputIterableValues}), incorrect JSON`);
-                    newErr.stack += '\nCaused by: ' + err.stack;
-                    logger.log('error', `Invalid input (${inputIterableValues}), incorrect JSON` + '\nCaused by: ' + err.stack);
-                    throw newErr;
+                    reject(`Invalid input (${inputIterableValues}), incorrect JSON` + '\nCaused by: ' + err.stack);
                   }
                 }
 
@@ -274,8 +271,7 @@ class Plan {
                             resolve();
                           })
                           .catch(function (err) {
-                            logger.log('error', 'scheduleChain createChainSerie createChainSerie parallel. Error: ', err);
-                            resolve();
+                            reject(err);
                           });
 
                       });
@@ -291,14 +287,12 @@ class Plan {
                             resolve();
                           })
                           .catch(function (err) {
-                            logger.log('error', 'scheduleChain createChainSerie Error ', err);
-                            resolve();
+                            reject(err);
                           });
                       });
                   }
                 } else {
-                  logger.log('error', 'Error input not found for iterable process');
-                  resolve();
+                  reject('Error input not found for iterable process');
                 }
 
               } else {
@@ -313,12 +307,11 @@ class Plan {
                           resolve();
                         })
                         .catch(function (err) {
-                          logger.log('error', 'Error ', err);
-                          resolve();
+                          reject(err);
                         });
                     })
                     .catch(function (err) {
-                      logger.log('error', `scheduleChain customsValues loadChain ${chain.id}. Error: `, err);
+                      reject(`scheduleChain customsValues loadChain ${chain.id}. Error: ${err}`);
                     });
                 } else {
                   var options = {"executeInmediate": executeInmediate};
@@ -327,8 +320,7 @@ class Plan {
                       resolve();
                     })
                     .catch(function (err) {
-                      logger.log('error', 'Error ', err);
-                      resolve();
+                      reject(err);
                     });
                 }
               }
@@ -338,30 +330,26 @@ class Plan {
             chain.schedule = schedule.scheduleJob(new Date(chain.start_date), function (chain) {
               if (_this.hasDependenciesBlocking(chain)) {
                 chain.waiting_dependencies();
-                logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> on_waiting_dependencies`);
+                logger.log('debug', `${chain.id} -> on_waiting_dependencies`);
                 resolve();
               } else {
-                logger.log('debug', `Ejecutar a FUTURO ${chain.id} -> start`);
+                logger.log('debug', `${chain.id} -> start`);
                 chain.start()
                   .then(function () {
-                    //_this.scheduleChains();
                     resolve();
                   })
                   .catch(function (err) {
-                    logger.log('error', 'scheduleChain chain.start Error ', err);
-                    resolve();
+                    reject(`scheduleChain chain.start Error: ${err}`);
                   });
               }
             }.bind(null, chain));
           }
 
         } else {
-          logger.log('error', `Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
-          throw new Error(`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
-          //resolve();
+          reject(`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
         }
       } else {
-        logger.log('warn', `CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `, new Date(), '-  chain.status:' + chain.status, '- chain.schedule_interval:', chain.schedule_interval, '- chain.scheduleRepeater:', (chain.scheduleRepeater === undefined));
+        logger.log('debug', `CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `, new Date(), '-  chain.status:' + chain.status, '- chain.schedule_interval:', chain.schedule_interval, '- chain.scheduleRepeater:', (chain.scheduleRepeater === undefined));
         resolve();
       }
     });

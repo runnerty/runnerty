@@ -7,35 +7,33 @@ var loadConfigSection = utils.loadConfigSection;
 class Event {
   constructor(name, notifications) {
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.loadEventsObjects(name, notifications)
         .then((events) => {
           resolve(events);
         })
         .catch(function (err) {
-          logger.log('error', 'Event constructor ', err);
-          resolve();
+          reject(err);
         });
     });
   }
 
   loadNotificationConfig(notification) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       loadConfigSection(global.config, 'notificators', notification.id)
         .then((config) => {
           notification.config = config;
           resolve(notification);
         })
         .catch(function (err) {
-          logger.log('error', 'loadNotificationConfig', err);
-          resolve(notification);
+          reject(err);
         });
     });
   }
 
   loadEventsObjects(name, notifications) {
     var _this = this;
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       var objEvent = {};
       objEvent[name] = {};
 
@@ -49,7 +47,6 @@ class Event {
             var notification = notifications[notificationsLength];
             _this.loadNotificationConfig(notification)
               .then(function (notificationAndConfig) {
-
                 var type = notificationAndConfig.config.type;
 
                 notificationsPromises.push(new global.notificators[type](notificationAndConfig));
@@ -61,23 +58,20 @@ class Event {
                   })
                   .catch(function (err) {
                     logger.log('error', 'Event loadEventsObjects: ', err);
-                    resolve(objEvent);
+                    reject(objEvent);
                   });
 
               })
               .catch(function (err) {
-                logger.log('error', 'Event loadNotificationConfig: ', err);
-                resolve(objEvent);
+                reject(err);
               });
           }
 
         } else {
-          logger.log('error', 'Event loadEventsObjects  zero notifications');
-          resolve(objEvent);
+          reject('Event loadEventsObjects zero notifications');
         }
       } else {
-        logger.log('error', 'Notifications, is not array', name, notifications);
-        resolve(objEvent);
+        reject(`Notifications, is not array  ${name}, ${notifications}`);
       }
     });
   }

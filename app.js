@@ -51,12 +51,10 @@ if(program.encrypt){
   process.exit();
 }
 
-
-logger.log('info', `RUNNERTY RUNNING - TIME...: ${new Date()}`);
-
 //LOAD GENERAL CONFIG:
 loadGeneralConfig(configFilePath)
   .then(function (fileConfig) {
+    logger.log('info', `RUNNERTY RUNNING - TIME...: ${new Date()}`);
     config = fileConfig;
     global.config = config;
     if (!config.general.planFilePath){
@@ -89,17 +87,18 @@ loadGeneralConfig(configFilePath)
     loadCalendars();
 
     new FilePlan(fileLoad, config)
-      .then(function (plan) {
-        global.runtimePlan = plan;
+      .then(function (filePlan) {
+        global.runtimePlan = filePlan;
+        filePlan.plan.scheduleChains();
         loadAPI();
       })
       .catch(function (err) {
-        logger.log('error', 'FilePlan: ', err);
+        logger.log('error', err);
       });
 
   })
   .catch(function (err) {
-    logger.log('error', `Config file ${configFilePath}: `,err);
+    logger.log('error', err);
   });
 
 //==================================================================

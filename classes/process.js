@@ -15,7 +15,7 @@ var path = require("path");
 var Event = require("./event.js");
 
 class Process {
-  constructor(id, name, parentUId, depends_process, depends_process_alt, exec, retries, retry_delay, limited_time_end, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, output_share, custom_values, chain_values) {
+  constructor(id, name, parentUId, depends_process, depends_process_alt, exec, retries, retry_delay, timeout, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, output_share, custom_values, chain_values) {
     this.id = id;
     this.name = name;
     this.uId = '';
@@ -25,7 +25,7 @@ class Process {
     this.exec = exec;
     this.retries = retries;
     this.retry_delay = retry_delay;
-    this.limited_time_end = limited_time_end;
+    this.timeout = timeout;
     this.end_on_fail = end_on_fail || false;
     this.end_chain_on_fail = end_chain_on_fail || false;
     this.output = output;
@@ -43,7 +43,7 @@ class Process {
 
     this.chain_values = chain_values;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       var _this = this;
       _this.setUid()
         .then(() => {
@@ -53,23 +53,25 @@ class Process {
               resolve(this);
             })
             .catch(function (err) {
-              logger.log('error', 'Process constructor loadEvents:', err);
-              resolve(this);
+              reject(err);
             });
         })
         .catch(function (err) {
-          logger.log('error', `Chain ${_this.id} setUid: `, err);
-          resolve();
+          reject(err);
         });
     });
   }
 
   setUid() {
     var _this = this;
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       crypto.randomBytes(16, function (err, buffer) {
-        _this.uId = _this.id + '_' + buffer.toString('hex');
-        resolve();
+        if(err){
+          reject(err);
+        }else{
+          _this.uId = _this.id + '_' + buffer.toString('hex');
+          resolve();
+        }
       });
     });
   }
@@ -129,7 +131,7 @@ class Process {
 
   loadEvents(events) {
     var _this = this;
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       var processEventsPromises = [];
 
       if (events instanceof Object) {
@@ -140,14 +142,13 @@ class Process {
             while (keysLength--) {
               var event = events[keys[keysLength]];
               if (event.hasOwnProperty('notifications')) {
-                processEventsPromises.push(new Event(keys[keysLength],
-                  event.notifications
-                ));
+                processEventsPromises.push(new Event(keys[keysLength], event.notifications));
               }
             }
 
             Promise.all(processEventsPromises)
               .then(function (eventsArr) {
+                var eventsArr = eventsArr.filter(Boolean); // Remove undefined items
                 var events = {};
                 var eventsArrLength = eventsArr.length;
                 while (eventsArrLength--) {
@@ -158,8 +159,7 @@ class Process {
                 resolve(events);
               })
               .catch(function (err) {
-                logger.log('error', 'Process loadEvents: ', err);
-                resolve();
+                reject(err);
               });
           } else {
             // Process without events
@@ -176,7 +176,6 @@ class Process {
 
   loadExecutorConfig() {
     var _this = this;
-
     return loadConfigSection(global.config, 'executors', _this.exec.id);
   }
 
@@ -276,8 +275,8 @@ class Process {
   stop() {
     var _this = this;
 
-    if (_this.exec.executor && !_this.isStopped() && !_this.isEnded() && !_this.isErrored()) {
-      _this.exec.executor.kill(_this)
+    if (_this.executor && !_this.isStopped() && !_this.isEnded() && !_this.isErrored()) {
+      _this.executor.kill(_this)
         .then((res) => {
           _this.status = 'stop';
           _this.ended_at = new Date();
@@ -377,8 +376,7 @@ class Process {
             resolve();
           })
           .catch(function (err) {
-            logger.log('error', 'Process startChildChainsDependients: ', err);
-            resolve();
+            reject(err);
           });
 
       } else {
@@ -507,40 +505,44 @@ class Process {
                 new global.executors[configValues.type](_this)
                   .then((res) => {
                     _this.executor = res;
-                    res.exec()
-                      .then((_res) => {
-                        resolve(_res);
-                      })
-                      .catch((err) => {
-                        reject(err);
-                      });
+
+                      res.exec()
+                        .then((_res) => {
+                          resolve(_res);
+                        })
+                        .catch((err) => {
+                          _this.execute_err_return = JSON.stringify(err);
+                          _this.execute_return = '';
+                          _this.error();
+                          reject(err);
+                        });
                   })
                   .catch((err) => {
+                    _this.execute_err_return = JSON.stringify(err);
+                    _this.execute_return = '';
+                    _this.error();
                     reject(err);
                   });
 
               } else {
-                logger.log('error', `Executor ${_this.exec.id} type is not valid`);
                 _this.execute_err_return = `Executor ${_this.exec.id} type is not valid`;
                 _this.execute_return = '';
                 _this.error();
-                reject(_this, `Executor ${_this.exec.id} type is not valid`);
+                reject(`Executor ${_this.exec.id} type is not valid`);
               }
 
             } else {
-              logger.log('error', `Executor ${_this.exec.id} type is not valid`);
               _this.execute_err_return = `Executor ${_this.exec.id} type is not valid`;
               _this.execute_return = '';
               _this.error();
-              reject(_this, `Executor ${_this.exec.id} type is not valid`);
+              reject(`Executor ${_this.exec.id} type is not valid`);
             }
           })
           .catch(function (err) {
-            logger.log('error', `Procces start loadExecutorConfig: ${err}`);
             _this.execute_err_return = `Procces start loadExecutorConfig: ${err}`;
             _this.execute_return = '';
             _this.error();
-            reject(_this, err);
+            reject(err);
           });
       } else {
         // DUMMY PROCCESS:
@@ -548,7 +550,7 @@ class Process {
           _this.end();
           resolve();
         } else {
-          reject(_this, `Incorrect exec ${_this.exec}`);
+          reject(`Incorrect exec ${_this.exec}`);
         }
       }
 
