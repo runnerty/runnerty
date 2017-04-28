@@ -506,7 +506,7 @@ class Process {
                   .then((res) => {
                     _this.executor = res;
 
-                      res.exec()
+                      res.execMain()
                         .then((_res) => {
                           resolve(_res);
                         })

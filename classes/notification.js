@@ -37,8 +37,12 @@ class Notification {
     });
   }
 
-  notificate() {
-    logger.log('error', 'Method notificate (notification) must be rewrite in child class');
+  notificate(values) {
+    var _this = this;
+    _this.getValues(values)
+      .then((res) => {
+        _this.queue(_this.channel, res);
+      });
   }
 
   send() {

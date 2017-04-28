@@ -4,7 +4,6 @@ var replaceWithSmart = utils.replaceWithSmart;
 var logger = utils.logger;
 var checkExecutorParams = utils.checkExecutorParams;
 
-
 class Execution {
   constructor(process) {
 
@@ -48,6 +47,24 @@ class Execution {
     });
   }
 
+  execMain(){
+    var _this = this;
+    return new Promise(function (resolve, reject) {
+      _this.resolve = resolve;
+      _this.reject = reject;
+      _this.getValues()
+        .then((res) => {
+          _this.exec(res);
+        })
+        .catch((err) => {
+          _this.process.execute_err_return = `Getting values ${err}`;
+          _this.process.execute_return = '';
+          _this.process.error();
+          reject(`Getting values ${err}`);
+        })
+    });
+  }
+
   exec() {
     var _this = this;
     return new Promise(function (resolve, reject) {
@@ -69,12 +86,17 @@ class Execution {
     });
   }
 
-  end(options, resolve, reject) {
+  end(options) {
     var _this = this;
 
-    if(_this.runtime_timeout){
-      clearTimeout(_this.runtime_timeout);
+    if(!options){
+      var options = {};
+      options.end = 'end';
     }
+    options.end = options.end || 'end';
+
+    var resolve = _this.resolve;
+    var reject = _this.reject;
 
     _this.process.execute_arg = options.execute_arg;
     _this.process.command_executed = options.command_executed;
