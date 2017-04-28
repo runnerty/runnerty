@@ -1,6 +1,6 @@
 {
   "name": "runnerty",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "preferGlobal": true,
   "main": "app.js",
   "license": "MIT",
