@@ -1,5 +1,6 @@
 {
   "name": "runnerty",
+  "description": "A new way for process managing",
   "version": "0.0.4",
   "preferGlobal": true,
   "main": "app.js",
