@@ -1,4 +1,5 @@
 "use strict";
+
 var logger = require("./utils.js").logger;
 
 function sendNotification(list, notification, sender, redisCli) {
@@ -11,7 +12,7 @@ function sendNotification(list, notification, sender, redisCli) {
       checkNotificationsSends(list, sender, redisCli);
     })
     .catch((err) => {
-      logger.log('error', `Notification Sender error: ${err}`);
+      logger.log("error", `Notification Sender error: ${err}`);
     });
 }
 
@@ -26,14 +27,14 @@ function checkNotificationsSends(list, sender, redisCli) {
       var milisecondsDiff = (timeDiff[0] * 1000) + (timeDiff[1] / 1000000);
 
       if (notificator.lastEndTime === [0, 0] || (notificator.minInterval <= milisecondsDiff)) {
-        var notificationsList = 'R' + '_NOTIFICATIONS_' + list;
+        var notificationsList = "R" + "_NOTIFICATIONS_" + list;
         redisCli.lpop(notificationsList, function (err, res) {
           if (res) {
             try {
               var notification = JSON.parse(res);
               sendNotification(list, notification, sender, redisCli);
             } catch (err) {
-              logger.log('error', `Notification Redis Notifications PARSE LPOP: ${err}`);
+              logger.log("error", `Notification Redis Notifications PARSE LPOP: ${err}`);
             }
           }
         });
@@ -48,7 +49,7 @@ function checkNotificationsSends(list, sender, redisCli) {
 }
 
 function queue(notification, notifToQueue, list) {
-  var notificationsList = 'R' + '_NOTIFICATIONS_' + list;
+  var notificationsList = "R" + "_NOTIFICATIONS_" + list;
   var redisCli = global.queueRedisCli;
 
   // QUEUE MEMORY;
@@ -66,7 +67,7 @@ function queue(notification, notifToQueue, list) {
   // NOTIFICATIONS:
   redisCli.rpush(notificationsList, JSON.stringify(notifToQueue), function (err, res) {
     if (err) {
-      logger.log('error', 'Notification Redis Notifications RPUSH:', err);
+      logger.log("error", "Notification Redis Notifications RPUSH:", err);
     } else {
       checkNotificationsSends(list, notification, redisCli);
     }

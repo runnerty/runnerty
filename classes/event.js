@@ -20,7 +20,7 @@ class Event {
 
   loadNotificationConfig(notification) {
     return new Promise((resolve, reject) => {
-      loadConfigSection(global.config, 'notificators', notification.id)
+      loadConfigSection(global.config, "notificators", notification.id)
         .then((config) => {
           notification.config = config;
           resolve(notification);
@@ -57,7 +57,7 @@ class Event {
                     resolve(objEvent);
                   })
                   .catch(function (err) {
-                    logger.log('error', 'Event loadEventsObjects: ', err);
+                    logger.log("error", "Event loadEventsObjects: ", err);
                     reject(objEvent);
                   });
 
@@ -68,7 +68,7 @@ class Event {
           }
 
         } else {
-          reject('Event loadEventsObjects zero notifications');
+          reject("Event loadEventsObjects zero notifications");
         }
       } else {
         reject(`Notifications, is not array  ${name}, ${notifications}`);

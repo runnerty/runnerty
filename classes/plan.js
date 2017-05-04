@@ -1,7 +1,7 @@
 "use strict";
 
-var schedule = require('node-schedule');
-var chokidar = require('chokidar');
+var schedule = require("node-schedule");
+var chokidar = require("chokidar");
 var logger = require("../libs/utils.js").logger;
 var Chain = require("./chain.js");
 
@@ -31,10 +31,10 @@ class Plan {
           var planChainsPromises = [];
 
           while (chainLength--) {
-            var chain = chains[chainLength];
+            let chain = chains[chainLength];
 
             if (chain.disable) {
-              logger.log('warn', `Chain ${chain.id} ignored: is setted to disable.`);
+              logger.log("warn", `Chain ${chain.id} ignored: is setted to disable.`);
             } else {
               planChainsPromises.push(_this.loadChain(chain));
             }
@@ -49,16 +49,16 @@ class Plan {
               resolve(chains);
             })
             .catch(function (err) {
-              //logger.log('error', 'Loading chains:', err);
+              //logger.log("error", "Loading chains:", err);
               reject(err);
             });
 
         } else {
-          logger.log('error', 'Plan have not Chains');
+          logger.log("error", "Plan have not Chains");
           reject();
         }
       } else {
-        logger.log('error', 'Chain, processes is not array');
+        logger.log("error", "Chain, processes is not array");
         reject();
       }
     });
@@ -97,7 +97,7 @@ class Plan {
           var dependence = depends_chain[dependsChainLength];
 
           if (dependence instanceof Object) {
-            if (dependence.hasOwnProperty('file_name') && dependence.hasOwnProperty('condition')) {
+            if (dependence.hasOwnProperty("file_name") && dependence.hasOwnProperty("condition")) {
 
               var watcher = chokidar.watch(dependence.file_name, {
                 ignored: /[\/\\](\.|\~)/,
@@ -121,7 +121,7 @@ class Plan {
                     .then(function (res) {
                     })
                     .catch(function (err) {
-                      logger.log('error', 'loadChainFileDependencies scheduleChain', err);
+                      logger.log("error", "loadChainFileDependencies scheduleChain", err);
                     });
                 }
               });
@@ -149,7 +149,7 @@ class Plan {
           .then(function (res) {
           })
           .catch(function (err) {
-            logger.log('error', 'scheduleChains scheduleChain', err);
+            logger.log("error", "scheduleChains scheduleChain", err);
           });
       }
     });
@@ -167,7 +167,7 @@ class Plan {
               process.childs_chains.push(res);
             })
             .catch(function (err) {
-              logger.log('error', `scheduleChain createChainSerie loadChain ${chain.id}. Error: `, err);
+              logger.log("error", `scheduleChain createChainSerie loadChain ${chain.id}. Error: `, err);
             });
         });
       });
@@ -189,7 +189,7 @@ class Plan {
             })
             .catch(function (err) {
               i = i + 1;
-              logger.log('error', 'scheduleChain execSerie Error ', err);
+              logger.log("error", "scheduleChain execSerie Error ", err);
             });
         });
       });
@@ -200,31 +200,31 @@ class Plan {
       if ((chain.schedule_interval !== undefined && chain.scheduleRepeater === undefined) || executeInmediate) {
         chain.stop();
       }
-      if ((!chain.end_date || (chain.hasOwnProperty('end_date') && new Date(chain.end_date) > new Date())) && (chain.isStopped()) && (chain.schedule_interval || executeInmediate)) {
-        if (chain.hasOwnProperty('start_date') || (chain.hasOwnProperty('iterable') || chain.iterable)) {
+      if ((!chain.end_date || (chain.hasOwnProperty("end_date") && new Date(chain.end_date) > new Date())) && (chain.isStopped()) && (chain.schedule_interval || executeInmediate)) {
+        if (chain.hasOwnProperty("start_date") || (chain.hasOwnProperty("iterable") || chain.iterable)) {
 
-          logger.log('debug', `SCHEDULED CHAIN ${chain.id} EN ${(new Date(chain.start_date))}`);
+          logger.log("debug", `SCHEDULED CHAIN ${chain.id} EN ${(new Date(chain.start_date))}`);
 
           // Remove Chain from pool
           if (chain.end_date) {
-            logger.log('debug', `SCHEDULED CHAIN CANCELATION ${chain.id} IN ${(new Date(chain.end_date))}`);
+            logger.log("debug", `SCHEDULED CHAIN CANCELATION ${chain.id} IN ${(new Date(chain.end_date))}`);
             chain.scheduleCancel = schedule.scheduleJob(new Date(chain.end_date), function (chain) {
-              logger.log('debug', `CANCELANDO CADENA ${chain.id}`);
+              logger.log("debug", `CANCELANDO CADENA ${chain.id}`);
               chain.schedule.cancel();
             }.bind(null, chain));
           }
 
-          if ((new Date(chain.start_date)) <= (new Date()) || (chain.hasOwnProperty('iterable') || chain.iterable)) {
+          if ((new Date(chain.start_date)) <= (new Date()) || (chain.hasOwnProperty("iterable") || chain.iterable)) {
 
-            logger.log('debug', `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
-            logger.log('debug', `TRYING START CHAIN ${chain.id} IN ${(new Date(chain.start_date))}`);
+            logger.log("debug", `start_date: ${(new Date(chain.start_date)) } / now: ${(new Date())}`);
+            logger.log("debug", `TRYING START CHAIN ${chain.id} IN ${(new Date(chain.start_date))}`);
 
             if (!executeInmediate && _this.hasDependenciesBlocking(chain)) {
               chain.waiting_dependencies();
-              logger.log('debug', `${chain.id} -> on_waiting_dependencies`);
+              logger.log("debug", `${chain.id} -> on_waiting_dependencies`);
             } else {
 
-              if (chain.hasOwnProperty('iterable') && chain.iterable && chain.iterable !== '') {
+              if (chain.hasOwnProperty("iterable") && chain.iterable && chain.iterable !== "") {
 
                 if (!inputIterableValues) {
                   //var inputIterableValues;
@@ -247,14 +247,14 @@ class Plan {
                     inputIterable = JSON.parse(inputIterableValues);
                     inputIterableLength = inputIterable.length;
                   } catch (err) {
-                    reject(`Invalid input (${inputIterableValues}), incorrect JSON` + '\nCaused by: ' + err.stack);
+                    reject(`Invalid input (${inputIterableValues}), incorrect JSON` + "\nCaused by: " + err.stack);
                   }
                 }
 
                 if (inputIterableLength) {
                   var execMode = chain.iterable;
 
-                  if (execMode === 'parallel') {
+                  if (execMode === "parallel") {
 
                     process.childs_chains = [];
 
@@ -292,7 +292,7 @@ class Plan {
                       });
                   }
                 } else {
-                  reject('Error input not found for iterable process');
+                  reject("Error input not found for iterable process");
                 }
 
               } else {
@@ -330,10 +330,10 @@ class Plan {
             chain.schedule = schedule.scheduleJob(new Date(chain.start_date), function (chain) {
               if (_this.hasDependenciesBlocking(chain)) {
                 chain.waiting_dependencies();
-                logger.log('debug', `${chain.id} -> on_waiting_dependencies`);
+                logger.log("debug", `${chain.id} -> on_waiting_dependencies`);
                 resolve();
               } else {
-                logger.log('debug', `${chain.id} -> start`);
+                logger.log("debug", `${chain.id} -> start`);
                 chain.start()
                   .then(function () {
                     resolve();
@@ -349,7 +349,7 @@ class Plan {
           reject(`Invalid PlanFile, chain ${chain.id} don´t have start_date.`);
         }
       } else {
-        logger.log('debug', `CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `, new Date(), '-  chain.status:' + chain.status, '- chain.schedule_interval:', chain.schedule_interval, '- chain.scheduleRepeater:', (chain.scheduleRepeater === undefined));
+        logger.log("debug", `CHAIN ${chain.id} IGNORED: END_DATE ${chain.end_date} < CURRENT DATE: `, new Date(), "-  chain.status:" + chain.status, "- chain.schedule_interval:", chain.schedule_interval, "- chain.scheduleRepeater:", (chain.scheduleRepeater === undefined));
         resolve();
       }
     });
@@ -392,14 +392,14 @@ class Plan {
       .then(function (res) {
       })
       .catch(function (err) {
-        logger.log('error', 'loadChainToPlan scheduleChain', err);
+        logger.log("error", "loadChainToPlan scheduleChain", err);
       });
   }
 
   dependenciesBlocking(chain) {
     var chainsDependencies = [];
 
-    if (chain.hasOwnProperty('depends_chains') && chain.depends_chains.length > 0) {
+    if (chain.hasOwnProperty("depends_chains") && chain.depends_chains.length > 0) {
       var depends_chains = chain.depends_chains;
       var planChains = this.chains;
 
@@ -409,7 +409,7 @@ class Plan {
       //File dependences:
       while (dependsChainsLength--) {
         if (typeof depends_chains[dependsChainsLength]) {
-          if (depends_chains[dependsChainsLength].hasOwnProperty('file_name')) {
+          if (depends_chains[dependsChainsLength].hasOwnProperty("file_name")) {
             if (chain.depends_files_ready) {
               if (chain.depends_files_ready.indexOf(depends_chains[dependsChainsLength].file_name) > -1) {
               } else {
@@ -430,19 +430,19 @@ class Plan {
 
         while (auxDependsChainsLength--) {
           switch (typeof depends_chains[auxDependsChainsLength]) {
-            case 'string':
+            case "string":
               if (depends_chains[auxDependsChainsLength] === planChains[planChainsLength].id) {
                 if (!planChains[planChainsLength].isEnded()) {
                   chainsDependencies.push(planChains[planChainsLength]);
                 }
               }
               break;
-            case 'object':
+            case "object":
               if (depends_chains[auxDependsChainsLength].chain_id === planChains[planChainsLength].id) {
 
-                if (planChains[planChainsLength].isEnded() || (depends_chains[auxDependsChainsLength].ignore_fail && planChains[planChainsLength].isErrored() && !depends_chains[auxDependsChainsLength].hasOwnProperty('process_id'))) {
+                if (planChains[planChainsLength].isEnded() || (depends_chains[auxDependsChainsLength].ignore_fail && planChains[planChainsLength].isErrored() && !depends_chains[auxDependsChainsLength].hasOwnProperty("process_id"))) {
                 } else {
-                  if (depends_chains[auxDependsChainsLength].hasOwnProperty('process_id')) {
+                  if (depends_chains[auxDependsChainsLength].hasOwnProperty("process_id")) {
                     var planProccessLength = planChains[planChainsLength].processes.length;
 
                     //EN LA VALIDACION DE DEPENDENCIES_CHAIN comprobar que tanto el chain ID como el proccess_id existen
@@ -476,7 +476,7 @@ class Plan {
   getValuesInputIterable(chain) {
     var input = [];
 
-    if (chain.hasOwnProperty('depends_chains') && chain.depends_chains.length > 0) {
+    if (chain.hasOwnProperty("depends_chains") && chain.depends_chains.length > 0) {
       var depends_chains = chain.depends_chains;
       var planChains = this.chains;
 
@@ -487,9 +487,9 @@ class Plan {
       while (planChainsLength--) {
         var auxDependsChainsLength = dependsChainsLength;
         while (auxDependsChainsLength--) {
-          if (typeof depends_chains[auxDependsChainsLength] === 'object') {
+          if (typeof depends_chains[auxDependsChainsLength] === "object") {
             if (depends_chains[auxDependsChainsLength].chain_id === planChains[planChainsLength].id) {
-              if (depends_chains[auxDependsChainsLength].hasOwnProperty('process_id')) {
+              if (depends_chains[auxDependsChainsLength].hasOwnProperty("process_id")) {
                 var planProccessLength = planChains[planChainsLength].processes.length;
                 while (planProccessLength--) {
                   if (planChains[planChainsLength].processes[planProccessLength].id === depends_chains[auxDependsChainsLength].process_id) {

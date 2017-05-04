@@ -1,4 +1,5 @@
 "use strict";
+
 var utils = require("../libs/utils.js");
 var replaceWithSmart = utils.replaceWithSmart;
 var checkNotificatorParams = utils.checkNotificatorParams;
@@ -46,7 +47,7 @@ class Notification {
   }
 
   send() {
-    logger.log('error', 'Method send (notification) must be rewrite in child class');
+    logger.log("error", "Method send (notification) must be rewrite in child class");
   }
 
   getValues(values) {
@@ -68,9 +69,9 @@ class Notification {
 
   queue(listName, notifToQueue) {
     var _this = this;
-    var list = _this.id + (listName ? '_' + listName : '');
+    var list = _this.id + (listName ? "_" + listName : "");
     // QUEUE REDIS;
-    if (global.config.queueNotificationsExternal && global.config.queueNotificationsExternal === 'redis') {
+    if (global.config.queueNotificationsExternal && global.config.queueNotificationsExternal === "redis") {
       //REDIS QUEUE:
       qnr.queue(_this, notifToQueue, list);
     } else {
@@ -86,7 +87,7 @@ class Notification {
         if(err){
           reject(err);
         }else{
-          _this.uId = _this.id + '_' + buffer.toString('hex');
+          _this.uId = _this.id + "_" + buffer.toString("hex");
           resolve();
         }
       });

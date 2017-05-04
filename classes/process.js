@@ -18,7 +18,7 @@ class Process {
   constructor(id, name, parentUId, depends_process, depends_process_alt, exec, retries, retry_delay, timeout, end_on_fail, end_chain_on_fail, events, status, execute_return, execute_err_return, started_at, ended_at, output, output_iterable, output_share, custom_values, chain_values) {
     this.id = id;
     this.name = name;
-    this.uId = '';
+    this.uId = "";
     this.parentUId = parentUId;
     this.depends_process = depends_process || [];
     this.depends_process_alt = depends_process_alt;
@@ -69,7 +69,7 @@ class Process {
         if(err){
           reject(err);
         }else{
-          _this.uId = _this.id + '_' + buffer.toString('hex');
+          _this.uId = _this.id + "_" + buffer.toString("hex");
           resolve();
         }
       });
@@ -85,7 +85,7 @@ class Process {
       "PROCESS_ID": _this.id,
       "PROCESS_NAME": _this.name,
       "PROCESS_EXEC_COMMAND": (_this.exec instanceof Object) ? _this.exec.command : _this.exec,
-      "PROCESS_EXEC_ID": (_this.exec instanceof Object) ? _this.exec.id : '',
+      "PROCESS_EXEC_ID": (_this.exec instanceof Object) ? _this.exec.id : "",
       "PROCESS_EXEC_COMMAND_EXECUTED": _this.command_executed,
       "PROCESS_EXEC_RETURN": _this.execute_return,
       "PROCESS_EXEC_ERR_RETURN": _this.execute_err_return,
@@ -141,7 +141,7 @@ class Process {
           if (keysLength > 0) {
             while (keysLength--) {
               var event = events[keys[keysLength]];
-              if (event.hasOwnProperty('notifications')) {
+              if (event.hasOwnProperty("notifications")) {
                 processEventsPromises.push(new Event(keys[keysLength], event.notifications));
               }
             }
@@ -163,12 +163,12 @@ class Process {
               });
           } else {
             // Process without events
-            logger.log('warn', 'Process, without events');
+            logger.log("warn", "Process, without events");
             resolve();
           }
         }
       } else {
-        logger.log('warn', 'Process, events is not set');
+        logger.log("warn", "Process, events is not set");
         resolve();
       }
     });
@@ -176,15 +176,15 @@ class Process {
 
   loadExecutorConfig() {
     var _this = this;
-    return loadConfigSection(global.config, 'executors', _this.exec.id);
+    return loadConfigSection(global.config, "executors", _this.exec.id);
   }
 
   notificate(event) {
     var _this = this;
 
-    if (_this.hasOwnProperty('events') && _this.events !== undefined) {
+    if (_this.hasOwnProperty("events") && _this.events !== undefined) {
       if (_this.events.hasOwnProperty(event)) {
-        if (_this.events[event].hasOwnProperty('notifications')) {
+        if (_this.events[event].hasOwnProperty("notifications")) {
           var notificationsLength = _this.events[event].notifications.length;
           while (notificationsLength--) {
             _this.events[event].notifications[notificationsLength].notificate(_this.values());
@@ -196,65 +196,69 @@ class Process {
 
   historicize(event) {
     var _this = this;
+    return new Promise(function (resolve, reject) {
+      if (global.config.historyEnabled) {
+        var mProcess = new mongoProcess
+        ({
+          id: _this.id,
+          uId: _this.uId,
+          parentUId: _this.parentUId,
+          event: event || _this.status,
+          date: _this.date,
+          name: _this.name,
+          exec: _this.exec,
+          depends_process: _this.depends_process,
+          depends_process_alt: _this.depends_process_alt,
+          retries: _this.retries,
+          retry_delay: _this.retry_delay,
+          timeout: _this.timeout,
+          end_on_fail: _this.end_on_fail,
+          end_chain_on_fail: _this.end_chain_on_fail,
+          command_executed: _this.command_executed,
+          retries_count: _this.retries_count,
+          output: _this.output,
+          output_iterable: _this.output_iterable,
+          custom_values: _this.custom_values,
+          output_share: _this.output_share,
+          execute_return: _this.execute_return,
+          execute_err_return: _this.execute_err_return,
+          started_at: _this.started_at,
+          ended_at: _this.ended_at,
+          duration_seconds: _this.duration_seconds,
+          execute_db_fieldCount: _this.execute_db_fieldCount,
+          execute_db_affectedRows: _this.execute_db_affectedRows,
+          execute_db_changedRows: _this.execute_db_changedRows,
+          execute_db_insertId: _this.execute_db_insertId,
+          execute_db_warningCount: _this.execute_db_warningCount,
+          execute_db_message: _this.execute_db_message
+        });
 
-    if (global.config.historyEnabled) {
-      var mProcess = new mongoProcess
-      ({
-        id: _this.id,
-        uId: _this.uId,
-        parentUId: _this.parentUId,
-        event: event || _this.status,
-        date: _this.date,
-        name: _this.name,
-        exec: _this.exec,
-        depends_process: _this.depends_process,
-        depends_process_alt: _this.depends_process_alt,
-        retries: _this.retries,
-        retry_delay: _this.retry_delay,
-        limited_time_end: _this.limited_time_end,
-        end_on_fail: _this.end_on_fail,
-        end_chain_on_fail: _this.end_chain_on_fail,
-        command_executed: _this.command_executed,
-        retries_count: _this.retries_count,
-        output: _this.output,
-        output_iterable: _this.output_iterable,
-        custom_values: _this.custom_values,
-        output_share: _this.output_share,
-        execute_return: _this.execute_return,
-        execute_err_return: _this.execute_err_return,
-        started_at: _this.started_at,
-        ended_at: _this.ended_at,
-        duration_seconds: _this.duration_seconds,
-        execute_db_fieldCount: _this.execute_db_fieldCount,
-        execute_db_affectedRows: _this.execute_db_affectedRows,
-        execute_db_changedRows: _this.execute_db_changedRows,
-        execute_db_insertId: _this.execute_db_insertId,
-        execute_db_warningCount: _this.execute_db_warningCount,
-        execute_db_message: _this.execute_db_message
-      });
-
-      mProcess.save(function (err, res) {
-        if (err) {
-          logger.log('error', `Error historicize ${event} process ${_this.id}`, err);
-        }
-      });
-    }
+        mProcess.save(function (err, res) {
+          if (err) {
+            logger.log("error", `Error historicize ${event} process ${_this.id}`, err);
+          }
+          resolve();
+        });
+      }else{
+        resolve();
+      }
+    });
   }
 
   isStopped() {
-    return (this.status === 'stop');
+    return (this.status === "stop");
   }
 
   isEnded() {
-    return (this.status === 'end');
+    return (this.status === "end");
   }
 
   isRunning() {
-    return (this.status === 'running');
+    return (this.status === "running");
   }
 
   isErrored() {
-    return (this.status === 'error');
+    return (this.status === "error");
   }
 
   stopChildChains() {
@@ -263,7 +267,7 @@ class Process {
     //If have childs_chains
     if (_this.childs_chains) {
       // Set All childs_chains to stopped
-      _this.childs_chains_status = 'stop';
+      _this.childs_chains_status = "stop";
       var childsChainsLength = _this.childs_chains.length;
       while (childsChainsLength--) {
         _this.childs_chains[childsChainsLength].stop();
@@ -278,22 +282,19 @@ class Process {
     if (_this.executor && !_this.isStopped() && !_this.isEnded() && !_this.isErrored()) {
       _this.executor.kill(_this)
         .then((res) => {
-          _this.status = 'stop';
-          _this.ended_at = new Date();
+          _this.status = "stop";
         })
         .catch((err) => {
-          _this.status = 'stop';
-          _this.ended_at = new Date();
-          logger.log('error', `Stoping process ${_this.id}:`, err);
+          _this.status = "stop";
+          logger.log("error", `Stoping process ${_this.id}:`, err);
         });
     } else {
-      _this.status = 'stop';
-      _this.ended_at = new Date();
+      _this.status = "stop";
     }
     _this.stopChildChains();
   }
 
-  end(notificate, writeOutput) {
+  async end(notificate, writeOutput) {
     var _this = this;
     var duration = chronometer(_this.hr_started_time);
     _this.duration_seconds = duration[0];
@@ -301,29 +302,28 @@ class Process {
     notificate = notificate || true;
     writeOutput = writeOutput || true;
 
-    _this.status = 'end';
+    _this.status = "end";
     _this.ended_at = new Date();
 
     if (writeOutput) {
-      _this.write_output();
+      await _this.write_output();
     }
-
-    //Clear depends_files_ready for re-check:
-    _this.depends_files_ready = [];
 
     if (notificate) {
-      _this.notificate('on_end');
+      _this.notificate("on_end");
     }
-    _this.historicize();
 
-    _this.setOutputShare();
+    _this.depends_files_ready = [];
+
+    await _this.setOutputShare();
+    _this.historicize();
   }
 
   endChildChains() {
     var _this = this;
 
-    _this.notificate('on_end_childs');
-    _this.childs_chains_status = 'end';
+    _this.notificate("on_end_childs");
+    _this.childs_chains_status = "end";
 
     var globalPlanChains = global.runtimePlan.plan.chains;
 
@@ -334,7 +334,7 @@ class Process {
             .then(function (chainStatus) {
             })
             .catch(function (err) {
-              logger.log('error', 'Error in process refreshChainStatus:', err);
+              logger.log("error", "Error in process refreshChainStatus:", err);
             });
         }
       });
@@ -343,8 +343,8 @@ class Process {
 
   startChildChains() {
     var _this = this;
-    _this.notificate('on_start_childs');
-    _this.childs_chains_status = 'running';
+    _this.notificate("on_start_childs");
+    _this.childs_chains_status = "running";
   }
 
   startChildChainsDependients(waitEndChilds) {
@@ -359,9 +359,9 @@ class Process {
         var itemChain = global.runtimePlan.plan.chains[chainsLength];
         var procValues = _this.values();
 
-        if (itemChain.hasOwnProperty('depends_chains') && itemChain.depends_chains.hasOwnProperty('chain_id') && itemChain.depends_chains.hasOwnProperty('process_id') && itemChain.depends_chains.chain_id === procValues.CHAIN_ID && itemChain.depends_chains.process_id === _this.id) {
+        if (itemChain.hasOwnProperty("depends_chains") && itemChain.depends_chains.hasOwnProperty("chain_id") && itemChain.depends_chains.hasOwnProperty("process_id") && itemChain.depends_chains.chain_id === procValues.CHAIN_ID && itemChain.depends_chains.process_id === _this.id) {
           if (itemChain.isEnded()) {
-            itemChain.status = 'stop';
+            itemChain.status = "stop";
           }
           var executeInmediate = true;
           chainsToRun.push(global.runtimePlan.plan.scheduleChain(itemChain, _this, executeInmediate, null, _this.custom_values));
@@ -391,7 +391,7 @@ class Process {
 
     return new Promise((resolve) => {
       var childsChainsLength = _this.childs_chains.length;
-      var statusChildsChains = 'end';
+      var statusChildsChains = "end";
 
       var chainsError = 0;
       var chainsEnd = 0;
@@ -400,28 +400,28 @@ class Process {
 
       while (childsChainsLength--) {
         switch (_this.childs_chains[childsChainsLength].status) {
-          case 'stop'   :
+          case "stop"   :
             chainsStop += 1;
             break;
-          case 'end'    :
+          case "end"    :
             chainsEnd += 1;
             break;
-          case 'running':
+          case "running":
             chainsRunning += 1;
             break;
-          case 'error'  :
+          case "error"  :
             chainsError += 1;
             break;
         }
       }
 
       if (chainsRunning > 0 || chainsStop > 0) {
-        statusChildsChains = 'running';
+        statusChildsChains = "running";
       } else {
         if (chainsError > 0) {
-          statusChildsChains = 'error';
+          statusChildsChains = "error";
         } else {
-          statusChildsChains = 'end';
+          statusChildsChains = "end";
         }
       }
 
@@ -433,26 +433,31 @@ class Process {
   setOutputShare() {
     var _this = this;
 
-    if (_this.hasOwnProperty('output_share') && _this.output_share) {
+    return new Promise(function (resolve, reject) {
+      if (_this.hasOwnProperty("output_share") && _this.output_share) {
 
-      var options = {
-        ignoreGlobalValues: false,
-        keysUpperCase: false
-      };
+        var options = {
+          ignoreGlobalValues: false,
+          keysUpperCase: false
+        };
 
-      replaceWithSmart(_this.output_share, _this.values(), options)
-        .then((res) => {
-          res.forEach(function (valOS) {
-            var _valOS = {};
-            _valOS[valOS.key.toUpperCase()] = {};
-            _valOS[valOS.key.toUpperCase()][valOS.name.toUpperCase()] = valOS.value;
-            if(!global.config.global_values){
-              global.config.global_values = [];
-            }
-            global.config.global_values.push(_valOS);
+        replaceWithSmart(_this.output_share, _this.values(), options)
+          .then((res) => {
+            res.forEach(function (valOS) {
+              var _valOS = {};
+              _valOS[valOS.key.toUpperCase()] = {};
+              _valOS[valOS.key.toUpperCase()][valOS.name.toUpperCase()] = valOS.value;
+              if(!global.config.global_values){
+                global.config.global_values = [];
+              }
+              global.config.global_values.push(_valOS);
+            });
+            resolve();
           });
-        });
-    }
+      }else{
+        resolve();
+      }
+    });
   }
 
   error(notificate, writeOutput) {
@@ -462,36 +467,37 @@ class Process {
     writeOutput = writeOutput || true;
 
     if (notificate) {
-      _this.notificate('on_fail');
+      _this.notificate("on_fail");
     }
 
     if (writeOutput) {
       _this.write_output();
     }
 
-    _this.status = 'error';
+    _this.status = "error";
     _this.historicize();
   }
 
   retry() {
     var _this = this;
-    _this.notificate('on_retry');
+    _this.notificate("on_retry");
   }
 
   waiting_dependencies() {
     var _this = this;
-    _this.notificate('on_waiting_dependencies');
+    _this.notificate("on_waiting_dependencies");
   }
 
   start(isRetry) {
     var _this = this;
+    _this.clean();
     _this.hr_started_time = chronometer();
-    _this.status = 'running';
+    _this.status = "running";
     _this.started_at = new Date();
 
     if (!isRetry || isRetry === undefined) {
-      _this.notificate('on_start');
-      _this.historicize('start');
+      _this.notificate("on_start");
+      _this.historicize("start");
     }
 
     return new Promise(function (resolve, reject) {
@@ -506,47 +512,47 @@ class Process {
                   .then((res) => {
                     _this.executor = res;
 
-                      res.execMain()
-                        .then((_res) => {
-                          resolve(_res);
-                        })
-                        .catch((err) => {
-                          _this.execute_err_return = JSON.stringify(err);
-                          _this.execute_return = '';
-                          _this.error();
-                          reject(err);
-                        });
+                    res.execMain()
+                      .then((_res) => {
+                        resolve(_res);
+                      })
+                      .catch((err) => {
+                        _this.execute_err_return = JSON.stringify(err);
+                        _this.execute_return = "";
+                        _this.error();
+                        reject(err);
+                      });
                   })
                   .catch((err) => {
                     _this.execute_err_return = JSON.stringify(err);
-                    _this.execute_return = '';
+                    _this.execute_return = "";
                     _this.error();
                     reject(err);
                   });
 
               } else {
                 _this.execute_err_return = `Executor ${_this.exec.id} type is not valid`;
-                _this.execute_return = '';
+                _this.execute_return = "";
                 _this.error();
                 reject(`Executor ${_this.exec.id} type is not valid`);
               }
 
             } else {
               _this.execute_err_return = `Executor ${_this.exec.id} type is not valid`;
-              _this.execute_return = '';
+              _this.execute_return = "";
               _this.error();
               reject(`Executor ${_this.exec.id} type is not valid`);
             }
           })
           .catch(function (err) {
             _this.execute_err_return = `Procces start loadExecutorConfig: ${err}`;
-            _this.execute_return = '';
+            _this.execute_return = "";
             _this.error();
             reject(err);
           });
       } else {
         // DUMMY PROCCESS:
-        if (Object.keys(_this.exec).length === 0 || _this.exec === '') {
+        if (Object.keys(_this.exec).length === 0 || _this.exec === "") {
           _this.end();
           resolve();
         } else {
@@ -561,110 +567,185 @@ class Process {
     var _this = this;
 
     function writeFile(filePath, mode, os) {
+      return new Promise(function (resolve, reject) {
+        var dirname = path.dirname(filePath);
 
-      var dirname = path.dirname(filePath);
-
-      fs.ensureDir(dirname, function (err) {
-        if (err) {
-          logger.log('error', `Creating directory ${dirname} in ensureDir in ${_this.id}: `, err);
-        } else {
-          fs.open(filePath, mode, (err, fd) => {
-            if (err) {
-              logger.log('error', `Writing output, open file ${filePath} in ${_this.id}: `, err);
-            } else {
-              fs.write(fd, os, null, 'utf8', function () {
-                fs.close(fd, function (err) {
-                  if (err) {
-                    logger.log('error', `Closing file ${filePath} in writeFile in ${_this.id}: `, err);
-                  }
+        fs.ensureDir(dirname, function (err) {
+          if (err) {
+            logger.log("error", `Creating directory ${dirname} in ensureDir in ${_this.id}: `, err);
+            reject(err);
+          } else {
+            fs.open(filePath, mode, (err, fd) => {
+              if (err) {
+                logger.log("error", `Writing output, open file ${filePath} in ${_this.id}: `, err);
+                reject(err);
+              } else {
+                fs.write(fd, os, null, "utf8", function () {
+                  fs.close(fd, function (err) {
+                    if (err) {
+                      logger.log("error", `Closing file ${filePath} in writeFile in ${_this.id}: `, err);
+                      reject(err);
+                    }else{
+                      resolve();
+                    }
+                  });
                 });
-              });
-            }
-          });
-        }
+              }
+            });
+          }
+        });
       });
     }
 
     function generateOutput(output) {
+      return new Promise(function (resolve, reject) {
+        replaceWithSmart(output, _this.values())
+          .then((_output) => {
+            if (_output && _output.file_name && _output.write.length > 0) {
 
-      replaceWithSmart(output, _this.values())
-        .then((_output) => {
-          if (_output && _output.file_name && _output.write.length > 0) {
+              var filePath = _output.file_name;
+              var output_stream = _output.write.filter(Boolean).join("\n");
 
-            var filePath = _output.file_name;
-            var output_stream = _output.write.filter(Boolean).join("\n");
-
-            if (_output.maxsize) {
-              var maxSizeBytes = bytes(_output.maxsize);
-              var output_stream_length = output_stream.length;
-
-              if (output_stream_length > maxSizeBytes) {
-                output_stream = output_stream.slice(output_stream_length - maxSizeBytes, output_stream_length);
-                output_stream_length = maxSizeBytes;
-                logger.log('debug', `output_stream truncated output_stream_length (${output_stream_length}) > maxSizeBytes (${maxSizeBytes})`);
-              }
-            }
-
-            if (_output.concat) {
               if (_output.maxsize) {
-                fs.stat(filePath, function (error, stats) {
+                var maxSizeBytes = bytes(_output.maxsize);
+                var output_stream_length = output_stream.length;
 
-                  var fileSizeInBytes = 0;
-                  if (!error) {
-                    fileSizeInBytes = stats.size;
-                  }
-                  //SI LA SUMA DEL TAMAÑO DEL FICHERO Y EL OUTPUT A ESCRIBIR DEL PROCESO SUPERAN EL MAXIMO PERMITIDO
-                  var totalSizeToWrite = fileSizeInBytes + output_stream_length;
-
-                  if (totalSizeToWrite > maxSizeBytes) {
-                    //SE OBTIENE LA PARTE DEL FICHERO QUE JUNTO CON EL OUTPUT SUMAN EL TOTAL PERMITIDO PARA ESCRIBIRLO (SUSTIUYENDO EL FICHERO)
-                    var positionFileRead = (totalSizeToWrite) - maxSizeBytes;
-                    var lengthFileRead = (fileSizeInBytes) - positionFileRead;
-
-                    fs.open(filePath, 'r', function (error, fd) {
-                      if (lengthFileRead > 0) {
-                        var buffer = new Buffer(lengthFileRead);
-
-                        fs.read(fd, buffer, 0, buffer.length, positionFileRead, function (error, bytesRead, buffer) {
-                          var data = buffer.toString("utf8", 0, buffer.length);
-                          data = data.concat("\n", output_stream);
-                          fs.close(fd, function (err) {
-                            if (err) {
-                              logger.log('error', `Closing file ${filePath} in ${_this.id}: `, err);
-                            }
-                            writeFile(filePath, 'w', data);
-                          });
-                        });
-                      } else {
-                        //SI NO SE VA A ESCRIBIR NADA DEL FICHERO ACTUAL
-                        writeFile(filePath, 'w', output_stream);
-                      }
-                    });
-                  } else {
-                    writeFile(filePath, 'a+', output_stream);
-                  }
-                });
-              } else {
-                writeFile(filePath, 'a+', output_stream);
+                if (output_stream_length > maxSizeBytes) {
+                  output_stream = output_stream.slice(output_stream_length - maxSizeBytes, output_stream_length);
+                  output_stream_length = maxSizeBytes;
+                  logger.log("debug", `output_stream truncated output_stream_length (${output_stream_length}) > maxSizeBytes (${maxSizeBytes})`);
+                }
               }
 
-            } else {
-              writeFile(filePath, 'w+', output_stream);
+              if (_output.concat) {
+                if (_output.maxsize) {
+                  fs.stat(filePath, function (error, stats) {
+
+                    var fileSizeInBytes = 0;
+                    if (!error) {
+                      fileSizeInBytes = stats.size;
+                    }
+                    //SI LA SUMA DEL TAMAÑO DEL FICHERO Y EL OUTPUT A ESCRIBIR DEL PROCESO SUPERAN EL MAXIMO PERMITIDO
+                    var totalSizeToWrite = fileSizeInBytes + output_stream_length;
+
+                    if (totalSizeToWrite > maxSizeBytes) {
+                      //SE OBTIENE LA PARTE DEL FICHERO QUE JUNTO CON EL OUTPUT SUMAN EL TOTAL PERMITIDO PARA ESCRIBIRLO (SUSTIUYENDO EL FICHERO)
+                      var positionFileRead = (totalSizeToWrite) - maxSizeBytes;
+                      var lengthFileRead = (fileSizeInBytes) - positionFileRead;
+
+                      fs.open(filePath, "r", function (error, fd) {
+                        if (lengthFileRead > 0) {
+                          var buffer = new Buffer(lengthFileRead);
+
+                          fs.read(fd, buffer, 0, buffer.length, positionFileRead, function (error, bytesRead, buffer) {
+                            var data = buffer.toString("utf8", 0, buffer.length);
+                            data = data.concat("\n", output_stream);
+                            fs.close(fd, function (err) {
+                              if (err) {
+                                logger.log("error", `Closing file ${filePath} in ${_this.id}: `, err);
+                              }
+                              writeFile(filePath, "w", data)
+                                .then(() => {
+                                    resolve();
+                                  },
+                                  err => {
+                                    reject(err);
+                                  });
+                            });
+                          });
+                        } else {
+                          //SI NO SE VA A ESCRIBIR NADA DEL FICHERO ACTUAL
+                          writeFile(filePath, "w", output_stream)
+                            .then(() => {
+                                resolve();
+                              },
+                              err => {
+                                reject(err);
+                              });
+                        }
+                      });
+                    } else {
+                      writeFile(filePath, "a+", output_stream)
+                        .then(() => {
+                            resolve();
+                          },
+                          err => {
+                            reject(err);
+                          });
+                    }
+                  });
+                } else {
+                  writeFile(filePath, "a+", output_stream)
+                    .then(() => {
+                        resolve();
+                      },
+                      err => {
+                        reject(err);
+                      });
+                }
+
+              } else {
+                writeFile(filePath, "w+", output_stream)
+                  .then(() => {
+                      resolve();
+                    },
+                    err => {
+                      reject(err);
+                    });
+              }
+            }else{
+              resolve();
             }
-          }
-        });
+          });
+      });
     }
 
-    if (_this.output instanceof Array) {
-      var outputCountItems = _this.output.length;
+    return new Promise(function (resolve, reject) {
+      if (_this.output instanceof Array) {
+        var outputCountItems = _this.output.length;
+        let promisesGO = [];
 
-      while (outputCountItems--) {
-        generateOutput(_this.output[outputCountItems]);
+        while (outputCountItems--) {
+          promisesGO.push(generateOutput(_this.output[outputCountItems]));
+        }
+
+        Promise.all(promisesGO)
+          .then(function () {
+            resolve();
+          })
+          .catch(function (err) {
+            resolve(err);
+          });
+
+      } else {
+        generateOutput(_this.output)
+          .then(() => {
+              resolve();
+            },
+            err => {
+              reject(err);
+            });
       }
-    } else {
-      generateOutput(_this.output);
-    }
+    });
+  }
 
+  clean(){
+    var _this = this;
+    delete _this.ended_at;
+    delete _this.command_executed;
+    delete _this.retries_count;
+    delete _this.output_iterable;
+    delete _this.custom_values;
+    delete _this.output_share;
+    delete _this.execute_return;
+    delete _this.execute_err_return;
+    delete _this.duration_seconds;
+    delete _this.execute_db_fieldCount;
+    delete _this.execute_db_affectedRows;
+    delete _this.execute_db_changedRows;
+    delete _this.execute_db_insertId;
+    delete _this.execute_db_warningCount;
+    delete _this.execute_db_message;
   }
 }
 

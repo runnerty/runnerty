@@ -1,25 +1,25 @@
 "use strict";
 
-var winston = require('winston');
-var fs = require('fs');
-var path = require('path');
-var configSchema = require('../schemas/conf.json');
-var Ajv = require('ajv');
+var winston = require("winston");
+var fs = require("fs");
+var path = require("path");
+var configSchema = require("../schemas/conf.json");
+var Ajv = require("ajv");
 var ajv = new Ajv({allErrors: true});
-var crypto = require('crypto');
-var moment = require('moment');
-var ics = require('ical2json');
-var redis = require('redis');
-var mongoose = require('mongoose');
-var lodash = require('lodash');
+var crypto = require("crypto");
+var moment = require("moment");
+var ics = require("ical2json");
+var redis = require("redis");
+var mongoose = require("mongoose");
+var lodash = require("lodash");
 
-const algorithm = 'aes-256-ctr';
+const algorithm = "aes-256-ctr";
 
 var logger = new (winston.Logger)({
   transports: [
-    new (winston.transports.Console)({colorize: 'all', level: 'info'}),
-    // new (winston.transports.File)({name: 'info-file', filename: 'filelog-info.log', level: 'info'}),
-    // new (winston.transports.File)({name: 'error-file',filename: 'filelog-error.log',level: 'error'}),
+    new (winston.transports.Console)({colorize: "all", level: "info"}),
+    // new (winston.transports.File)({name: "info-file", filename: "filelog-info.log", level: "info"}),
+    // new (winston.transports.File)({name: "error-file",filename: "filelog-error.log",level: "error"}),
   ]
 });
 
@@ -28,8 +28,8 @@ module.exports.logger = logger;
 
 function encrypt(text, password) {
   var cipher = crypto.createCipher(algorithm, password || global.cryptoPassword);
-  var crypted = cipher.update(text, 'utf8', 'hex');
-  crypted += cipher.final('hex');
+  var crypted = cipher.update(text, "utf8", "hex");
+  crypted += cipher.final("hex");
   return crypted;
 }
 
@@ -37,8 +37,8 @@ module.exports.encrypt = encrypt;
 
 function decrypt(text, password) {
   var decipher = crypto.createDecipher(algorithm, password || global.cryptoPassword);
-  var dec = decipher.update(text, 'hex', 'utf8');
-  dec += decipher.final('utf8');
+  var dec = decipher.update(text, "hex", "utf8");
+  dec += decipher.final("utf8");
   return dec;
 }
 
@@ -72,25 +72,25 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
       } else {
 
         try {
-          fs.readFile(filePath, 'utf8', function (err, res) {
+          fs.readFile(filePath, "utf8", function (err, res) {
             if (err) {
               reject(`Loading general configuration: ${err}`);
             } else {
 
               // CONFIG DEFAULTS:
-              fs.readFile(path.join(__dirname, '../config/defaults.json'), 'utf8', function (err, defaults) {
+              fs.readFile(path.join(__dirname, "../config/defaults.json"), "utf8", function (err, defaults) {
                 var fileParsed;
                 var defaultsFileParsed;
                 var configLoad;
 
                 if (err) {
-                  logger.log('warn', `Loading default config file `, err);
+                  logger.log("warn", `Loading default config file `, err);
                 } else {
                   if (defaults) {
                     try {
                       defaultsFileParsed = JSON.parse(defaults);
                     } catch (err) {
-                      logger.log('error', `Parsing default configuration: ${err} ${err.stack}`);
+                      logger.log("error", `Parsing default configuration: ${err} ${err.stack}`);
                     }
                   }
                 }
@@ -107,17 +107,17 @@ module.exports.loadGeneralConfig = function loadGeneralConfig(configFilePath) {
                 }
 
                 // ADD NOTIFICATORS SCHEMAS:
-                var notificatorsPath = configLoad.config.general.notificatorsPath || path.join(path.dirname(configFilePath), 'node_modules');
+                var notificatorsPath = configLoad.config.general.notificatorsPath || path.join(path.dirname(configFilePath), "node_modules");
                 var promiseNotificatorsSchemas = loadNotificators(notificatorsPath, configLoad.config.notificators);
 
                 // ADD EXECUTORS SCHEMAS:
-                var executorsPath = configLoad.config.general.executorsPath || path.join(path.dirname(configFilePath), 'node_modules');
+                var executorsPath = configLoad.config.general.executorsPath || path.join(path.dirname(configFilePath), "node_modules");
                 var promiseExecutorsSchemas = loadExecutors(executorsPath, configLoad.config.executors);
 
                 Promise.all([promiseNotificatorsSchemas, promiseExecutorsSchemas]).then(values => {
-                  ajv.addSchema(configSchema, 'configSchema');
+                  ajv.addSchema(configSchema, "configSchema");
 
-                  ajv.validate('configSchema', configLoad);
+                  ajv.validate("configSchema", configLoad);
 
                   var objConf = configLoad.config;
                   resolve(objConf);
@@ -146,7 +146,7 @@ module.exports.loadConfigSection = function loadConfigSection(config, section, i
       while (sectionLength--) {
         if (config[section][sectionLength].id === id_config) {
           cnf = config[section][sectionLength];
-          if (cnf.hasOwnProperty('crypted_password')) {
+          if (cnf.hasOwnProperty("crypted_password")) {
             if (global.cryptoPassword) {
               cnf.password = decrypt(cnf.crypted_password);
             } else {
@@ -173,7 +173,7 @@ module.exports.loadSQLFile = function loadSQLFile(filePath) {
       if (err) {
         reject(`Load SQL file: ${err}`);
       } else {
-        fs.readFile(filePath, 'utf8', function (err, res) {
+        fs.readFile(filePath, "utf8", function (err, res) {
           if (err) {
             reject(`Load SQL file readFile: ${err}`);
           } else {
@@ -187,7 +187,7 @@ module.exports.loadSQLFile = function loadSQLFile(filePath) {
 
 function replaceWith(text, objParams, ignoreGlobalValues) {
 
-  text = text || '';
+  text = text || "";
 
   objParams = objParams || {};
 
@@ -199,7 +199,7 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
     if (!padLeft) {
       padLeft = true;
     }
-    if (typeof str === 'undefined') {
+    if (typeof str === "undefined") {
       return pad;
     }
     if (padLeft) {
@@ -209,14 +209,14 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
     }
   }
 
-  objParams.DD = objParams.DD || getDateString('DD');
-  objParams.MM = objParams.MM || getDateString('MM');
-  objParams.YY = objParams.YY || getDateString('YY');
-  objParams.YYYY = objParams.YYYY || getDateString('YYYY');
-  objParams.HH = objParams.HH || getDateString('HH');
-  objParams.HH12 = objParams.HH12 || getDateString('hh');
-  objParams.mm = objParams.mm || getDateString('mm');
-  objParams.ss = objParams.ss || getDateString('ss');
+  objParams.DD = objParams.DD || getDateString("DD");
+  objParams.MM = objParams.MM || getDateString("MM");
+  objParams.YY = objParams.YY || getDateString("YY");
+  objParams.YYYY = objParams.YYYY || getDateString("YYYY");
+  objParams.HH = objParams.HH || getDateString("HH");
+  objParams.HH12 = objParams.HH12 || getDateString("hh");
+  objParams.mm = objParams.mm || getDateString("mm");
+  objParams.ss = objParams.ss || getDateString("ss");
 
   // MONTHS MMMM_[LANG]
   var months = text.toString().match(/\:MMMM_\w{2}/ig);
@@ -228,7 +228,7 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
       var month = months[monthsLength].substr(1, 7);
       var monthLang = months[monthsLength].substr(6, 2);
       if (!objParams[month]) {
-        objParams[month] = getDateString('MMMM', true, monthLang);
+        objParams[month] = getDateString("MMMM", true, monthLang);
       }
     }
   }
@@ -243,7 +243,7 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
       var shortMonth = shortMonths[shortMonthsLength].substr(1, 6);
       var shortMonthLang = shortMonths[shortMonthsLength].substr(5, 2);
       if (!objParams[shortMonth]) {
-        objParams[shortMonth] = getDateString('MMM', true, shortMonthLang);
+        objParams[shortMonth] = getDateString("MMM", true, shortMonthLang);
       }
     }
   }
@@ -258,7 +258,7 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
       var day = days[daysLength].substr(1, 7);
       var lang = days[daysLength].substr(6, 2);
       if (!objParams[day]) {
-        objParams[day] = getDateString('dddd', true, lang);
+        objParams[day] = getDateString("dddd", true, lang);
       }
     }
   }
@@ -273,7 +273,7 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
       var shortDay = shortDays[shortDaysLength].substr(1, 6);
       var lang = shortDays[shortDaysLength].substr(5, 2);
       if (!objParams[shortDay]) {
-        objParams[shortDay] = getDateString('ddd', true, lang);
+        objParams[shortDay] = getDateString("ddd", true, lang);
       }
     }
   }
@@ -296,12 +296,12 @@ function replaceWith(text, objParams, ignoreGlobalValues) {
 
   // FIRST TURN
   while (keysLengthFirst--) {
-    text = text.toString().replace(new RegExp('\\:' + keys[keysLengthFirst], 'ig'), objParams[keys[keysLengthFirst]] || '');
+    text = text.toString().replace(new RegExp("\\:" + keys[keysLengthFirst], "ig"), objParams[keys[keysLengthFirst]] || "");
   }
 
   // SECOND TURN
   while (keysLengthSecond--) {
-    text = text.toString().replace(new RegExp('\\:' + keys[keysLengthSecond], 'ig'), objParams[keys[keysLengthSecond]] || '');
+    text = text.toString().replace(new RegExp("\\:" + keys[keysLengthSecond], "ig"), objParams[keys[keysLengthSecond]] || "");
   }
 
   return text;
@@ -314,14 +314,14 @@ function replaceWithNew(text, objParams, options) {
 
   //OPTIONS:
   var ignoreGlobalValues = options ? (options.ignoreGlobalValues || false) : false;
-  var altValueReplace = options ? (options.altValueReplace || '') : '';
-  var insensitiveCase = options ? ((options.insensitiveCase ? 'i' : '') || '') : '';
+  var altValueReplace = options ? (options.altValueReplace || "") : "";
+  var insensitiveCase = options ? ((options.insensitiveCase ? "i" : "") || "") : "";
 
   return new Promise(function (resolve, reject) {
-    text = text || '';
+    text = text || "";
 
     objParams = objParams || {};
-    text = text || '';
+    text = text || "";
 
     objParams = objParams || {};
 
@@ -333,7 +333,7 @@ function replaceWithNew(text, objParams, options) {
       if (!padLeft) {
         padLeft = true;
       }
-      if (typeof str === 'undefined') {
+      if (typeof str === "undefined") {
         return pad;
       }
       if (padLeft) {
@@ -343,14 +343,14 @@ function replaceWithNew(text, objParams, options) {
       }
     }
 
-    objParams.DD = objParams.DD || getDateString('DD');
-    objParams.MM = objParams.MM || getDateString('MM');
-    objParams.YY = objParams.YY || getDateString('YY');
-    objParams.YYYY = objParams.YYYY || getDateString('YYYY');
-    objParams.HH = objParams.HH || getDateString('HH');
-    objParams.HH12 = objParams.HH12 || getDateString('hh');
-    objParams.mm = objParams.mm || getDateString('mm');
-    objParams.ss = objParams.ss || getDateString('ss');
+    objParams.DD = objParams.DD || getDateString("DD");
+    objParams.MM = objParams.MM || getDateString("MM");
+    objParams.YY = objParams.YY || getDateString("YY");
+    objParams.YYYY = objParams.YYYY || getDateString("YYYY");
+    objParams.HH = objParams.HH || getDateString("HH");
+    objParams.HH12 = objParams.HH12 || getDateString("hh");
+    objParams.mm = objParams.mm || getDateString("mm");
+    objParams.ss = objParams.ss || getDateString("ss");
 
 // MONTHS MMMM_[LANG]
     var months = text.toString().match(/\:MMMM_\w{2}/ig);
@@ -362,7 +362,7 @@ function replaceWithNew(text, objParams, options) {
         var month = months[monthsLength].substr(1, 7);
         var monthLang = months[monthsLength].substr(6, 2);
         if (!objParams[month]) {
-          objParams[month] = getDateString('MMMM', true, monthLang);
+          objParams[month] = getDateString("MMMM", true, monthLang);
         }
       }
     }
@@ -377,7 +377,7 @@ function replaceWithNew(text, objParams, options) {
         var shortMonth = shortMonths[shortMonthsLength].substr(1, 6);
         var shortMonthLang = shortMonths[shortMonthsLength].substr(5, 2);
         if (!objParams[shortMonth]) {
-          objParams[shortMonth] = getDateString('MMM', true, shortMonthLang);
+          objParams[shortMonth] = getDateString("MMM", true, shortMonthLang);
         }
       }
     }
@@ -392,7 +392,7 @@ function replaceWithNew(text, objParams, options) {
         var day = days[daysLength].substr(1, 7);
         var lang = days[daysLength].substr(6, 2);
         if (!objParams[day]) {
-          objParams[day] = getDateString('dddd', true, lang);
+          objParams[day] = getDateString("dddd", true, lang);
         }
       }
     }
@@ -407,7 +407,7 @@ function replaceWithNew(text, objParams, options) {
         var shortDay = shortDays[shortDaysLength].substr(1, 6);
         var lang = shortDays[shortDaysLength].substr(5, 2);
         if (!objParams[shortDay]) {
-          objParams[shortDay] = getDateString('ddd', true, lang);
+          objParams[shortDay] = getDateString("ddd", true, lang);
         }
       }
     }
@@ -430,16 +430,16 @@ function replaceWithNew(text, objParams, options) {
 
 // FIRST TURN
     while (keysLengthFirst--) {
-      text = text.toString().replace(new RegExp('\\:' + keys[keysLengthFirst], insensitiveCase + 'g'), objParams[keys[keysLengthFirst]] || altValueReplace);
+      text = text.toString().replace(new RegExp("\\:" + keys[keysLengthFirst], insensitiveCase + "g"), objParams[keys[keysLengthFirst]] || altValueReplace);
     }
 
 // SECOND TURN
     while (keysLengthSecond--) {
-      text = text.toString().replace(new RegExp('\\:' + keys[keysLengthSecond], insensitiveCase + 'g'), objParams[keys[keysLengthSecond]] || altValueReplace);
+      text = text.toString().replace(new RegExp("\\:" + keys[keysLengthSecond], insensitiveCase + "g"), objParams[keys[keysLengthSecond]] || altValueReplace);
     }
 
     if (altValueReplace) {
-      text = text.toString().replace(new RegExp('\\:\\w+', insensitiveCase + 'g'), altValueReplace);
+      text = text.toString().replace(new RegExp("\\:\\w+", insensitiveCase + "g"), altValueReplace);
     }
 
     resolve(text);
@@ -491,7 +491,7 @@ function replaceWithSmart(inputObject, objParams, options) {
                       });
                   })
                   .catch(function (err) {
-                    logger.log('error', 'replaceWithSmart function execSerie . Error ', err);
+                    logger.log("error", "replaceWithSmart function execSerie . Error ", err);
                   });
               });
             });
@@ -503,7 +503,7 @@ function replaceWithSmart(inputObject, objParams, options) {
               resolve(resObject);
             })
             .catch(function (err) {
-              logger.log('error', 'replaceWithSmart execSerie. Error ', err);
+              logger.log("error", "replaceWithSmart execSerie. Error ", err);
               resolve(inputObject);
             });
         } else {
@@ -532,19 +532,19 @@ function addGlobalValuesToObjParams(objParams) {
 
       if (intialValue instanceof Object) {
 
-        if (intialValue.format === 'text') {
+        if (intialValue.format === "text") {
 
           if (intialValue.value instanceof Array) {
 
             var valuesLength = intialValue.value.length;
             var i = 0;
-            var finalValue = '';
+            var finalValue = "";
 
             while (valuesLength--) {
               var rtext = replaceWith(intialValue.value[i], objParams, true);
 
-              var quotechar = intialValue.quotechar || '';
-              var delimiter = intialValue.delimiter || '';
+              var quotechar = intialValue.quotechar || "";
+              var delimiter = intialValue.delimiter || "";
 
               if (valuesLength !== 0) {
                 finalValue = finalValue + quotechar + rtext + quotechar + delimiter;
@@ -553,28 +553,28 @@ function addGlobalValuesToObjParams(objParams) {
               }
               i++;
             }
-            gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = finalValue;
+            gv[keymaster.toUpperCase() + "_" + keysValueObjects[keysValueObjectsLength].toUpperCase()] = finalValue;
 
           } else {
             let value = replaceWith(intialValue.value, objParams, true);
-            gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
+            gv[keymaster.toUpperCase() + "_" + keysValueObjects[keysValueObjectsLength].toUpperCase()] = value;
           }
 
         } else {
 
-          if (intialValue.format === 'json') {
+          if (intialValue.format === "json") {
 
             if (intialValue.value instanceof Object || intialValue.value instanceof Array) {
-              gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(JSON.stringify(intialValue.value), objParams, true);
+              gv[keymaster.toUpperCase() + "_" + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(JSON.stringify(intialValue.value), objParams, true);
 
             } else {
-              gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(intialValue.value, objParams, true);
+              gv[keymaster.toUpperCase() + "_" + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(intialValue.value, objParams, true);
             }
           }
         }
 
       } else {
-        gv[keymaster.toUpperCase() + '_' + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(intialValue, objParams, true);
+        gv[keymaster.toUpperCase() + "_" + keysValueObjects[keysValueObjectsLength].toUpperCase()] = replaceWith(intialValue, objParams, true);
       }
     }
   }
@@ -653,13 +653,13 @@ module.exports.checkEvaluation = function checkEvaluation(oper_left, condition, 
   oper_right = replaceWith(oper_right, values);
 
   switch (condition) {
-    case '==':
+    case "==":
       return (oper_left === oper_right);
-    case '!=':
+    case "!=":
       return (oper_left !== oper_right);
-    case '>=':
+    case ">=":
       return (oper_left >= oper_right);
-    case '<=':
+    case "<=":
       return (oper_left <= oper_right);
     default:
       return false;
@@ -694,11 +694,11 @@ function requireDir(directory, modules) {
       var dirsLength = dirs.length;
       while (dirsLength--) {
         if (fs.statSync(path.join(containerDirectory, dirs[dirsLength])).isDirectory()) {
-          if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'))) {
-            container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + '.js'));
+          if (fs.existsSync(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + ".js"))) {
+            container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], dirs[dirsLength] + ".js"));
           } else {
-            if (path.join(containerDirectory, dirs[dirsLength], 'index.js')) {
-              container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], 'index.js'));
+            if (path.join(containerDirectory, dirs[dirsLength], "index.js")) {
+              container[dirs[dirsLength]] = require(path.join(containerDirectory, dirs[dirsLength], "index.js"));
             }
           }
         }
@@ -743,21 +743,21 @@ module.exports.checkCalendar = function checkCalendar(calendars, execDate) {
     }
 
     var chainMustRun = true;
-    if (calendars.enable && calendars.enable !== '') {
+    if (calendars.enable && calendars.enable !== "") {
       if (global.calendars[calendars.enable]) {
         var enableEvents = global.calendars[calendars.enable];
         chainMustRun = await isDateInEvents(execDate, enableEvents);
       } else {
-        logger.log('error', `Calendar enable ${calendars.enable} not found`);
+        logger.log("error", `Calendar enable ${calendars.enable} not found`);
       }
     }
 
-    if (calendars.disable && calendars.disable !== '' && chainMustRun) {
+    if (calendars.disable && calendars.disable !== "" && chainMustRun) {
       if (global.calendars[calendars.disable]) {
         var disableEvents = global.calendars[calendars.disable];
         chainMustRun = !await isDateInEvents(execDate, disableEvents);
       } else {
-        logger.log('error', `Calendar disable ${calendars.disable} not found`);
+        logger.log("error", `Calendar disable ${calendars.disable} not found`);
       }
     }
     resolve(chainMustRun);
@@ -769,20 +769,20 @@ function generateCalendar(file) {
   return new Promise((resolve) => {
     var fileName = path.parse(file).name;
     var fileExt = path.parse(file).ext;
-    if (fileExt === '.ics') {
+    if (fileExt === ".ics") {
       var filePath = path.join(global.config.general.calendarsPath, file);
       var parsedCal = {};
       fs.readFile(filePath, {encoding: "utf8"}, function (err, data) {
         if (err) {
-          logger.log('error', 'Calendars readFile: ', err);
+          logger.log("error", "Calendars readFile: ", err);
         } else {
           parsedCal = ics.convert(data).VCALENDAR[0].VEVENT;
           var calEvents = [];
           for (var i = 0; i < parsedCal.length; i++) {
             var event = {};
-            event.start = parseInt(parsedCal[i]['DTSTART;VALUE=DATE']);
-            event.end = parseInt(parsedCal[i]['DTEND;VALUE=DATE']);
-            event.summary = parsedCal[i]['SUMMARY'];
+            event.start = parseInt(parsedCal[i]["DTSTART;VALUE=DATE"]);
+            event.end = parseInt(parsedCal[i]["DTEND;VALUE=DATE"]);
+            event.summary = parsedCal[i]["SUMMARY"];
             calEvents.push(event);
           }
           global.calendars[fileName] = calEvents;
@@ -794,48 +794,68 @@ function generateCalendar(file) {
 }
 
 module.exports.loadCalendars = function loadCalendars() {
-  global.calendars = {};
-  if (global.config.general.calendarsPath) {
-    fs.readdir(global.config.general.calendarsPath, (err, files) => {
-      for (var i = 0; i < files.length; i++) {
-        generateCalendar(files[i]);
-      }
-    });
-  }
+  return new Promise((resolve) => {
+    global.calendars = {};
+    if (global.config.general.calendarsPath) {
+      fs.readdir(global.config.general.calendarsPath, (err, files) => {
+        for (var i = 0; i < files.length; i++) {
+          generateCalendar(files[i]);
+        }
+        resolve();
+      });
+    }else{
+      resolve();
+    }
+  });
 };
 
 module.exports.loadQueueNotifications = function loadQueueNotifications() {
-  global.notificatorList = {};
-  global.notificationsList = {};
-  if (global.config.general.queue_notifications && global.config.general.queue_notifications.queue) {
-    // REDIS QUEUE NOTIFICATIONS:
-    if (global.config.general.queue_notifications.queue = 'redis') {
-      var redisClient = redis.createClient(global.config.general.queue_notifications.port || "6379", global.config.general.queue_notifications.host, global.config.general.queue_notifications.options), multi;
-      if (global.config.general.queue_notifications.password && global.config.general.queue_notifications.password !== '') {
-        redisClient.auth(global.config.general.queue_notifications.password);
-      }
-      redisClient.on("error", function (err) {
-        logger.log('error', `Could not connect to Redis (Queue): ${err}`);
-      });
+  return new Promise((resolve) => {
+    global.notificatorList = {};
+    global.notificationsList = {};
+    if (global.config.general.queue_notifications && global.config.general.queue_notifications.queue) {
+      // REDIS QUEUE NOTIFICATIONS:
+      if (global.config.general.queue_notifications.queue = "redis") {
+        var redisClient = redis.createClient(global.config.general.queue_notifications.port || "6379", global.config.general.queue_notifications.host, global.config.general.queue_notifications.options), multi;
+        if (global.config.general.queue_notifications.password && global.config.general.queue_notifications.password !== "") {
+          redisClient.auth(global.config.general.queue_notifications.password);
+        }
+        redisClient.on("error", function (err) {
+          logger.log("error", `Could not connect to Redis (Queue): ${err}`);
+          resolve();
+        });
 
-      redisClient.on("ready", function () {
-        global.queueRedisCli = redisClient;
-        global.config.queueNotificationsExternal = 'redis';
-      });
+        redisClient.on("ready", function () {
+          global.queueRedisCli = redisClient;
+          global.config.queueNotificationsExternal = "redis";
+          resolve();
+        });
+      }else{
+        resolve();
+      }
+    }else{
+      resolve();
     }
-  }
+  });
 };
 
 module.exports.loadMongoHistory = function loadMongoHistory() {
-  if (config.general.history && config.general.history.mongodb && (config.general.history.disable !== true)) {
-    mongoose.connect(`mongodb://${config.general.history.mongodb.host}:${config.general.history.mongodb.port}/runnerty`);
-    mongoose.connection.on('error', function (err) {
-      logger.log('error', `Mongodb connection error ${err}`);
-    });
-    global.config.historyEnabled = true;
-  } else {
-    global.config.historyEnabled = false;
-  }
+  return new Promise((resolve) => {
+    if (config.general.history && config.general.history.mongodb && (config.general.history.disable !== true)) {
+      global.config.historyEnabled = true;
+      mongoose.connect(`mongodb://${config.general.history.mongodb.host}:${config.general.history.mongodb.port}/runnerty`)
+        .then(() => {
+          resolve();
+        },
+        err => {
+          resolve();
+          logger.log("error", `Mongodb connection error ${err}`);
+        });
+    } else {
+      global.config.historyEnabled = false;
+      resolve();
+    }
+  });
 };
 
 module.exports.mongooseCloseConnection = function mongooseCloseConnection() {
@@ -856,22 +876,22 @@ function loadExecutors(executorsPath, executors) {
           for (var i = 0; i < executors.length; i++) {
             let ex = executors[i].type;
             if (res[ex]) {
-              let exSchema = path.join(executorsPath, ex, 'schema.json');
+              let exSchema = path.join(executorsPath, ex, "schema.json");
               if (fs.existsSync(exSchema)) {
                 executorsInConfig[ex] = res[ex];
                 let schemaContent = require(exSchema);
                 items.anyOf.push({"$ref": ex + "#/definitions/config"});
                 ajv.addSchema(schemaContent, ex);
 
-                if (!ajv.getSchema('exec_' + ex)) {
-                  ajv.addSchema(schemaContent.definitions.params, 'exec_' + ex);
+                if (!ajv.getSchema("exec_" + ex)) {
+                  ajv.addSchema(schemaContent.definitions.params, "exec_" + ex);
                 }
 
               } else {
-                logger.log('error', `Schema not found in executor ${ex}`);
+                logger.log("error", `Schema not found in executor ${ex}`);
               }
             } else {
-              logger.log('error', `Executor type ${ex} in config not found in executors path: ${executorsPath}`);
+              logger.log("error", `Executor type ${ex} in config not found in executors path: ${executorsPath}`);
             }
           }
           configSchema.properties.config.properties.executors.items = items;
@@ -898,24 +918,24 @@ function loadNotificators(notificatorsPath, notificators) {
           for (var i = 0; i < notificators.length;) {
             let no = notificators[i].type;
             if (res[no]) {
-              let noSchema = path.join(notificatorsPath, no, 'schema.json');
+              let noSchema = path.join(notificatorsPath, no, "schema.json");
               if (fs.existsSync(noSchema)) {
                 notificatorsInConfig[no] = res[no];
                 let schemaContent = require(noSchema);
                 items.anyOf.push({"$ref": no + "#/definitions/config"});
                 ajv.addSchema(schemaContent, no);
 
-                if (!ajv.getSchema('notif_' + no)) {
-                  ajv.addSchema(schemaContent.definitions.params, 'notif_' + no);
+                if (!ajv.getSchema("notif_" + no)) {
+                  ajv.addSchema(schemaContent.definitions.params, "notif_" + no);
                 }
 
               } else {
-                logger.log('error', `Schema not found in executor ${no}`);
+                logger.log("error", `Schema not found in executor ${no}`);
               }
               i++;
             } else {
               notificators.splice(i, 1);
-              logger.log('error', `Notificators type ${no} in config not found in notificators path: ${notificatorsPath}`);
+              logger.log("error", `Notificators type ${no} in config not found in notificators path: ${notificatorsPath}`);
             }
           }
           configSchema.properties.config.properties.notificators.items = items;
@@ -934,10 +954,10 @@ function checkExecutorParams(executor) {
   return new Promise((resolve, reject) => {
     let executorId = executor.type;
 
-    if (ajv.getSchema('exec_' + executorId)) {
+    if (ajv.getSchema("exec_" + executorId)) {
       var valid = false;
       try{
-        valid = ajv.validate('exec_' + executorId, executor);
+        valid = ajv.validate("exec_" + executorId, executor);
         if(valid){
           resolve();
         }else{
@@ -957,10 +977,10 @@ function checkNotificatorParams(notification) {
   return new Promise((resolve, reject) => {
 
     let notificatorId = notification.type;
-    if (ajv.getSchema('notif_' + notificatorId)) {
+    if (ajv.getSchema("notif_" + notificatorId)) {
       var valid = false;
       try{
-        valid = ajv.validate('notif_' + notificatorId, notification);
+        valid = ajv.validate("notif_" + notificatorId, notification);
         if(valid){
           resolve();
         }else{
@@ -978,7 +998,7 @@ module.exports.checkNotificatorParams = checkNotificatorParams;
 
 function loadAPI() {
   if (global.config.general.api && global.config.general.api.port && global.config.general.api.users) {
-    require('../api/api.js')();
+    require("../api/api.js")();
   }
 };
 module.exports.loadAPI = loadAPI;

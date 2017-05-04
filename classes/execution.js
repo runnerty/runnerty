@@ -1,4 +1,5 @@
 "use strict";
+
 var utils = require("../libs/utils.js");
 var replaceWithSmart = utils.replaceWithSmart;
 var logger = utils.logger;
@@ -13,8 +14,8 @@ class Execution {
     var paramsLength = params.length;
 
     while (paramsLength--) {
-      if(params[paramsLength] === 'type'){
-        logger.log('error', `Params of "${process.id}" contains no allowed "type" parameter, will be ignored.`);
+      if(params[paramsLength] === "type"){
+        logger.log("error", `Params of "${process.id}" contains no allowed "type" parameter, will be ignored.`);
       }else{
         _this[params[paramsLength]] = process.exec[params[paramsLength]];
       }
@@ -58,31 +59,31 @@ class Execution {
         })
         .catch((err) => {
           _this.process.execute_err_return = `Getting values ${err}`;
-          _this.process.execute_return = '';
+          _this.process.execute_return = "";
           _this.process.error();
           reject(`Getting values ${err}`);
-        })
+        });
     });
   }
 
   exec() {
     var _this = this;
     return new Promise(function (resolve, reject) {
-      logger.log('error', 'Method exec (execution) must be rewrite in child class');
+      logger.log("error", "Method exec (execution) must be rewrite in child class");
       _this.process.execute_err_return = `Method exec (execution) must be rewrite in child class`;
-      _this.process.execute_return = '';
+      _this.process.execute_return = "";
       _this.process.error();
-      reject('Method exec (execution) must be rewrite in child class');
+      reject("Method exec (execution) must be rewrite in child class");
     });
   }
 
-  kill() {
+  kill(reason) {
     var _this = this;
     return new Promise(function (resolve, reject) {
-      logger.log('warn', 'Execution - Method kill must be rewrite in child class');
-      _this.process.execute_err_return = `Execution - Method kill must be rewrite in child class`;
-      _this.process.execute_return = '';
-      reject('Execution - Method kill must be rewrite in child class');
+      logger.log("warn", _this.id, "killed: ",reason);
+      _this.process.execute_err_return = _this.id + " - killed: " + reason;
+      _this.process.execute_return = "";
+      reject(_this.id + " - killed: " + reason);
     });
   }
 
@@ -91,17 +92,17 @@ class Execution {
 
     if(!options){
       var options = {};
-      options.end = 'end';
+      options.end = "end";
     }
-    options.end = options.end || 'end';
+    options.end = options.end || "end";
 
     var resolve = _this.resolve;
     var reject = _this.reject;
 
     _this.process.execute_arg = options.execute_arg;
     _this.process.command_executed = options.command_executed;
-    _this.process.execute_err_return = options.execute_err_return || '';
-    _this.process.execute_return = options.execute_return || '';
+    _this.process.execute_err_return = options.execute_err_return || "";
+    _this.process.execute_return = options.execute_return || "";
     _this.process.execute_db_results = options.execute_db_results;
     _this.process.execute_db_results_object = options.execute_db_results_object;
     _this.process.execute_db_results_csv = options.execute_db_results_csv;
@@ -114,9 +115,9 @@ class Execution {
     _this.process.retries_count = options.retries_count;
 
     switch (options.end) {
-      case 'error':
+      case "error":
         _this.process.error();
-        reject(options.messageLog || '');
+        reject(options.messageLog || "");
         break;
       default:
         _this.process.end();
@@ -129,7 +130,7 @@ class Execution {
     var _this = this;
     var useGlobalValues = options.useGlobalValues || true;
     var useProcessValues = options.useProcessValues || false;
-    var altValueReplace = options.altValueReplace || '';
+    var altValueReplace = options.altValueReplace || "";
     var useExtraValue = options.useExtraValue || false;
 
     var _options = {
@@ -154,9 +155,9 @@ class Execution {
           resolve(res);
         })
         .catch(function (err) {
-          logger.log('error', 'Execution - Method getValues:', err);
-          _this.process.execute_err_return = 'Execution - Method getValues:' + err;
-          _this.process.execute_return = '';
+          logger.log("error", "Execution - Method getValues:", err);
+          _this.process.execute_err_return = "Execution - Method getValues:" + err;
+          _this.process.execute_return = "";
           _this.process.error();
           reject(err);
         });
@@ -182,17 +183,17 @@ class Execution {
               resolve(res);
             })
             .catch(function (err) {
-              logger.log('error', 'Execution - Method getValues:', err);
-              _this.process.execute_err_return = 'Execution - Method getValues:' + err;
-              _this.process.execute_return = '';
+              logger.log("error", "Execution - Method getValues:", err);
+              _this.process.execute_err_return = "Execution - Method getValues:" + err;
+              _this.process.execute_return = "";
               _this.process.error();
               reject(err);
             });
         })
         .catch(function (err) {
-          logger.log('error', 'Execution - Method getValues / loadExecutorConfig:', err);
-          _this.process.execute_err_return = 'Execution - Method getValues / loadExecutorConfig:' + err;
-          _this.process.execute_return = '';
+          logger.log("error", "Execution - Method getValues / loadExecutorConfig:", err);
+          _this.process.execute_err_return = "Execution - Method getValues / loadExecutorConfig:" + err;
+          _this.process.execute_return = "";
           _this.process.error();
           reject(err);
         });
@@ -206,9 +207,9 @@ class Execution {
           resolve(res);
         })
         .catch(function (err) {
-          logger.log('error', 'Execution - Method getParamValues:', err);
-          _this.process.execute_err_return = 'Execution - Method getParamValues:' + err;
-          _this.process.execute_return = '';
+          logger.log("error", "Execution - Method getParamValues:", err);
+          _this.process.execute_err_return = "Execution - Method getParamValues:" + err;
+          _this.process.execute_return = "";
           _this.process.error();
           reject(err);
         });
@@ -224,17 +225,17 @@ class Execution {
               resolve(res);
             })
             .catch(function (err) {
-              logger.log('error', 'Execution - Method getConfigValues:', err);
-              _this.process.execute_err_return = 'Execution - Method getConfigValues:' + err;
-              _this.process.execute_return = '';
+              logger.log("error", "Execution - Method getConfigValues:", err);
+              _this.process.execute_err_return = "Execution - Method getConfigValues:" + err;
+              _this.process.execute_return = "";
               _this.process.error();
               resolve();
             });
         })
         .catch(function (err) {
-          logger.log('error', 'Execution - Method getConfigValues / loadExecutorConfig:', err);
-          _this.process.execute_err_return = 'Execution - Method getConfigValues / loadExecutorConfig:' + err;
-          _this.process.execute_return = '';
+          logger.log("error", "Execution - Method getConfigValues / loadExecutorConfig:", err);
+          _this.process.execute_err_return = "Execution - Method getConfigValues / loadExecutorConfig:" + err;
+          _this.process.execute_return = "";
           _this.process.error();
           reject(err);
         });

@@ -1,4 +1,5 @@
 "use strict";
+
 var logger = require("./utils.js").logger;
 
 function sendNotification(list, notification, sender) {
@@ -11,7 +12,7 @@ function sendNotification(list, notification, sender) {
       checkNotificationsSends(list, sender);
     })
     .catch((err) => {
-      logger.log('error', `Notification Sender error: ${err}`);
+      logger.log("error", `Notification Sender error: ${err}`);
     });
 };
 

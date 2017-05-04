@@ -1,12 +1,12 @@
 "use strict";
 
-var fs = require('fs');
-var crypto = require('crypto');
+var fs = require("fs");
+var crypto = require("crypto");
 var logger = require("../libs/utils.js").logger;
-var planSchema = require('../schemas/plan.json');
-var chainSchema = require('../schemas/chain.json');
-var processSchema = require('../schemas/process.json');
-var Ajv = require('ajv');
+var planSchema = require("../schemas/plan.json");
+var chainSchema = require("../schemas/chain.json");
+var processSchema = require("../schemas/process.json");
+var Ajv = require("ajv");
 var ajv = new Ajv({allErrors: true});
 
 var Plan = require("./plan.js");
@@ -34,26 +34,26 @@ function serializer() {
   };
 }
 
-ajv.addFormat('cron', /^(((([\*]{1}){1})|((\*\/){0,1}(([0-9]{1}){1}|(([1-5]{1}){1}([0-9]{1}){1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([0-9]{1}){1}|(([1]{1}){1}([0-9]{1}){1}){1}|([2]{1}){1}([0-3]{1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([1-9]{1}){1}|(([1-2]{1}){1}([0-9]{1}){1}){1}|([3]{1}){1}([0-1]{1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([1-9]{1}){1}|(([1-2]{1}){1}([0-9]{1}){1}){1}|([3]{1}){1}([0-1]{1}){1}))|(jan|feb|mar|apr|may|jun|jul|aug|sep|okt|nov|dec)) ((([\*]{1}){1})|((\*\/){0,1}(([0-7]{1}){1}))|(sun|mon|tue|wed|thu|fri|sat)))$/);
-ajv.addSchema(planSchema, 'planSchema');
-ajv.addSchema(processSchema, 'processSchema');
-ajv.addSchema(chainSchema, 'chainSchema');
+ajv.addFormat("cron", /^(((([\*]{1}){1})|((\*\/){0,1}(([0-9]{1}){1}|(([1-5]{1}){1}([0-9]{1}){1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([0-9]{1}){1}|(([1]{1}){1}([0-9]{1}){1}){1}|([2]{1}){1}([0-3]{1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([1-9]{1}){1}|(([1-2]{1}){1}([0-9]{1}){1}){1}|([3]{1}){1}([0-1]{1}){1}))) ((([\*]{1}){1})|((\*\/){0,1}(([1-9]{1}){1}|(([1-2]{1}){1}([0-9]{1}){1}){1}|([3]{1}){1}([0-1]{1}){1}))|(jan|feb|mar|apr|may|jun|jul|aug|sep|okt|nov|dec)) ((([\*]{1}){1})|((\*\/){0,1}(([0-7]{1}){1}))|(sun|mon|tue|wed|thu|fri|sat)))$/);
+ajv.addSchema(planSchema, "planSchema");
+ajv.addSchema(processSchema, "processSchema");
+ajv.addSchema(chainSchema, "chainSchema");
 
 class FilePlan {
   constructor(filePath) {
     this.filePath = filePath;
-    this.fileContent = '';
-    this.lastHashPlan = '';
+    this.fileContent = "";
+    this.lastHashPlan = "";
     this.plan = {};
 
     return new Promise((resolve, reject) => {
       var _this = this;
-      _this.loadFileContent(filePath, 'planSchema')
+      _this.loadFileContent(filePath, "planSchema")
         .then((res) => {
           _this.fileContent = res;
           _this.getChains(res)
             .then((chains) => {
-              new Plan('', chains)
+              new Plan("", chains)
                 .then(function (plan) {
                   _this.plan = plan;
                   if(global.planRestored){
@@ -83,7 +83,7 @@ class FilePlan {
           reject(`File ${filePath} not exists: ${err}`);
         } else {
           try {
-            fs.readFile(filePath, 'utf8', function (err, res) {
+            fs.readFile(filePath, "utf8", function (err, res) {
               if (err) {
                 reject(`File loadFileContent (${filePath}) readFile: ${err}`);
               } else {
@@ -119,7 +119,7 @@ class FilePlan {
     var _this = this;
 
     return new Promise((resolve, reject) => {
-      if (json.hasOwnProperty('chains')) {
+      if (json.hasOwnProperty("chains")) {
         if (json.chains instanceof Array) {
 
           var loadChains = [];
@@ -139,10 +139,10 @@ class FilePlan {
             });
 
         } else {
-          reject('Invalid PlanFile, chain is not an array.');
+          reject("Invalid PlanFile, chain is not an array.");
         }
       } else {
-        reject('Invalid PlanFile, chain property not found.');
+        reject("Invalid PlanFile, chain property not found.");
       }
 
     });
@@ -152,8 +152,8 @@ class FilePlan {
     var _this = this;
     return new Promise(function (resolve, reject) {
 
-      if (chain.hasOwnProperty('chain_path')) {
-        _this.loadFileContent(chain.chain_path, 'chainSchema')
+      if (chain.hasOwnProperty("chain_path")) {
+        _this.loadFileContent(chain.chain_path, "chainSchema")
           .then((res) => {
             _this.getChain(res)
               .then((res) => {
@@ -181,10 +181,10 @@ class FilePlan {
 
     var valid = false;
     try{
-      valid = ajv.validate('chainSchema', chain);
+      valid = ajv.validate("chainSchema", chain);
       if (!valid) {
         if (!silent) {
-          logger.log('error', `Invalid chain, id ${chain.id} for schema chainSchema:`, ajv.errors);
+          logger.log("error", `Invalid chain, id ${chain.id} for schema chainSchema:`, ajv.errors);
         }
         return false;
       } else {
@@ -192,7 +192,7 @@ class FilePlan {
       }
     }catch(err){
       if (!silent) {
-        logger.log('error', `Invalid chain, id ${chain.id} for schema chainSchema:`, err);
+        logger.log("error", `Invalid chain, id ${chain.id} for schema chainSchema:`, err);
       }
       return false;
     }
@@ -210,16 +210,16 @@ class FilePlan {
       try {
         objStr = JSON.stringify(plan, serializer());
       } catch (err) {
-        logger.log('error', err);
+        logger.log("error", err);
         throw err;
       }
     }
 
-    var hashPlan = crypto.createHash('sha256').update(objStr).digest("hex");
+    var hashPlan = crypto.createHash("sha256").update(objStr).digest("hex");
 
     if (_this.lastHashPlan !== hashPlan) {
       _this.lastHashPlan = hashPlan;
-      logger.log('debug', '> REFRESING hashPlan:', hashPlan);
+      logger.log("debug", "> REFRESING hashPlan:", hashPlan);
       fs.writeFileSync(global.config.general.binBackup, objStr, null);
     }
   }

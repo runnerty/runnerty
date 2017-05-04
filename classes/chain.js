@@ -5,12 +5,13 @@ var logger = utils.logger;
 var getProcessByUId = utils.getProcessByUId;
 var checkEvaluation = utils.checkEvaluation;
 var checkCalendar = utils.checkCalendar;
+var chokidar = require("chokidar");
 var chronometer = utils.chronometer;
-var schedule = require('node-schedule');
-var anymatch = require('anymatch');
-var crypto = require('crypto');
+var schedule = require("node-schedule");
+var anymatch = require("anymatch");
+var crypto = require("crypto");
 var mongoChain = require("../mongodb-models/chain.js");
-var mongoose = require('mongoose');
+var mongoose = require("mongoose");
 
 var Process = require("./process.js");
 var Event = require("./event.js");
@@ -19,7 +20,7 @@ class Chain {
   constructor(id, name, parentUId, iterable, input, custom_values, start_date, end_date, schedule_interval, depends_chains, depends_chains_alt, events, processes, status, started_at, ended_at, calendars) {
     this.id = id;
     this.name = name;
-    this.uId = '';
+    this.uId = "";
     this.iterable = iterable;
     this.parentUId = parentUId;
     this.input = input;
@@ -41,7 +42,7 @@ class Chain {
       var _this = this;
 
       _this.setUid()
-        .then(() => {
+        .then((res) => {
           _this.loadProcesses(processes)
             .then((processes) => {
               _this.processes = processes;
@@ -68,7 +69,7 @@ class Chain {
     var _this = this;
     return new Promise((resolve) => {
       crypto.randomBytes(16, function (err, buffer) {
-        _this.uId = _this.id + '_' + buffer.toString('hex');
+        _this.uId = _this.id + "_" + buffer.toString("hex");
         resolve();
       });
     });
@@ -84,8 +85,7 @@ class Chain {
         if (processesLength > 0) {
 
           while (processesLength--) {
-            var process = processes[processesLength];
-            chainProcessPromises.push(_this.loadProcess(process, _this.uId, _this.custom_values));
+            chainProcessPromises.push(_this.loadProcess(processes[processesLength], _this.uId, _this.custom_values));
           }
 
           Promise.all(chainProcessPromises)
@@ -146,11 +146,11 @@ class Chain {
         var keysLength = keys.length;
         if (keysLength > 0) {
           while (keysLength--) {
-            var event = events[keys[keysLength]];
-            if (event.hasOwnProperty('notifications')) {
+            let event = events[keys[keysLength]];
+            if (event.hasOwnProperty("notifications")) {
               processEventsPromises.push(new Event(keys[keysLength], event.notifications));
             } else {
-              logger.log('debug', `Chain ${_this.id} Events without procces and notifications`);
+              logger.log("debug", `Chain ${_this.id} Events without procces and notifications`);
             }
           }
 
@@ -159,23 +159,23 @@ class Chain {
               var events = {};
               var eventsArrLength = eventsArr.length;
               while (eventsArrLength--) {
-                var e = eventsArr[eventsArrLength];
-                var key = Object.keys(e);
+                let e = eventsArr[eventsArrLength];
+                let key = Object.keys(e);
                 events[key[0]] = e[key[0]];
               }
               resolve(events);
             })
             .catch(function (err) {
-              //logger.log('error', `Chain ${_this.id} events: ` + err);
+              //logger.log("error", `Chain ${_this.id} events: ` + err);
               reject(err);
             });
 
         } else {
-          logger.log('debug', `Chain ${_this.id} events is empty`);
+          logger.log("debug", `Chain ${_this.id} events is empty`);
           resolve();
         }
       } else {
-        logger.log('debug', `Chain ${_this.id} events is not set`);
+        logger.log("debug", `Chain ${_this.id} events is not set`);
         resolve();
       }
     });
@@ -189,10 +189,10 @@ class Chain {
 
     if (dependsProcessLength > 0) {
       while (dependsProcessLength--) {
-        var dependence = depends_process[dependsProcessLength];
+        let dependence = depends_process[dependsProcessLength];
 
         if (dependence instanceof Object) {
-          if (dependence.hasOwnProperty('file_name') && dependence.hasOwnProperty('condition')) {
+          if (dependence.hasOwnProperty("file_name") && dependence.hasOwnProperty("condition")) {
 
             //TODO: VALIDATE CONDITIONS VALUES
 
@@ -220,7 +220,7 @@ class Chain {
                     //chain.end();
                   })
                   .catch(function (err) {
-                    logger.log('error', 'Error in loadProcessFileDependencies startProcesses:', err);
+                    logger.log("error", "Error in loadProcessFileDependencies startProcesses:", err);
                   });
               }
             });
@@ -266,10 +266,10 @@ class Chain {
 
   notificate(event) {
     var _this = this;
-    if (_this.hasOwnProperty('events') && _this.events !== undefined) {
+    if (_this.hasOwnProperty("events") && _this.events !== undefined) {
       if (_this.events.hasOwnProperty(event)) {
-        if (_this.events[event].hasOwnProperty('notifications')) {
-          var notificationsLength = _this.events[event].notifications.length;
+        if (_this.events[event].hasOwnProperty("notifications")) {
+          let notificationsLength = _this.events[event].notifications.length;
           while (notificationsLength--) {
             _this.events[event].notifications[notificationsLength].notificate(_this.values());
           }
@@ -281,8 +281,9 @@ class Chain {
   historicize(event) {
     var _this = this;
 
-    if (global.config.historyEnabled) {
-      var mChain = new mongoChain
+    return new Promise(function (resolve, reject) {
+      if (global.config.historyEnabled) {
+        var mChain = new mongoChain
         ({
           id: _this.id,
           uId: _this.uId,
@@ -300,37 +301,41 @@ class Chain {
           depends_chains_alt: _this.depends_chains_alt
         });
 
-      mChain.save(function (err, res) {
-        if (err) {
-          logger.log('error', `Error historicize ${event} chain ${_this.id}`, err);
-        }
-      });
-    }
+        mChain.save(function (err, res) {
+          if (err) {
+            logger.log("error", `Error historicize ${event} chain ${_this.id}`, err);
+          }
+          resolve();
+        });
+      }else{
+        resolve();
+      }
+    });
   }
 
   isStopped() {
     var _this = this;
-    return (_this.status === 'stop');
+    return (_this.status === "stop");
   }
 
   isEnded() {
     var _this = this;
-    return (_this.status === 'end');
+    return (_this.status === "end");
   }
 
   isRunning() {
     var _this = this;
-    return (_this.status === 'running');
+    return (_this.status === "running");
   }
 
   isErrored() {
     var _this = this;
-    return (_this.status === 'error');
+    return (_this.status === "error");
   }
 
   stop() {
     var _this = this;
-    _this.status = 'stop';
+    _this.status = "stop";
 
     var processesLength = _this.processes.length;
     while (processesLength--) {
@@ -346,11 +351,10 @@ class Chain {
     _this.duration_humnized = duration[1];
 
     _this.ended_at = new Date();
-    _this.status = 'end';
-    _this.notificate('on_end');
-    _this.historicize();
-
+    _this.status = "end";
+    _this.notificate("on_end");
     _this.refreshParentProcessChildsChainsStatus();
+    _this.historicize();
   }
 
   refreshParentProcessChildsChainsStatus() {
@@ -362,12 +366,12 @@ class Chain {
     if (processParentFound) {
       processParentFound.refreshProcessChildsChainsStatus()
         .then(function (processChildsChainsStatus) {
-          if (processChildsChainsStatus === 'end') {
+          if (processChildsChainsStatus === "end") {
             processParentFound.endChildChains();
           }
         })
         .catch(function (err) {
-          logger.log('error', 'Error in chain refreshParentProcessChildsChainsStatus:', err);
+          logger.log("error", "Error in chain refreshParentProcessChildsChainsStatus:", err);
         });
     }
   }
@@ -376,95 +380,97 @@ class Chain {
     this.started_at = new Date();
     this.hr_started_time = chronometer();
 
-    this.notificate('on_start');
-    this.historicize('start');
+    this.notificate("on_start");
+    this.historicize("start");
   }
 
   error() {
-    this.status = 'error';
-    this.notificate('on_fail');
+    this.status = "error";
+    this.notificate("on_fail");
     this.historicize();
   }
 
   //Start Chain
   start(options) {
-    var chain = this;
+    var _this = this;
+
+    _this.clean();
 
     if (options.inputIteration) {
-      var inputLength = chain.input.length;
-      chain.execute_input = {};
+      var inputLength = _this.input.length;
+      _this.execute_input = {};
 
       while (inputLength--) {
-        var key = Object.keys(chain.input[inputLength])[0];
-        var value = chain.input[inputLength][key];
-        chain.execute_input[key] = options.inputIteration[value];
+        let key = Object.keys(_this.input[inputLength])[0];
+        let value = _this.input[inputLength][key];
+        _this.execute_input[key] = options.inputIteration[value];
       }
     }
 
     return new Promise((resolve) => {
 
-      if (chain.hasOwnProperty('processes')) {
-        if (chain.processes instanceof Array && chain.processes.length > 0) {
+      if (_this.hasOwnProperty("processes")) {
+        if (_this.processes instanceof Array && _this.processes.length > 0) {
           // Initialize Chain
-          if (chain.schedule_interval && !options.executeInmediate) {
-            chain.scheduleRepeater = schedule.scheduleJob(chain.schedule_interval, async function (chain) {
-              if ((new Date(chain.end_date)) < (new Date())) {
-                chain.scheduleRepeater.cancel();
+          if (_this.schedule_interval && !options.executeInmediate) {
+            _this.scheduleRepeater = schedule.scheduleJob(_this.schedule_interval, async function (chain) {
+              if ((new Date(_this.end_date)) < (new Date())) {
+                _this.scheduleRepeater.cancel();
               }
               var chainCalendarEnable = true;
-              if (chain.calendars) {
-                chainCalendarEnable = await checkCalendar(chain.calendars);
+              if (_this.calendars) {
+                chainCalendarEnable = await checkCalendar(_this.calendars);
               }
               if (chainCalendarEnable) {
-                if (chain.isStopped() || chain.isEnded()) {
-                  chain.setChainToInitState()
+                if (_this.isStopped() || _this.isEnded()) {
+                  _this.setChainToInitState()
                     .then(function () {
-                      chain.startProcesses(options.waitEndChilds)
+                      _this.startProcesses(options.waitEndChilds)
                         .then(function () {
                           global.runtimePlan.plan.scheduleChains();
                         })
                         .catch(function (err) {
-                          logger.log('error', 'Error in startProcesses:', err);
+                          logger.log("error", "Error in startProcesses:", err);
                         });
                     })
                     .catch(function (err) {
-                      logger.log('error', 'Error setChainToInitState: ', err);
+                      logger.log("error", "Error setChainToInitState: ", err);
                     });
                 } else {
-                  logger.log('debug', `Trying start processes of ${chain.id} but this is running`);
+                  logger.log("debug", `Trying start processes of ${_this.id} but this is running`);
                 }
               } else {
-                logger.log('debug', `Running chain ${chain.id} disable in calendar`);
+                logger.log("debug", `Running chain ${_this.id} disable in calendar`);
               }
 
-            }.bind(null, chain));
+            }.bind(null, _this));
             resolve();
 
           } else {
-            chain.startProcesses(options.waitEndChilds)
+            _this.startProcesses(options.waitEndChilds)
               .then(function () {
                 global.runtimePlan.plan.scheduleChains();
                 resolve();
               })
               .catch(function (err) {
-                logger.log('error', 'Error in startProcesses:', err);
+                logger.log("error", "Error in startProcesses:", err);
                 resolve();
               });
           }
         } else {
-          logger.log('error', `Chain ${chain.id} dont have processes`);
-          throw new Error(`Chain ${chain.id} dont have processes`);
+          logger.log("error", `Chain ${_this.id} dont have processes`);
+          throw new Error(`Chain ${_this.id} dont have processes`);
         }
       } else {
-        logger.log('error', `Invalid chain ${chain.id}, processes property not found.`);
-        throw new Error(`Invalid chain ${chain.id}, processes property not found.`);
+        logger.log("error", `Invalid chain ${_this.id}, processes property not found.`);
+        throw new Error(`Invalid chain ${_this.id}, processes property not found.`);
       }
     });
   }
 
   waiting_dependencies() {
     var _this = this;
-    _this.notificate('on_waiting_dependencies');
+    _this.notificate("on_waiting_dependencies");
   }
 
   setChainToInitState() {
@@ -481,7 +487,7 @@ class Chain {
       _this.execute_input = {};
       //Warning
       if (_this.isRunning()) {
-        logger.log('warn', `This chain ${_this.id} is running yet and is being initialized`)
+        logger.log("warn", `This chain ${_this.id} is running yet and is being initialized`)
       }
       // Set All Process to stopped
       var processesLength = _this.processes.length;
@@ -496,7 +502,7 @@ class Chain {
     return new Promise((resolve) => {
 
       var processesLength = this.processes.length;
-      var statusChain = 'end';
+      var statusChain = "end";
 
       var processesError = 0;
       var processesEnd = 0;
@@ -505,16 +511,16 @@ class Chain {
 
       while (processesLength--) {
         switch (this.processes[processesLength].status) {
-          case 'stop':
+          case "stop":
             processesStop += 1;
             break;
-          case 'end':
+          case "end":
             processesEnd += 1;
             break;
-          case 'running':
+          case "running":
             processesRunning += 1;
             break;
-          case 'error':
+          case "error":
             processesError += 1;
             break;
         }
@@ -523,16 +529,16 @@ class Chain {
       processesLength = this.processes.length;
       while (processesLength--) {
         switch (this.processes[processesLength].childs_chains_status) {
-          case 'stop':
+          case "stop":
             processesStop += 1;
             break;
-          case 'end':
+          case "end":
             processesEnd += 1;
             break;
-          case 'running':
+          case "running":
             processesRunning += 1;
             break;
-          case 'error':
+          case "error":
             processesError += 1;
             break;
         }
@@ -540,12 +546,12 @@ class Chain {
 
       //Set Chain Status
       if (processesRunning > 0 || processesStop > 0) {
-        statusChain = 'running';
+        statusChain = "running";
       } else {
         if (processesError > 0) {
-          statusChain = 'error';
+          statusChain = "error";
         } else {
-          statusChain = 'end';
+          statusChain = "end";
         }
       }
 
@@ -562,14 +568,14 @@ class Chain {
       process.execute_input = _this.execute_input;
 
       if (process.isStopped()) {
-        logger.log('debug', `Process ${process.id} scheduled`);
+        logger.log("debug", `Process ${process.id} scheduled`);
 
         var processMustDo = _this.checkProcessActionToDo(process);
 
         switch (processMustDo) {
-          case 'run':
+          case "run":
 
-            logger.log('debug', `Starting ${process.id}`);
+            logger.log("debug", `Starting ${process.id}`);
 
             process.start()
               .then(function () {
@@ -581,18 +587,18 @@ class Chain {
                         resolve();
                       })
                       .catch(function (err) {
-                        logger.log('error', 'Error in startProcess:', err);
+                        logger.log("error", "Error in startProcess:", err);
                         resolve();
                       });
                   })
                   .catch(function (err) {
-                    logger.log('error', 'Error in startProcess:', err);
+                    logger.log("error", "Error in startProcess:", err);
                     _this.startProcesses(waitEndChilds)
                       .then(function (res) {
                         resolve();
                       })
                       .catch(function (err) {
-                        logger.log('error', 'Error in startProcess:', err);
+                        logger.log("error", "Error in startProcess:", err);
                         resolve();
                       });
                   });
@@ -600,18 +606,18 @@ class Chain {
               })
               .catch(function (err) {
                 err = err || process.execute_err_return;
-                logger.log('error', 'Process ' + process.id, err);
+                logger.log("error", "Process " + process.id, err);
 
                 if (process.end_chain_on_fail) {
                   _this.end();
 
                   _this.setChainToInitState()
                     .then(function () {
-                      logger.log('debug', 'setChainToInitState end_chain_on_fail');
+                      logger.log("debug", "setChainToInitState end_chain_on_fail");
                       resolve();
                     })
                     .catch(function (err) {
-                      logger.log('error', 'Error setChainToInitState on end_chain_on_fail: ', err);
+                      logger.log("error", "Error setChainToInitState on end_chain_on_fail: ", err);
                       resolve();
                     });
 
@@ -622,19 +628,19 @@ class Chain {
                       resolve();
                     })
                     .catch(function (err) {
-                      logger.log('error', 'Error in startProcesses (prev errored):', err);
+                      logger.log("error", "Error in startProcesses (prev errored):", err);
                       resolve();
                     });
                 }
               });
 
             break;
-          case 'wait':
+          case "wait":
             process.waiting_dependencies();
             resolve();
             break;
-          case 'end':
-            logger.log('debug', `Ignored: Only executed on_fail ${process.id}`);
+          case "end":
+            logger.log("debug", `Ignored: Only executed on_fail ${process.id}`);
             var notificateEnd = false;
             process.end(notificateEnd);
 
@@ -643,7 +649,7 @@ class Chain {
                 resolve();
               })
               .catch(function (err) {
-                logger.log('error', 'Error in startProcesses (end errored):', err);
+                logger.log("error", "Error in startProcesses (end errored):", err);
                 resolve();
               });
 
@@ -674,12 +680,12 @@ class Chain {
       _this.refreshChainStatus()
         .then(function (chainStatus) {
 
-          if (chainStatus === 'running' && !runningBeforeRefresh) {
+          if (chainStatus === "running" && !runningBeforeRefresh) {
             _this.running();
           }
 
           // If Chains is running:
-          if (chainStatus === 'running') {
+          if (chainStatus === "running") {
 
             if (waitEndChilds) { //Serie
               function execSerie(processes) {
@@ -690,7 +696,7 @@ class Chain {
                       .then(function (res) {
                       })
                       .catch(function (err) {
-                        logger.log('error', 'chain startProcesses execSerie  startProcesses waitEndChilds. Error ', err);
+                        logger.log("error", "chain startProcesses execSerie  startProcesses waitEndChilds. Error ", err);
                       });
                   });
                 });
@@ -702,7 +708,7 @@ class Chain {
                   resolve();
                 })
                 .catch(function (err) {
-                  logger.log('error', 'chain startProcesses execSerie waitEndChilds. Error ', err);
+                  logger.log("error", "chain startProcesses execSerie waitEndChilds. Error ", err);
                   resolve();
                 });
 
@@ -720,17 +726,17 @@ class Chain {
                   resolve();
                 })
                 .catch(function (err) {
-                  logger.log('error', `chain startProcesses:`, err)
+                  logger.log("error", `chain startProcesses:`, err);
                   resolve();
                 });
             }
 
           } else {
-            if (chainStatus === 'end') {
+            if (chainStatus === "end") {
               _this.end();
               resolve();
             } else {
-              if (chainStatus === 'error') {
+              if (chainStatus === "error") {
                 _this.error();
                 resolve();
               }
@@ -738,7 +744,7 @@ class Chain {
           }
         })
         .catch(function (err) {
-          logger.log('error', 'Error en chain startProcesses refreshChainStatus: ', err);
+          logger.log("error", "Error en chain startProcesses refreshChainStatus: ", err);
           resolve();
         });
     });
@@ -746,9 +752,9 @@ class Chain {
 
   checkProcessActionToDo(process) {
     var _this = this;
-    var action = 'run';
+    var action = "run";
 
-    if (process.hasOwnProperty('depends_process') && process.depends_process.length > 0) {
+    if (process.hasOwnProperty("depends_process") && process.depends_process.length > 0) {
       var depends_process = process.depends_process;
       var planProcess = _this.processes;
 
@@ -758,7 +764,7 @@ class Chain {
       // Check process dependencies
       while (dependsprocessLength--) {
         if (typeof depends_process[dependsprocessLength]) {
-          if (depends_process[dependsprocessLength].hasOwnProperty('file_name')) {
+          if (depends_process[dependsprocessLength].hasOwnProperty("file_name")) {
             // If any depends files is ready
             if (process.depends_files_ready) {
 
@@ -774,11 +780,11 @@ class Chain {
               }
 
               if (!dependenceFound) {
-                action = 'wait';
+                action = "wait";
               }
 
             } else {
-              action = 'wait';
+              action = "wait";
             }
           }
         }
@@ -793,52 +799,52 @@ class Chain {
 
         while (auxDependsprocessLength--) {
           switch (typeof depends_process[auxDependsprocessLength]) {
-            case 'string':
+            case "string":
 
               if (depends_process[auxDependsprocessLength] === planProcess[planProcessLength].id) {
                 if (!planProcess[planProcessLength].isEnded()) {
-                  action = 'wait';
+                  action = "wait";
                 } else {
                   if (planProcess[planProcessLength].isErrored()) {
-                    action = 'wait';
+                    action = "wait";
                   } else {
-                    action = 'run';
+                    action = "run";
                   }
                 }
               }
 
               break;
-            case 'object':
-              if (!depends_process[auxDependsprocessLength].hasOwnProperty('file_name')) {
+            case "object":
+              if (!depends_process[auxDependsprocessLength].hasOwnProperty("file_name")) {
 
                 if (depends_process[auxDependsprocessLength].id === planProcess[planProcessLength].id) {
 
                   if (!planProcess[planProcessLength].isEnded() && !planProcess[planProcessLength].isErrored()) {
-                    action = 'wait';
+                    action = "wait";
                   } else {
 
                     //CHECK ON_FAIL
                     var on_fail = false;
-                    if (depends_process[auxDependsprocessLength].hasOwnProperty('on_fail')) {
+                    if (depends_process[auxDependsprocessLength].hasOwnProperty("on_fail")) {
                       on_fail = depends_process[auxDependsprocessLength].on_fail;
                     }
 
                     if (planProcess[planProcessLength].isErrored()) {
                       if (on_fail) {
-                        action = 'run';
+                        action = "run";
                       } else {
-                        action = 'wait';
+                        action = "wait";
                       }
                     } else {
                       if (on_fail) {
-                        action = 'end';
+                        action = "end";
                       } else {
-                        action = 'run';
+                        action = "run";
                       }
                     }
 
                     // CHECK EVALUATE
-                    if (action === 'run' && depends_process[auxDependsprocessLength].hasOwnProperty('evaluate')) {
+                    if (action === "run" && depends_process[auxDependsprocessLength].hasOwnProperty("evaluate")) {
                       var evaluate = depends_process[auxDependsprocessLength].evaluate;
                       var evaluateLength = evaluate.length;
                       var _eval = {};
@@ -846,7 +852,7 @@ class Chain {
                       while (evaluateLength--) {
                         _eval = evaluate[evaluateLength];
                         if (!checkEvaluation(_eval.oper_left, _eval.condition, _eval.oper_right, process.values())) {
-                          action = 'wait';
+                          action = "wait";
                         }
                       }
                     }
@@ -862,6 +868,14 @@ class Chain {
       return action;
     }
   }
+
+  clean(){
+    var _this = this;
+    delete _this.duration_seconds;
+    delete _this.started_at;
+    delete _this.ended_at;
+  }
+
 }
 
 module.exports = Chain;
