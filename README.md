@@ -8,7 +8,7 @@
 [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] [![Dependency Status][david-badge]][david-badge-url] [![devDependency Status][david-dev-badge]][david-dev-badge-url]
 
 ## Installation
-```
+```bash
 npm install -g runnerty
 ```
 
