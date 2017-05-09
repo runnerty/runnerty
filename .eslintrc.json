@@ -29,7 +29,6 @@
     "semi": [
       "error",
       "always"
-    ],
-    "handle-callback-err": [2, "err"]
+    ]
   }
 }
