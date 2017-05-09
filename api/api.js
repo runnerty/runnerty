@@ -475,9 +475,9 @@ module.exports = function () {
             logger.log('error', 'FilePlan loadFileContent getChains: ' + err);
           });
       })
-      .catch(function (e) {
+      .catch(function (err) {
         res.status(500).send(`Error loading "${chainId}" (loading file):` + err);
-        logger.log('error', 'File Plan, constructor:' + e)
+        logger.log('error', 'File Plan, constructor:' + err)
       });
   });
 

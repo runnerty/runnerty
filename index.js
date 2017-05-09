@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 "use strict";
 
-var runnerty = require("./lib/app.js");
+require("./lib/app.js");

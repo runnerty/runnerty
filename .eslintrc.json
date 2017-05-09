@@ -30,6 +30,6 @@
       "error",
       "always"
     ],
-     "no-console":0
+    "handle-callback-err": [2, "err"]
   }
 }
