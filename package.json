@@ -1,8 +1,9 @@
 {
   "name": "runnerty",
+  "description": "A new way for process managing",
   "version": "0.0.6",
   "preferGlobal": true,
-  "main": "app.js",
+  "main": "index.js",
   "license": "MIT",
   "author": "Coderty",
   "homepage": "http://www.runnerty.io/",
@@ -19,7 +20,6 @@
   "bugs": {
     "url": "https://github.com/Coderty/runnerty/issues"
   },
-  "description": "",
   "scripts": {},
   "dependencies": {
     "ajv": "^4.11.8",
