@@ -55,9 +55,9 @@ Before you submit your Pull Request (PR) consider the following guidelines:
   that relates to your submission. You don't want to duplicate effort.
 * Make your changes in a new git branch:
 
-      ```shell
-      git checkout -b my-fix-branch master
-      ```
+    ```shell
+    git checkout -b my-fix-branch master
+    ```
 
 * Create your patch, **including appropriate test cases**.
 * Follow our [Coding Rules](#rules).
@@ -65,9 +65,9 @@ Before you submit your Pull Request (PR) consider the following guidelines:
   [commit message conventions](#commit). Adherence to these conventions
   is necessary because release notes are automatically generated from these messages.
 
-     ```shell
-     git commit -a
-     ```
+    ```shell
+    git commit -a
+    ```
   Note: the optional commit `-a` command line option will automatically "add" and "rm" edited files.
 
 * Push your branch to GitHub:
