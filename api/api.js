@@ -11,7 +11,7 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var helmet = require('helmet');
-var utils = require("../libs/utils.js");
+var utils = require("../lib/utils.js");
 var logger = utils.logger;
 var crypto = require('crypto');
 var config = global.config.general;
@@ -475,9 +475,9 @@ module.exports = function () {
             logger.log('error', 'FilePlan loadFileContent getChains: ' + err);
           });
       })
-      .catch(function (e) {
+      .catch(function (err) {
         res.status(500).send(`Error loading "${chainId}" (loading file):` + err);
-        logger.log('error', 'File Plan, constructor:' + e)
+        logger.log('error', 'File Plan, constructor:' + err)
       });
   });
 
