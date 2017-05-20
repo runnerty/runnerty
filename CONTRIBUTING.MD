@@ -1,4 +1,4 @@
-# Contributing to Angular
+# Contributing to Runnerty
 
 These contrigutions guidelines are based on the [Angular guidelines](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit)
 
@@ -119,10 +119,8 @@ from the main (upstream) repository:
     ```
 
 ## <a name="rules"></a> Coding Rules
-To ensure consistency throughout the source code, keep these rules in mind as you are working:
 
-* All public API methods **must be documented**. (Details TBC).
-* We are using eslint to manage code firmatting.
+* We are using eslint to manage code formatting.
 
 ## <a name="commit"></a> Commit Message Guidelines
 
