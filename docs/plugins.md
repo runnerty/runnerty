@@ -9,10 +9,10 @@ This is the list of the oficial plugins availables.
 - [https://www.npmjs.com/package/@runnerty/executor-mysql](MySql)
 - [https://www.npmjs.com/package/@runnerty/executor-s3](S3)
 - [https://www.npmjs.com/package/@runnerty/executor-pdf](PDF)
-- [https://www.npmjs.com/package/@runnerty/executor-shell](Shell) <-- se está modificando ahora mismo
+- [https://www.npmjs.com/package/@runnerty/executor-shell](Shell)
 - [https://www.npmjs.com/package/@runnerty/executor-scp](SCP)
 - [https://www.npmjs.com/package/@runnerty/executor-iterable](Iterable)
-- [https://www.npmjs.com/package/@runnerty/executor-redis](Redis) <-- me falta corregir eslint
+- [https://www.npmjs.com/package/@runnerty/executor-redis](Redis)
 - [https://www.npmjs.com/package/@runnerty/executor-postgres](Postgres)
 - [https://www.npmjs.com/package/@runnerty/executor-iconv](ICONV)
 - [https://www.npmjs.com/package/@runnerty/executor-check-online-service](Check Online Service)
