@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "A new way for process managing",
-  "version": "0.0.7",
+  "version": "0.0.6",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -11,7 +11,7 @@
     "bin": "./bin"
   },
   "bin": {
-    "runnerty": "./app.js"
+    "runnerty": "./index.js"
   },
   "repository": {
     "type": "git",
