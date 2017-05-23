@@ -39,9 +39,9 @@
     "jsonwebtoken": "^7.4.1",
     "lodash": "^4.17.4",
     "moment": "^2.18.0",
-    "mongoose": "^4.9.10",
+    "mongoose": "^4.9.2",
     "morgan": "^1.8.1",
-    "node-schedule": "^1.2.1",
+    "node-schedule": "^1.2.3",
     "redis": "^2.7.1",
     "winston": "^2.3.1"
   },
