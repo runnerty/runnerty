@@ -423,9 +423,7 @@ module.exports = function () {
       if (process) {
         if (process.isRunning()) {
           res.json();
-
-          process.proc.kill('SIGINT');
-          process.stop();
+          process.stop(req.user + ' REQUEST KILL PROCESS ' + processId + ' FROM CHAIN ' + chainId);
 
         } else {
           res.status(423).send(`Is not posible kill process "${processId}" of chain "${chainId}" to end because is ${process.status}`);

@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "A new way for process managing",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -11,7 +11,7 @@
     "bin": "./bin"
   },
   "bin": {
-    "runnerty": "./index.js"
+    "runnerty": "./app.js"
   },
   "repository": {
     "type": "git",
@@ -32,15 +32,14 @@
     "debug": "~2.2.0",
     "express": "^4.15.3",
     "express-jwt": "^3.4.0",
-    "fast-csv": "^2.4.0",
     "fs-extra": "^1.0.0",
     "helmet": "^2.1.2",
     "ical2json": "^1.2.0",
     "jsonwebtoken": "^7.4.1",
     "lodash": "^4.17.4",
     "moment": "^2.18.0",
-    "mongoose": "^4.9.2",
-    "morgan": "^1.8.1",
+    "mongoose": "^4.10.2",
+    "morgan": "^1.8.2",
     "node-schedule": "^1.2.3",
     "redis": "^2.7.1",
     "winston": "^2.3.1"
@@ -50,6 +49,7 @@
     "scheduler",
     "task",
     "task manager",
+    "automation",
     "job",
     "notifications",
     "executions",
@@ -68,6 +68,6 @@
     "dev ops"
   ],
   "engines": {
-    "node": ">=7.7.1"
+    "node": ">=7.10.0"
   }
 }
