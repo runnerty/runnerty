@@ -1,4 +1,29 @@
 # API (WS) - Runnerty
+
+## Configuración
+### En el fichero de configuración: general/api (conf.json)
+```json
+{
+  "general": {
+    "api": {
+      "port": 3456,
+      "users": [
+        {
+          "user": "runnerty",
+          "password": "password_runnerty"
+        },
+        {
+          "user": "usr_test",
+          "password": "pass_test"
+        }
+      ],
+      "secret": "RUNNERTY_SECRET_SAMPLE",
+      "limite_req": "20mb"
+    }
+  }
+}
+```
+
 ## Autenticación
 Login para obtener token de acceso
 ### POST [/auth/]
