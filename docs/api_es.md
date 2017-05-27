@@ -19,8 +19,9 @@ Login para obtener token de acceso
 ```
 
 Es importante tener en cuenta que en todas las llamadas a la API (excepto /auth/) deben contener las cabeceras:
- Content-Type: application/json
- Authorization: Bearer [TOKEN_RESULTANTE_DE_AUTH]
+
+`Content-Type: application/json`
+`Authorization: Bearer [TOKEN_RESULTANTE_DE_AUTH]`
 
 ## Consultar cadenas
 Consultar cadenas cargadas
@@ -81,7 +82,7 @@ Consultar proceso de una cadena
 + Sample (url)
 http://sample_host.com/api/process/CHAIN_SAMPLE/PROCESS_ONE
 
-## Matar un proceso de una cadena
+## Matar proceso de una cadena
 Matar un proceso de una cadena
 ### POST [/process/kill]
 
