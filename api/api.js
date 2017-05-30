@@ -387,14 +387,13 @@ module.exports = function () {
 
           process.execute_return = '';
           process.execute_err_return = '';
-          process.end();
+          process.end().then(() => {});
 
           if (continueChain) {
             chain.startProcesses()
-              .then(function (res) {
-              })
-              .catch(function (e) {
-                logger.log('error', `Error in startProcesses next to set end process "${processId}" of chain "${chainId}"  by ${req.user}:` + e);
+              .then(function (res) {})
+              .catch(function (err) {
+                logger.log('error', `Error in startProcesses next to set end process "${processId}" of chain "${chainId}"  by ${req.user}:` + err);
               })
           }
         } else {
