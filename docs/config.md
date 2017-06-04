@@ -1,6 +1,6 @@
 # configuration
 
-###config.json
+### config.json
 
 The general configuraton and params of the workflows is in the conf.json file. Runnerty will try to get the config.json file in the actual path.
 
@@ -59,7 +59,7 @@ This is an example of the configutarion of two executors (shell and mysql):
 }
 ```
 
-### Notificators
+### Notificators
 
 The Notificators are plugins which allows Runnerty to comunicate events to different services and channels. This is a list of the official available [Plugins]
 
@@ -91,7 +91,7 @@ This is an example of the configutarion of two notificators (mail and telegram):
 }
 ```
 
-###global values
+### Global values
 
 It is possible to define values that can be used in the chains an process (paths, files, data, …):
 
