@@ -39,7 +39,7 @@ Runnerty will try to get the plan.json file in the actual path but it is possibl
 }
 ```
 
-### structure (chain and process)
+### Structure (chain and process)
 
 A plan is formed by one or more chains. A chain is a set of processes with it’s owns properties like scheduling, events, outputs, etc.
 
