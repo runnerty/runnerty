@@ -34,9 +34,9 @@ Id, identifies the chain. with this identifier Runnerty will provide a global va
 
 ```json
 {
-	...
-	"id":"EXAMPLE_CHAIN",
-	...
+  ...
+  "id":"EXAMPLE_CHAIN",
+  ...
 }
 ```
 
@@ -44,9 +44,9 @@ name, it's a description of the chain:
 
 ```json
 {
-	...
-	"name":"Name of the sample chain",
-	...
+  ...
+  "name":"Name of the sample chain",
+  ...
 }
 ```
 
@@ -57,9 +57,9 @@ This scheduling will execute the chain at every minute:
 
 ```json
 {
-	...
-	"schedule_interval":"*/1 * * * *",
-	...
+  ...
+  "schedule_interval":"*/1 * * * *",
+  ...
 }
 ```
 
@@ -74,9 +74,9 @@ It is possible to define dependencies with other chains or with processes of oth
 
 ```json
 {
-	...
-	"depends_chains":["CHAIN_ONE"],
-	...
+  ...
+  "depends_chains":["CHAIN_ONE"],
+  ...
 }
 ```
 
@@ -84,9 +84,9 @@ The chain of the example will no execute after the chain with the id CHAIN_ONE i
 
 ```json
 {
-	...
-	"depends_chains":{"chain_id":"CHAIN_ONE","process_id":"PROCESS_ONE"},
-	...
+  ...
+  "depends_chains":{"chain_id":"CHAIN_ONE","process_id":"PROCESS_ONE"},
+  ...
 }
 ```
 
@@ -100,24 +100,24 @@ This is an example o the events of a chain using the Telegam notificator:
 
 ```json
 {
-	...
-	"events": {
+  ...
+  "events": {
     "on_start": {
-			"notifications": [
+      "notifications": [
         {
           "id": "telegram_default",
           "message": "THE CHAIN HAS STARTED"
         }
       ]
-		},
-		"on_fail": {
-			"notifications": [
+    },
+    "on_fail": {
+      "notifications": [
         {
-		      "id": "telegram_default",
-	        "message": "THE CHAIN HAS FAILED"
+          "id": "telegram_default",
+	  "message": "THE CHAIN HAS FAILED"
         }
       ]
-		},
+    },
     "on_end": {
       "notifications": [
         {
@@ -127,7 +127,7 @@ This is an example o the events of a chain using the Telegam notificator:
       ]
     }
   }
-	...
+  ...
 }
 ```
 
