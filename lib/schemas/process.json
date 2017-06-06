@@ -6,6 +6,8 @@
     "properties": {
       "id": {"type": "string"},
       "name": {"type": "string"},
+      "depends_process":{"type": "array"},
+      "depends_conditions":{"type": "array"},
       "exec": {
         "type": "object",
         "required": ["id"],
