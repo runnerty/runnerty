@@ -53,13 +53,12 @@ This is the basic structure of a plan with chain with one process:
       "depends_chains":[],
       "processes":[
         {
-          "id":"CONCAT_ALL_CSV_FILES",
-          "name":"Concatena todos los archivos .csv en uno",
+          "id":"PROCESS_ONE",
+          "name":"Firts process of the chain",
           "exec":{
             "id":"shell default",
-            "command":"echo 'Hello world'",
-          },
-          "end_chain_on_fail":true,
+            "command":"echo 'Hello world'"
+          }
         }
       ]
     }
