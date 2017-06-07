@@ -17,13 +17,13 @@ In the conf.json file is set the configuration of the different executors, notif
   "executors": [
     {
       "id": "shell_default",
-      "type": "runnerty-executor-shell"
+      "type": "@runnerty/executor-shell"
     }
   ],
   "notificators": [
     {
       "id": "telegram_default",
-      "type": "telegram",
+      "type": "@trunnerty/notificator-telegram",
       "token": "MyTokenId",
       "chat_id": "MyChatId"
     }
@@ -44,11 +44,11 @@ This is an example of the configutarion of two executors (shell and mysql):
   "executors": [
     {
       "id": "shell_default",
-      "type": "runnerty-executor-shell"
+      "type": "@runnerty/executor-shell"
     },
     {
       "id": "mysql_default",
-      "type": "runnerty-executor-mysql",
+      "type": "@runnerty/executor-mysql",
       "user": "mysqlusr",
       "password": "mysqlpass",
       "database": "MYDB",
@@ -72,13 +72,13 @@ This is an example of the configutarion of two notificators (mail and telegram):
   "notificators": [
     {
       "id": "telegram_default",
-      "type": "telegram",
+      "type": "@runnerty/notificator-telegram",
       "token": "MyTokenId",
       "chat_id": "MyChatId"
     },
     {
       "id": "mail_default",
-      "type": "runnerty-notificator-mail",
+      "type": "@runnerty/notificator-mail",
       "disable": false,
       "from": "Runnerty Notificator <my@sender.com>",
       "transport": "smtp://my%mailsender.com:pass@smtp.host.com/?pool=true",
@@ -122,13 +122,31 @@ These values can be used in the whole plan (chains and proccess) referencing the
 
 
 ### Cripted passwords
-
-Runnerty offers the possibility to encrypt passwords so it is not necessary to put real passwords on the conf.json file.
+Runnerty offers the possibility to encrypt passwords so it is not necessary to put passwords on the conf.json file.
 
 ```
-runnerty -e password_to_encrypt
+runnerty -p master_cryptor_password -e password_to_encrypt
 ```
 
-This will return the crypted password. 
+Note that master_cryptor_password is the personal password needed to decrypt the passwords.
+
+This will return the crypted password. Now, in the conf.json you can use the crypted paswords with the property crypted_password (Runnerty will decrypt the crypted password in memory and send it to the executors):
+
+```json
+{
+  "executors": [
+    {
+      "id": "mysql_default",
+      "type": "@runnerty/executor-mysql",
+      "user": "mysqlusr",
+      "crypted_password": "ABDEFE1234..",
+      "database": "MYDB",
+      "host": "myhost.com",
+      "port": "3306"
+    }
+  ]
+}
+```
+
 
 [Plugins]: https://github.com/Coderty/runnerty/blob/master/docs/plugins.md
