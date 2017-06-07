@@ -75,7 +75,9 @@
         {
           "id":"PROCESS_TWO",
           "name":"Proccess Two",
-          "depends_process":["PROCESS_ONE"],
+          "depends_process":[{"id":"PROCESS_ONE","evaluate": [{ "oper_left": "1", "condition": "==", "oper_right": "1" }]}],
+          "depends_alt":[],
+          "depends_conditions":[{ "oper_left": "1", "condition": "==", "oper_right": "1" }],
           "exec":{
             "id":"shell_default",
             "command":"echo hello word from :PROCESS_ID!"
@@ -111,6 +113,14 @@
                   "id":"mail_default",
                   "subject":"RUNNERTY SAMPLE",
                   "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_RETURN"
+                }
+              ]
+            },
+            "on_ignore":{
+              "notifications":[
+                {
+                  "id":"telegram_default",
+                  "message":">  > IGNORADO EL PROCESO *:PROCESS_NAME* "
                 }
               ]
             }
