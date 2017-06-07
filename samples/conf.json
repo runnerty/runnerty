@@ -25,6 +25,7 @@
         "depends_files_ready"
       ]
     },
+    "calendarsPath": "/calendars_dir/",
     "history": {
       "disable":true,
       "mongodb":{
