@@ -20,6 +20,21 @@
               "limite_req": {"type": "string"},
               "propertiesExcludesInResponse": {"type": "array"}
             }
+          },
+          "history": {
+            "type": "object",
+            "properties": {
+              "disable": {"type": "boolean"},
+              "mongodb": {
+                "type": "object",
+                "required": ["host","database"],
+                "properties": {
+                  "host": {"type": "string"},
+                  "port": {"type": "number"},
+                  "database": {"type": "string"}
+                }
+              }
+            }
           }
         }
       },

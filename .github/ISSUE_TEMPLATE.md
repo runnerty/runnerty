@@ -6,7 +6,7 @@ IF YOU DON'T FILL OUT THE FOLLOWING INFORMATION WE MIGHT CLOSE YOUR ISSUE WITHOU
 ```
 [ ] bug report => search github for a similar issue or PR before submitting
 [ ] feature request
-[ ] support request => Please do not submit support request here, instead see https://github.com/angular/angular/blob/master/CONTRIBUTING.md#question
+[ ] support request => Please do not submit support request here, instead see https://github.com/Coderty/runnerty/blob/master/CONTRIBUTING.md#question
 ```
 
 **Current behavior**
@@ -28,8 +28,8 @@ https://plnkr.co or similar
 **Please tell us about your environment:**
 <!-- Operating system, IDE, package manager, HTTP server, ... -->
 
-* **Runnerty version:** 2.0.X
-<!-- Check whether this is still an issue in the most recent Angular version -->
+* **Runnerty version:** 0.0.1
+<!-- Check whether this is still an issue in the most recent Runnerty version -->
 
 * **Operation system:**
 <!-- All OS where this could be reproduced -->
