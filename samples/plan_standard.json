@@ -30,7 +30,7 @@
       "processes":[
         {
           "id":"PROCESS_ONE",
-          "name":"Proccess One",
+          "name":"Process One",
           "depends_process":[],
           "exec":{
             "id":"shell_default",
@@ -74,7 +74,7 @@
         },
         {
           "id":"PROCESS_TWO",
-          "name":"Proccess Two",
+          "name":"Process Two",
           "depends_process":["PROCESS_ONE"],
           "exec":{
             "id":"shell_default",

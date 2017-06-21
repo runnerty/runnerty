@@ -111,14 +111,14 @@ It is possible to define values that can be used in the chains an process (paths
       	},
         "my_values":{
           "value_one":"VALUE_ONE",
-          "value_one":"VALUE_TWO",
+          "value_one":"VALUE_TWO"
         }
       }
     ]
   }
 ```
 
-These values can be used in the whole plan (chains and proccess) referencing them. Runnerty has also some default values. Have a look at: [link]
+These values can be used in the whole plan (chains and process) referencing them. Runnerty has also some default values. Have a look at: [link]
 
 
 ### Cripted passwords
