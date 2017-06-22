@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "A new way for process managing",
-  "version": "0.1.0-rc.2",
+  "version": "0.1.0-rc.3",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -22,7 +22,7 @@
   },
   "scripts": {},
   "dependencies": {
-    "ajv": "^4.11.8",
+    "ajv": "^5.2.0",
     "anymatch": "^1.3.0",
     "body-parser": "^1.17.2",
     "bytes": "^2.5.0",
@@ -37,7 +37,7 @@
     "jsonwebtoken": "^7.4.1",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
-    "mongoose": "^4.10.7",
+    "mongoose": "^4.10.8",
     "morgan": "^1.8.2",
     "node-schedule": "^1.2.3",
     "redis": "^2.7.1",
