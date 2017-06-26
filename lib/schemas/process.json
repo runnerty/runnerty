@@ -22,6 +22,7 @@
       },
       "retries": {"type": "number"},
       "retry_delay": {"type": "number"},
+      "notificate_only_last_fail": {"type": "boolean"},
       "end_chain_on_fail": {"type": "boolean"},
       "output": {
         "type": "array",
