@@ -2,13 +2,13 @@
   "executors": [
     {
       "id": "shell_default",
-      "type": "runnerty-executor-shell"
+      "type": "@runnerty-executor-shell"
     }
   ],
   "notificators": [
     {
       "id": "mail_default",
-      "type": "runnerty-notificator-mail",
+      "type": "@runnerty-notificator-mail",
       "disable": false,
       "from": "Runnerty <my@mail.com>",
       "transport": "smtps://my%40mail.com:mypass@smtp.mail.com/?pool=true",
