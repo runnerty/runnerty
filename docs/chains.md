@@ -323,4 +323,3 @@ now we use these values everywhere in our iterable chain:
 In the example :email has the user´s email and :name has the user's name
 
 
-

@@ -10,6 +10,8 @@ It is also possible to indicate dependencies using conditional operations:
 
 ejemplo
 
+### operators 
+
 ### exec
 
 ### events
@@ -17,3 +19,5 @@ ejemplo
 ### output
     mensaje, maxsize, contact
 ### output share
+
+### output iterable
