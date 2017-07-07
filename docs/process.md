@@ -11,7 +11,7 @@ One of the most important executors could be the shell executor ([@runnerty/exec
 Each process has two identification fields: ```id``` and ```name```
 
 ```id``` is the unique identification string of the process.
-```name``` is a drescription of ther process
+```name``` is a drescription of the process
 
 ```json
 "processes": [
@@ -24,7 +24,7 @@ Each process has two identification fields: ```id``` and ```name```
 
 ### dependencies
 
-Like in the chains it is possible to idicate that one processes depends from another or various processes.
+Like in the chains, it is possible to idicate that one process depends from another or various processes.
 
 ```json
 "processes": [
@@ -50,7 +50,7 @@ It is also possible to indicate dependencies using conditional operations.
 ]
 ```
 
-In oper left and right we can use values comming from the output of other process or chain, values defined in global_values in the conf.json or values defined in the custom_values of the chain.
+In oper_left and oper_right we can use values comming from the output of other process or chain, values defined in global_values in the conf.json or values defined in the custom_values of the chain.
 
 These are the different conditions that can be used: ```"==", "!=", ">=", "<="```
 
@@ -84,15 +84,15 @@ In this example we are using our shell_default executor, the configuration for t
 }
 ```
 
-With the ```id``` field we are indicating the executor that we are going to be used. The rest of the fields are params for the executor. Know more about the executors and their usage in [executors] doc. Yo can also chekc the [conf] documentatio to know how to configure them.
+With the ```id``` field we are indicating the executor that we are going tov use. The rest of the fields are params for the executor. Know more about the executors and their usage in [executors] doc. Yo can also chekc the [conf] documentation to know how to configure them.
 
 ### events
 
-With the events property Runnerty can access to the differnts states of the process: ```"on_start", "on_fail", "on_retry" and "on_end"```.
+With the events property Runnerty can access to the differnt states of the process: ```"on_start", "on_fail", "on_retry" and "on_end"```.
 
 In this events we can notify anything on a state of the process using a notificator. know mor about [notificators].
 
-This is an example of the events of a process using the Telegam notificator to notify the different states of the process to a Telegram's chat:
+This is an example of the events of a process using the Telegram notificator to notify the different states of the process to a Telegram chat:
 
 ```json
 {
