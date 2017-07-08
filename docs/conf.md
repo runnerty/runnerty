@@ -111,7 +111,7 @@ It is possible to define values that can be used in the chains an process (paths
       	},
         "my_values":{
           "value_one":"VALUE_ONE",
-          "value_one":"VALUE_TWO",
+          "value_two":"VALUE_TWO"
         }
       }
     ]

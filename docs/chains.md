@@ -99,6 +99,20 @@ In the chain can be indicated a calendar when the chains is going to be enable a
 }
 ```
 
+### custom values
+
+It is possible to define and overwrite global values at chain level setting a custom_values attribute:
+```json
+{
+  "id":"EXAMPLE_CHAIN",
+  "name":"Name of the sample chain",
+  "custom_values": 
+    {
+      "YYYY":"1986",
+      "MY_LOCAL_CHAIN_VALUE":"ABC"
+    }
+}
+```
 
 ### dependencies
 
@@ -321,5 +335,4 @@ now we use these values everywhere in our iterable chain:
 }
 ```
 In the example :email has the user´s email and :name has the user's name
-
 

@@ -25,6 +25,7 @@
         "depends_files_ready"
       ]
     },
+    "calendarsPath": "/calendars_dir/",
     "history": {
       "disable":true,
       "mongodb":{
@@ -43,12 +44,12 @@
   "executors": [
     {
       "id":"scp_default",
-      "type":"runnerty-executor-scp",
+      "type":"@runnerty-executor-scp",
       "identityFile": "/.ssh/my.pem"
     },
     {
       "id":"s3_default",
-      "type":"runnerty-executor-s3",
+      "type":"@runnerty-executor-s3",
       "apiVersion": "2006-03-01",
       "accessKeyId": "ABC123",
       "secretAccessKey": "ABC123",
@@ -58,7 +59,7 @@
     },
     {
       "id": "mail_default",
-      "type": "runnerty-executor-mail",
+      "type": "@runnerty-executor-mail",
       "disable": false,
       "from": "Runnerty <my@mail.com>",
       "transport": "smtps://my%40mail.com:mypass@smtp.mail.com/?pool=true",
@@ -69,20 +70,20 @@
     },
     {
       "id": "iconv_default",
-      "type": "runnerty-executor-iconv"
+      "type": "@runnerty-executor-iconv"
     },
     {
       "id": "shell_default",
-      "type": "runnerty-executor-shell"
+      "type": "@runnerty-executor-shell"
     },
     {
       "id": "wait_default",
-      "type": "runnerty-executor-wait",
+      "type": "@runnerty-executor-wait",
       "seconds": "60"
     },
     {
       "id": "mysql_default",
-      "type": "runnerty-executor-mysql",
+      "type": "@runnerty-executor-mysql",
       "user": "mysql_user",
       "password": "mysql_password",
       "_crypted_password": "mysql_crypted_password",
@@ -91,7 +92,7 @@
       "port": "3306"
     },
     {"id":"postgres_default",
-      "type":"runnerty-executor-postgres",
+      "type":"@runnerty-executor-postgres",
       "user":"postgres_user",
       "password":"postgres_password",
       "database":"MYDB",
@@ -100,7 +101,7 @@
     },
     {
       "id": "redis_default",
-      "type": "runnerty-executor-redis",
+      "type": "@runnerty-executor-redis",
       "password": "redis_password",
       "host": "redishost.com",
       "port": "6379",
@@ -110,7 +111,7 @@
   "notificators": [
     {
       "id": "slack_default",
-      "type": "runnerty-notificator-slack",
+      "type": "@runnerty-notificator-slack",
       "webhookurl":"https://hooks.slack.com/services/ABC123/ABC123/ABC123",
       "bot_name": "Runnerty-Sentinel",
       "channel": "my_runnerty_channel",
@@ -119,7 +120,7 @@
     },
     {
       "id": "mail_default",
-      "type": "runnerty-notificator-mail",
+      "type": "@runnerty-notificator-mail",
       "disable": false,
       "from": "Runnerty <my@mail.com>",
       "transport": "smtps://my%40mail.com:mypass@smtp.mail.com/?pool=true",
@@ -130,7 +131,7 @@
     },
     {
       "id": "telegram_default",
-      "type": "runnerty-notificator-telegram",
+      "type": "@runnerty-notificator-telegram",
       "token": "ABC123",
       "chat_id": "ABC123"
     }
