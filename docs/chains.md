@@ -17,7 +17,7 @@ This is an example of a basic chain with one process:
           "id":"PROCESS_ONE",
           "name":"Firt process of the chains",
           "exec":{
-            "id":"shell default",
+            "id":"shell_default",
             "command":"echo 'Hello world'",
           },
           "end_chain_on_fail":true,
@@ -100,6 +100,7 @@ In the chain can be indicated a calendar when the chains is going to be enable a
 ```
 
 ### custom values
+
 It is possible to define and overwrite global values at chain level setting a custom_values attribute:
 ```json
 {
@@ -156,7 +157,7 @@ With the events property Runnerty can access to the differnts states of the chai
 
 In this events we can notify anything using a notificator. (know mor about notificators [link].
 
-This is an example o the events of a chain using the Telegam notificator:
+This is an example of the events of a chain using the Telegam notificator to notify the different states of the chain to a Telegram's chat:
 
 ```json
 {
@@ -207,7 +208,7 @@ In the processes property can be defined all ther processes thar are going to be
       "name":"First process of the chain",
       "exec":
         {
-          "id":"shell default",
+          "id":"shell_default",
           "command":"echo 'Hello world'",
         }
     }
@@ -218,7 +219,7 @@ In the processes property can be defined all ther processes thar are going to be
 
 ### iteable chains
 
-An iterale chain is a chain that is going to be executed for each objects of the array returned by a process. For example, if we have a process which returns and objects array we can execute an iterable chain for each object of the array.
+An iterale chain is a chain that is going to be executed for each object of the array returned by a process. For example, if we have a process which returns an objects array we can execute an iterable chain for each object of the array.
 
 In this example we are going to send a email to al the users of the USERS table.
 
@@ -334,6 +335,4 @@ now we use these values everywhere in our iterable chain:
 }
 ```
 In the example :email has the user´s email and :name has the user's name
-
-
 
