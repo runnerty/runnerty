@@ -240,13 +240,13 @@ we have the chain get-users-email.json with a process which selects all the user
         { "id":"mysql_default",
           "command": "SELECT email, name FROM USERS"
         },
-      "output_iterable":"PROCESS_EXEC_DB_RETURN"
+      "output_iterable":"PROCESS_EXEC_DATA_OUTPUT"
     }
   ]
 }
 ```
 
-We assign the array returned for the select with the PROCESS_EXEC_DB_RETURN value to the property "output_iterable". Now we are going to define the iterable chain "send-mail-to-user"
+We assign the array returned for the select with the PROCESS_EXEC_DATA_OUTPUT value to the property "output_iterable". Now we are going to define the iterable chain "send-mail-to-user"
 
 
 ```json

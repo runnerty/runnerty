@@ -175,14 +175,14 @@ For example:
         { "id":"mysql_default",
           "command": "SELECT email FROM USERS WHERE ID = 1"
         },
-      "output_share":[{"key":"USER","name":"EMAIL","value":":PROCESS_EXEC_RETURN"}]
+      "output_share":[{"key":"USER","name":"EMAIL","value":":PROCESS_EXEC_MSG_OUTPUT"}]
     }
   ]
 }
 ```
 In this example we are getting the email of an user from the database using the @runnerty/executor_mysql and assigning it to a value. This way we can use the ```:USER_EMAIL``` value anywhere of the chain.
 
-Note that in this example we are are using the value ```:PROCESS_EXEC_RETURN``` This is a global_value that contains the return of the process. Have a look at the [global_values] documentation.
+Note that in this example we are are using the value ```:PROCESS_EXEC_MSG_OUTPUT``` This is a global_value that contains the return of the process. Have a look at the [global_values] documentation.
 
 ### output iterable
 
