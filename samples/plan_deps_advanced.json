@@ -43,7 +43,7 @@
             {
               "file_name":"/etc/runnerty/test.log",
               "write":[
-                "> EXEC :PROCESS_ID - :DD-:MM-:YY :HH::mm::ss: RETURN: :PROCESS_EXEC_RETURN"
+                "> EXEC :PROCESS_ID - :DD-:MM-:YY :HH::mm::ss: RETURN: :PROCESS_EXEC_MSG_OUTPUT"
               ],
               "concat":true,
               "maxsize":"10mb"
@@ -66,7 +66,7 @@
                 {
                   "id":"mail_default",
                   "subject":"RUNNERTY SAMPLE",
-                  "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_RETURN"
+                  "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_MSG_OUTPUT"
                 }
               ]
             }
@@ -89,7 +89,7 @@
             {
               "file_name":"/etc/runnerty/test.log",
               "write":[
-                "> EXEC :PROCESS_ID - :DD-:MM-:YY :HH::mm::ss: RETURN: :PROCESS_EXEC_RETURN"
+                "> EXEC :PROCESS_ID - :DD-:MM-:YY :HH::mm::ss: RETURN: :PROCESS_EXEC_MSG_OUTPUT"
               ],
               "concat":true,
               "maxsize":"10mb"
@@ -112,7 +112,7 @@
                 {
                   "id":"mail_default",
                   "subject":"RUNNERTY SAMPLE",
-                  "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_RETURN"
+                  "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_MSG_OUTPUT"
                 }
               ]
             },
@@ -120,7 +120,7 @@
               "notifications":[
                 {
                   "id":"telegram_default",
-                  "message":">  > IGNORADO EL PROCESO *:PROCESS_NAME* "
+                  "message":">  > PROCESS IGNORED *:PROCESS_NAME* "
                 }
               ]
             }
