@@ -32,14 +32,8 @@ module.exports = function () {
     next();
   });
 
-  function excluder(key, value) {
-    if (config.api.propertiesExcludesInResponse.indexOf(key) !== -1) {
-      return undefined;
-    }
-    return value;
-  }
 
-  function serializer(replacer) {
+  function serializer() {
     var stack = [];
     var keys = [];
 
@@ -58,11 +52,9 @@ module.exports = function () {
       else {
         stack.push(value);
       }
-      return replacer === null ? value : replacer(key, value);
+      return value;
     };
   }
-
-  app.set("json replacer", excluder);
 
 
   app.use(bodyParser.urlencoded({extended: true}));
@@ -131,7 +123,7 @@ module.exports = function () {
     path: ["/auth"]
   }));
 
-  app.use(function (err, req, res, next) {
+  app.use(function (err, req, res) {
     if (err.name === "UnauthorizedError") {
       res.status(401).send("Unauthorized");
     }
@@ -172,35 +164,29 @@ module.exports = function () {
 
   // GET ALL CHAINS
   router.get("/chains", function (req, res) {
+    let output = apiPlan.getAllChains(config.api.chainsFieldsResponse);
+    res.send(JSON.stringify(output, serializer()));
+  });
 
-    let objectToResult = ["depends_chains", "args", "events", "output", "chain_values", "schedule_interval", "scheduleCancel", "scheduleRepeater", "parentUId", "exec", "depends_process", "retries", "retry_delay", "end_on_fail", "end_chain_on_fail"];
+  // GET ALL CHAINS
+  router.get("/chains/status/:status", function (req, res) {
+    let status = req.params.status;
 
-    function excluderGetChain(key, value) {
-      if (objectToResult.indexOf(key) !== -1) {
-        return undefined;
-      }
-      return value;
+    if (status){
+      let output = apiPlan.getChainsByStatus(status, config.api.chainsFieldsResponse);
+      res.send(JSON.stringify(output, serializer()));
+    }else{
+      res.status(500).send("Param status not found");
     }
-
-    res.send(JSON.stringify(apiPlan.chains, serializer(excluderGetChain)));
   });
 
   // GET A CHAIN
   router.get("/chain/:chainId", function (req, res) {
     var chainId = req.params.chainId;
-    var chain = apiPlan.getChainById(chainId);
-
-    let objectToResult = ["depends_chains", "args", "events", "output", "chain_values", "schedule_interval", "scheduleCancel", "scheduleRepeater", "parentUId", "exec", "depends_process", "retries", "retry_delay", "end_on_fail", "end_chain_on_fail"];
-
-    function excluderGetChain(key, value) {
-      if (objectToResult.indexOf(key) !== -1) {
-        return undefined;
-      }
-      return value;
-    }
+    var chain = apiPlan.getChainById(chainId, config.api.chainsFieldsResponse);
 
     if (chain) {
-      res.send(JSON.stringify(chain, serializer(excluderGetChain)));
+      res.send(JSON.stringify(chain, serializer()));
     } else {
       res.status(404).send(`Chain "${chainId}" not found`);
     }
@@ -238,10 +224,10 @@ module.exports = function () {
   //GET ALL PROCESSES OF CHAIN INDICATED IN PARAMETER chainId
   router.get("/processes/:chainId", function (req, res) {
     var chainId = req.params.chainId;
-    var chain = apiPlan.getChainById(chainId);
+    var chain = apiPlan.getChainById(chainId, config.api.chainsFieldsResponse);
 
     if (chain) {
-      res.json(chain.processes);
+      res.json(chain.processes || {});
     } else {
       res.status(404).send(`Chain "${chainId}" not found`);
     }
@@ -268,10 +254,10 @@ module.exports = function () {
   router.get("/process/:chainId/:processId", function (req, res) {
     var chainId = req.params.chainId;
     var processId = req.params.processId;
-    var chain = apiPlan.getChainById(chainId);
+    var chain = apiPlan.getChainById(chainId, config.api.chainsFieldsResponse);
 
     if (chain) {
-      var process = chain.getProcessById(processId);
+      var process = chain.getProcessById(processId, config.api.processFieldsResponse);
       if (process) {
         res.json(process);
       } else {
@@ -338,8 +324,8 @@ module.exports = function () {
 
           if (continueChain) {
             chain.startProcesses()
-              .then(function (res) {})
-              .catch(function (err) {
+              .then({})
+              .catch(err => {
                 logger.log("error", `Error in startProcesses next to set end process "${processId}" of chain "${chainId}"  by ${req.user}:` + err);
               });
           }
@@ -381,64 +367,6 @@ module.exports = function () {
       res.status(404).send(`Chain "${chainId}" not found`);
     }
 
-  });
-
-  // LOAD/REALOAD CHAIN
-  router.post("/chain/load", function (req, res) {
-
-    var chainId = req.body.chainId;
-    var planFile = req.body.planFile || config.planFilePath;
-
-    apiPlan.loadFileContent(planFile)
-      .then((fileRes) => {
-        apiPlan.getChains(fileRes)
-          .then((fileChains) => {
-
-            var newChain = fileChains.find(function byId(chain) {
-              return chain.id === chainId;
-            });
-
-            if (newChain) {
-              apiPlan.loadChain(newChain)
-                .then(function (newChainObj) {
-                  res.json();
-                  apiPlan.loadChainToPlan(newChainObj);
-                  // Force refresh binBackup
-                  apiPlan.refreshBinBackup();
-                })
-                .catch(function (err) {
-                  res.status(500).send(`Error loading "${chainId}":` + err);
-                  logger.log("error", "FilePlan new Plan: " + err);
-                });
-            } else {
-              res.status(404).send(`Chain "${chainId}" not found in file`);
-            }
-          })
-          .catch(function (err) {
-            res.status(500).send(`Error loading file chain "${chainId}":` + err);
-            logger.log("error", "FilePlan loadFileContent getChains: " + err);
-          });
-      })
-      .catch(function (err) {
-        res.status(500).send(`Error loading "${chainId}" (loading file):` + err);
-        logger.log("error", "File Plan, constructor:" + err);
-      });
-  });
-
-  // REMOVE CHAIN
-  router.post("/chain/remove", function (req, res) {
-    var chainId = req.body.chainId;
-    var chain = apiPlan.getChainById(chainId);
-    if (chain) {
-      if (!chain.isEnded() && !chain.isRunning()) {
-        res.json();
-        apiPlan.chains.splice(apiPlan.getIndexChainById(chainId), 1);
-      } else {
-        res.status(423).send(`Is not posible remove chain "${chainId}" because is ${chain.status}`);
-      }
-    } else {
-      res.status(404).send(`Chain "${chainId}" not found`);
-    }
   });
 
 };
