@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "A new way for process managing",
-  "version": "1.0.0-rc.5",
+  "version": "1.0.0-rc.6",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -32,6 +32,7 @@
     "express": "^4.15.3",
     "express-jwt": "^5.3.0",
     "fs-extra": "^4.0.0",
+    "glob-to-regexp": "^0.3.0",
     "helmet": "^3.6.1",
     "ical2json": "^1.2.0",
     "jsonwebtoken": "^7.4.1",
