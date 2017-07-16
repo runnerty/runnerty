@@ -13,9 +13,7 @@ var utils = require("../lib/utils.js");
 var logger = utils.logger;
 var config = global.config.general;
 const port = config.api.port;
-/*
- var lusca           = require('lusca');
- */
+
 
 //============================================
 var apiPlan = global.runtimePlan.plan;
@@ -56,7 +54,6 @@ module.exports = function () {
     };
   }
 
-
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(bodyParser.json({limit: config.api.limite_req}));
 
@@ -64,44 +61,25 @@ module.exports = function () {
   // SECURITY
   app.use(helmet());
   app.disable("x-powered-by");
-  /*
-   app.use(lusca({
-   csp: {},
-   xframe: 'SAMEORIGIN',
-   hsts: {maxAge: 31536000, includeSubDomains: true, preload: true},
-   xssProtection: true
-   }));
-   */
-  /*
-   app.use(function(req, res, next) {
-   if (config.CSRF_EXCLUDE.indexOf(req.path) === -1) {
-   lusca.csrf({angular:true})(req, res, next);
-   } else {
-   next();
-   }
-   });
-   */
 
-  /*
-   app.use(function (req, res, next) {
+  app.use(function (req, res, next) {
+     // Website you wish to allow to connect
+    //res.setHeader("Access-Control-Allow-Origin", "https://localhost:3456");
 
-   // Website you wish to allow to connect
-   res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3030');
+     // Request methods you wish to allow
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST");
 
-   // Request methods you wish to allow
-   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+     // Request headers you wish to allow
+    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
 
-   // Request headers you wish to allow
-   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+     // Set to true if you need the website to include cookies in the requests sent
+     // to the API (e.g. in case you use sessions)
+    //res.setHeader("Access-Control-Allow-Credentials", true);
 
-   // Set to true if you need the website to include cookies in the requests sent
-   // to the API (e.g. in case you use sessions)
-   res.setHeader('Access-Control-Allow-Credentials', true);
+     // Pass to next layer of middleware
+    next();
+  });
 
-   // Pass to next layer of middleware
-   next();
-   });
-   */
   //==================================================================
   // API
 
@@ -123,26 +101,28 @@ module.exports = function () {
     path: ["/auth"]
   }));
 
-  app.use(function (err, req, res) {
+  app.use(function (err, req, res, next) {
     if (err.name === "UnauthorizedError") {
       res.status(401).send("Unauthorized");
     }
+    next();
   });
 
   app.use("/", router);
 
   router.post("/auth", function (req, res) {
 
-    var user = req.body.user;
-    var password = req.body.password;
+    let user = req.body.user;
+    let password = req.body.password;
+
+    function checkAcces(up) {
+      return (up.user === user && up.password === password);
+    }
+
 
     if (!user) {
       res.json({success: false, message: "Authentication failed. User not found."});
     } else if (user) {
-
-      function checkAcces(up) {
-        return (up.user === user && up.password === password);
-      }
 
       if (config.api.users.findIndex(checkAcces) !== -1) {
 

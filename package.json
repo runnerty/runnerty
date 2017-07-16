@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "A new way for process managing",
-  "version": "1.0.0-rc.5",
+  "version": "1.0.0-rc.6",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
