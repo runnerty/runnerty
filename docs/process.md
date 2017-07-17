@@ -50,7 +50,7 @@ It is also possible to indicate dependencies using conditional operations.
 ]
 ```
 
-In oper_left and oper_right we can use values comming from the output of other process or chain, values defined in global_values in the conf.json or values defined in the custom_values of the chain.
+In oper_left and oper_right we can use values comming from the output of other process or chain, values defined in global_values in the config.json or values defined in the custom_values of the chain.
 
 These are the different conditions that can be used: ```"==", "!=", ">=", "<="```
 
@@ -71,7 +71,7 @@ In the exec property are the fields that identifie the executor that is going to
     }
   ]
 ```
-In this example we are using our shell_default executor, the configuration for this executor should be in our conf.json file:
+In this example we are using our shell_default executor, the configuration for this executor should be in our config.json file:
 
 ```json
 {

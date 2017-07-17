@@ -27,7 +27,7 @@ Or directly as an object of the "chains" array:
 }
 ```
 
-Runnerty will try to get the plan.json file in the actual path but it is possible to indicate a plan.json file in the conf.json:
+Runnerty will try to get the plan.json file in the actual path but it is possible to indicate a plan.json file in the config.json:
 
 ```json
 {

@@ -6,7 +6,7 @@ There are a bunch of notificators for different channels. You can have a look at
 
 ### configuration
 
-In the conf.json file of the project we are going to write the configuration of the different notificators that are going to be used in the processes.
+In the config.json file of the project we are going to write the configuration of the different notificators that are going to be used in the processes.
 
 ```json
 {
@@ -38,7 +38,7 @@ This is an example of the configuration of two notificator: ```@runnerty/notific
 
 The destination of a notificator is to use it in our plan's processes to comunicate events. We could say that using an executor has two parts: ```configuration``` and ```params```.
 
- The configuration properties are set in the conf.json. They are the identifiers fields of the notificator. For example, this is the configuration properties for the @runnerty/executor-telegram:
+ The configuration properties are set in the config.json. They are the identifiers fields of the notificator. For example, this is the configuration properties for the @runnerty/executor-telegram:
 
 ```json
 {
@@ -79,7 +79,7 @@ In the processes are set the variable properties (params) of the notificator. Th
 }
 ```
 
-Runnerty matchs the ```id``` property from the plan with the conf.json one to identify the notificator to run. the ```message``` field is the variable property that may change in every process.
+Runnerty matchs the ```id``` property from the plan with the config.json one to identify the notificator to run. the ```message``` field is the variable property that may change in every process.
 
 It is important to know that it is possible to overwrite some configuration properties IN THE processes. For example: if we want to change the token and chat_id of the notification depending of the event:
 
@@ -115,7 +115,7 @@ It is important to know that it is possible to overwrite some configuration prop
 }
 ```
 
-Note that when the process ends with fail it will overwrite the ```token``` and ```chat_id``` properties of the conf.json and it will send the message to a different chat.
+Note that when the process ends with fail it will overwrite the ```token``` and ```chat_id``` properties of the config.json and it will send the message to a different chat.
 
 
 [executors]: https://github.com/Coderty/runnerty/blob/master/docs/executors.md

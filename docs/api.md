@@ -1,7 +1,7 @@
 # API (WS) - Runnerty
 
 ## Configuration
-### In the config file: general/api (conf.json)
+### In the config file: general/api (config.json)
 ```json
 {
   "general": {

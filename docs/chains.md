@@ -68,7 +68,7 @@ This scheduling will execute the chain at every minute:
 }
 ```
 
-There is also the possibility to schedule a chain using a calendars. The calendars path is indicated in the conf.json file:
+There is also the possibility to schedule a chain using a calendars. The calendars path is indicated in the config.json file:
 
 ```json
 {
