@@ -170,6 +170,9 @@ Must be one of the following:
 * **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing
   semi-colons, etc)
 * **test**: Adding missing tests or correcting existing tests
+* **ci**: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
+* **chore**: Other changes that don't modify src or test files
+* **revert**: Reverts a previous commit
 
 ### Scope
 The scope should be the name of the npm package affected (as perceived by person reading changelog generated from commit messages.
