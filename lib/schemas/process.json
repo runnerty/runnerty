@@ -54,81 +54,56 @@
           }
         }
       },
-      "events": {
+      "notifications": {
         "type": "object",
         "properties": {
           "on_start": {
-            "type": "object",
-            "properties":{
-              "notifications":{
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "required": ["id"],
-                  "properties": {
-                    "id": {"type": "string"}
-                  }
-                }
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id"],
+              "properties": {
+                "id": {"type": "string"}
               }
             }
           },
           "on_end": {
-            "type": "object",
-            "properties":{
-              "notifications":{
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "required": ["id"],
-                  "properties": {
-                    "id": {"type": "string"}
-                  }
-                }
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id"],
+              "properties": {
+                "id": {"type": "string"}
               }
             }
           },
           "on_fail": {
-            "type": "object",
-            "properties":{
-              "notifications":{
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "required": ["id"],
-                  "properties": {
-                    "id": {"type": "string"}
-                  }
-                }
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id"],
+              "properties": {
+                "id": {"type": "string"}
               }
             }
           },
           "on_retry": {
-            "type": "object",
-            "properties":{
-              "notifications":{
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "required": ["id"],
-                  "properties": {
-                    "id": {"type": "string"}
-                  }
-                }
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id"],
+              "properties": {
+                "id": {"type": "string"}
               }
             }
           },
           "on_waiting_dependencies": {
-            "type": "object",
-            "properties":{
-              "notifications":{
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "required": ["id"],
-                  "properties": {
-                    "id": {"type": "string"}
-                  }
-                }
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id"],
+              "properties": {
+                "id": {"type": "string"}
               }
             }
           }

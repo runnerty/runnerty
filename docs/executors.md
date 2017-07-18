@@ -42,7 +42,7 @@ The destination of an executor is to use it in our plan's processes. We could sa
     {
       "id": "shell_default",
       "type": "@runnerty/executor-shell"
-    },
+    }
   ]
 }
 ```

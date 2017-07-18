@@ -2,7 +2,7 @@
 
 ### config.json
 
-The general configuraton and params of the workflows is in the config.json file. Runnerty will try to get the config.json file in the actual path.
+The general configuration and params of the workflows is in the config.json file. Runnerty will try to get the config.json file in the actual path.
 
 With the -c param it is possible to indicate a different path. 
 
@@ -61,11 +61,11 @@ This is an example of the configutarion of two executors (shell and mysql):
 
 ### Notificators
 
-The Notificators are plugins which allows Runnerty to comunicate events from the chain and processes to different services and channels. This is a list of the official available [Plugins]
+The Notificators are plugins which allows Runnerty to notificate from the chain and processes to different services and channels. This is a list of the official available [Plugins]
 
 In the config.json file are defined all the notificators that are going to be used in the whole plan.
 
-This is an example of the configutarion of two notificators (mail and telegram):
+This is an example of the configuration of two notificators (mail and telegram):
 
 ```json
 {

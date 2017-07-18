@@ -1,6 +1,6 @@
 # notificators
 
-The notificators are plugins for Runnerty used for notifying events occurred in the processes or chains. 
+The notificators are plugins for Runnerty used for notifying occurred in the processes or chains. 
 
 There are a bunch of notificators for different channels. You can have a look at the list of the official [executors].
 
@@ -36,7 +36,7 @@ This is an example of the configuration of two notificator: ```@runnerty/notific
 
 ### usage
 
-The destination of a notificator is to use it in our plan's processes to comunicate events. We could say that using an executor has two parts: ```configuration``` and ```params```.
+The destination of a notificator is to use it in our plan's processes to comunicate notifications. We could say that using an executor has two parts: ```configuration``` and ```params```.
 
  The configuration properties are set in the config.json. They are the identifiers fields of the notificator. For example, this is the configuration properties for the @runnerty/executor-telegram:
 
@@ -48,7 +48,7 @@ The destination of a notificator is to use it in our plan's processes to comunic
       "type": "@runnerty/notificator-telegram",
       "token": "MyTokenId",
       "chat_id": "MyChatId"
-    },
+    }
   ]
 }
 ```
@@ -66,15 +66,13 @@ In the processes are set the variable properties (params) of the notificator. Th
       "id":"shell_default",
       "command":"echo 'Hello world'",
     },
-  "events": {
-    "on_end": {
-      "notifications": [
-        {
-          "id": "telegram_default",
-          "message": "THE PROCESS HAS FINISHED"
-        }
-      ]
-    }
+  "notifications": {
+    "on_end":[
+      {
+         "id": "telegram_default",
+         "message": "THE PROCESS HAS FINISHED"
+      }
+    ]
   }
 }
 ```
@@ -92,25 +90,21 @@ It is important to know that it is possible to overwrite some configuration prop
       "id":"shell_default",
       "command":"echo 'Hello world'",
     },
-  "events": {
-    "on_fail":{
-        "notifications": [
-        {
-          "id": "telegram_default",
-          "token": "MyDangerTokenId",
-          "chat_id": "MyDangerChatId",
-          "message": "THE PROCESS HAS ABORTED"
-        }
-      ]
-    },
-    "on_end": {
-      "notifications": [
-        {
-          "id": "telegram_default",
-          "message": "THE PROCESS HAS FINISHED"
-        }
-      ]
-    }
+  "notifications": {
+    "on_fail":[
+      {
+        "id": "telegram_default",
+        "token": "MyDangerTokenId",
+        "chat_id": "MyDangerChatId",
+        "message": "THE PROCESS HAS ABORTED"
+      }
+    ],
+    "on_end":[
+      {
+        "id": "telegram_default",
+        "message": "THE PROCESS HAS FINISHED"
+      }
+    ]
   }
 }
 ```

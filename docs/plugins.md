@@ -17,8 +17,9 @@ This is the list of the oficial plugins availables.
 - [ICONV](https://www.npmjs.com/package/@runnerty/executor-iconv)
 - [HTTP](https://www.npmjs.com/package/@runnerty/executor-http)
 - [Check Online Service](https://www.npmjs.com/package/@runnerty/executor-check-online-service)
+- [Decompress (tar, unzip, gunzip, 7z and rar)](https://www.npmjs.com/package/@runnerty/executor-decompress)
 
-## Notificators 
+## Notificators
 
 - [Mail](https://www.npmjs.com/package/@runnerty/notificator-mail)
 - [Slack](https://www.npmjs.com/package/@runnerty/notificator-slack)

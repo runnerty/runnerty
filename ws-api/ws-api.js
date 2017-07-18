@@ -1,17 +1,17 @@
 "use strict";
 
-var express = require("express");
-var bodyParser = require("body-parser");
-var router = express.Router();
-var morgan = require("morgan");
-var jwt = require("jsonwebtoken");
-var expressJwt = require("express-jwt");
-var app = express();
-var server = require("http").Server(app);
-var helmet = require("helmet");
-var utils = require("../lib/utils.js");
-var logger = utils.logger;
-var config = global.config.general;
+const express = require("express");
+const bodyParser = require("body-parser");
+const router = express.Router();
+const morgan = require("morgan");
+const jwt = require("jsonwebtoken");
+const expressJwt = require("express-jwt");
+const app = express();
+const server = require("http").Server(app);
+const helmet = require("helmet");
+const utils = require("../lib/utils.js");
+const logger = utils.logger;
+const config = global.config.general;
 const port = config.api.port;
 
 
@@ -21,7 +21,7 @@ var apiPlan = global.runtimePlan.plan;
 module.exports = function () {
   //==============================================
   // SERVER
-  server.listen(port, function (err, res) {
+  server.listen(port, function () {
     logger.log("info", "Listening on port [" + port + "]");
   });
 
