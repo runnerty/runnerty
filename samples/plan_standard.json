@@ -7,25 +7,21 @@
       "end_date":"2099-11-01T00:00:00.00Z",
       "schedule_interval":"*/1 * * * *",
       "depends_chains":[],
-      "events":{
-        "on_start":{
-          "notifications":[
-            {
-              "id":"mail_default",
-              "subject":"RUNNERTY SAMPLE",
-              "message":"CHAIN :CHAIN_NAME START"
-            }
-          ]
-        },
-        "on_end":{
-          "notifications":[
-            {
-              "id":"mail_default",
-              "subject":"RUNNERTY SAMPLE",
-              "message":"CHAIN :CHAIN_NAME END"
-            }
-          ]
-        }
+      "notifications":{
+        "on_start":[
+          {
+            "id":"mail_default",
+            "subject":"RUNNERTY SAMPLE",
+            "message":"CHAIN :CHAIN_NAME START"
+          }
+        ],
+        "on_end":[
+          {
+            "id":"mail_default",
+            "subject":"RUNNERTY SAMPLE",
+            "message":"CHAIN :CHAIN_NAME END"
+          }
+        ]
       },
       "processes":[
         {
@@ -49,27 +45,23 @@
               "maxsize":"10mb"
             }
           ],
-          "events":{
-            "on_start":{
-              "notifications":[
-                {
-                  "id":"mail_default",
-                  "subject":"RUNNERTY SAMPLE",
-                  "message":"PROCESS :PROCESS_NAME START"
-                }
-              ]
-            },
-            "on_fail":{},
-            "on_retry":{},
-            "on_end":{
-              "notifications":[
-                {
-                  "id":"mail_default",
-                  "subject":"RUNNERTY SAMPLE",
-                  "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_MSG_OUTPUT"
-                }
-              ]
-            }
+          "notifications":{
+            "on_start":[
+              {
+                "id":"mail_default",
+                "subject":"RUNNERTY SAMPLE",
+                "message":"PROCESS :PROCESS_NAME START"
+              }
+            ],
+            "on_fail":[],
+            "on_retry":[],
+            "on_end":[
+              {
+                "id":"mail_default",
+                "subject":"RUNNERTY SAMPLE",
+                "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_MSG_OUTPUT"
+              }
+            ]
           }
         },
         {
@@ -93,27 +85,23 @@
               "maxsize":"10mb"
             }
           ],
-          "events":{
-            "on_start":{
-              "notifications":[
-                {
-                  "id":"mail_default",
-                  "subject":"RUNNERTY SAMPLE",
-                  "message":"PROCESS :PROCESS_NAME START"
-                }
-              ]
-            },
-            "on_fail":{},
-            "on_retry":{},
-            "on_end":{
-              "notifications":[
-                {
-                  "id":"mail_default",
-                  "subject":"RUNNERTY SAMPLE",
-                  "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_MSG_OUTPUT"
-                }
-              ]
-            }
+          "notifications":{
+            "on_start":[
+              {
+                "id":"mail_default",
+                "subject":"RUNNERTY SAMPLE",
+                "message":"PROCESS :PROCESS_NAME START"
+              }
+            ],
+            "on_fail":[],
+            "on_retry":[],
+            "on_end":[
+              {
+                "id":"mail_default",
+                "subject":"RUNNERTY SAMPLE",
+                "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_MSG_OUTPUT"
+              }
+            ]
           }
         }
       ]

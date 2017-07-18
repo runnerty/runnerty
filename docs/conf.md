@@ -1,16 +1,16 @@
 # configuration
 
-### conf.json
+### config.json
 
-The general configuraton and params of the workflows is in the conf.json file. Runnerty will try to get the conf.json file in the actual path.
+The general configuration and params of the workflows is in the config.json file. Runnerty will try to get the config.json file in the actual path.
 
 With the -c param it is possible to indicate a different path. 
 
 ```
-runnerty -c /path/conf.json
+runnerty -c /path/config.json
 ```
 
-In the conf.json file is set the configuration of the different executors, notificators and global values (params, paths, files, etc.) which are going to be used on the processes: 
+In the config.json file is set the configuration of the different executors, notificators and global values (params, paths, files, etc.) which are going to be used on the processes: 
 
 ```json
 {
@@ -35,7 +35,7 @@ In the conf.json file is set the configuration of the different executors, notif
 
 The executors are plugins which enclose functionalities. This plugins allows Runnerty execute processes, data bases operations, use external services, etc. This is a list of the official available [Plugins]
 
-In the conf.json file are defined all the executors that are going to be used in the whole plan.
+In the config.json file are defined all the executors that are going to be used in the whole plan.
 
 This is an example of the configutarion of two executors (shell and mysql): 
 
@@ -61,11 +61,11 @@ This is an example of the configutarion of two executors (shell and mysql):
 
 ### Notificators
 
-The Notificators are plugins which allows Runnerty to comunicate events from the chain and processes to different services and channels. This is a list of the official available [Plugins]
+The Notificators are plugins which allows Runnerty to notificate from the chain and processes to different services and channels. This is a list of the official available [Plugins]
 
-In the conf.json file are defined all the notificators that are going to be used in the whole plan.
+In the config.json file are defined all the notificators that are going to be used in the whole plan.
 
-This is an example of the configutarion of two notificators (mail and telegram):
+This is an example of the configuration of two notificators (mail and telegram):
 
 ```json
 {
@@ -122,7 +122,7 @@ These values can be used in the whole plan (chains and proccess) referencing the
 
 
 ### Cripted passwords
-Runnerty offers the possibility to encrypt passwords so it is not necessary to put passwords on the conf.json file.
+Runnerty offers the possibility to encrypt passwords so it is not necessary to put passwords on the config.json file.
 
 ```
 runnerty -p master_cryptor_password -e password_to_encrypt
@@ -130,7 +130,7 @@ runnerty -p master_cryptor_password -e password_to_encrypt
 
 Note that master_cryptor_password is the personal password needed to decrypt the passwords.
 
-This will return the crypted password. Now, in the conf.json you can use the crypted paswords with the property crypted_password (Runnerty will decrypt the crypted password in memory and send it to the executors):
+This will return the crypted password. Now, in the config.json you can use the crypted paswords with the property crypted_password (Runnerty will decrypt the crypted password in memory and send it to the executors):
 
 ```json
 {

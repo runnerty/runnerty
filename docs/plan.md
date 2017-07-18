@@ -27,7 +27,7 @@ Or directly as an object of the "chains" array:
 }
 ```
 
-Runnerty will try to get the plan.json file in the actual path but it is possible to indicate a plan.json file in the conf.json:
+Runnerty will try to get the plan.json file in the actual path but it is possible to indicate a plan.json file in the config.json:
 
 ```json
 {
@@ -39,7 +39,7 @@ Runnerty will try to get the plan.json file in the actual path but it is possibl
 
 ### Structure (chain and process)
 
-A plan is formed by one or more chains. A chain is a set of processes with it’s own properties like scheduling, events, outputs, etc.
+A plan is formed by one or more chains. A chain is a set of processes with it’s own properties like scheduling, notifications, outputs, etc.
 
 This is the basic structure of a plan with chain with one process:
 

@@ -1,6 +1,6 @@
 # Chain
 
-A chain is a set of processes with it’s own properties like scheduling, events, dependencies, outputs, etc.
+A chain is a set of processes with it’s own properties like scheduling, notifications, dependencies, outputs, etc.
 
 This is an example of a basic chain with one process:
 
@@ -18,9 +18,9 @@ This is an example of a basic chain with one process:
           "name":"Firt process of the chains",
           "exec":{
             "id":"shell_default",
-            "command":"echo 'Hello world'",
+            "command":"echo 'Hello world'"
           },
-          "end_chain_on_fail":true,
+          "end_chain_on_fail":true
         }
       ]
     }
@@ -68,7 +68,7 @@ This scheduling will execute the chain at every minute:
 }
 ```
 
-There is also the possibility to schedule a chain using a calendars. The calendars path is indicated in the conf.json file:
+There is also the possibility to schedule a chain using a calendars. The calendars path is indicated in the config.json file:
 
 ```json
 {
@@ -151,42 +151,36 @@ error: when ther is an error in the file treatment.
 }
 ```
 
-### events
+### notifications
 
-With the events property Runnerty can access to the differnts states of the chain: "on_start", "on_fail", "on_retry" and "on_end".
+With the notifications property Runnerty can access to the differnts states of the chain: "on_start", "on_fail", and "on_end".
 
-In this events we can notify anything using a notificator. (know mor about notificators [link].
+In this notifications we can notify anything using a notificator. (know more about notificators [link]).
 
-This is an example of the events of a chain using the Telegam notificator to notify the different states of the chain to a Telegram's chat:
+This is an example of the notifications of a chain using the Telegam notificator to notify the different states of the chain to a Telegram's chat:
 
 ```json
 {
   ...
-  "events": {
-    "on_start": {
-      "notifications": [
-        {
-          "id": "telegram_default",
-          "message": "THE CHAIN :CHAIN_ID HAS STARTED"
-        }
-      ]
-    },
-    "on_fail": {
-      "notifications": [
-        {
-          "id": "telegram_default",
-          "message": "THE CHAIN :CHAIN_ID HAS FAILED"
-        }
-      ]
-    },
-    "on_end": {
-      "notifications": [
-        {
-          "id": "telegram_default",
-          "message": "THE CHAIN :CHAIN_ID HAS FINISHED"
-        }
-      ]
-    }
+  "notifications": {
+    "on_start": [
+      {
+        "id": "telegram_default",
+        "message": "THE CHAIN :CHAIN_ID HAS STARTED"
+      }
+    ],
+    "on_fail": [
+      {
+        "id": "telegram_default",
+        "message": "THE CHAIN :CHAIN_ID HAS FAILED"
+      }
+    ],
+    "on_end": [
+      {
+        "id": "telegram_default",
+        "message": "THE CHAIN :CHAIN_ID HAS FINISHED"
+      }
+    ]
   }
   ...
 }
@@ -209,7 +203,7 @@ In the processes property can be defined all ther processes thar are going to be
       "exec":
         {
           "id":"shell_default",
-          "command":"echo 'Hello world'",
+          "command":"echo 'Hello world'"
         }
     }
   ]
@@ -267,7 +261,7 @@ We assign the array returned for the select with the PROCESS_EXEC_DATA_OUTPUT va
           "message": "Hello :name", 
           "title": "Message set by Runnerty"
         },
-      "end_chain_on_fail":true,
+      "end_chain_on_fail":true
     }
   ]
 }
@@ -329,7 +323,7 @@ now we use these values everywhere in our iterable chain:
           "message": "Hello :name", 
           "title": "Message set by Runnerty"
         },
-      "end_chain_on_fail":true,
+      "end_chain_on_fail":true
     }
   ]
 }

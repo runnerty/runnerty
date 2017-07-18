@@ -50,7 +50,7 @@ It is also possible to indicate dependencies using conditional operations.
 ]
 ```
 
-In oper_left and oper_right we can use values comming from the output of other process or chain, values defined in global_values in the conf.json or values defined in the custom_values of the chain.
+In oper_left and oper_right we can use values comming from the output of other process or chain, values defined in global_values in the config.json or values defined in the custom_values of the chain.
 
 These are the different conditions that can be used: ```"==", "!=", ">=", "<="```
 
@@ -71,7 +71,7 @@ In the exec property are the fields that identifie the executor that is going to
     }
   ]
 ```
-In this example we are using our shell_default executor, the configuration for this executor should be in our conf.json file:
+In this example we are using our shell_default executor, the configuration for this executor should be in our config.json file:
 
 ```json
 {
@@ -86,13 +86,13 @@ In this example we are using our shell_default executor, the configuration for t
 
 With the ```id``` field we are indicating the executor that we are going tov use. The rest of the fields are params for the executor. Know more about the executors and their usage in [executors] doc. Yo can also chekc the [conf] documentation to know how to configure them.
 
-### events
+### notifications
 
-With the events property Runnerty can access to the differnt states of the process: ```"on_start", "on_fail", "on_retry" and "on_end"```.
+With the notifications property Runnerty can access to the differnt states of the process: ```"on_start", "on_fail", "on_retry" and "on_end"```.
 
-In this events we can notify anything on a state of the process using a notificator. know mor about [notificators].
+In this notifications we can notify anything on a state of the process using a notificator. know more about [notificators].
 
-This is an example of the events of a process using the Telegram notificator to notify the different states of the process to a Telegram chat:
+This is an example of the notifications of a process using the Telegram notificator to notify the different states of the process to a Telegram chat:
 
 ```json
 {
@@ -101,33 +101,27 @@ This is an example of the events of a process using the Telegram notificator to 
   "exec":
     {
       "id":"shell_default",
-      "command":"echo 'Hello world'",
+      "command":"echo 'Hello world'"
     },
-  "events": {
-    "on_start": {
-      "notifications": [
-        {
-          "id": "telegram_default",
-          "message": "THE PROCESS :PROCESS_ID HAS STARTED"
-        }
+  "notifications": {
+    "on_start": [
+      {
+        "id": "telegram_default",
+        "message": "THE PROCESS :PROCESS_ID HAS STARTED"
+      }
+      ],
+    "on_fail": [
+      {
+        "id": "telegram_default",
+        "message": "THE PROCESS :PROCESS_ID HAS FAILED"
+      }
+      ],
+    "on_end": [
+      {
+        "id": "telegram_default",
+        "message": "THE PROCESS :PROCESS_ID HAS FINISHED"
+      }
       ]
-    },
-    "on_fail": {
-      "notifications": [
-        {
-          "id": "telegram_default",
-          "message": "THE PROCESS :PROCESS_ID HAS FAILED"
-        }
-      ]
-    },
-    "on_end": {
-      "notifications": [
-        {
-          "id": "telegram_default",
-          "message": "THE PROCESS :PROCESS_ID HAS FINISHED"
-        }
-      ]
-    }
   }
   ...
 }
@@ -145,7 +139,7 @@ Another property of ther processes is that we can reditrect the output of a proc
     "exec":
       {
         "id":"shell_default",
-        "command":"echo 'Hello world'",
+        "command":"echo 'Hello world'"
       },
   "output": [{
 			"file_name":"/var/log/runnerty/general.log", 
