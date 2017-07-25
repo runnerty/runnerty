@@ -33,7 +33,8 @@ This is an example of a basic chain with one process:
 
 A chain has two identification fields:
 
-**id**, identifies the chain. with this identifier Runnerty will provide a global value (*:CHAIN_ID*) that can be used in the whole chain. To know more about global variables have a look at: [link]
+**id**, identifies the chain. with this identifier Runnerty will provide a global value (*:CHAIN_ID*) that can be used in the whole chain. To know more about global values have a look [here](conf.md)
+
 ```json
 {
   "id": "EXAMPLE_CHAIN"
@@ -53,7 +54,7 @@ A chain has two identification fields:
 
 ### Scheduling
 
-There are diferent ways to schedule a chain. It is possible to schedule chains with a cron expression.
+There are different ways to schedule a chain. It is possible to schedule chains with a cron expression.
 
 This scheduling will execute the chain at every minute:
 
@@ -65,7 +66,7 @@ This scheduling will execute the chain at every minute:
 }
 ```
 
-There is also the possibility to schedule a chain using a calendars. The calendars path could be indicated in the *config.json* file:
+There is also the possibility to schedule a chain using a calendars. The calendars path can be indicated in the *config.json* file:
 
 ```json
 {
@@ -83,7 +84,7 @@ runnerty
     |-- laboral_days.ics
 ```
 
-Calendars could be used for both enabling or disabling execution dates through the **enable** and **disable** properties, so it could be specified, for example, to only execute a chain on laboral days, excluding weekends, like in the sample below:
+Calendars can be used for both enabling or disabling execution dates through the **enable** and **disable** properties, so it can be specified, for example, to only execute a chain on laboral days, excluding weekends, like in the sample below:
 
 ```json
 {
@@ -114,7 +115,7 @@ It is possible to define and overwrite global values at chain level, setting a *
 
 ### Dependencies
 
-It is possible to define dependencies with other chains or other chains processes. This means than a chain with dependencies will never execute before their dependencies are resolved. 
+It is possible to define dependencies with other chains or other chains processes. This means than a chain with dependencies will never execute before their dependencies are resolved.
 
 You can define these dependency restrictions through the **depends_chains** property, like in the sample below:
 
@@ -135,7 +136,7 @@ The chain of the example will not be executed until the chain with *id* *CHAIN_O
 }
 ```
 
-In addition, it is possible to set up file system path dependencies in Runnerty with the help of auto-magically configured filewatchers. Them are defined with the **condition** property and could be fired through the following actions:
+In addition, it is possible to set up file system path dependencies in Runnerty with the help of auto-magically configured filewatchers. Them are defined with the **condition** property and can be fired through the following actions:
 
 - *add*: when a file is added.
 - *change*: when a file is changed.
@@ -222,11 +223,11 @@ Learn more about *processes* and how to configure them [here](docs/process.md).
 
 ### Iterable chains
 
-An **iterale chain** is a chain that is going to be executed for each object in the array previously returned by another process. 
+An **iterale chain** is a chain that is going to be executed for each object in the array previously returned by another process.
 
 For example, if we have a process which returns *one objects array* we can execute an iterable chain for each object in the array.
 
-In the following example we are going to send a email to every user of the USERS table. 
+In the following example we are going to send an email to every user of the USERS table.
 
 First, we have the chain get-users-email.json with a process which selects all the users's email:
 
@@ -234,7 +235,7 @@ First, we have the chain get-users-email.json with a process which selects all t
 ```json
 {
   "id": "GET-USERS-EMAIL",
-  "name": "It gets all the user's names to send a email",
+  "name": "It gets all the user's names to send an email",
   "schedule_interval": "1 */1 * * *",
   "processes": [
     {
@@ -332,7 +333,7 @@ With the **input** property we can assign the properties of each object returned
 }
 ```
 
-Now, we can use these values everywhere across our iterable chain:
+Now, we can use these values anywhere in our iterable chain:
 
 ```json
 {
