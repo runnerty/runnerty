@@ -27,7 +27,7 @@
         {
           "id":"PROCESS_ONE",
           "name":"Process One",
-          "depends_process":[],
+          "depends_process":{},
           "exec":{
             "id":"shell_default",
             "command":"echo hello word from :PROCESS_ID!"
@@ -67,9 +67,7 @@
         {
           "id":"PROCESS_TWO",
           "name":"Process Two",
-          "depends_process":[{"id":"PROCESS_ONE","evaluate": [{ "oper_left": "1", "condition": "==", "oper_right": "1" }]}],
-          "depends_alt":[],
-          "depends_conditions":[{ "oper_left": "1", "condition": "==", "oper_right": "1" }],
+          "depends_process": {"$and":[{"$end":"PROCESS_ONE"},{"ABC":{"$eq":"ABC"}}]},
           "exec":{
             "id":"shell_default",
             "command":"echo hello word from :PROCESS_ID!"

@@ -27,7 +27,7 @@
         {
           "id":"PROCESS_ONE",
           "name":"Process One",
-          "depends_process":[],
+          "depends_process":{},
           "exec":{
             "id":"shell_default",
             "command":"echo hello word from :PROCESS_ID!"
@@ -67,7 +67,7 @@
         {
           "id":"PROCESS_TWO",
           "name":"Process Two",
-          "depends_process":["PROCESS_ONE"],
+          "depends_process":"PROCESS_ONE",
           "exec":{
             "id":"shell_default",
             "command":"echo hello word from :PROCESS_ID!"
