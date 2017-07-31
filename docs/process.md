@@ -54,6 +54,20 @@ In oper_left and oper_right we can use values comming from the output of other p
 
 These are the different conditions that can be used: ```"==", "!=", ">=", "<="```
 
+### dependence on_fail
+
+With this dependence the process will start only if the the the process wich it depends has failed. This is an example of how to use it:
+
+```json
+"processes": [
+    {
+      "id": "PROCESS_TWO",
+      "name": "Second process of the chain",
+      "depends_process":[{"id":"PROCESS_ONE","on_fail":true}],
+    }
+]
+```
+
 ### exec
 
 In the exec property are the fields that identifie the executor that is going to be used and the params needed. 
