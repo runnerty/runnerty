@@ -16,16 +16,34 @@ These values contain time values, this is the list of the time values provided b
 YY   - Last two digits of the current year
 YYYY - Current year
 MM   - Current month
+WW   - Current week number
 DD   - Current day
 HH   - Current hour
 mm   - Current minute
 ss   - Current second
 ```
+##### Sample current year: 2017
+##### Sample current month: DECEMBER
+##### Sample current week day: THURSDAY
 ```
 MMMM_[LANGUAGE_INITIALS] > :MMMM_EN = DECEMBER, :MMMM_ES = DICIEMBRE
 MMM_[LANGUAGE_INITIALS]  > :MMM_EN  = DEC,      :MMM_ES = DIC.
 DDDD_[LANGUAGE_INITIALS] > :DDDD_EN = THURSDAY, :DDDD_ES = JUEVES 
 DDD_[LANGUAGE_INITIALS]  > :DDD_EN  = THU,      :DDD_ES = JUE.
+```
+```
+YYYY_[INCREMENT] > :YYYY_1 = 2018,    :YYYY_-2 = 2015
+YY_[INCREMENT]   > :YY_1   = 18,      :YY_-2   = 15
+MMMM_[INCREMENT] > :MMMM_1 = JANUARY, :MMMM_-2 = OCTOBER
+MMM_[INCREMENT]  > :MMM_1  = JAN,     :MMM_-2  = OCT
+DDDD_[INCREMENT] > :DDDD_1 = FRIDAY,  :DDDD_-2 = TUESDAY 
+DDD_[INCREMENT]  > :DDD_1  = FRI,     :DDD_-2  = TUE
+```
+```
+MMMM_[INCREMENT]_[LANGUAGE_INITIALS] > :MMMM_1_EN = JANUARY, :MMMM_-2_ES = OCTUBRE
+MMM_[INCREMENT]_[LANGUAGE_INITIALS]  > :MMM_1_EN  = JAN,     :MMM_-2_EN = OCT.
+DDDD_[INCREMENT]_[LANGUAGE_INITIALS] > :DDDD_1_EN = FRIDAY,  :DDDD_-2_ES = MARTES 
+DDD_[INCREMENT]_[LANGUAGE_INITIALS]  > :DDD_1_EN  = FRI,     :DDD_-2_ES = MAR
 ```
 
 These values are very useful for example to write the output information of a process in a log file:
