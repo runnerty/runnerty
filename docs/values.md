@@ -7,6 +7,12 @@ Runnerty provides a bunch of different values that can be used in the whole plan
 
 These values are called ```global``` because they are automatically provided by Runnerty or defined in the config. Thereby, they can be used in the plan. 
 
+### environment values
+These values allows you to get environment variables.
+##### Sample if you define environment variable: export MYENVVAL=TESTVALUE
+```
+ENV_[ENVIRONMENT VARIABLE NAME] > :ENV_MYENVVAL = TESTVALUE
+```
 
 ### time values
 
