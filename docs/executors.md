@@ -4,7 +4,7 @@ The executors are plugins for Runnerty which encapsulate functionalities. The pr
 
 There are a bunch of executors for different purposes. Execute sentences in different databases like mysql, postgres, etc. Sending mails, operations with S3 files. You can have a look at the list of the official [executors].
 
-### configuration
+### configuration
 
 In the config.json file of the project we are going to write the configuration of the different executors that are going to be used in the processes.
 
@@ -85,7 +85,7 @@ This is the configuration of the executor. We are connecting to ```"MYDB"```
 }
 ```
 
-We can overwrite this information from the ´´´exec´´´properties of the process:
+We can overwrite this information from the ```exec``` properties of the process:
 
 ```json
 {

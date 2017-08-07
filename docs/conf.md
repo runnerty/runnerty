@@ -2,7 +2,7 @@
 
 ### config.json
 
-The general configuration and params of the workflows is in the config.json file. Runnerty will try to get the config.json file in the actual path.
+The general configuration and params of the workflows is set in the config.json file. Runnerty will try to get the config.json file in the actual path.
 
 With the -c param it is possible to indicate a different path. 
 

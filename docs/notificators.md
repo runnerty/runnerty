@@ -4,7 +4,7 @@ The notificators are plugins for Runnerty used for notifying occurred in the pro
 
 There are a bunch of notificators for different channels. You can have a look at the list of the official [executors].
 
-### configuration
+### configuration
 
 In the config.json file of the project we are going to write the configuration of the different notificators that are going to be used in the processes.
 
