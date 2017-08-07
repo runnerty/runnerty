@@ -31,6 +31,7 @@ ss   - Current second
 ##### Sample current year: 2017
 ##### Sample current month: DECEMBER
 ##### Sample current week day: THURSDAY
+##### Sample current day: 7
 ```
 MMMM_[LANGUAGE_INITIALS] > :MMMM_EN = DECEMBER, :MMMM_ES = DICIEMBRE
 MMM_[LANGUAGE_INITIALS]  > :MMM_EN  = DEC,      :MMM_ES = DIC.
@@ -44,12 +45,21 @@ MMMM_[INCREMENT] > :MMMM_1 = JANUARY, :MMMM_-2 = OCTOBER
 MMM_[INCREMENT]  > :MMM_1  = JAN,     :MMM_-2  = OCT
 DDDD_[INCREMENT] > :DDDD_1 = FRIDAY,  :DDDD_-2 = TUESDAY 
 DDD_[INCREMENT]  > :DDD_1  = FRI,     :DDD_-2  = TUE
+DD_[INCREMENT]  > :DD_1  = 8,         :DD_-2  = 6
 ```
 ```
 MMMM_[INCREMENT]_[LANGUAGE_INITIALS] > :MMMM_1_EN = JANUARY, :MMMM_-2_ES = OCTUBRE
 MMM_[INCREMENT]_[LANGUAGE_INITIALS]  > :MMM_1_EN  = JAN,     :MMM_-2_EN = OCT.
 DDDD_[INCREMENT]_[LANGUAGE_INITIALS] > :DDDD_1_EN = FRIDAY,  :DDDD_-2_ES = MARTES 
 DDD_[INCREMENT]_[LANGUAGE_INITIALS]  > :DDD_1_EN  = FRI,     :DDD_-2_ES = MAR
+```
+```
+MM_[INCREMENT]_[OUTPUT_FORMAT] > :MM_1_YYYY = 2018, :MM_-2_YYYY = 2017
+MM_[INCREMENT]_[OUTPUT_FORMAT] > :MM_1_YY = 18, :MM_-2_YYYY = 17
+MM_[INCREMENT]_[OUTPUT_FORMAT] > :MM_1_WW = 01, :MM_-2_WW = 40
+DD_[INCREMENT]_[OUTPUT_FORMAT] > :DD_+30_MM = 01, :DD_-30_MM = 11
+DD_[INCREMENT]_[OUTPUT_FORMAT] > :DD_30_YYYY = 2018, :DD_-30_YYYY = 2017
+DD_[INCREMENT]_[OUTPUT_FORMAT] > :DD_30_WW = 45, :DD_-30_WW = 01
 ```
 
 These values are very useful for example to write the output information of a process in a log file:
