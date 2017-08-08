@@ -16,19 +16,19 @@ In the example below ```PROCESS_B``` will start when ```PROCESS_A``` ends:
   "id": "PROCESS_B",
   "name": "Second process of the chain",
   "depends_process": {"$end": "PROCESS_A"},
-  ...
+  "...": "..."
 }
 ```
 Note than we can simplify this action just by adding ```"depends_process": ["PROCESS_A"]```
 
-In this example ```PROCESS_B``` will start when if ```PROCESS_A``` fails:
+In this example ```PROCESS_B``` will start if ```PROCESS_A``` fails:
 
 ```json
 {
   "id": "PROCESS_B",
   "name": "Second process of the chain",
   "depends_process": {"$fail": "PROCESS_A"},
-  ...
+  "...": "..."
 }
 ```
 
@@ -43,7 +43,7 @@ Dependencies of two processes:
   "id": "PROCESS_C",
   "name": "Second process of the chain",
   "depends_process": {"$and": [{"$end": "PROCESS_A"},{"$end": "PROCESS_B"}]},
-  ...
+  "...": "..."
 }
 ```
 Note than we can simplify this action just by adding ```"depends_process": ["PROCESS_A","PROCESS_B"]```
@@ -59,17 +59,19 @@ In this example process E will start only if process A or B fails and process C 
   "id": "PROCESS_E",
   "name": "Second process of the chain",
   "depends_process": {
-                      "$and": [
-                        {
-                        "$or": [
-                          {"$fail": "PROCESS_A"},
-                          {"$fail": "PROCESS_B"}
-                        ]}],
-                        "$and": [
-                          {"$end": "PROCESS_C"},
-                          {"$end": "PROCESS_D"}
-                        ]
-                      }
+    "$and": [
+      {
+        "$or": [
+          {"$fail": "PROCESS_A"},
+          {"$fail": "PROCESS_B"}
+        ]
+      }
+    ],
+    "$and": [
+      {"$end": "PROCESS_C"},
+      {"$end": "PROCESS_D"}
+    ]
+  }
 }
 ```
 
@@ -98,10 +100,11 @@ This is an example of how to use conditions in the dependencies of a proecess:
   "id": "PROCESS_B",
   "name": "Second process of the chain",
   "depends_process": {
-                      "$and": [
-                        {"VAL_1": {"$eq": "VAL_2"}},
-                        {"VAL_2": {"$gte": "VAL_3"}}
-                      ]}
+    "$and": [
+        {"VAL_1": {"$eq": "VAL_2"}},
+        {"VAL_2": {"$gte": "VAL_3"}}
+      ]
+    }
 }
 ```
 
@@ -112,62 +115,53 @@ Moreover, we can use the conditions however we want in the ```"depends_process"`
   "id": "PROCESS_B",
   "name": "Second process of the chain",
   "depends_process": {
-                      "$and": [
-                            {"$or":[
-                                    {"VAL_1": {"$eq": "VAL_2"}},
-                                    {"VAL_1": {"$eq": "VAL_3"}}
-                                  ]},
-                            {"$or":[
-                                    {"VAL_4": {"$gte": "VAL_5"}},
-                                    {"VAL_4": {"$gte": "VAL_6"}}
-                                  ]}
-                            ],
-                      "$and": [
-                            {"$or":[
-                                    {"VAL_1": {"$eq": "VAL_2"}},
-                                    {"VAL_1": {"$eq": "VAL_3"}}
-                                  ]},
-                            {"$and":[
-                                    {"VAL_4": {"$gte": "VAL_5"}},
-                                    {"VAL_4": {"$gte": "VAL_6"}}
-                                  ]}
-                            ],
-                      "$or": [
-                            {"$and": [
-                                    {"VAL_1": {"$eq": "VAL_2"}},
-                                    {"VAL_1": {"$eq": "VAL_3"}}
-                                  ]},
-                            {"$and": [
-                                    {"VAL_4": {"$gte": "VAL_5"}},
-                                    {"VAL_4": {"$gte": "VAL_6"}}
-                                  ]}
-                            ]
-                      }
+      "$and": [
+        {"$or": [
+            {"VAL_1": {"$eq": "VAL_2"}},
+            {"VAL_1": {"$eq": "VAL_3"}}
+          ]
+        },
+        {"$or": [
+            {"VAL_2": {"$gte": "VAL_4"}},
+            {"VAL_2": {"$gte": "VAL_5"}}
+          ]
+        },
+        {"$and": [
+            {"VAL_3": {"$eq": "VAL_6"}},
+            {"VAL_4": {"$eq": "VAL_7"}}
+          ]
+        }
+      ]
+    }
 }
 ```
 
 ## multiple expressions
 
-At this point, you probably imagine that it is also posible to mix dependies with other processes states and values evaluations. This is a simple example of hao to do that:
+At this point, you probably imagine that it is also posible to mix dependencies with other processes states and values evaluations. This is a simple example of how to do that:
 
 ```json
 {
   "id": "PROCESS_B",
   "name": "Second process of the chain",
   "depends_process": {
-  "$and":[
-     {"$end":"PROCESS_A"}, {"$and": [
-                                  {"$or":[
-                                        {"VAL1":{"$eq":"VAL1"}},
-                                        {"VAL1":{"$eq":"VAL3"}}
-                                      ]},
-                                  {"$or":[
-                                        {"VAL4":{"$ne":"VAL4"}},
-                                        {"VAL4":{"$ne":"VAL5"}}
-                                      ]}
-                                 ]}
-                                ]
-                            }
+    "$and": [
+      {"$end": "PROCESS_A"}, 
+      {"$and": [
+          {"$or":[
+              {"VAL1":{"$eq":"VAL1"}},
+              {"VAL1":{"$eq":"VAL3"}}
+            ]
+          },
+          {"$or":[
+              {"VAL4":{"$ne":"VAL4"}},
+              {"VAL4":{"$ne":"VAL5"}}
+            ]
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
