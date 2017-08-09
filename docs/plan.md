@@ -7,20 +7,20 @@ It is possible to load a chain from an external file using "chain_path".
 ```json
 {
   "chains":[
-    {"chain_path":"/var/runnerty/chains/my-chain-one.json"},
-    {"chain_path":"/var/runnerty/chains/my-chain-two.json"},
+    {"chain_path": "/var/runnerty/chains/my-chain-one.json"},
+    {"chain_path": "/var/runnerty/chains/my-chain-two.json"},
     [...]
   ]
 }
 ```
 
-Or directly as an object of the "chains" array: 
+Or directly as an object of the ```chains``` array: 
 
 ```json
 {
   "chains":[
     {
-      "id":"MY_CHAIN_ONE",
+      "id": "MY_CHAIN_ONE",
       [...]
     }
   ]
@@ -47,17 +47,17 @@ This is the basic structure of a plan with chain with one process:
 {
   "chains":[
     {
-      "id":"EXAMPLE_CHAIN",
-      "name":"Name of the sample chain",
-      "schedule_interval":"* * * * *",
-      "depends_chains":[],
-      "processes":[
+      "id": "EXAMPLE_CHAIN",
+      "name": "Name of the sample chain",
+      "schedule_interval": "* * * * *",
+      "depends_chains": [],
+      "processes": [
         {
-          "id":"PROCESS_ONE",
-          "name":"Firts process of the chain",
-          "exec":{
-            "id":"shell default",
-            "command":"echo 'Hello world'"
+          "id": "PROCESS_ONE",
+          "name": "Firts process of the chain",
+          "exec": {
+            "id": "shell default",
+            "command": "echo 'Hello world'"
           }
         }
       ]

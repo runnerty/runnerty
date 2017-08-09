@@ -84,7 +84,7 @@ runnerty
     |-- laboral_days.ics
 ```
 
-Calendars can be used for both enabling or disabling execution dates through the **enable** and **disable** properties, so it can be specified, for example, to only execute a chain on laboral days, excluding weekends, like in the sample below:
+Calendars can be used for both, enabling or disabling execution dates through the **enable** and **disable** properties, so it can be specified, for example, to only execute a chain on laboral days, excluding weekends, like in the sample below:
 
 ```json
 {
