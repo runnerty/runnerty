@@ -33,7 +33,7 @@ In the config.json file is set the configuration of the different executors, not
 
 ### Executors
 
-The executors are plugins which enclose functionalities. This plugins allows Runnerty execute processes, data bases operations, use external services, etc. This is a list of the official available [Plugins]
+The executors are plugins which enclose functionalities. This plugins allows Runnerty execute processes, data bases operations, use external services, etc. This is a list of the official available [here](plugins.md)
 
 In the config.json file are defined all the executors that are going to be used in the whole plan.
 
@@ -148,5 +148,3 @@ This will return the crypted password. Now, in the config.json you can use the c
 }
 ```
 
-
-[Plugins]: https://github.com/Coderty/runnerty/blob/master/docs/plugins.md
