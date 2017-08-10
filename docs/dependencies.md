@@ -5,11 +5,11 @@ Runnerty provides a powerful feature to establish dependencies between processes
 
 ## process dependencies
 
-It is very easy to establish dependencies between processes using the property ```"depends_process"``` in our processes. If you want to know how to configure and use processes in your chains, please click [here](process.md).
+It is very easy to establish dependencies between processes using the property `"depends_process"` in our processes. If you want to know how to configure and use processes in your chains, please click [here](process.md).
 
-We can set up a dependencie to other process end state using ```"$end"```  and ```"$fail"``` operators:
+We can set up a dependencie to other process end state using `"$end"`  and `"$fail"` operators:
 
-In the example below ```PROCESS_B``` will start when ```PROCESS_A``` ends:
+In the example below `PROCESS_B` will start when `PROCESS_A` ends:
 
 ```json
 {
@@ -19,9 +19,9 @@ In the example below ```PROCESS_B``` will start when ```PROCESS_A``` ends:
   "...": "..."
 }
 ```
-Note than we can simplify this action just by adding ```"depends_process": ["PROCESS_A"]```
+Note than we can simplify this action just by adding `"depends_process": ["PROCESS_A"]`
 
-In this example ```PROCESS_B``` will start if ```PROCESS_A``` fails:
+In this example `PROCESS_B` will start if `PROCESS_A` fails:
 
 ```json
 {
@@ -46,7 +46,7 @@ Dependencies of two processes:
   "...": "..."
 }
 ```
-Note than we can simplify this action just by adding ```"depends_process": ["PROCESS_A","PROCESS_B"]```
+Note than we can simplify this action just by adding `"depends_process": ["PROCESS_A","PROCESS_B"]`
 
 ### complex dependencies:
 
@@ -108,7 +108,7 @@ This is an example of how to use conditions in the dependencies of a proecess:
 }
 ```
 
-Moreover, we can use the conditions however we want in the ```"depends_process"``` property and create complex evaluations:
+Moreover, we can use the conditions however we want in the `"depends_process"` property and create complex evaluations:
 
 ```json
 {

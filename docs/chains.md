@@ -196,14 +196,14 @@ The following example shows how to set up notifications for the different states
 
 (List of avaliable officialy notificators coming out soon).
 
-Learn more about notificators and how to configure them [here](docs/notificators.md).
+Learn more about notificators and how to configure them [here](notificators.md).
 
 
 ### Processes
 
 In the **processes** array property can be defined all the processes that are going to be part of the chain.
 
-Learn more about *processes* and how to configure them [here](docs/process.md).
+Learn more about *processes* and how to configure them [here](process.md).
 
 
 ```json

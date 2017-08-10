@@ -1,6 +1,7 @@
 # API (WS) - Runnerty
 
 ## Configuration
+
 ### In the config file: general/api (config.json)
 ```json
 {
@@ -25,7 +26,9 @@
 ```
 
 ## Authentication
+
 Login to get the access token
+
 ### POST [/auth/]
 
 + Body parameters
