@@ -1,17 +1,17 @@
 # processes
 
-In Runnerty, processes are calls to the executors. The executors are plugins which encapsulate functionalities. Know more about [executors].
+In Runnerty, processes are calls to the executors. The executors are plugins which encapsulate functionalities. Know more about executors [here](executors.md).
 
-There is a bunch of executors with different functionalities, have a look at the official [list].
+There is a bunch of executors with different functionalities, have a look at the official [here](plugins.md).
 
-One of the most important executors could be the shell executor ([@runnerty/executor-shell]). As it is the Command-Line Interface, with this plugin is possible to execute existing processes that you may already have.
+One of the most important executors could be the shell executor [@runnerty/executor-shell](https://github.com/Coderty/runnerty-executor-shell). As it is the Command-Line Interface, with this plugin is possible to execute existing processes that you may already have.
 
 ### identification
 
-Each process has two identification fields: ```id``` and ```name```
+Each process has two identification fields: `id` and `name`
 
-```id``` is the unique identification string of the process.
-```name``` is a drescription of the process
+`id` is the unique identification string of the process.
+`name` is a drescription of the process
 
 ```json
 "processes": [
@@ -26,7 +26,7 @@ Each process has two identification fields: ```id``` and ```name```
 
 With Runnerty is possible to establish dependencies betwwen processes. Runnerty provides a powerful feature for this task. 
 
-In the example below we can see how ```PROCESS_ONE``` has a dependcien with ```PROCESS_TWO```. This way, ```PROCESS_TWO``` will only start when ```PROCESS_ONE``` had finished.
+In the example below we can see how `PROCESS_ONE` has a dependcien with `PROCESS_TWO`. This way, `PROCESS_TWO` will only start when `PROCESS_ONE` had finished.
 
 ```json
 "processes": [
@@ -72,11 +72,11 @@ In this example we are using our shell_default executor, the configuration for t
 }
 ```
 
-With the ```id``` field we are indicating the executor that we are going tov use. The rest of the fields are params for the executor. Know more about the executors and their usage in [executors] doc. Yo can also chekc the [conf] documentation to know how to configure them.
+With the `id` field we are indicating the executor that we are going tov use. The rest of the fields are params for the executor. Know more about the executors and their usage in [here](executors.md). You can also chekc the [config](config.md) documentation to know how to configure them.
 
 ### notifications
 
-Runnerty also provides a notification system for your workflows. With the notifications property you can have access to the different states of the process: ```"on_start", "on_fail", "on_retry" and "on_end"``` and use them to send notifications.
+Runnerty also provides a notification system for your workflows. With the notifications property you can have access to the different states of the process: `"on_start", "on_fail", "on_retry" and "on_end"` and use them to send notifications.
 
 For this task, Runnerty uses **notificators**, know more about them [here](notificators.md).
 
@@ -111,7 +111,6 @@ This is an example of usage of notifications in a process. In this case, we are 
       }
       ]
   }
-  ...
 }
 ```
 Note that in the example it is used the global value :PROCESS_ID, this value will have the id of the process. Know more about [global_values].
@@ -140,7 +139,7 @@ Another property of ther processes is that we can reditrect the output of a proc
 }
 ```
 
-Runnerty provides some options to manage logs. Using the property ```concat``` we can indicate runnerty if we want to concatente the output or overwrite it. 
+Runnerty provides some options to manage logs. Using the property `concat` we can indicate runnerty if we want to concatente the output or overwrite it. 
 
 With the maxsize option we indicate Runnerty the maximun size that the log's file could have. Runnerty will automatically delete the firt lines of the file when it is full and needs to continue writting.
 
@@ -165,20 +164,12 @@ For example:
   ]
 }
 ```
-In this example we are getting the email of an user from the database using the @runnerty/executor_mysql and assigning it to a value. This way we can use the ```:USER_EMAIL``` value anywhere of the chain.
+In this example we are getting the email of an user from the database using the @runnerty/executor_mysql and assigning it to a value. This way we can use the `:USER_EMAIL` value anywhere of the chain.
 
-Note that in this example we are are using the value ```:PROCESS_EXEC_MSG_OUTPUT``` This is a global_value that contains the return of the process. Have a look at the [global_values] documentation.
+Note that in this example we are are using the value `:PROCESS_EXEC_MSG_OUTPUT` This is a global_value that contains the return of the process. Have a look at the [values](values.md) documentation.
 
 ### output_iterable
 
 The output_iterable property it's used to iterate a chain depending of the output of a process. An iterale chain is a chain that is going to be executed for each object of the array returned by a process. For example, if we have a process which returns an objects array we can execute an iterable chain for each object of the array.
 
-You can have a lo at the [chains] documentation to see an usage example.
-
-[list]: https://github.com/Coderty/runnerty/blob/master/docs/plugins.md
-[executors]: https://github.com/Coderty/runnerty/blob/master/docs/executors.md
-[@runnerty/executor-shell]: https://github.com/Coderty/runnerty-executor-shell
-[conf]: https://github.com/Coderty/runnerty/blob/master/docs/conf.md
-[notificators]: https://github.com/Coderty/runnerty/blob/master/docs/notificators.md
-[global_values]: https://github.com/Coderty/runnerty/blob/master/docs/global_values.md
-[chains]: https://github.com/Coderty/runnerty/blob/master/docs/chains.md
+You can have a look at the [chains](chains.md) documentation to see an usage example.

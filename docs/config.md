@@ -23,7 +23,7 @@ In the config.json file is set the configuration of the different executors, not
   "notificators": [
     {
       "id": "telegram_default",
-      "type": "@trunnerty/notificator-telegram",
+      "type": "@runnerty/notificator-telegram",
       "token": "MyTokenId",
       "chat_id": "MyChatId"
     }
