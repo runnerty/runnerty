@@ -7,6 +7,12 @@ Runnerty provides a bunch of different values that can be used in the whole plan
 
 These values are called ```global``` because they are automatically provided by Runnerty or defined in the config. Thereby, they can be used in the plan. 
 
+### environment values
+These values allows you to get environment variables.
+##### Sample if you define environment variable: export MYENVVAL=TESTVALUE
+```
+ENV_[ENVIRONMENT VARIABLE NAME] > :ENV_MYENVVAL = TESTVALUE
+```
 
 ### time values
 
@@ -16,16 +22,44 @@ These values contain time values, this is the list of the time values provided b
 YY   - Last two digits of the current year
 YYYY - Current year
 MM   - Current month
+WW   - Current week number
 DD   - Current day
 HH   - Current hour
 mm   - Current minute
 ss   - Current second
 ```
+##### Sample current year: 2017
+##### Sample current month: DECEMBER
+##### Sample current week day: THURSDAY
+##### Sample current day: 7
 ```
 MMMM_[LANGUAGE_INITIALS] > :MMMM_EN = DECEMBER, :MMMM_ES = DICIEMBRE
 MMM_[LANGUAGE_INITIALS]  > :MMM_EN  = DEC,      :MMM_ES = DIC.
 DDDD_[LANGUAGE_INITIALS] > :DDDD_EN = THURSDAY, :DDDD_ES = JUEVES 
 DDD_[LANGUAGE_INITIALS]  > :DDD_EN  = THU,      :DDD_ES = JUE.
+```
+```
+YYYY_[INCREMENT] > :YYYY_1 = 2018,    :YYYY_-2 = 2015
+YY_[INCREMENT]   > :YY_1   = 18,      :YY_-2   = 15
+MMMM_[INCREMENT] > :MMMM_1 = JANUARY, :MMMM_-2 = OCTOBER
+MMM_[INCREMENT]  > :MMM_1  = JAN,     :MMM_-2  = OCT
+DDDD_[INCREMENT] > :DDDD_1 = FRIDAY,  :DDDD_-2 = TUESDAY 
+DDD_[INCREMENT]  > :DDD_1  = FRI,     :DDD_-2  = TUE
+DD_[INCREMENT]  > :DD_1  = 8,         :DD_-2  = 6
+```
+```
+MMMM_[INCREMENT]_[LANGUAGE_INITIALS] > :MMMM_1_EN = JANUARY, :MMMM_-2_ES = OCTUBRE
+MMM_[INCREMENT]_[LANGUAGE_INITIALS]  > :MMM_1_EN  = JAN,     :MMM_-2_EN = OCT.
+DDDD_[INCREMENT]_[LANGUAGE_INITIALS] > :DDDD_1_EN = FRIDAY,  :DDDD_-2_ES = MARTES 
+DDD_[INCREMENT]_[LANGUAGE_INITIALS]  > :DDD_1_EN  = FRI,     :DDD_-2_ES = MAR
+```
+```
+MM_[INCREMENT]_[OUTPUT_FORMAT] > :MM_1_YYYY = 2018, :MM_-2_YYYY = 2017
+MM_[INCREMENT]_[OUTPUT_FORMAT] > :MM_1_YY = 18, :MM_-2_YYYY = 17
+MM_[INCREMENT]_[OUTPUT_FORMAT] > :MM_1_WW = 01, :MM_-2_WW = 40
+DD_[INCREMENT]_[OUTPUT_FORMAT] > :DD_+30_MM = 01, :DD_-30_MM = 11
+DD_[INCREMENT]_[OUTPUT_FORMAT] > :DD_30_YYYY = 2018, :DD_-30_YYYY = 2017
+DD_[INCREMENT]_[OUTPUT_FORMAT] > :DD_30_WW = 45, :DD_-30_WW = 01
 ```
 
 These values are very useful for example to write the output information of a process in a log file:
