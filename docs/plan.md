@@ -9,19 +9,19 @@ It is possible to load a chain from an external file using "chain_path".
   "chains":[
     {"chain_path": "/var/runnerty/chains/my-chain-one.json"},
     {"chain_path": "/var/runnerty/chains/my-chain-two.json"},
-    [...]
+    {"...": "..."}
   ]
 }
 ```
 
-Or directly as an object of the ```chains``` array: 
+Or directly as an object of the `chains` array: 
 
 ```json
 {
   "chains":[
     {
       "id": "MY_CHAIN_ONE",
-      [...]
+      "...": "..."
     }
   ]
 }
