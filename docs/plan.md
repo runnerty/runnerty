@@ -14,7 +14,7 @@ It is possible to load a chain from an external file using "chain_path".
 }
 ```
 
-Or directly as an object of the ```chains``` array: 
+Or directly as an object of the `chains` array: 
 
 ```json
 {
