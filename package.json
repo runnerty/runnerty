@@ -15,10 +15,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:Coderty/runnerty.git"
+    "url": "git@github.com:runnerty/runnerty.git"
   },
   "bugs": {
-    "url": "https://github.com/Coderty/runnerty/issues"
+    "url": "https://github.com/runnerty/runnerty/issues"
   },
   "scripts": {
     "commit": "git-cz"
