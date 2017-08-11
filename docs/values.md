@@ -2,10 +2,9 @@
 
 Runnerty provides a bunch of different values that can be used in the whole plan of our chains. They can be global or local values. Runnerty will automatically replace this variables with it's value. They are very useful to store params, save output values from the processes, making processes evaluations, etc... 
 
-
 ## global values
 
-These values are called ```global``` because they are automatically provided by Runnerty or defined in the config. Thereby, they can be used in the plan. 
+These values are called `global` because they are automatically provided by Runnerty or defined in the config. Thereby, they can be used in the plan. 
 
 ### environment values
 These values allows you to get environment variables.
@@ -82,12 +81,12 @@ These values are very useful for example to write the output information of a pr
 }
 ```
 
-Runnerty will replace ```:DD-:MM-:YYYY :HH::mm::ss``` for it's value: ```31-07-2017 16:00:00```
+Runnerty will replace `:DD-:MM-:YYYY :HH::mm::ss` for it's value: `31-07-2017 16:00:00`
 
 
 ### config values
 
-In the ```config.json``` file it is possible to define our owns values to use them in our chains. This is an example of the ```config.json``` file with some values definitions:
+In the `config.json` file it is possible to define our owns values to use them in our chains. This is an example of the `config.json` file with some values definitions:
 
 ```json
 {
@@ -191,7 +190,6 @@ In this example we can see a procces that in the notification use some of the pr
       }
       ]
   }
-  ...
 }
 ```
 
@@ -215,9 +213,10 @@ The output_share is a property of the process. This feature allows to share info
   ]
 }
 ```
-In this example we are getting the email of an user from the database using the ```@runnerty/executor_mysql``` and assigning it to a value. This way we can use the ```:USER_EMAIL``` value anywhere of the chain.
 
-Notice that in this example we are are using the value ```:PROCESS_EXEC_DB_FIRSTROW_EMAIL``` This is an extra value returned by this executor that contains the field selected by the query.
+In this example we are getting the email of an user from the database using the `@runnerty/executor_mysql` and assigning it to a value. This way we can use the `:USER_EMAIL` value anywhere of the chain.
+
+Notice that in this example we are are using the value `:PROCESS_EXEC_DB_FIRSTROW_EMAIL` This is an extra value returned by this executor that contains the field selected by the query.
 
 
 ### chain values 
@@ -232,14 +231,13 @@ CNAIN_NAME  - Contains the name of the chain
 
 ### custom values
 
-This values can be defined in our chains and can be used in the whole plan of the chain. This is also very useful when you want to overwrite a value defined in the ```config.json``` file:
+This values can be defined in our chains and can be used in the whole plan of the chain. This is also very useful when you want to overwrite a value defined in the `config.json` file:
 
 ```json
 {
   "id":"CHAIN_ONE",
   "name":"Example chain",
   "custom_values":{"MY_VALUE":"MY_VALUE"}
-  ...
 }
 ```
 
@@ -286,9 +284,10 @@ You can know for more information about iterable chains in the chains [here](cha
   ]
 }
 ```
+
 In this example we can see how the chain is receiving two input fields and the process is using their values to send an email.
 
 
 ### executors extra values
 
-As the executors are plugins for Runnerty, it is possible that some of them need to return additional information to Runnerty. For this task Runnerty provides the ```EXTRA_OUTPUT``` values that can be used by the executors. Know more about this in the executors development documentation.
+As the executors are plugins for Runnerty, it is possible that some of them need to return additional information to Runnerty. For this task Runnerty provides the `EXTRA_OUTPUT` values that can be used by the executors. Know more about this in the executors development documentation.
