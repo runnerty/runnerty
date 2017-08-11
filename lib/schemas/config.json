@@ -1,65 +1,107 @@
 { "type": "object",
   "required": ["config"],
   "properties": {
-  "config": {
-    "type": "object",
-    "required": ["general"],
-    "properties": {
-      "general": {
-        "type": "object",
-        "properties": {
-          "binBackup": {"type": "string"},
-          "planFilePath": {"type": "string"},
-          "refreshIntervalBinBackup": {"type": "number"},
-          "api": {
-            "type": "object",
-            "properties": {
-              "port": {"type": "number"},
-              "users": {"type": "array"},
-              "secret": {"type": "string"},
-              "limite_req": {"type": "string"},
-              "propertiesExcludesInResponse": {"type": "array"}
-            }
-          },
-          "history": {
-            "type": "object",
-            "properties": {
-              "disable": {"type": "boolean"},
-              "mongodb": {
-                "type": "object",
-                "required": ["host","database"],
+    "config": {
+      "type": "object",
+      "required": ["general"],
+      "properties": {
+        "general": {
+          "type": "object",
+          "properties": {
+            "binBackup": {"type": "string"},
+            "planFilePath": {"type": "string"},
+            "refreshIntervalBinBackup": {"type": "number"},
+            "api": {
+              "type": "object",
+              "anyOf": [{
+                "required": ["port"],
                 "properties": {
-                  "host": {"type": "string"},
-                  "port": {"type": "number"},
-                  "database": {"type": "string"}
+                  "port": {"type": ["number"]},
+                  "users": {"type": "array"},
+                  "secret": {"type": "string"},
+                  "limite_req": {"type": "string"},
+                  "token_expiration_time": {"type": "number"},
+                  "log_display_level": {
+                    "type": "string",
+                    "pattern": "(combined|common|dev|short|tiny)"
+                  },
+                  "chainsFieldsResponse": {"type": "array"},
+                  "processFieldsResponse": {"type": "array"}
+                }  
+              }, {
+                "required": ["unix_socket"],
+                "properties": {
+                  "unix_socket": {"type": "string"},
+                  "users": {"type": "array"},
+                  "secret": {"type": "string"},
+                  "limite_req": {"type": "string"},
+                  "token_expiration_time": {"type": "number"},
+                  "log_display_level": {
+                    "type": "string",
+                    "pattern": "(combined|common|dev|short|tiny)"
+                  },
+                  "chainsFieldsResponse": {"type": "array"},
+                  "processFieldsResponse": {"type": "array"}
+                }  
+              }, {
+                "required": ["port", "ssl"],
+                "properties": {
+                  "port": {"type": ["string"]},
+                  "ssl": {"type": "boolean"},
+                  "key": {"type": "string"},
+                  "cert": {"type": "string"},
+                  "users": {"type": "array"},
+                  "secret": {"type": "string"},
+                  "limite_req": {"type": "string"},
+                  "token_expiration_time": {"type": "number"},
+                  "log_display_level": {
+                    "type": "string",
+                    "pattern": "(combined|common|dev|short|tiny)"
+                  },
+                  "chainsFieldsResponse": {"type": "array"},
+                  "processFieldsResponse": {"type": "array"}
+                }  
+              }]
+            },
+            "history": {
+              "type": "object",
+              "properties": {
+                "disable": {"type": "boolean"},
+                "mongodb": {
+                  "type": "object",
+                  "required": ["host","database"],
+                  "properties": {
+                    "host": {"type": "string"},
+                    "port": {"type": "number"},
+                    "database": {"type": "string"}
+                  }
                 }
               }
             }
           }
-        }
-      },
-      "executors": {
-        "type": "array"
-      },
-      "notificators": {
-        "type": "array"
-      },
-      "global_values": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "additionalProperties" : {
-            "type" : "object",
-            "properties":{
-              "value": {"type": ["string","array","object"]},
-              "format": {"type": "string"},
-              "delimiter":{"type": "string"},
-              "quotechar":{"type": "string"}
+        },
+        "executors": {
+          "type": "array"
+        },
+        "notificators": {
+          "type": "array"
+        },
+        "global_values": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "properties":{
+                "value": {"type": ["string","array","object"]},
+                "format": {"type": "string"},
+                "delimiter":{"type": "string"},
+                "quotechar":{"type": "string"}
+              }
             }
           }
         }
       }
     }
   }
-}
 }
