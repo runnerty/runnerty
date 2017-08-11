@@ -34,6 +34,7 @@
     "fs-extra": "^4.0.1",
     "glob-to-regexp": "^0.3.0",
     "helmet": "^3.8.1",
+    "https": "^1.0.0",
     "ical2json": "^1.2.0",
     "jsonwebtoken": "^7.4.2",
     "lodash": "^4.17.4",
