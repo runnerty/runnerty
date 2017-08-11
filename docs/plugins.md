@@ -11,6 +11,7 @@ This is the list of the oficial plugins availables.
 - [Redis](https://www.npmjs.com/package/@runnerty/executor-redis)
 - [Postgres](https://www.npmjs.com/package/@runnerty/executor-postgres)
 - [Mail](https://www.npmjs.com/package/@runnerty/executor-mail)
+- [Filesystem](https://www.npmjs.com/package/@runnerty/executor-filesystem)
 - [AWS-S3](https://www.npmjs.com/package/@runnerty/executor-s3)
 - [PDF](https://www.npmjs.com/package/@runnerty/executor-pdf)
 - [SCP](https://www.npmjs.com/package/@runnerty/executor-scp)
@@ -18,9 +19,11 @@ This is the list of the oficial plugins availables.
 - [HTTP](https://www.npmjs.com/package/@runnerty/executor-http)
 - [Check Online Service](https://www.npmjs.com/package/@runnerty/executor-check-online-service)
 - [Decompress (tar, unzip, gunzip, 7z and rar)](https://www.npmjs.com/package/@runnerty/executor-decompress)
+- [Confirmation](https://www.npmjs.com/package/@runnerty/executor-confirmation)
 
 ## Notificators
 
 - [Mail](https://www.npmjs.com/package/@runnerty/notificator-mail)
 - [Slack](https://www.npmjs.com/package/@runnerty/notificator-slack)
 - [Telegram](https://www.npmjs.com/package/@runnerty/notificator-telegram)
+- [Console](https://www.npmjs.com/package/@runnerty/notificator-console)
