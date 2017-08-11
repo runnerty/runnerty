@@ -73,7 +73,8 @@
   },
   "devDependencies": {
     "commitizen": "^2.9.6",
-    "cz-conventional-changelog": "^2.0.0"
+    "cz-conventional-changelog": "^2.0.0",
+    "all-contributors": "4.4.0"
   },
   "config": {
     "commitizen": {
