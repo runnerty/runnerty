@@ -105,7 +105,9 @@ module.exports = () => {
   // ================================================
 
   // = API ==========================================
-  app.use(morgan(config.api.log_display_level)); //TODO parametrizar
+  if (config.api.log_display_level) {
+    app.use(morgan(config.api.log_display_level));
+  }
 
   app.use(bodyParser.json());
 
@@ -127,8 +129,9 @@ module.exports = () => {
   app.use((err, req, res, next) => {
     if (err.name === "UnauthorizedError") {
       res.status(401).send({message: "Unauthorized"});
+    } else {
+      next();
     }
-    next();
   });
 
   app.use("/", router);
