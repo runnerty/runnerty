@@ -105,7 +105,9 @@ module.exports = () => {
   // ================================================
 
   // = API ==========================================
-  app.use(morgan(config.api.log_display_level)); //TODO parametrizar
+  if (config.api.log_display_level) {
+    app.use(morgan(config.api.log_display_level));
+  }
 
   app.use(bodyParser.json());
 
