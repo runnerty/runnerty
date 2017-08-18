@@ -101,7 +101,7 @@ In the `config.json` file it is possible to define our owns values to use them i
         "my_files": {
           "file_one":"/path/MYFILE_ONE.csv",
           "file_one":"/path/MYFILE_TWO.csv"
-      	},
+        },
         "my_values":{
           "value_one":"VALUE_ONE",
           "value_two":"VALUE_TWO"
@@ -122,8 +122,11 @@ They are called local because these values come from different parts of the plan
 Theses values are formed with the procces information and configuration. For example, these two values takes it's value from the metadata of the process:
 
 ```
-PROCESS_ID -- contains the ID of the process
-PROCESS_NAME -- contains the name of the process 
+CHAIN_ID                       - Contains the process chain id
+CHAIN_NAME                     - Contains the process chain name
+CHAIN_STARTED_AT               - Contains the date and time when the process chain started
+PROCESS_ID                     - Contains the process id
+PROCESS_NAME                   - Contains the process name
 ```
 
 This is an example of a process using the time and process values to write in a log file:
@@ -131,7 +134,7 @@ This is an example of a process using the time and process values to write in a 
 ```json
 {
   "id":"PROCESS_ONE",
-  	"name":"First process of the chain",
+    "name":"First process of the chain",
     "exec": {
       "id":"shell_default",
       "command":"echo 'Hello world'"
@@ -149,14 +152,7 @@ These are the rest of the values that takes information from the process executi
 
 
 ```
-CHAIN_ID                       - Contains the chain id
-CHAIN_NAME                     - Contains the chain name
-CHAIN_STARTED_AT               - Contains the date and time when the chain started
-PROCESS_ID                     - Contains the process id
-PROCESS_NAME                   - Contains the process name
 PROCESS_EXEC_ID                - Contains the execution id
-PROCESS_DURATION_SECONDS       - Contains the duration in seconds (when is end).
-PROCESS_DURATION_HUMANIZED     - Contains the humanized duration (when is end).
 PROCESS_EXEC_COMMAND           - Contains the command that is going to be executed by the executor
 PROCESS_EXEC_COMMAND_EXECUTED  - Contains the command executed by the executor (once all the values have been translated)
 PROCESS_EXEC_MSG_OUTPUT        - Contains the output message of the executor
@@ -164,6 +160,8 @@ PROCESS_EXEC_DATA_OUTPUT       - Contains the data output of the executor
 PROCESS_EXEC_ERR_OUTPUT        - Contains the error returned by the executor
 PROCESS_STARTED_AT             - Contains the date and time when the process started
 PROCESS_ENDED_AT               - Contains the date and time when the process ended
+PROCESS_DURATION_SECONDS       - Contains the duration in seconds (when is end).
+PROCESS_DURATION_HUMANIZED     - Contains the humanized duration (when is end).
 PROCESS_RETRIES_COUNT          - Contains the times that the process have been retried
 ```
 
@@ -232,8 +230,11 @@ Notice that in this example we are are using the value `:PROCESS_EXEC_DB_FIRSTRO
 Just like the process values, there are also some values formed with the chain information: 
 
 ```
-CHAIN_ID    - Contains the ID of the chain
-CNAIN_NAME  - Contains the name of the chain
+CHAIN_ID                 - Contains the ID of the chain
+CNAIN_NAME               - Contains the name of the chain
+CHAIN_STARTED_AT         - Contains the date and time when the chain started
+CHAIN_DURATION_SECONDS   - Contains the duration in seconds (when is end).
+CHAIN_DURATION_HUMANIZED - Contains the humanized duration (when is end).  
 ```
 
 
