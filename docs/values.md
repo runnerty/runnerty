@@ -149,14 +149,22 @@ These are the rest of the values that takes information from the process executi
 
 
 ```
-PROCESS_COMMAND           - Contains the command that is going to be executed by the executor
-PROCESS_ARGS              - Contains the args past to the executors
-PROCESS_COMMAND_EXECUTED  - Contains the command executed by the executor (once all the values have been translated)
-PROCESS_EXEC_MSG_OUTPUT   - Contains the output message of the executor
-PROCESS_EXEC_ERR_RETURN   - Contains the error returned by the executor
-PROCESS_STARTED_AT        - Contains the date and time when the process started
-PROCESS_ENDED_AT          - Contains the date and time when the process ended
-PROCESS_RETRIES_COUNT     - Contains the times that the process have been retried
+CHAIN_ID                       - Contains the chain id
+CHAIN_NAME                     - Contains the chain name
+CHAIN_STARTED_AT               - Contains the date and time when the chain started
+PROCESS_ID                     - Contains the process id
+PROCESS_NAME                   - Contains the process name
+PROCESS_EXEC_ID                - Contains the execution id
+PROCESS_DURATION_SECONDS       - Contains the duration in seconds (when is end).
+PROCESS_DURATION_HUMANIZED     - Contains the humanized duration (when is end).
+PROCESS_EXEC_COMMAND           - Contains the command that is going to be executed by the executor
+PROCESS_EXEC_COMMAND_EXECUTED  - Contains the command executed by the executor (once all the values have been translated)
+PROCESS_EXEC_MSG_OUTPUT        - Contains the output message of the executor
+PROCESS_EXEC_DATA_OUTPUT       - Contains the data output of the executor
+PROCESS_EXEC_ERR_OUTPUT        - Contains the error returned by the executor
+PROCESS_STARTED_AT             - Contains the date and time when the process started
+PROCESS_ENDED_AT               - Contains the date and time when the process ended
+PROCESS_RETRIES_COUNT          - Contains the times that the process have been retried
 ```
 
 In this example we can see a procces that in the notification use some of the process values to send useful information:
@@ -180,7 +188,7 @@ In this example we can see a procces that in the notification use some of the pr
     "on_fail": [
       {
         "id": "telegram_default",
-        "message": "THE PROCESS :PROCESS_ID HAS FAILED AT :PROCESS_STARTED_AT - THE EXECUTED COMMAND WAS :PROCESS_COMMAND_EXECUTED  - THE ERROR WAS :PROCESS_EXEC_ERR_RETURN"
+        "message": "THE PROCESS :PROCESS_ID HAS FAILED AT :PROCESS_STARTED_AT - THE EXECUTED COMMAND WAS :PROCESS_COMMAND_EXECUTED  - THE ERROR WAS :PROCESS_EXEC_ERR_OUTPUT"
       }
       ],
     "on_end": [
