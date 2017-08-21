@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -76,7 +76,7 @@
   "devDependencies": {
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.0.0",
-    "all-contributors": "4.4.0"
+    "all-contributors-cli": "4.4.0"
   },
   "config": {
     "commitizen": {
