@@ -17,12 +17,30 @@
       ],
       "secret": "RUNNERTY_BY_CODERTY",
       "limite_req": "20mb",
-      "propertiesExcludesInResponse": [
-        "proc",
-        "scheduleCancel",
-        "scheduleRepeater",
-        "file_watchers",
-        "depends_files_ready"
+      "chainsFieldsResponse": [
+        "id",
+        "name",
+        "status",
+        "started_at",
+        "ended_at",
+        "duration_humanized",
+        "custom_values",
+        "processes.id",
+        "processes.name",
+        "processes.status",
+        "processes.retries",
+        "processes.started_at",
+        "processes.ended_at",
+        "processes.duration_humanized"
+      ],
+      "processFieldsResponse": [
+        "id",
+        "name",
+        "status",
+        "retries",
+        "started_at",
+        "ended_at",
+        "duration_humanized"
       ]
     },
     "calendarsPath": "/calendars_dir/",

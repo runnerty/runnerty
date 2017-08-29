@@ -11,7 +11,7 @@
         "status",
         "started_at",
         "ended_at",
-        "duration_humnized",
+        "duration_humanized",
         "custom_values",
         "processes.id",
         "processes.name",
@@ -19,7 +19,7 @@
         "processes.retries",
         "processes.started_at",
         "processes.ended_at",
-        "processes.duration_humnized"
+        "processes.duration_humanized"
       ],
       "processFieldsResponse": [
         "id",
@@ -28,7 +28,7 @@
         "retries",
         "started_at",
         "ended_at",
-        "duration_humnized"
+        "duration_humanized"
       ]
     }
   },

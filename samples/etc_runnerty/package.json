@@ -9,15 +9,18 @@
     "@runnerty/notificator-slack": "latest",
     "@runnerty/notificator-telegram": "latest",
     "@runnerty/notificator-console": "latest",
-    "@runnerty/executor-shell": "latest",
-    "@runnerty/executor-wait": "latest",
+    "@runnerty/executor-decompress": "latest",
+    "@runnerty/executor-filesystem": "latest",
+    "@runnerty/executor-iconv": "latest",
     "@runnerty/executor-iterable": "latest",
     "@runnerty/executor-mail": "latest",
     "@runnerty/executor-mysql": "latest",
-    "@runnerty/executor-redis": "latest",
+    "@runnerty/executor-pdf": "latest",
     "@runnerty/executor-postgres": "latest",
+    "@runnerty/executor-redis": "latest",
+    "@runnerty/executor-s3": "latest",
     "@runnerty/executor-scp": "latest",
-    "@runnerty/executor-iconv": "latest",
-    "@runnerty/executor-s3": "latest"
+    "@runnerty/executor-shell": "latest",
+    "@runnerty/executor-wait": "latest"
   }
 }
