@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -26,7 +26,7 @@
   "dependencies": {
     "ajv": "^5.2.2",
     "body-parser": "^1.17.2",
-    "bytes": "^2.5.0",
+    "bytes": "^3.0.0",
     "chokidar": "^1.7.0",
     "commander": "^2.11.0",
     "express": "^4.15.4",
@@ -38,7 +38,7 @@
     "jsonwebtoken": "^7.4.2",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
-    "mongoose": "^4.11.6",
+    "mongoose": "^4.11.10",
     "morgan": "^1.8.2",
     "node-schedule": "^1.2.4",
     "object-sizeof": "^1.2.0",
