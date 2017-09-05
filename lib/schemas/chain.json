@@ -4,15 +4,19 @@
   "properties": {
     "id": {"type": "string"},
     "name": {"type": "string"},
-    "start_date": {"type": "string", "format": "date-time"},
-    "end_date": {"type": "string", "format": "date-time"},
-    "_schedule_interval": {"type": "string", "format": "cron"},
-    "schedule_interval": {"type": "string"},
-    "calendars": {
-      "type": "object",
-      "properties": {
-        "enable":{"type": "string"},
-        "disable":{"type": "string"}
+    "triggers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "calendars": {
+            "type": "object",
+            "properties": {
+              "enable":{"type": "string"},
+              "disable":{"type": "string"}
+            }
+          }
+        }
       }
     },
     "depends_chains": {"type": ["array","object"]},

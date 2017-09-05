@@ -80,6 +80,9 @@
             }
           }
         },
+        "triggers": {
+          "type": "array"
+        },
         "executors": {
           "type": "array"
         },

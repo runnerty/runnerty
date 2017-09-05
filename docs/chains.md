@@ -136,26 +136,6 @@ The chain of the example will not be executed until the chain with *id* *CHAIN_O
 }
 ```
 
-In addition, it is possible to set up file system path dependencies in Runnerty with the help of auto-magically configured filewatchers. Them are defined with the **condition** property and can be fired through the following actions:
-
-- *add*: when a file is added.
-- *change*: when a file is changed.
-- *unlink*: when a file is deleted.
-- *error*: when there is an error in the file treatment.
-
-Usage example below:
-
-```json
-{
-  "depends_chains": [
-    {
-      "file_name": "/path/myfile.txt",
-      "condition": "add"
-    }
-  ]
-}
-```
-
 ### Notifications
 
 With the **notifications** property, Runnerty can be set up to emit notifications during the chain status flow, fired up by the following callbacks:
