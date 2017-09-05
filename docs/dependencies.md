@@ -1,9 +1,9 @@
-# dependencies
+# Dependencies
 
 Runnerty provides a powerful feature to establish dependencies between processes. Not only it is possible to set up dependencies to other processes end states. You can also use operators to evaluate values, add complex conditions using operators and multiple expressions.
 
 
-## process dependencies
+## Process dependencies
 
 It is very easy to establish dependencies between processes using the property `"depends_process"` in our processes. If you want to know how to configure and use processes in your chains, please click [here](process.md).
 
@@ -32,7 +32,7 @@ In this example `PROCESS_B` will start if `PROCESS_A` fails:
 }
 ```
 
-### operators
+### Operators
 
 It is possible to add operators to the dependencies if we need to evaluate more than one process:
 
@@ -48,7 +48,7 @@ Dependencies of two processes:
 ```
 Note than we can simplify this action just by adding `"depends_process": ["PROCESS_A","PROCESS_B"]`
 
-### complex dependencies:
+### Complex dependencies:
 
 Using operatios Runnerty offers the possibility to add complex dependencies between our processes. 
 
@@ -75,11 +75,11 @@ In this example process E will start only if process A or B fails and process C 
 }
 ```
 
-## evaluations
+## Evaluations
 
 With Runnerty we can also establish dependencies of an evaluation using values from our processes or chains. If you want to know more about the usage of values in Runnerty, please click [here](values.md).
 
-### conditions
+### Conditions
 
 ```
 $eq    - equal
@@ -136,9 +136,9 @@ Moreover, we can use the conditions however we want in the `"depends_process"` p
 }
 ```
 
-## multiple expressions
+## Multiple expressions
 
-At this point, you probably imagine that it is also posible to mix dependencies with other processes states and values evaluations. This is a simple example of how to do that:
+At this point, you probably imagine that it is also possible to mix dependencies with other processes states and values evaluations. This is a simple example of how to do that:
 
 ```json
 {

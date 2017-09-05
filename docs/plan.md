@@ -49,7 +49,7 @@ This is the basic structure of a plan with chain with one process:
     {
       "id": "EXAMPLE_CHAIN",
       "name": "Name of the sample chain",
-      "schedule_interval": "* * * * *",
+      "triggers": [],
       "depends_chains": [],
       "processes": [
         {

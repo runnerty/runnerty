@@ -2,7 +2,7 @@
 
 ## Configuration
 
-### In the config file: general/api (config.json)
+### In the config file: general/api [config.json](config.md)
 ```json
 {
   "general": {
@@ -27,7 +27,7 @@
 
 ## Authentication
 
-Login to get the access token
+Login to get the access token.
 
 ### POST [/auth/]
 
