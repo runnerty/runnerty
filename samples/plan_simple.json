@@ -3,7 +3,6 @@
     {
       "id":"CHAIN_ONE",
       "name":"Chain one sample",
-      "schedule_interval":"*/1 * * * *",
       "processes":[
         {
           "id":"PROCESS_ONE",

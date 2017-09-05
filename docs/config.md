@@ -1,4 +1,4 @@
-# configuration
+# Configuration
 
 ### config.json
 
@@ -10,10 +10,20 @@ With the -c param it is possible to indicate a different path.
 runnerty -c /path/config.json
 ```
 
-In the config.json file is set the configuration of the different executors, notificators and global values (params, paths, files, etc.) which are going to be used on the processes: 
+In the config.json file is set the configuration of the different triggers, executors, notificators and global values (params, paths, files, etc.) which are going to be used on the processes: 
 
 ```json
 {
+  "triggers": [
+    {
+      "id":"schedule_default",
+      "type":"@runnerty-trigger-schedule"
+    },
+    {
+      "id":"filewatcher_default",
+      "type":"@runnerty-trigger-file-watcher"
+    }
+  ],
   "executors": [
     {
       "id": "shell_default",
@@ -31,13 +41,17 @@ In the config.json file is set the configuration of the different executors, not
 }
 ```
 
+### Triggers
+The triggers are plugins which provoked the execution of a chain.
+The most common case is the schedule trigger which allows us to execute a chain with a periodicity like CRON. 
+Another example is the file watcher trigger. This trigger let us to execute a chain based on the events defined over a directory or file.
 ### Executors
 
 The executors are plugins which enclose functionalities. This plugins allows Runnerty execute processes, data bases operations, use external services, etc. This is a list of the official available [here](plugins.md)
 
 In the config.json file are defined all the executors that are going to be used in the whole plan.
 
-This is an example of the configutarion of two executors (shell and mysql): 
+This is an example of the configuration of two executors (shell and mysql): 
 
 ```json
 {
@@ -98,10 +112,10 @@ It is possible to define values that can be used in the chains an process (paths
 ```json
 {
     "executors": [
-      ...
+      {"...":"..."}
     ],
     "notificators": [
-      ...
+      {"...":"..."}
     ],
     "global_values": [
       {

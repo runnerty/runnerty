@@ -3,9 +3,19 @@
     {
       "id":"CHAIN_ONE",
       "name":"Chain one sample",
-      "start_date":"2017-04-01T00:00:00.00Z",
-      "end_date":"2099-11-01T00:00:00.00Z",
-      "schedule_interval":"*/1 * * * *",
+      "triggers":[
+        {
+          "id":"schedule_default",
+          "start_date":"2017-09-05T00:00:00.00Z",
+          "end_date":"2099-09-05T00:00:00.00Z",
+          "schedule_interval":"*/1 * * * *"
+        },
+        {
+          "id":"filewatcher_default",
+          "file_name": "/etc/runnerty/myfile.txt",
+          "condition": "add"
+        }
+      ],
       "depends_chains":[],
       "notifications":{
         "on_start":[

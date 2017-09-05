@@ -1,19 +1,19 @@
-# values
+# Values
 
 Runnerty provides a bunch of different values that can be used in the whole plan of our chains. They can be global or local values. Runnerty will automatically replace this variables with it's value. They are very useful to store params, save output values from the processes, making processes evaluations, etc... 
 
-## global values
+## Global values
 
 These values are called `global` because they are automatically provided by Runnerty or defined in the config. Thereby, they can be used in the plan. 
 
-### environment values
+### Environment values
 These values allows you to get environment variables.
 ##### Sample if you define environment variable: export MYENVVAL=TESTVALUE
 ```
 ENV_[ENVIRONMENT VARIABLE NAME] > :ENV_MYENVVAL = TESTVALUE
 ```
 
-### time values
+### Time values
 
 These values contain time values, this is the list of the time values provided by Runnerty:
 
@@ -84,17 +84,17 @@ These values are very useful for example to write the output information of a pr
 Runnerty will replace `:DD-:MM-:YYYY :HH::mm::ss` for it's value: `31-07-2017 16:00:00`
 
 
-### config values
+### Config values
 
 In the `config.json` file it is possible to define our owns values to use them in our chains. This is an example of the `config.json` file with some values definitions:
 
 ```json
 {
     "executors": [
-      ...
+      {"...":"..."}
     ],
     "notificators": [
-      ...
+      {"...":"..."}
     ],
     "global_values": [
       {
@@ -112,14 +112,14 @@ In the `config.json` file it is possible to define our owns values to use them i
 ```
 
 
-## local values
+## Local values
 
 They are called local because these values come from different parts of the plan. They take their values from different Runnerty changeable sources such as the processes or chains information.
 
 
-### process values 
+### Process values 
 
-Theses values are formed with the procces information and configuration. For example, these two values takes it's value from the metadata of the process:
+Theses values are formed with the process information and configuration. For example, these two values takes it's value from the metadata of the process:
 
 ```
 CHAIN_ID                       - Contains the process chain id
@@ -165,7 +165,7 @@ PROCESS_DURATION_HUMANIZED     - Contains the humanized duration (when is end).
 PROCESS_RETRIES_COUNT          - Contains the times that the process have been retried
 ```
 
-In this example we can see a procces that in the notification use some of the process values to send useful information:
+In this example we can see a process that in the notification use some of the process values to send useful information:
 
 ```json
 {
@@ -225,7 +225,7 @@ In this example we are getting the email of an user from the database using the 
 Notice that in this example we are are using the value `:PROCESS_EXEC_DB_FIRSTROW_EMAIL` This is an extra value returned by this executor that contains the field selected by the query.
 
 
-### chain values 
+### Chain values 
 
 Just like the process values, there are also some values formed with the chain information: 
 
@@ -238,7 +238,7 @@ CHAIN_DURATION_HUMANIZED - Contains the humanized duration (when is end).
 ```
 
 
-### custom values
+### Custom values
 
 This values can be defined in our chains and can be used in the whole plan of the chain. This is also very useful when you want to overwrite a value defined in the `config.json` file:
 
@@ -253,7 +253,7 @@ This values can be defined in our chains and can be used in the whole plan of th
 Notice that this values can be also past from the API. 
 
 
-### input values
+### Input values
 
 This values cames from the output of an iterable chain. An iterable chain is an awasome feature of runnerty that allows you to be execute a chain for each object in the array previously returned by another chain.
 
@@ -297,6 +297,6 @@ You can know for more information about iterable chains in the chains [here](cha
 In this example we can see how the chain is receiving two input fields and the process is using their values to send an email.
 
 
-### executors extra values
+### Executors extra values
 
 As the executors are plugins for Runnerty, it is possible that some of them need to return additional information to Runnerty. For this task Runnerty provides the `EXTRA_OUTPUT` values that can be used by the executors. Know more about this in the executors development documentation.

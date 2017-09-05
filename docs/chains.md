@@ -10,7 +10,7 @@ This is an example of a basic chain with one process:
     {
       "id": "EXAMPLE_CHAIN",
       "name": "Name of the sample chain",
-      "schedule_interval": "* * * * *",
+      "triggers": [],
       "depends_chains": [],
       "processes": [
         {
@@ -51,52 +51,9 @@ A chain has two identification fields:
 ```
 
 
+### Execution (Triggers)
+The way to execute chains is by [triggers](triggers.md)
 
-### Scheduling
-
-There are different ways to schedule a chain. It is possible to schedule chains with a cron expression.
-
-This scheduling will execute the chain at every minute:
-
-```json
-{
-  "id": "EXAMPLE_CHAIN",
-  "name": "Name of the sample chain",
-  "schedule_interval": "*/1 * * * *"
-}
-```
-
-There is also the possibility to schedule a chain using a calendars. The calendars path can be indicated in the *config.json* file:
-
-```json
-{
-  "general": {
-    "calendarsPath": "/calendars/"
-  }
-}
-```
-
-Calendars dir:
-```
-runnerty
-  |-- calendars
-    |-- weekends.ics
-    |-- laboral_days.ics
-```
-
-Calendars can be used for both, enabling or disabling execution dates through the **enable** and **disable** properties, so it can be specified, for example, to only execute a chain on laboral days, excluding weekends, like in the sample below:
-
-```json
-{
-  "id": "EXAMPLE_CHAIN",
-  "name": "Name of the sample chain",
-  "calendars": 
-    {
-      "enable": "laboral_days",
-      "disable": "weekends"
-    }
-}
-```
 
 ### Custom values
 
@@ -310,6 +267,7 @@ With the **input** property we can assign the properties of each object returned
       "name": "name"
     }
   ],
+  "...":"..."
 }
 ```
 

@@ -1,6 +1,6 @@
 # List of plugins availables
 
-This is the list of the oficial plugins availables. 
+This is the list of the official plugins availables. 
 
 ## Executors
 
@@ -27,3 +27,8 @@ This is the list of the oficial plugins availables.
 - [Slack](https://www.npmjs.com/package/@runnerty/notificator-slack)
 - [Telegram](https://www.npmjs.com/package/@runnerty/notificator-telegram)
 - [Console](https://www.npmjs.com/package/@runnerty/notificator-console)
+
+## Triggers
+
+- [Schedule](https://www.npmjs.com/package/@runnerty/trigger-schedule)
+- [File Watcher](https://www.npmjs.com/package/@runnerty/trigger-file-watcher)
