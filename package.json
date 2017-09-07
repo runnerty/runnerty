@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "2.0.0-rc0",
+  "version": "2.0.0-rc1",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -41,6 +41,7 @@
     "morgan": "^1.8.2",
     "object-sizeof": "^1.2.0",
     "redis": "^2.8.0",
+    "request": "^2.81.0",
     "winston": "^2.3.1"
   },
   "keywords": [

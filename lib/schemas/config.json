@@ -11,6 +11,7 @@
             "binBackup": {"type": "string"},
             "planFilePath": {"type": "string"},
             "refreshIntervalBinBackup": {"type": "number"},
+            "modulesPath": {"type": "string"},
             "api": {
               "type": "object",
               "anyOf": [{
@@ -27,7 +28,7 @@
                   },
                   "chainsFieldsResponse": {"type": "array"},
                   "processFieldsResponse": {"type": "array"}
-                }  
+                }
               }, {
                 "required": ["unix_socket"],
                 "properties": {
@@ -42,7 +43,7 @@
                   },
                   "chainsFieldsResponse": {"type": "array"},
                   "processFieldsResponse": {"type": "array"}
-                }  
+                }
               }, {
                 "required": ["port", "ssl"],
                 "properties": {
@@ -60,7 +61,7 @@
                   },
                   "chainsFieldsResponse": {"type": "array"},
                   "processFieldsResponse": {"type": "array"}
-                }  
+                }
               }]
             },
             "history": {
