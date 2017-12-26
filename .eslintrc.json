@@ -1,7 +1,8 @@
 {
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "jest/globals": true
   },
   "extends": "eslint:recommended",
   "globals": {
@@ -30,5 +31,8 @@
       "error",
       "always"
     ]
-  }
+  },
+  "plugins": [
+    "jest"
+  ]
 }

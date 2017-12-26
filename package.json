@@ -21,7 +21,9 @@
     "url": "https://github.com/runnerty/runnerty/issues"
   },
   "scripts": {
-    "commit": "git-cz"
+    "commit": "git-cz",
+    "test": "jest",
+    "test-watch": "jest --watch"
   },
   "dependencies": {
     "ajv": "^5.2.2",
@@ -73,9 +75,27 @@
     "node": ">=8.1.0"
   },
   "devDependencies": {
+    "all-contributors-cli": "4.4.0",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.0.0",
-    "all-contributors-cli": "4.4.0"
+    "eslint": "^4.14.0",
+    "eslint-plugin-jest": "^21.5.0",
+    "jest": "^20.0.4",
+    "jest-cli": "^20.0.4"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "lib/loadConfigSection.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 0,
+        "functions": 0,
+        "lines": 0,
+        "statements": 0
+      }
+    }
   },
   "config": {
     "commitizen": {
