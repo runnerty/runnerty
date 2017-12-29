@@ -177,8 +177,8 @@
     },
     {
       "MY_LISTS": {
-        "LIST_ZERO": {"value":[":YYYY","-CA-",":MM","-TO-",":DD"], "format":"text"},
-        "LIST_ONE": {"value":["VAL1","VAL2:MM","VAL3"], "format":"text", "delimiter":",", "quotechar":"\""},
+        "LIST_ZERO": {"value":["@GETDATE(YYYY)","-CA-","@GETDATE(MM)","-TO-","@GETDATE(DD)"], "format":"text"},
+        "LIST_ONE": {"value":["VAL1","VAL2@GETDATE(MM)","VAL3"], "format":"text", "delimiter":",", "quotechar":"\""},
         "LIST_TWO": {"value":["VAL1","VAL2","VAL3"], "format":"json"},
         "LIST_THREE": {"value":[{"KEY1": "VAL1", "KEY2": "VAL2"}, {"KEY1": "VAL1", "KEY2": "VAL2"}], "format":"json"}
       }
