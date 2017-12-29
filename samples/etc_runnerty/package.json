@@ -21,6 +21,8 @@
     "@runnerty/executor-s3": "latest",
     "@runnerty/executor-scp": "latest",
     "@runnerty/executor-shell": "latest",
-    "@runnerty/executor-wait": "latest"
+    "@runnerty/executor-wait": "latest",
+    "@runnerty/trigger-schedule": "latest",
+    "@runnerty/trigger-file-watcher": "latest"
   }
 }
