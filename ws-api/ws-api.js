@@ -14,6 +14,7 @@ const fs = require("fs");
 const utils = require("../lib/utils.js");
 const logger = utils.logger;
 const config = global.config.general;
+const queueProcess = require("../lib/queue-process-memory.js");
 
 let apiPlan = global.runtimePlan.plan;
 
@@ -232,18 +233,20 @@ module.exports = () => {
    * - customValues (JSON) custom values to replace in chain processes
    */
   router.post("/chain/forceStart/:chainId", (req, res) => {
-    let chainId = req.params.chainId;
-    let inputValues = req.body.inputIterableValues || null;
-    let customValues = req.body.customValues;
+    const chainId = req.params.chainId;
+    let chain = apiPlan.getChainById(chainId);
 
-    apiPlan.startChain(chainId, inputValues, customValues)
-      .then(() => {
-        res.send();
-      })
-      .catch((err) => {
-        res.status(404).send(err);
-        logger.error("forceStart error", err);
-      });
+    if(chain){
+      chain.inputValues = req.body.inputIterableValues || chain.inputValues;
+      chain.customValues = req.body.customValues || chain.customValues;
+
+      queueProcess.queue(chainId, chain);
+      res.send();
+    }else{
+      res.status(404).send("Chain not found");
+      logger.error("forceStart error", "Chain not found");
+    }
+
   });
 
   /**

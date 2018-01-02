@@ -30,6 +30,10 @@
         "ended_at",
         "duration_humanized"
       ]
+    },
+    "agent":{
+      "disabled": false,
+      "retryInterval": 5000
     }
   },
   "executors": [],
