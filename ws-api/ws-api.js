@@ -211,9 +211,10 @@ module.exports = () => {
    * 
    * Output: chain (JSON)
    */
-  router.get("/chain/:chainId", (req, res) => {
-    let chainId = req.params.chainId;
-    let chain = apiPlan.getChainById(chainId, config.api.chainsFieldsResponse);
+  router.get("/chain/:chainId/:uniqueId", (req, res) => {
+    const chainId = req.params.chainId;
+    const uniqueId = req.params.uniqueId;
+    let chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
       res.send(JSON.stringify(chain, serializer()));
@@ -240,7 +241,7 @@ module.exports = () => {
       chain.inputValues = req.body.inputIterableValues || chain.inputValues;
       chain.customValues = req.body.customValues || chain.customValues;
 
-      queueProcess.queue(chainId, chain);
+      queueProcess.queueChain(chain);
       res.send();
     }else{
       res.status(404).send("Chain not found");
@@ -257,9 +258,10 @@ module.exports = () => {
    * 
    * Output: processes (objects array)
    */
-  router.get("/processes/:chainId", (req, res) => {
-    let chainId = req.params.chainId;
-    let chain = apiPlan.getChainById(chainId, config.api.chainsFieldsResponse);
+  router.get("/processes/:chainId/:uniqueId", (req, res) => {
+    const chainId = req.params.chainId;
+    const uniqueId = req.params.uniqueId;
+    let chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
       res.json(chain.processes || {});
@@ -275,10 +277,11 @@ module.exports = () => {
    * Params input:
    * - chainId (string)
    */
-  router.post("/chain/stop/:chainId", (req, res) => {
-    let chainId = req.params.chainId;
+  router.post("/chain/stop/:chainId/:uniqueId", (req, res) => {
+    const chainId = req.params.chainId;
+    const uniqueId = req.params.uniqueId;
 
-    apiPlan.stopChain(chainId)
+    apiPlan.stopChain(chainId, uniqueId)
       .then(() => {
         logger.info(`Chain "${chainId}" killed by ${req.user}`);
         res.json("");
@@ -298,11 +301,12 @@ module.exports = () => {
    * 
    * Output: process (object)
    */
-  router.get("/process/:chainId/:processId", (req, res) => {
+  router.get("/process/:chainId/:uniqueId/:processId", (req, res) => {
     const chainId = req.params.chainId;
+    const uniqueId = req.params.uniqueId;
     const processId = req.params.processId;
 
-    let chain = apiPlan.getChainById(chainId, config.api.chainsFieldsResponse);
+    let chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
       let process = chain.getProcessById(processId, config.api.processFieldsResponse);
@@ -327,12 +331,13 @@ module.exports = () => {
    */
   router.post("/process/retry", (req, res) => {
     const chainId = req.body.chainId;
+    const uniqueId = req.body.uniqueId;
     const processId = req.body.processId;
     const once = req.body.once || false;
 
     logger.info(`Retrying process "${processId}" from chain "${chainId}" by ${req.user}`);
 
-    let chain = apiPlan.getChainById(chainId);
+    let chain = apiPlan.getChainById(chainId, uniqueId);
 
     if (chain) {
       let process = chain.getProcessById(processId);
@@ -366,12 +371,13 @@ module.exports = () => {
    */
   router.post("/process/end", (req, res) => {
     const chainId = req.body.chainId;
+    const uniqueId = req.body.uniqueId;
     const processId = req.body.processId;
     const continueChain = req.body.continueChain || false;
 
     logger.info(`Setting process "${processId}" to end, from chain "${chainId}" by ${req.user}`);
 
-    let chain = apiPlan.getChainById(chainId);
+    let chain = apiPlan.getChainById(chainId, uniqueId);
 
     if (chain) {
       let process = chain.getProcessById(processId);
@@ -410,11 +416,12 @@ module.exports = () => {
    */
   router.post("/process/kill", (req, res) => {
     const chainId = req.body.chainId;
+    const uniqueId = req.body.uniqueId;
     const processId = req.body.processId;
 
     logger.info(`Killing process "${processId}" from chain "${chainId}" by ${req.user}`);
 
-    let chain = apiPlan.getChainById(chainId);
+    let chain = apiPlan.getChainById(chainId, uniqueId);
 
     if (chain) {
       let process = chain.getProcessById(processId);

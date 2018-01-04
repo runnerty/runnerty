@@ -75,9 +75,9 @@
     "node": ">=8.9.3"
   },
   "devDependencies": {
+    "all-contributors-cli": "4.10.1",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.1.0",
-    "all-contributors-cli": "4.10.1",
     "eslint": "^4.14.0",
     "eslint-plugin-jest": "^21.5.0",
     "jest": "^22.0.4",
