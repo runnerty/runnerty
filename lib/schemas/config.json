@@ -64,6 +64,12 @@
                 }
               }]
             },
+            "queues":{
+              "type": "object",
+              "properties": {
+                "retryInterval": {"type": "number"}
+              }
+            },
             "history": {
               "type": "object",
               "properties": {

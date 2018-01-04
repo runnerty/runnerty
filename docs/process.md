@@ -84,7 +84,7 @@ With the `id` field we are indicating the executor that we are going tov use. Th
 
 ### Notifications
 
-Runnerty also provides a notification system for your workflows. With the notifications property you can have access to the different states of the process: `"on_start", "on_fail", "on_retry" and "on_end"` and use them to send notifications.
+Runnerty also provides a notification system for your workflows. With the notifications property you can have access to the different states of the process: `"on_start", "on_fail", "on_retry", "on_end" and "on_queue""` and use them to send notifications.
 
 For this task, Runnerty uses **notificators**, know more about them [here](notificators.md).
 
@@ -117,7 +117,13 @@ This is an example of usage of notifications in a process. In this case, we are 
         "id": "telegram_default",
         "message": "THE PROCESS :PROCESS_ID HAS FINISHED"
       }
-      ]
+      ],
+   "on_queue": [
+     {
+       "id": "telegram_default",
+       "message": "THE PROCESS :PROCESS_ID HAS QUEUE"
+     }
+     ]
   }
 }
 ```

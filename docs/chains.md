@@ -99,6 +99,7 @@ With the **notifications** property, Runnerty can be set up to emit notification
 - *on_start*
 - *on_fail*
 - *on_end*
+- *on_queue*
 
 In these notifications we could notify anything using **notificators**.
 
@@ -123,6 +124,12 @@ The following example shows how to set up notifications for the different states
       {
         "id": "telegram_default",
         "message": "THE CHAIN :CHAIN_ID HAS FINISHED"
+      }
+    ],
+    "on_end": [
+      {
+        "id": "telegram_default",
+        "message": "THE CHAIN :CHAIN_ID HAS QUEUE"
       }
     ]
   }
