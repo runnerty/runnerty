@@ -67,7 +67,7 @@
             "queues":{
               "type": "object",
               "properties": {
-                "retryInterval": {"type": "number"}
+                "refreshInterval": {"type": "number"}
               }
             },
             "history": {

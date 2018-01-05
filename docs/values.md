@@ -1,6 +1,6 @@
 # Values
 
-Runnerty provides a bunch of different values that can be used in the whole plan of our chains. They can be global or local values. Runnerty will automatically replace this variables with it's value. They are very useful to store params, save output values from the processes, making processes evaluations, etc... 
+Runnerty provides a bunch of different values that can be used in the whole plan of our chains by using the @GV/@GETVALUE function. They can be global or local values. Runnerty will automatically replace this variables with it's value. They are very useful to store params, save output values from the processes, making processes evaluations, etc... 
 
 ## Global values
 
@@ -10,79 +10,8 @@ These values are called `global` because they are automatically provided by Runn
 These values allows you to get environment variables.
 ##### Sample if you define environment variable: export MYENVVAL=TESTVALUE
 ```
-ENV_[ENVIRONMENT VARIABLE NAME] > :ENV_MYENVVAL = TESTVALUE
+ENV_[ENVIRONMENT VARIABLE NAME] > @GV(ENV_MYENVVAL) = TESTVALUE
 ```
-
-### Time values
-
-These values contain time values, this is the list of the time values provided by Runnerty:
-
-```
-YY   - Last two digits of the current year
-YYYY - Current year
-MM   - Current month
-WW   - Current week number
-DD   - Current day
-HH   - Current hour
-mm   - Current minute
-ss   - Current second
-```
-##### Sample current year: 2017
-##### Sample current month: DECEMBER
-##### Sample current week day: THURSDAY
-##### Sample current day: 7
-```
-MMMM_[LANGUAGE_INITIALS] > :MMMM_EN = DECEMBER, :MMMM_ES = DICIEMBRE
-MMM_[LANGUAGE_INITIALS]  > :MMM_EN  = DEC,      :MMM_ES = DIC.
-DDDD_[LANGUAGE_INITIALS] > :DDDD_EN = THURSDAY, :DDDD_ES = JUEVES 
-DDD_[LANGUAGE_INITIALS]  > :DDD_EN  = THU,      :DDD_ES = JUE.
-```
-```
-YYYY_[INCREMENT] > :YYYY_1 = 2018,    :YYYY_-2 = 2015
-YY_[INCREMENT]   > :YY_1   = 18,      :YY_-2   = 15
-MMMM_[INCREMENT] > :MMMM_1 = JANUARY, :MMMM_-2 = OCTOBER
-MMM_[INCREMENT]  > :MMM_1  = JAN,     :MMM_-2  = OCT
-DDDD_[INCREMENT] > :DDDD_1 = FRIDAY,  :DDDD_-2 = TUESDAY 
-DDD_[INCREMENT]  > :DDD_1  = FRI,     :DDD_-2  = TUE
-DD_[INCREMENT]  > :DD_1  = 8,         :DD_-2  = 6
-```
-```
-MMMM_[INCREMENT]_[LANGUAGE_INITIALS] > :MMMM_1_EN = JANUARY, :MMMM_-2_ES = OCTUBRE
-MMM_[INCREMENT]_[LANGUAGE_INITIALS]  > :MMM_1_EN  = JAN,     :MMM_-2_EN = OCT.
-DDDD_[INCREMENT]_[LANGUAGE_INITIALS] > :DDDD_1_EN = FRIDAY,  :DDDD_-2_ES = MARTES 
-DDD_[INCREMENT]_[LANGUAGE_INITIALS]  > :DDD_1_EN  = FRI,     :DDD_-2_ES = MAR
-```
-```
-MM_[INCREMENT]_[OUTPUT_FORMAT] > :MM_1_YYYY = 2018, :MM_-2_YYYY = 2017
-MM_[INCREMENT]_[OUTPUT_FORMAT] > :MM_1_YY = 18, :MM_-2_YYYY = 17
-MM_[INCREMENT]_[OUTPUT_FORMAT] > :MM_1_WW = 01, :MM_-2_WW = 40
-DD_[INCREMENT]_[OUTPUT_FORMAT] > :DD_+30_MM = 01, :DD_-30_MM = 11
-DD_[INCREMENT]_[OUTPUT_FORMAT] > :DD_30_YYYY = 2018, :DD_-30_YYYY = 2017
-DD_[INCREMENT]_[OUTPUT_FORMAT] > :DD_30_WW = 45, :DD_-30_WW = 01
-```
-
-These values are very useful for example to write the output information of a process in a log file:
-
-```json
-{
-  "id": "PROCESS_ONE",
-    "name": "First process of the chain",
-    "exec":
-      {
-        "id": "shell_default",
-        "command": "echo 'Hello world'"
-      },
-  "output": [{
-    "file_name": "/var/log/runnerty/general.log", 
-    "write": ["EXECUTION AT :DD-:MM-:YY :HH::mm::ss"], 
-    "concat": true, 
-    "maxsize": "1mb"
-    }]
-}
-```
-
-Runnerty will replace `:DD-:MM-:YYYY :HH::mm::ss` for it's value: `31-07-2017 16:00:00`
-
 
 ### Config values
 
@@ -141,7 +70,7 @@ This is an example of a process using the time and process values to write in a 
       },
   "output": [{
     "file_name":"/var/log/runnerty/general.log", 
-    "write":["EXECUTION *:PROCESS_ID* *PROCESS_NAME* AT :DD-:MM-:YY :HH::mm::ss\n"], 
+    "write":["EXECUTION @GV(PROCESS_ID) - @GV(PROCESS_NAME) - AT @GETDATE('YYYY-MM-DD HH:mm:ss')\n"],
     "concat":true, 
     "maxsize":"1mb"
     }]
@@ -180,19 +109,19 @@ In this example we can see a process that in the notification use some of the pr
     "on_start": [
       {
         "id": "telegram_default",
-        "message": "THE PROCESS :PROCESS_ID HAS STARTED AT :PROCESS_STARTED_AT"
+        "message": "THE PROCESS @GV(PROCESS_ID) HAS STARTED AT @GV(PROCESS_STARTED_AT)"
       }
       ],
     "on_fail": [
       {
         "id": "telegram_default",
-        "message": "THE PROCESS :PROCESS_ID HAS FAILED AT :PROCESS_STARTED_AT - THE EXECUTED COMMAND WAS :PROCESS_COMMAND_EXECUTED  - THE ERROR WAS :PROCESS_EXEC_ERR_OUTPUT"
+        "message": "THE PROCESS @GV(PROCESS_ID) HAS FAILED AT @GV(PROCESS_STARTED_AT) - THE EXECUTED COMMAND WAS @GV(PROCESS_COMMAND_EXECUTED)  - THE ERROR WAS @GV(PROCESS_EXEC_ERR_OUTPUT)"
       }
       ],
     "on_end": [
       {
         "id": "telegram_default",
-        "message": "THE PROCESS :PROCESS_ID HAS FINISHED AT :PROCESS_ENDED_AT"
+        "message": "THE PROCESS @GV(PROCESS_ID) HAS FINISHED AT @GV(PROCESS_ENDED_AT)"
       }
       ]
   }
@@ -208,21 +137,21 @@ The output_share is a property of the process. This feature allows to share info
   "processes":[
     {
       "id": "GET-USER-EMAIL",
-      "name": "it get an user email",
+      "name": "It get an user email",
       "exec":
         { 
           "id": "mysql_default",
           "command": "SELECT email FROM USERS WHERE ID = 1"
         },
-      "output_share": [{"key":"USER","name":"EMAIL","value":":PROCESS_EXEC_DB_FIRSTROW_EMAIL"}]
+      "output_share": [{"key":"USER","name":"EMAIL","value":"@GV(PROCESS_EXEC_DB_FIRSTROW_EMAIL)"}]
     }
   ]
 }
 ```
 
-In this example we are getting the email of an user from the database using the `@runnerty/executor_mysql` and assigning it to a value. This way we can use the `:USER_EMAIL` value anywhere of the chain.
+In this example we are getting the email of an user from the database using the `@runnerty/executor_mysql` and assigning it to a value. This way we can use the `@GV(USER_EMAIL)` value anywhere of the chain.
 
-Notice that in this example we are are using the value `:PROCESS_EXEC_DB_FIRSTROW_EMAIL` This is an extra value returned by this executor that contains the field selected by the query.
+Notice that in this example we are are using the value `@GV(PROCESS_EXEC_DB_FIRSTROW_EMAIL)` This is an extra value returned by this executor that contains the field selected by the query.
 
 
 ### Chain values 
@@ -283,9 +212,9 @@ You can know for more information about iterable chains in the chains [here](cha
       "exec": {
         "id": "mail_default",
         "to": [
-          ":email"
+          "@GV(email)"
         ],
-        "message": "Hello :name",
+        "message": "Hello @GV(name)",
         "title": "Message set by Runnerty"
       },
       "end_chain_on_fail": true
