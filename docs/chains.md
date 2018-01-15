@@ -20,7 +20,9 @@ This is an example of a basic chain with one process:
             "id": "shell_default",
             "command": "echo 'Hello world'"
           },
-          "end_chain_on_fail": true
+          "chain_action_on_fail": {
+            "action": "end"
+          }
         }
       ]
     }
@@ -99,6 +101,7 @@ With the **notifications** property, Runnerty can be set up to emit notification
 - *on_start*
 - *on_fail*
 - *on_end*
+- *on_retry*
 - *on_queue*
 
 In these notifications we could notify anything using **notificators**.
@@ -124,6 +127,12 @@ The following example shows how to set up notifications for the different states
       {
         "id": "telegram_default",
         "message": "THE CHAIN :CHAIN_ID HAS FINISHED"
+      }
+    ],
+    "on_retry": [
+      {
+        "id": "telegram_default",
+        "message": "THE CHAIN :CHAIN_ID HAS RETRY"
       }
     ],
     "on_end": [
@@ -164,6 +173,87 @@ Learn more about *processes* and how to configure them [here](process.md).
   ]
 }
 ```
+
+### Actions in chain when process fail
+
+It is possible to define what action (end or retry) to perform at the chain level in case a process fails.
+
+Retry it 2 times with a delay of 2 seconds (2000ms) if the process fails:
+```json
+{
+  "...": "...",
+  "processes": [
+    {
+      "id": "SAMPLE_PROCESS",
+      "...": "...",
+      "chain_action_on_fail": {
+        "action": "retry",
+        "delay": "1 min",
+        "retries": 2
+      }
+    }
+  ]
+}
+```
+
+End the chain if the process fails:
+```json
+{
+  "...": "...",
+  "processes": [
+    {
+      "id": "SAMPLE_PROCESS",
+      "...": "...",
+      "chain_action_on_fail": {
+        "action": "end"
+      }
+    }
+  ]
+}
+```
+
+
+Delay property understands the following strings:
+
+- `x milliseconds`
+- `x millisecond`
+- `x msecs`
+- `x msec`
+- `x ms`
+- `x seconds`
+- `x second`
+- `x secs`
+- `x sec`
+- `x s`
+- `x minutes`
+- `x minute`
+- `x mins`
+- `x min`
+- `x m`
+- `x hours`
+- `x hour`
+- `x hrs`
+- `x hr`
+- `x h`
+- `x days`
+- `x day`
+- `x d`
+- `x weeks`
+- `x week`
+- `x wks`
+- `x wk`
+- `x w`
+- `x years`
+- `x year`
+- `x yrs`
+- `x yr`
+- `x y`
+
+The space after the number is optional so you can also write `1ms` instead of `1
+ms`. In addition to that it also accepts numbers and strings which only includes
+numbers and we assume that these are always in milliseconds.
+
+*From: [Millisecond module]*(https://github.com/unshiftio/millisecond)
 
 ### Iterable chains
 
@@ -228,7 +318,11 @@ Now we are going to define the iterable chain *"send-mail-to-user"*
         "message": "Hello :name",
         "title": "Message set by Runnerty"
       },
-      "end_chain_on_fail": true
+      "chain_action_on_fail": {
+        "action": "retry",
+        "delay": "1 min",
+        "retries": 1
+      }
     }
   ]
 }
@@ -294,10 +388,13 @@ Now, we can use these values anywhere in our iterable chain:
         "message": "Hello :name",
         "title": "Message send by Runnerty"
       },
-      "end_chain_on_fail": true
+      "chain_action_on_fail": {
+        "action": "end"
+      }
     }
   ]
 }
 ```
 In the example :email will be replaced with the user's email and :name will be replaced with the user's name.
+
 

@@ -217,7 +217,7 @@ You can know for more information about iterable chains in the chains [here](cha
         "message": "Hello @GV(name)",
         "title": "Message set by Runnerty"
       },
-      "end_chain_on_fail": true
+      "chain_action_on_fail": true
     }
   ]
 }
