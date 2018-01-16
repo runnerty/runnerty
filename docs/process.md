@@ -118,10 +118,16 @@ This is an example of usage of notifications in a process. In this case, we are 
         "message": "THE PROCESS :PROCESS_ID HAS FINISHED"
       }
       ],
-   "on_queue": [
+    "on_queue": [
      {
        "id": "telegram_default",
        "message": "THE PROCESS :PROCESS_ID HAS QUEUE"
+     }
+     ],
+    "on_timeout": [
+     {
+       "id": "telegram_default",
+       "message": "THE PROCESS :PROCESS_ID HAS TIMEOUT"
      }
      ]
   }
@@ -157,7 +163,7 @@ Runnerty provides some options to manage logs. Using the property `concat` we ca
 
 With the maxsize option we indicate Runnerty the maximun size that the log's file could have. Runnerty will automatically delete the firt lines of the file when it is full and needs to continue writting.
 
-### output_share
+### Output Share (output_share)
 
 The output_share property it is used to define values from the output of a process. Theses values area availables for the rest of the procesess of the chain.
 
@@ -183,8 +189,71 @@ In this example we are getting the email of an user from the database using the 
 
 Note that in this example we are are using the value `:PROCESS_EXEC_MSG_OUTPUT` This is a global_value that contains the return of the process. Have a look at the [values](values.md) documentation.
 
-### output_iterable
+### OutputI terable (output_iterable)
 
-The `output_iterable property it's used to iterate a chain depending of the output of a process. An iterable chain is a chain that is going to be executed for each object of the array returned by a process. For example, if we have a process which returns an objects array we can execute an iterable chain for each object of the array.
+The`output_iterable property it's used to iterate a chain depending of the output of a process. An iterable chain is a chain that is going to be executed for each object of the array returned by a process. For example, if we have a process which returns an objects array we can execute an iterable chain for each object of the array.
 
 You can have a look at the [chains](chains.md) documentation to see an usage example.
+
+### TimeOut (timeout)
+
+The`timeout property it's used to set the maximun time to wait process ends.
+It is possible to establish two different actions, end or error. If the "error" action is indicated, the process will end with a failure and if "end" is indicated the process will end without failure. In both cases the function "kill" of the executor in question will be called.
+In addition to the action must indicate the mandatory property "delay" indicating the maximum timeout in milliseconds.
+
+For example:
+```json
+{
+  "processes":[
+    {
+      "...": "...",
+      "timeout":{
+        "action": "error",
+        "delay": "3s"
+        }
+    }
+  ]
+}
+```
+
+Delay property understands the following strings:
+
+- `x milliseconds`
+- `x millisecond`
+- `x msecs`
+- `x msec`
+- `x ms`
+- `x seconds`
+- `x second`
+- `x secs`
+- `x sec`
+- `x s`
+- `x minutes`
+- `x minute`
+- `x mins`
+- `x min`
+- `x m`
+- `x hours`
+- `x hour`
+- `x hrs`
+- `x hr`
+- `x h`
+- `x days`
+- `x day`
+- `x d`
+- `x weeks`
+- `x week`
+- `x wks`
+- `x wk`
+- `x w`
+- `x years`
+- `x year`
+- `x yrs`
+- `x yr`
+- `x y`
+
+The space after the number is optional so you can also write `1ms` instead of `1
+ms`. In addition to that it also accepts numbers and strings which only includes
+numbers and we assume that these are always in milliseconds.
+
+*From: [Millisecond module]*(https://github.com/unshiftio/millisecond)
