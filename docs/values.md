@@ -22,7 +22,7 @@ In the `config.json` file it is possible to define our owns values to use them i
     "executors": [
       {"...":"..."}
     ],
-    "notificators": [
+    "notifiers": [
       {"...":"..."}
     ],
     "global_values": [

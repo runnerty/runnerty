@@ -22,8 +22,8 @@
   },
   "scripts": {
     "commit": "git-cz",
-    "test": "jest",
-    "test-watch": "jest --watch"
+    "test": "RUNNERTY_TEST=true jest",
+    "test-watch": "RUNNERTY_TEST=true jest --watch"
   },
   "dependencies": {
     "ajv": "^5.5.2",
@@ -36,11 +36,11 @@
     "glob-to-regexp": "^0.3.0",
     "helmet": "^3.9.0",
     "ical2json": "^1.2.0",
-    "jsonwebtoken": "^8.1.0",
+    "jsonwebtoken": "^8.1.1",
     "lodash": "^4.17.4",
     "millisecond": "^0.1.2",
     "moment": "^2.20.1",
-    "mongoose": "^4.13.9",
+    "mongoose": "^5.0.1",
     "morgan": "^1.9.0",
     "object-sizeof": "^1.2.0",
     "redis": "^2.8.0",
@@ -73,16 +73,16 @@
     "orchestrator"
   ],
   "engines": {
-    "node": ">=8.9.3"
+    "node": ">=8.9.4"
   },
   "devDependencies": {
     "all-contributors-cli": "4.10.1",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.1.0",
-    "eslint": "^4.15.0",
-    "eslint-plugin-jest": "^21.6.2",
-    "jest": "^22.1.1",
-    "jest-cli": "^22.1.1"
+    "eslint": "^4.16.0",
+    "eslint-plugin-jest": "^21.7.0",
+    "jest": "^22.1.4",
+    "jest-cli": "^22.1.4"
   },
   "jest": {
     "testEnvironment": "node",

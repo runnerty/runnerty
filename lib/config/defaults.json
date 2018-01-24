@@ -38,6 +38,6 @@
     }
   },
   "executors": [],
-  "notificators": [],
+  "notifiers": [],
   "global_values":[]
 }

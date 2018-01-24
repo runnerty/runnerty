@@ -104,9 +104,9 @@ With the **notifications** property, Runnerty can be set up to emit notification
 - *on_retry*
 - *on_queue*
 
-In these notifications we could notify anything using **notificators**.
+In these notifications we could notify anything using **notifiers**.
 
-The following example shows how to set up notifications for the different states of the chain through *Telegram Notificator*, publishing messages to a previously defined Telegram's chatroom:
+The following example shows how to set up notifications for the different states of the chain through *Telegram Notifier*, publishing messages to a previously defined Telegram's chatroom:
 
 ```json
 {
@@ -147,9 +147,9 @@ The following example shows how to set up notifications for the different states
 >Note the usage of the *global value :CHAIN_ID* on the previous example. This value will be replaced with the chain's *id*. Know more about global values [here](config.md)
 
 
-(List of avaliable officialy notificators coming out soon).
+(List of avaliable officialy notifiers coming out soon).
 
-Learn more about notificators and how to configure them [here](notificators.md).
+Learn more about notifiers and how to configure them [here](notifiers.md).
 
 
 ### Processes

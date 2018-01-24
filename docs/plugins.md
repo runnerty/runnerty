@@ -21,12 +21,12 @@ This is the list of the official plugins availables.
 - [Decompress (tar, unzip, gunzip, 7z and rar)](https://www.npmjs.com/package/@runnerty/executor-decompress)
 - [Confirmation](https://www.npmjs.com/package/@runnerty/executor-confirmation)
 
-## Notificators
+## Notifiers
 
-- [Mail](https://www.npmjs.com/package/@runnerty/notificator-mail)
-- [Slack](https://www.npmjs.com/package/@runnerty/notificator-slack)
-- [Telegram](https://www.npmjs.com/package/@runnerty/notificator-telegram)
-- [Console](https://www.npmjs.com/package/@runnerty/notificator-console)
+- [Mail](https://www.npmjs.com/package/@runnerty/notifier-mail)
+- [Slack](https://www.npmjs.com/package/@runnerty/notifier-slack)
+- [Telegram](https://www.npmjs.com/package/@runnerty/notifier-telegram)
+- [Console](https://www.npmjs.com/package/@runnerty/notifier-console)
 
 ## Triggers
 

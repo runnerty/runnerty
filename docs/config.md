@@ -10,7 +10,7 @@ With the -c param it is possible to indicate a different path.
 runnerty -c /path/config.json
 ```
 
-In the config.json file is set the configuration of the different triggers, executors, notificators and global values (params, paths, files, etc.) which are going to be used on the processes: 
+In the config.json file is set the configuration of the different triggers, executors, notifiers and global values (params, paths, files, etc.) which are going to be used on the processes: 
 
 ```json
 {
@@ -30,10 +30,10 @@ In the config.json file is set the configuration of the different triggers, exec
       "type": "@runnerty/executor-shell"
     }
   ],
-  "notificators": [
+  "notifiers": [
     {
       "id": "telegram_default",
-      "type": "@runnerty/notificator-telegram",
+      "type": "@runnerty/notifier-telegram",
       "token": "MyTokenId",
       "chat_id": "MyChatId"
     }
@@ -73,28 +73,28 @@ This is an example of the configuration of two executors (shell and mysql):
 }
 ```
 
-### Notificators
+### Notifiers
 
-The Notificators are plugins which allows Runnerty to notificate from the chain and processes to different services and channels. This is a list of the official available [Plugins]
+The Notifiers are plugins which allows Runnerty to notificate from the chain and processes to different services and channels. This is a list of the official available [Plugins]
 
-In the config.json file are defined all the notificators that are going to be used in the whole plan.
+In the config.json file are defined all the notifiers that are going to be used in the whole plan.
 
-This is an example of the configuration of two notificators (mail and telegram):
+This is an example of the configuration of two notifiers (mail and telegram):
 
 ```json
 {
-  "notificators": [
+  "notifiers": [
     {
       "id": "telegram_default",
-      "type": "@runnerty/notificator-telegram",
+      "type": "@runnerty/notifier-telegram",
       "token": "MyTokenId",
       "chat_id": "MyChatId"
     },
     {
       "id": "mail_default",
-      "type": "@runnerty/notificator-mail",
+      "type": "@runnerty/notifier-mail",
       "disable": false,
-      "from": "Runnerty Notificator <my@sender.com>",
+      "from": "Runnerty Notifier <my@sender.com>",
       "transport": "smtp://my%mailsender.com:pass@smtp.host.com/?pool=true",
       "bcc":["mycc@mail.com"],
       "templateDir": "/etc/runnerty/templates",
@@ -114,7 +114,7 @@ It is possible to define values that can be used in the chains an process (paths
     "executors": [
       {"...":"..."}
     ],
-    "notificators": [
+    "notifiers": [
       {"...":"..."}
     ],
     "global_values": [

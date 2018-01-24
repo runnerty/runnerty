@@ -136,10 +136,10 @@
       "options": {}
     }
   ],
-  "notificators": [
+  "notifiers": [
     {
       "id": "slack_default",
-      "type": "@runnerty-notificator-slack",
+      "type": "@runnerty-notifier-slack",
       "webhookurl":"https://hooks.slack.com/services/ABC123/ABC123/ABC123",
       "bot_name": "Runnerty-Sentinel",
       "channel": "my_runnerty_channel",
@@ -148,7 +148,7 @@
     },
     {
       "id": "mail_default",
-      "type": "@runnerty-notificator-mail",
+      "type": "@runnerty-notifier-mail",
       "disable": false,
       "from": "Runnerty <my@mail.com>",
       "transport": "smtps://my%40mail.com:mypass@smtp.mail.com/?pool=true",
@@ -159,7 +159,7 @@
     },
     {
       "id": "telegram_default",
-      "type": "@runnerty-notificator-telegram",
+      "type": "@runnerty-notifier-telegram",
       "token": "ABC123",
       "chat_id": "ABC123"
     }
