@@ -1,2 +1,2 @@
-:subject
-:message
+@GV(subject)
+@GV(message)

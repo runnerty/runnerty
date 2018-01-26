@@ -1,10 +1,10 @@
-# executors
+# Executors
 
 The executors are plugins for Runnerty which encapsulate functionalities. The processes of a chain use executors to realize different actions. 
 
 There are a bunch of executors for different purposes. Execute sentences in different databases like mysql, postgres, etc. Sending mails, operations with S3 files. You can have a look at the official list of executors [here](plugins.md).
 
-### configuration
+### Configuration
 
 In the config.json file of the project we are going to write the configuration of the different executors that are going to be used in the processes.
 
@@ -30,11 +30,11 @@ In the config.json file of the project we are going to write the configuration o
 
 This is an example of the configuration of two executors: `@runnerty/executor-shell` and `@runnerty/executor-mysql`. Each executor has it's owns properties, some of them are mandatory, you can have a look at each executor documentation to know how to use them.
 
-### usage
+### Usage
 
 The destination of an executor is to use it in our plan's processes. We could say that using an executor has two parts: `configuration` and `params`.
 
- The configuration properties are set in the config.json. They are the identifiers fields of the executor. For example, this is the configuration properties for the @runnerty/executor-shell:
+ The configuration properties are set in the [config.json](config.md). They are the identifiers fields of the executor. For example, this is the configuration properties for the @runnerty/executor-shell:
 
 ```json
 {

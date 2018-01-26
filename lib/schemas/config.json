@@ -11,6 +11,10 @@
             "binBackup": {"type": "string"},
             "planFilePath": {"type": "string"},
             "refreshIntervalBinBackup": {"type": "number"},
+            "executorsPath": {"type": "string"},
+            "notifiersPath": {"type": "string"},
+            "triggersPath": {"type": "string"},
+            "modulesPath": {"type": "string"},
             "api": {
               "type": "object",
               "anyOf": [{
@@ -27,7 +31,7 @@
                   },
                   "chainsFieldsResponse": {"type": "array"},
                   "processFieldsResponse": {"type": "array"}
-                }  
+                }
               }, {
                 "required": ["unix_socket"],
                 "properties": {
@@ -42,7 +46,7 @@
                   },
                   "chainsFieldsResponse": {"type": "array"},
                   "processFieldsResponse": {"type": "array"}
-                }  
+                }
               }, {
                 "required": ["port", "ssl"],
                 "properties": {
@@ -60,8 +64,14 @@
                   },
                   "chainsFieldsResponse": {"type": "array"},
                   "processFieldsResponse": {"type": "array"}
-                }  
+                }
               }]
+            },
+            "queues":{
+              "type": "object",
+              "properties": {
+                "refreshInterval": {"type": "number"}
+              }
             },
             "history": {
               "type": "object",
@@ -80,10 +90,13 @@
             }
           }
         },
+        "triggers": {
+          "type": "array"
+        },
         "executors": {
           "type": "array"
         },
-        "notificators": {
+        "notifiers": {
           "type": "array"
         },
         "global_values": {

@@ -10,7 +10,7 @@ This is an example of a basic chain with one process:
     {
       "id": "EXAMPLE_CHAIN",
       "name": "Name of the sample chain",
-      "schedule_interval": "* * * * *",
+      "triggers": [],
       "depends_chains": [],
       "processes": [
         {
@@ -20,7 +20,9 @@ This is an example of a basic chain with one process:
             "id": "shell_default",
             "command": "echo 'Hello world'"
           },
-          "end_chain_on_fail": true
+          "chain_action_on_fail": {
+            "action": "end"
+          }
         }
       ]
     }
@@ -51,52 +53,9 @@ A chain has two identification fields:
 ```
 
 
+### Execution (Triggers)
+The way to execute chains is by [triggers](triggers.md)
 
-### Scheduling
-
-There are different ways to schedule a chain. It is possible to schedule chains with a cron expression.
-
-This scheduling will execute the chain at every minute:
-
-```json
-{
-  "id": "EXAMPLE_CHAIN",
-  "name": "Name of the sample chain",
-  "schedule_interval": "*/1 * * * *"
-}
-```
-
-There is also the possibility to schedule a chain using a calendars. The calendars path can be indicated in the *config.json* file:
-
-```json
-{
-  "general": {
-    "calendarsPath": "/calendars/"
-  }
-}
-```
-
-Calendars dir:
-```
-runnerty
-  |-- calendars
-    |-- weekends.ics
-    |-- laboral_days.ics
-```
-
-Calendars can be used for both, enabling or disabling execution dates through the **enable** and **disable** properties, so it can be specified, for example, to only execute a chain on laboral days, excluding weekends, like in the sample below:
-
-```json
-{
-  "id": "EXAMPLE_CHAIN",
-  "name": "Name of the sample chain",
-  "calendars": 
-    {
-      "enable": "laboral_days",
-      "disable": "weekends"
-    }
-}
-```
 
 ### Custom values
 
@@ -136,36 +95,18 @@ The chain of the example will not be executed until the chain with *id* *CHAIN_O
 }
 ```
 
-In addition, it is possible to set up file system path dependencies in Runnerty with the help of auto-magically configured filewatchers. Them are defined with the **condition** property and can be fired through the following actions:
-
-- *add*: when a file is added.
-- *change*: when a file is changed.
-- *unlink*: when a file is deleted.
-- *error*: when there is an error in the file treatment.
-
-Usage example below:
-
-```json
-{
-  "depends_chains": [
-    {
-      "file_name": "/path/myfile.txt",
-      "condition": "add"
-    }
-  ]
-}
-```
-
 ### Notifications
 
 With the **notifications** property, Runnerty can be set up to emit notifications during the chain status flow, fired up by the following callbacks:
 - *on_start*
 - *on_fail*
 - *on_end*
+- *on_retry*
+- *on_queue*
 
-In these notifications we could notify anything using **notificators**.
+In these notifications we could notify anything using **notifiers**.
 
-The following example shows how to set up notifications for the different states of the chain through *Telegram Notificator*, publishing messages to a previously defined Telegram's chatroom:
+The following example shows how to set up notifications for the different states of the chain through *Telegram Notifier*, publishing messages to a previously defined Telegram's chatroom:
 
 ```json
 {
@@ -187,6 +128,18 @@ The following example shows how to set up notifications for the different states
         "id": "telegram_default",
         "message": "THE CHAIN :CHAIN_ID HAS FINISHED"
       }
+    ],
+    "on_retry": [
+      {
+        "id": "telegram_default",
+        "message": "THE CHAIN :CHAIN_ID HAS RETRY"
+      }
+    ],
+    "on_end": [
+      {
+        "id": "telegram_default",
+        "message": "THE CHAIN :CHAIN_ID HAS QUEUE"
+      }
     ]
   }
 }
@@ -194,9 +147,9 @@ The following example shows how to set up notifications for the different states
 >Note the usage of the *global value :CHAIN_ID* on the previous example. This value will be replaced with the chain's *id*. Know more about global values [here](config.md)
 
 
-(List of avaliable officialy notificators coming out soon).
+(List of avaliable officialy notifiers coming out soon).
 
-Learn more about notificators and how to configure them [here](notificators.md).
+Learn more about notifiers and how to configure them [here](notifiers.md).
 
 
 ### Processes
@@ -220,6 +173,87 @@ Learn more about *processes* and how to configure them [here](process.md).
   ]
 }
 ```
+
+### Actions in chain when process fail
+
+It is possible to define what action (end or retry) to perform at the chain level in case a process fails.
+
+Retry it 2 times with a delay of 2 seconds (2000ms) if the process fails:
+```json
+{
+  "...": "...",
+  "processes": [
+    {
+      "id": "SAMPLE_PROCESS",
+      "...": "...",
+      "chain_action_on_fail": {
+        "action": "retry",
+        "delay": "1 min",
+        "retries": 2
+      }
+    }
+  ]
+}
+```
+
+End the chain if the process fails:
+```json
+{
+  "...": "...",
+  "processes": [
+    {
+      "id": "SAMPLE_PROCESS",
+      "...": "...",
+      "chain_action_on_fail": {
+        "action": "end"
+      }
+    }
+  ]
+}
+```
+
+
+Delay property understands the following strings:
+
+- `x milliseconds`
+- `x millisecond`
+- `x msecs`
+- `x msec`
+- `x ms`
+- `x seconds`
+- `x second`
+- `x secs`
+- `x sec`
+- `x s`
+- `x minutes`
+- `x minute`
+- `x mins`
+- `x min`
+- `x m`
+- `x hours`
+- `x hour`
+- `x hrs`
+- `x hr`
+- `x h`
+- `x days`
+- `x day`
+- `x d`
+- `x weeks`
+- `x week`
+- `x wks`
+- `x wk`
+- `x w`
+- `x years`
+- `x year`
+- `x yrs`
+- `x yr`
+- `x y`
+
+The space after the number is optional so you can also write `1ms` instead of `1
+ms`. In addition to that it also accepts numbers and strings which only includes
+numbers and we assume that these are always in milliseconds.
+
+*From: [Millisecond module]*(https://github.com/unshiftio/millisecond)
 
 ### Iterable chains
 
@@ -284,7 +318,11 @@ Now we are going to define the iterable chain *"send-mail-to-user"*
         "message": "Hello :name",
         "title": "Message set by Runnerty"
       },
-      "end_chain_on_fail": true
+      "chain_action_on_fail": {
+        "action": "retry",
+        "delay": "1 min",
+        "retries": 1
+      }
     }
   ]
 }
@@ -330,6 +368,7 @@ With the **input** property we can assign the properties of each object returned
       "name": "name"
     }
   ],
+  "...":"..."
 }
 ```
 
@@ -349,10 +388,13 @@ Now, we can use these values anywhere in our iterable chain:
         "message": "Hello :name",
         "title": "Message send by Runnerty"
       },
-      "end_chain_on_fail": true
+      "chain_action_on_fail": {
+        "action": "end"
+      }
     }
   ]
 }
 ```
 In the example :email will be replaced with the user's email and :name will be replaced with the user's name.
+
 
