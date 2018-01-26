@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "2.0.0-rc5",
+  "version": "2.0.0-rc6",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -22,24 +22,25 @@
   },
   "scripts": {
     "commit": "git-cz",
-    "test": "jest",
-    "test-watch": "jest --watch"
+    "test": "RUNNERTY_TEST=true jest",
+    "test-watch": "RUNNERTY_TEST=true jest --watch"
   },
   "dependencies": {
     "ajv": "^5.5.2",
     "body-parser": "^1.18.2",
     "bytes": "^3.0.0",
-    "commander": "^2.12.2",
+    "commander": "^2.13.0",
     "express": "^4.16.2",
     "express-jwt": "^5.3.0",
     "fs-extra": "^5.0.0",
     "glob-to-regexp": "^0.3.0",
     "helmet": "^3.9.0",
     "ical2json": "^1.2.0",
-    "jsonwebtoken": "^8.1.0",
+    "jsonwebtoken": "^8.1.1",
     "lodash": "^4.17.4",
+    "millisecond": "^0.1.2",
     "moment": "^2.20.1",
-    "mongoose": "^4.13.8",
+    "mongoose": "^5.0.1",
     "morgan": "^1.9.0",
     "object-sizeof": "^1.2.0",
     "redis": "^2.8.0",
@@ -72,16 +73,16 @@
     "orchestrator"
   ],
   "engines": {
-    "node": ">=8.9.3"
+    "node": ">=8.9.4"
   },
   "devDependencies": {
+    "all-contributors-cli": "4.10.1",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.1.0",
-    "all-contributors-cli": "4.10.1",
-    "eslint": "^4.14.0",
-    "eslint-plugin-jest": "^21.5.0",
-    "jest": "^22.0.4",
-    "jest-cli": "^22.0.4"
+    "eslint": "^4.16.0",
+    "eslint-plugin-jest": "^21.7.0",
+    "jest": "^22.1.4",
+    "jest-cli": "^22.1.4"
   },
   "jest": {
     "testEnvironment": "node",

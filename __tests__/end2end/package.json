@@ -1,14 +1,8 @@
 {
   "name": "runnerty-modules",
-  "description": "Runnerty modules sample",
-  "license": "MIT",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": false,
   "dependencies": {
-    "@runnerty/notifier-mail": "latest",
-    "@runnerty/notifier-slack": "latest",
-    "@runnerty/notifier-telegram": "latest",
-    "@runnerty/notifier-console": "latest",
     "@runnerty/executor-decompress": "latest",
     "@runnerty/executor-filesystem": "latest",
     "@runnerty/executor-iconv": "latest",
@@ -22,7 +16,10 @@
     "@runnerty/executor-scp": "latest",
     "@runnerty/executor-shell": "latest",
     "@runnerty/executor-wait": "latest",
-    "@runnerty/trigger-schedule": "latest",
-    "@runnerty/trigger-file-watcher": "latest"
+    "@runnerty/notifier-console": "latest",
+    "@runnerty/notifier-mail": "latest",
+    "@runnerty/notifier-slack": "latest",
+    "@runnerty/notifier-telegram": "latest",
+    "@runnerty/trigger-schedule": "latest"
   }
 }

@@ -55,10 +55,11 @@ Gets loaded chains
 
 ## Get chain
 Gets chain
-### GET [/chain/:chainId]
+### GET [/chain/:chainId/:uniqueId]
 
 + URL parameters
     + chainId (Chain ID)
+    + uniqueId (chain uId or execId)
 
 + Sample (url)
 http://sample_host.com/api/chain/CHAIN_SAMPLE
@@ -89,20 +90,22 @@ http://sample_host.com/api/chain/forceStart/CHAIN_SAMPLE
 
 ## Get a chain processes
 Gets the processes of a chain
-### GET [/processes/:chainId]
+### GET [/processes/:chainId/:uniqueId]
 
 + URL parameters
-    + chainId (ID de la cadena)
+    + chainId (chain ID)
+    + uniqueId (chain uId or execId)
 
 + Sample (url)
 http://sample_host.com/api/processes/CHAIN_SAMPLE
 
 ## Get process of a chain
 Gets a process of a chain
-### GET [/process/:chainId/:processId]
+### GET [/process/:chainId/:uniqueId/:processId]
 
 + URL parameters
     + chainId (Chain ID)
+    + uniqueId (chain uId or execId)
     + processId (process ID)
 
 + Sample (url)
@@ -117,6 +120,7 @@ http://sample_host.com/api/process/kill
 
 + Body parameters
     + chainId (chain ID)
+    + uniqueId (chain uId or execId)
     + processId (process ID)
     
 + Sample (body)

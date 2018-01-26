@@ -1,0 +1,227 @@
+{
+  "chains": [
+    {
+      "id": "CHAIN_ONE",
+      "name": "CHAIN_ONE",
+      "queue": "TEST",
+      "priority": 10,
+      "__custom_values":{"KEY_VAL_CHAIN_ONE":"1","KEY_VAL_CHAIN_TWO":"2","KEY_VAL_CHAIN_THREE":"3"},
+      "execId":"@GV(CHAIN_ID)_@GV(KEY)_@GV(VALUE)",
+      "triggers":[],
+      "_depends_chains": {},
+      "notifications": {
+        "on_start": [
+            {
+              "id": "console_default",
+              "message": "1 @GV(CHAIN_ID)",
+              "mode": "info"
+            }
+          ],
+        "on_fail": [
+                {
+              "id": "console_default",
+              "message": "AVISO CADENA!! ABORTADA @GV(CHAIN_ID)",
+              "mode": "info"
+                }
+        ],
+        "on_retry": [
+            {
+              "id": "console_default",
+              "message": "RETRY CHAIN DE cadena @GV(CHAIN_ID)"
+            }
+        ],
+        "on_end":[
+            {
+              "id": "console_default",
+              "message": "13 @GV(CHAIN_ID) END"
+            }
+          ]
+      },
+      "processes": [
+        {
+          "id": "CHAIN_ONE_PROC_ONE",
+          "name": "CHAIN_ONE_PROC_ONE",
+          "queue": "TEST_TWO",
+          "priority": 5,
+          "chain_action_on_fail": {
+            "action": "retry",
+            "delay": 2000,
+            "retries": 1
+            },
+          "exec": {
+            "id": "shell_default",
+            "command": "echo x"
+          },
+          "notifications": {
+            "on_start": [{
+              "id": "console_default",
+              "message": "11 @GV(PROCESS_ID)",
+              "mode": "info"
+            }],
+            "on_end": [],
+            "on_queue": [
+                {
+              "id": "console_default",
+              "message": "3 @GV(PROCESS_ID) QUEUE",
+              "mode": "info"
+                }
+              ]
+            }
+        },
+        {
+          "id": "CHAIN_ONE_PROC_TWO",
+          "name": "CHAIN_ONE_PROC_TWO",
+          "depends_process": ["CHAIN_ONE_PROC_ONE"],
+          "exec": {
+            "id": "shell_default",
+            "command": "echo x"
+          },
+          "notifications": {
+            "on_start": [{
+              "id": "console_default",
+              "message": "12 @GV(PROCESS_ID)",
+              "mode": "info"
+            }],
+            "on_end": []
+            }
+        }
+      ]
+    },
+    {
+      "id": "CHAIN_TWO",
+      "name": "CHAIN_TWO",
+      "queue": "TEST_TWO",
+      "priority": 10,
+      "_depends_chains": [],
+      "triggers":[],
+      "notifications": {
+        "on_start": [
+            {
+              "id": "console_default",
+              "message": "2 @GV(CHAIN_ID)",
+              "mode": "info"
+            }
+          ],
+        "on_fail": [
+                {
+              "id": "console_default",
+              "message": "AVISO CADENA!! ABORTADA @GV(CHAIN_ID)",
+              "mode": "info"
+                }
+        ],
+        "on_retry": [],
+        "on_end":[
+            {
+              "id": "console_default",
+              "message": "6 @GV(CHAIN_ID) END"
+            }
+          ]
+      },
+      "processes": [
+        {
+          "id": "CHAIN_TWO_PROC_ONE",
+          "name": "CHAIN_TWO_PROC_ONE",
+          "disable": false,
+          "exec": {
+            "id": "shell_default",
+            "command": "echo proc2"
+          },
+          "notifications": {
+            "on_start": [{
+              "id": "console_default",
+              "message": "4 @GV(PROCESS_ID)",
+              "mode": "info"
+            }],
+            "on_end": []
+            }
+        },
+        {
+          "id": "CHAIN_TWO_PROC_TWO",
+          "name": "CHAIN_TWO_PROC_TWO",
+          "depends_process": ["CHAIN_TWO_PROC_ONE"],
+          "disable": false,
+          "exec": {
+            "id": "shell_default",
+            "command": "echo proc2"
+          },
+          "notifications": {
+            "on_start": [{
+              "id": "console_default",
+              "message": "5 @GV(PROCESS_ID)",
+              "mode": "info"
+            }],
+            "on_end": []
+            }
+        }
+      ]
+    },
+{
+      "id": "CHAIN_THREE",
+      "name": "CHAIN_THREE",
+      "queue": "TEST_TWO",
+      "priority": 5,
+      "_depends_chains": [],
+      "triggers":[],
+      "notifications": {
+        "on_start": [
+            {
+              "id": "console_default",
+              "message": "7 @GV(CHAIN_ID)",
+              "mode": "info"
+            }
+          ],
+        "on_fail": [
+                {
+              "id": "console_default",
+              "message": "AVISO CADENA!! ABORTADA @GV(CHAIN_ID)",
+              "mode": "info"
+                }
+        ],
+        "on_retry": [],
+        "on_end":[
+            {
+              "id": "console_default",
+              "message": "10 @GV(CHAIN_ID) END"
+            }
+          ]
+      },
+      "processes": [
+        {
+          "id": "CHAIN_THREE_PROC_ONE",
+          "name": "CHAIN_THREE_PROC_ONE",
+          "disable": false,
+          "exec": {
+            "id": "shell_default",
+            "command": "echo x"
+          },
+          "notifications": {
+            "on_start": [{
+              "id": "console_default",
+              "message": "8 @GV(PROCESS_ID)",
+              "mode": "info"
+            }],
+            "on_end": []
+            }
+        },
+        {
+          "id": "CHAIN_THREE_PROC_TWO",
+          "name": "CHAIN_THREE_PROC_TWO",
+          "depends_process": ["CHAIN_THREE_PROC_ONE"],
+          "disable": false,
+          "exec": {
+            "id": "shell_default",
+            "command": "echo proc2"
+          },
+          "notifications": {
+            "on_start": [{
+              "id": "console_default",
+              "message": "9 @GV(PROCESS_ID)",
+              "mode": "info"
+            }],
+            "on_end": []
+            }
+        }
+      ]
+    }
+  ]
+}

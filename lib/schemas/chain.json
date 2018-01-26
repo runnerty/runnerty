@@ -4,6 +4,11 @@
   "properties": {
     "id": {"type": "string"},
     "name": {"type": "string"},
+    "execId": {"type": "string"},
+    "queue": {"type": "string"},
+    "priority": {"type": "number"},
+    "input": {"type": "array"},
+    "custom_values": {"type": "object"},
     "triggers": {
       "type": "array",
       "items": {
@@ -44,6 +49,16 @@
           }
         },
         "on_fail": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": {"type": "string"}
+            }
+          }
+        },
+        "on_retry": {
           "type": "array",
           "items": {
             "type": "object",

@@ -7,6 +7,8 @@
       "log_display_level": "dev",
       "chainsFieldsResponse": [
         "id",
+        "uId",
+        "execId",
         "name",
         "status",
         "started_at",
@@ -31,12 +33,11 @@
         "duration_humanized"
       ]
     },
-    "agent":{
-      "disabled": false,
-      "retryInterval": 5000
+    "queues":{
+      "refreshInterval": 5000
     }
   },
   "executors": [],
-  "notificators": [],
+  "notifiers": [],
   "global_values":[]
 }

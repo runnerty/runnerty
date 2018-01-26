@@ -13,7 +13,7 @@ const basic_config_mockup = {
       propertiesExcludesInResponse: [Array] },
     planFilePath: "~/plan.json" 
   },
-  notificators: [],
+  notifiers: [],
   global_values: [],
   historyEnabled: false };
 
@@ -27,7 +27,7 @@ const basic_config_mockup_cryptoPassword = {
       propertiesExcludesInResponse: [Array] },
     planFilePath: "~/plan.json" 
   },
-  notificators: [],
+  notifiers: [],
   global_values: [],
   historyEnabled: false 
 };
