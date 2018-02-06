@@ -213,7 +213,7 @@ module.exports = () => {
    */
   router.get("/chain/:chainId/:uniqueId", (req, res) => {
     const chainId = req.params.chainId;
-    const uniqueId = req.params.uniqueId;
+    const uniqueId = req.params.uniqueId || "main";
     let chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
@@ -260,7 +260,7 @@ module.exports = () => {
    */
   router.get("/processes/:chainId/:uniqueId", (req, res) => {
     const chainId = req.params.chainId;
-    const uniqueId = req.params.uniqueId;
+    const uniqueId = req.params.uniqueId || "main";
     let chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
@@ -279,7 +279,7 @@ module.exports = () => {
    */
   router.post("/chain/stop/:chainId/:uniqueId", (req, res) => {
     const chainId = req.params.chainId;
-    const uniqueId = req.params.uniqueId;
+    const uniqueId = req.params.uniqueId || "main";
 
     apiPlan.stopChain(chainId, uniqueId)
       .then(() => {
@@ -303,7 +303,7 @@ module.exports = () => {
    */
   router.get("/process/:chainId/:uniqueId/:processId", (req, res) => {
     const chainId = req.params.chainId;
-    const uniqueId = req.params.uniqueId;
+    const uniqueId = req.params.uniqueId || "main";
     const processId = req.params.processId;
 
     let chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
@@ -331,7 +331,7 @@ module.exports = () => {
    */
   router.post("/process/retry", (req, res) => {
     const chainId = req.body.chainId;
-    const uniqueId = req.body.uniqueId;
+    const uniqueId = req.body.uniqueId || "main";
     const processId = req.body.processId;
     const once = req.body.once || false;
 
@@ -371,7 +371,7 @@ module.exports = () => {
    */
   router.post("/process/end", (req, res) => {
     const chainId = req.body.chainId;
-    const uniqueId = req.body.uniqueId;
+    const uniqueId = req.body.uniqueId || "main";
     const processId = req.body.processId;
     const continueChain = req.body.continueChain || false;
 
@@ -416,7 +416,7 @@ module.exports = () => {
    */
   router.post("/process/kill", (req, res) => {
     const chainId = req.body.chainId;
-    const uniqueId = req.body.uniqueId;
+    const uniqueId = req.body.uniqueId || "main";
     const processId = req.body.processId;
 
     logger.info(`Killing process "${processId}" from chain "${chainId}" by ${req.user}`);
