@@ -1,4 +1,4 @@
-# configuration
+# Configuration
 
 ### config.json
 
@@ -10,20 +10,30 @@ With the -c param it is possible to indicate a different path.
 runnerty -c /path/config.json
 ```
 
-In the config.json file is set the configuration of the different executors, notificators and global values (params, paths, files, etc.) which are going to be used on the processes: 
+In the config.json file is set the configuration of the different triggers, executors, notifiers and global values (params, paths, files, etc.) which are going to be used on the processes: 
 
 ```json
 {
+  "triggers": [
+    {
+      "id":"schedule_default",
+      "type":"@runnerty-trigger-schedule"
+    },
+    {
+      "id":"filewatcher_default",
+      "type":"@runnerty-trigger-file-watcher"
+    }
+  ],
   "executors": [
     {
       "id": "shell_default",
       "type": "@runnerty/executor-shell"
     }
   ],
-  "notificators": [
+  "notifiers": [
     {
       "id": "telegram_default",
-      "type": "@runnerty/notificator-telegram",
+      "type": "@runnerty/notifier-telegram",
       "token": "MyTokenId",
       "chat_id": "MyChatId"
     }
@@ -31,13 +41,19 @@ In the config.json file is set the configuration of the different executors, not
 }
 ```
 
-### Executors
+### Triggers
+The triggers are plugins which provoked the execution of a chain.
 
+The most common case is the schedule trigger which allows us to execute a chain with a periodicity like CRON. 
+
+Another example is the file watcher trigger. This trigger let us to execute a chain based on the events defined over a directory or file.
+
+### Executors
 The executors are plugins which enclose functionalities. This plugins allows Runnerty execute processes, data bases operations, use external services, etc. This is a list of the official available [here](plugins.md)
 
 In the config.json file are defined all the executors that are going to be used in the whole plan.
 
-This is an example of the configutarion of two executors (shell and mysql): 
+This is an example of the configuration of two executors (shell and mysql): 
 
 ```json
 {
@@ -59,28 +75,28 @@ This is an example of the configutarion of two executors (shell and mysql):
 }
 ```
 
-### Notificators
+### Notifiers
 
-The Notificators are plugins which allows Runnerty to notificate from the chain and processes to different services and channels. This is a list of the official available [Plugins]
+The Notifiers are plugins which allows Runnerty to notificate events that happend in the chain and processes to different services and channels. This is a list of the official available [Plugins]
 
-In the config.json file are defined all the notificators that are going to be used in the whole plan.
+In the config.json file are defined all the notifiers that are going to be used in the whole plan.
 
-This is an example of the configuration of two notificators (mail and telegram):
+This is an example of the configuration of two notifiers (mail and telegram):
 
 ```json
 {
-  "notificators": [
+  "notifiers": [
     {
       "id": "telegram_default",
-      "type": "@runnerty/notificator-telegram",
+      "type": "@runnerty/notifier-telegram",
       "token": "MyTokenId",
       "chat_id": "MyChatId"
     },
     {
       "id": "mail_default",
-      "type": "@runnerty/notificator-mail",
+      "type": "@runnerty/notifier-mail",
       "disable": false,
-      "from": "Runnerty Notificator <my@sender.com>",
+      "from": "Runnerty Notifier <my@sender.com>",
       "transport": "smtp://my%mailsender.com:pass@smtp.host.com/?pool=true",
       "bcc":["mycc@mail.com"],
       "templateDir": "/etc/runnerty/templates",
@@ -98,10 +114,10 @@ It is possible to define values that can be used in the chains an process (paths
 ```json
 {
     "executors": [
-      ...
+      {"...":"..."}
     ],
-    "notificators": [
-      ...
+    "notifiers": [
+      {"...":"..."}
     ],
     "global_values": [
       {

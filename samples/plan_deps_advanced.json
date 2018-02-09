@@ -3,9 +3,19 @@
     {
       "id":"CHAIN_ONE",
       "name":"Chain one sample",
-      "start_date":"2017-04-01T00:00:00.00Z",
-      "end_date":"2099-11-01T00:00:00.00Z",
-      "schedule_interval":"*/1 * * * *",
+      "triggers":[
+        {
+          "id":"schedule_default",
+          "start_date":"2017-09-05T00:00:00.00Z",
+          "end_date":"2099-09-05T00:00:00.00Z",
+          "schedule_interval":"*/1 * * * *"
+        },
+        {
+          "id":"filewatcher_default",
+          "file_name": "/etc/runnerty/myfile.txt",
+          "condition": "add"
+        }
+      ],
       "depends_chains":[],
       "notifications":{
         "on_start":[
@@ -34,12 +44,12 @@
           },
           "retries":0,
           "retry_delay":0,
-          "end_chain_on_fail":true,
+          "chain_action_on_fail":true,
           "output":[
             {
               "file_name":"/etc/runnerty/test.log",
               "write":[
-                "> EXEC :PROCESS_ID - :DD-:MM-:YY :HH::mm::ss: RETURN: :PROCESS_EXEC_MSG_OUTPUT"
+                "> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
               ],
               "concat":true,
               "maxsize":"10mb"
@@ -59,7 +69,7 @@
               {
                 "id":"mail_default",
                 "subject":"RUNNERTY SAMPLE",
-                "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_MSG_OUTPUT"
+                "message":"PROCESS :PROCESS_NAME END. RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
               }
             ]
           }
@@ -70,16 +80,16 @@
           "depends_process": {"$and":[{"$end":"PROCESS_ONE"},{"ABC":{"$eq":"ABC"}}]},
           "exec":{
             "id":"shell_default",
-            "command":"echo hello word from :PROCESS_ID!"
+            "command":"echo hello word from @GV(PROCESS_ID)!"
           },
           "retries":0,
           "retry_delay":0,
-          "end_chain_on_fail":true,
+          "chain_action_on_fail":true,
           "output":[
             {
               "file_name":"/etc/runnerty/test.log",
               "write":[
-                "> EXEC :PROCESS_ID - :DD-:MM-:YY :HH::mm::ss: RETURN: :PROCESS_EXEC_MSG_OUTPUT"
+                "> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
               ],
               "concat":true,
               "maxsize":"10mb"
@@ -90,7 +100,7 @@
               {
                 "id":"mail_default",
                 "subject":"RUNNERTY SAMPLE",
-                "message":"PROCESS :PROCESS_NAME START"
+                "message":"PROCESS @GV(PROCESS_NAME) START"
               }
             ],
             "on_fail":[],
@@ -99,13 +109,13 @@
               {
                 "id":"mail_default",
                 "subject":"RUNNERTY SAMPLE",
-                "message":"PROCESS :PROCESS_NAME END. RETURN: :PROCESS_EXEC_MSG_OUTPUT"
+                "message":"PROCESS @GV(PROCESS_NAME) END. RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
               }
             ],
             "on_ignore":[
               {
                 "id":"telegram_default",
-                "message":">  > PROCESS IGNORED *:PROCESS_NAME* "
+                "message":">  > PROCESS IGNORED *@GV(PROCESS_NAME)* "
               }
             ]
           }

@@ -181,7 +181,7 @@ The following is the list of supported scopes:
 
 * **core**
 * **executors**
-* **notificators**
+* **notifiers**
 * **api**
 
 There is currently few exception to the "use package name" rule:

@@ -7,6 +7,8 @@
       "log_display_level": "dev",
       "chainsFieldsResponse": [
         "id",
+        "uId",
+        "execId",
         "name",
         "status",
         "started_at",
@@ -30,9 +32,12 @@
         "ended_at",
         "duration_humanized"
       ]
+    },
+    "queues":{
+      "refreshInterval": 5000
     }
   },
   "executors": [],
-  "notificators": [],
+  "notifiers": [],
   "global_values":[]
 }

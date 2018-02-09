@@ -54,10 +54,11 @@ Consultar cadenas cargadas
 
 ## Consultar cadena
 Consultar una cadena
-### GET [/chain/:chainId]
+### GET [/chain/:chainId:uniqueId]]
 
 + URL parameters
     + chainId (ID de la cadena)
+    + uniqueId (uId de la cadena)
 
 + Sample (url)
 http://sample_host.com/api/chain/CHAIN_SAMPLE
@@ -116,6 +117,7 @@ http://sample_host.com/api/process/kill
 
 + Body parameters
     + chainId (ID de la cadena)
+    + uniqueId (uId de la cadena)
     + processId (ID del proceso)
     
 + Sample (body)

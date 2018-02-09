@@ -1,18 +1,19 @@
 # List of plugins availables
 
-This is the list of the oficial plugins availables. 
+This is the list of the official plugins availables. 
 
 ## Executors
 
 - [Shell](https://www.npmjs.com/package/@runnerty/executor-shell)
 - [Iterable](https://www.npmjs.com/package/@runnerty/executor-iterable)
-- [Wait](https://www.npmjs.com/package/@runnerty/executor-wait)
 - [Mysql](https://www.npmjs.com/package/@runnerty/executor-mysql)
 - [Redis](https://www.npmjs.com/package/@runnerty/executor-redis)
 - [Postgres](https://www.npmjs.com/package/@runnerty/executor-postgres)
 - [Mail](https://www.npmjs.com/package/@runnerty/executor-mail)
 - [Filesystem](https://www.npmjs.com/package/@runnerty/executor-filesystem)
 - [AWS-S3](https://www.npmjs.com/package/@runnerty/executor-s3)
+- [AWS-EC2](https://www.npmjs.com/package/@runnerty/executor-ec2)
+- [Wait](https://www.npmjs.com/package/@runnerty/executor-wait)
 - [PDF](https://www.npmjs.com/package/@runnerty/executor-pdf)
 - [SCP](https://www.npmjs.com/package/@runnerty/executor-scp)
 - [ICONV](https://www.npmjs.com/package/@runnerty/executor-iconv)
@@ -20,10 +21,16 @@ This is the list of the oficial plugins availables.
 - [Check Online Service](https://www.npmjs.com/package/@runnerty/executor-check-online-service)
 - [Decompress (tar, unzip, gunzip, 7z and rar)](https://www.npmjs.com/package/@runnerty/executor-decompress)
 - [Confirmation](https://www.npmjs.com/package/@runnerty/executor-confirmation)
+- [XML/JSON Parser](https://www.npmjs.com/package/@runnerty/executor-parse-xml-json)
 
-## Notificators
+## Notifiers
 
-- [Mail](https://www.npmjs.com/package/@runnerty/notificator-mail)
-- [Slack](https://www.npmjs.com/package/@runnerty/notificator-slack)
-- [Telegram](https://www.npmjs.com/package/@runnerty/notificator-telegram)
-- [Console](https://www.npmjs.com/package/@runnerty/notificator-console)
+- [Mail](https://www.npmjs.com/package/@runnerty/notifier-mail)
+- [Slack](https://www.npmjs.com/package/@runnerty/notifier-slack)
+- [Telegram](https://www.npmjs.com/package/@runnerty/notifier-telegram)
+- [Console](https://www.npmjs.com/package/@runnerty/notifier-console)
+
+## Triggers
+
+- [Schedule](https://www.npmjs.com/package/@runnerty/trigger-schedule)
+- [File Watcher](https://www.npmjs.com/package/@runnerty/trigger-file-watcher)

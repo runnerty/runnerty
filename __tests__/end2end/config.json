@@ -1,0 +1,54 @@
+{
+  "config": {
+    "general": {
+      "binBackup": "/tmp/bin.json",
+      "planFilePath": "plan.json",
+      "executorsPath": "./__tests__/end2end/node_modules/",
+      "notifiersPath": "./__tests__/end2end/node_modules/",
+      "triggersPath": "./__tests__/end2end/node_modules/",
+      "refreshIntervalBinBackup": 2000,
+      "api": {},
+      "history": {
+      	"disable":true,
+      	"mongodb":{
+          "host":"localhost",
+          "database": "runnerty",
+          "port":32769
+      	}
+      },
+      "queues":{
+        "refreshInterval":4000
+      }
+    },
+    "triggers": [
+     {
+      "id":"schedule_default",
+      "type":"@runnerty-trigger-schedule"
+     }
+    ],
+    "executors": [
+      {
+        "id": "shell_default",
+        "type": "@runnerty-executor-shell"
+      },
+      {
+        "id": "wait_default",
+        "type": "@runnerty-executor-wait",
+        "seconds": "60"
+      }
+    ],
+    "notifiers": [
+      {
+        "id":"console_default",
+        "type": "@runnerty-notifier-console"
+      }
+    ],
+    "global_values": [
+      {
+        "myparams": {
+          "sample": "sample_value"
+        }
+      }
+    ]
+  }
+}
