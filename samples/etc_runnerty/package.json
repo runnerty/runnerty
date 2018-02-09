@@ -22,6 +22,7 @@
     "@runnerty/executor-scp": "latest",
     "@runnerty/executor-shell": "latest",
     "@runnerty/executor-wait": "latest",
+    "@runnerty/executor-parse-xml-json": "latest",
     "@runnerty/trigger-schedule": "latest",
     "@runnerty/trigger-file-watcher": "latest"
   }
