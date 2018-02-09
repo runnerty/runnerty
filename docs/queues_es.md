@@ -1,14 +1,12 @@
-# Queues (Colas)
+# Queues
 
-El uso de colas tiene como fin evitar la ejecución en paralelo de cadenas y/o procesos que se decida que no puedan ejecutarse al mismo tiempo por cualquier motivo, además nos permite decidir en que orden se ejecutarán mediante el uso de prioridades.
+The usage of queues is recommended to avoid paralel executions of chains or processes that can run at the same time for any reason. In addition, it allows us to establish the execution order unsing priorities
 
+For example: If we have several processes or chains that works with the same file (file_one.txt) it is possible to assign the queue "file_one" to all of them, this way, paralel executions will be avoided.
 
-Por ejemplo: Si tenemos varios procesos o cadenas que operan sobre en un mismo fichero (fichero_uno.txt) podemos asignar la cola "fichero_uno" a todos ellos para evitar que se produzcan ejecuciones en paralelo.
+### Configutarion
 
-
-### Configuración
-
-En el fichero config.json del proyecto vamos a escribir la configuración de colas en el que podemos indicar el tiempo de refresco de colas en milisegundos.
+In the config.json file can be configured the refresh interval of the queues. It is indicated in milliseconds.
 
 ```json
 {
@@ -18,10 +16,12 @@ En el fichero config.json del proyecto vamos a escribir la configuración de col
 }
 ```
 
-### Uso
-Tanto en cadenas como en procesos se debe indicar el identificador de la cadena (Cadena alfanumerica) y la prioridad (opcional - entero)
+### Usage
 
-En una cadena:
+Both in chais and processes we have to indicate the identifier of the chain (alpanimeric) and the priority (optional - integer)
+
+In the chain:
+
 ```json
 {
   "id": "EXAMPLE_CHAIN",
@@ -32,7 +32,8 @@ En una cadena:
 }
 ```
 
-En un proceso:
+In a process:
+
 ```json
 {
   "processes":[
@@ -45,5 +46,4 @@ En un proceso:
       }
     ]
 }
-```
 ```

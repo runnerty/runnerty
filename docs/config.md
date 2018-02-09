@@ -43,10 +43,12 @@ In the config.json file is set the configuration of the different triggers, exec
 
 ### Triggers
 The triggers are plugins which provoked the execution of a chain.
-The most common case is the schedule trigger which allows us to execute a chain with a periodicity like CRON. 
-Another example is the file watcher trigger. This trigger let us to execute a chain based on the events defined over a directory or file.
-### Executors
 
+The most common case is the schedule trigger which allows us to execute a chain with a periodicity like CRON. 
+
+Another example is the file watcher trigger. This trigger let us to execute a chain based on the events defined over a directory or file.
+
+### Executors
 The executors are plugins which enclose functionalities. This plugins allows Runnerty execute processes, data bases operations, use external services, etc. This is a list of the official available [here](plugins.md)
 
 In the config.json file are defined all the executors that are going to be used in the whole plan.
@@ -75,7 +77,7 @@ This is an example of the configuration of two executors (shell and mysql):
 
 ### Notifiers
 
-The Notifiers are plugins which allows Runnerty to notificate from the chain and processes to different services and channels. This is a list of the official available [Plugins]
+The Notifiers are plugins which allows Runnerty to notificate events that happend in the chain and processes to different services and channels. This is a list of the official available [Plugins]
 
 In the config.json file are defined all the notifiers that are going to be used in the whole plan.
 
