@@ -10,7 +10,6 @@
 * **queues:** add queues to avoid paralel executions and to establish priorities. [docs](./docs/queues.md)
 * **cli:** add force execution and remote plan/config. [docs](./docs/usage.md)
 
-
 ### Tests
 
 * **common:** add general tests to the project
