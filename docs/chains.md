@@ -54,7 +54,7 @@ A chain has two identification fields:
 
 
 ### Execution (Triggers)
-The way to execute chains is by [triggers](triggers.md)
+The way to execute chains is by using [triggers](triggers.md)
 
 
 ### Custom values
@@ -84,7 +84,7 @@ You can define these dependency restrictions through the **depends_chains** prop
 }
 ```
 
-The chain of the example will not be executed until the chain with *id* *CHAIN_ONE* is finished. It is also possible to configure a set up dependencies to one chain's process or more:
+The chain of the example will not be executed until the chain with *id* *CHAIN_ONE* is finished. It is also possible to configure a set of dependencies to one chain's process or more:
 
 ```json
 {
@@ -135,7 +135,7 @@ The following example shows how to set up notifications for the different states
         "message": "THE CHAIN :CHAIN_ID HAS RETRY"
       }
     ],
-    "on_end": [
+    "on_queue": [
       {
         "id": "telegram_default",
         "message": "THE CHAIN :CHAIN_ID HAS QUEUE"
@@ -249,9 +249,7 @@ Delay property understands the following strings:
 - `x yr`
 - `x y`
 
-The space after the number is optional so you can also write `1ms` instead of `1
-ms`. In addition to that it also accepts numbers and strings which only includes
-numbers and we assume that these are always in milliseconds.
+The space after the number is optional so you can also write `1ms` instead of `1 ms`. In addition, it also accepts numbers and strings which only includes numbers and we assume that these are always in milliseconds.
 
 *From: [Millisecond module]*(https://github.com/unshiftio/millisecond)
 
@@ -270,7 +268,12 @@ First, we have the chain get-users-email.json with a process which selects all t
 {
   "id": "GET-USERS-EMAIL",
   "name": "It gets all the user's names to send an email",
-  "schedule_interval": "1 */1 * * *",
+  "triggers": [
+    {
+      "id":"schedule_default",
+      "schedule_interval": "1 */1 * * *"
+    }
+  ],
   "processes": [
     {
       "id": "GET-USER-EMAIL",

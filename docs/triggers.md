@@ -1,6 +1,6 @@
 # Triggers
 
-The execution of chains happens by a trigger (module npm) that could be developed and coupled to Runnerty. 
+The execution of chains happens by a trigger (npm module) that could be developed and coupled to Runnerty. 
 
 ### Configuration
 
@@ -27,9 +27,9 @@ This is an example of the configuration of two triggers: `@runnerty/trigger-sche
 
 ### Usage
 
-The destination of an trigger is to use it in our chains's. We could say that using an executor has two parts: `configuration` and `params`.
+The destination of an trigger is to use it in our chains. We could say that using a trigger has two parts: `configuration` and `params`.
 
- The configuration properties are set in the [config.json](config.md). They are the identifiers fields of the trigger. For example, this is the configuration properties for the @runnerty/trigger-schedule:
+The configuration properties are set in the [config.json](config.md). They are the identifiers fields of the trigger. For example, this is the configuration properties for the @runnerty/trigger-schedule:
 
 ```json
 {
@@ -68,6 +68,7 @@ It is important to know that it is possible to overwrite some configuration prop
 
 This is the configuration of the trigger. We are planing the execution of chain when file `myfile.txt` is added to the folder `/etc/runnerty/`
 [config.json](config.md):
+
 ```json
 {
   "triggers": [
@@ -82,6 +83,7 @@ This is the configuration of the trigger. We are planing the execution of chain 
 
 We can overwrite this information from the `triggers` properties of the chain:
 [plan.json (object chains)](chains.md)
+
 ```json
 {
   "id":"CHAIN_ONE",

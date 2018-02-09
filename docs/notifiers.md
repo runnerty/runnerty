@@ -1,6 +1,6 @@
 # Notifiers
 
-The notifiers are plugins for Runnerty used for notifying occurred in the processes or chains. 
+The notifiers are plugins for Runnerty used for notify events occurred in the processes or chains. 
 
 There are a bunch of notifiers for different channels. You can have a look at the official list [here](executors.md).
 
@@ -38,7 +38,7 @@ This is an example of the configuration of two notifier: `@runnerty/notifier-tel
 
 The destination of a notifier is to use it in our plan's processes to communicate notifications. We could say that using an executor has two parts: `configuration` and `params`.
 
- The configuration properties are set in the [config.json](config.md). They are the identifiers fields of the notifier. For example, this is the configuration properties for the @runnerty/executor-telegram:
+The configuration properties are set in the [config.json](config.md). They are the identifiers fields of the notifier. For example, this is the configuration properties for the @runnerty/executor-telegram:
 
 ```json
 {
@@ -109,4 +109,4 @@ It is important to know that it is possible to overwrite some configuration prop
 }
 ```
 
-Note that when the process ends with fail it will overwrite the `token` and `chat_id` properties of the [config.json](config.md) and it will send the message to a different chat.
+>Note that when the process ends with fail it will overwrite the `token` and `chat_id` properties of the [config.json](config.md) and it will send the message to a different chat.

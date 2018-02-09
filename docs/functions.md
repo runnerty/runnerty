@@ -5,10 +5,12 @@ Runnerty provides a bunch of different functions that can be used in the whole p
 ## All functions
 
 ### Values
-| Function                  | Syntax                                | Description                                                                                                 |
-| :---                      | :---                                  | :---                                                                                                        |
-| GV                        | `@GV(VALUE_ID)`                       | Used to get values. Learn more about *values* [here](values.md).                                            |
-| GETVALUE *(GV ALIAS)*     | `@GETVALUE(VALUE_ID)`                 | Used to get values. Learn more about *values* [here](values.md).                                            |
+| Function                              | Syntax                          | Description                                                                                                                                    |
+| :---                                  | :---                            | :---                                                                                                                                           |
+| GV                                    | `@GV(VALUE_ID)`                 | Used to get values. Learn more about *values* [here](values.md).                                                                               |
+| GETVALUE *(GV ALIAS)*                 | `@GETVALUE(VALUE_ID)`           | Used to get values. Learn more about *values* [here](values.md).                                                                               |
+| GETVALUEESCAPE *(GVESCAPE ALIAS)*     | `@GETVALUEESCAPE(VALUE_ID)`     | Used to get values escaped (Replacing no SingleStringCharacters or DoubleStringCharacters ECMA). Learn more about *values* [here](values.md).  |
+| GETVALUEUNESCAPE *(GVUNCESCAPE ALIAS)*| `@GETVALUEUNESCAPE(VALUE_ID)`   | Used to get values unescaped (Restoring no SingleStringCharacters or DoubleStringCharacters ECMA). Learn more about *values* [here](values.md).|
 
 ### Math
 | Function                  | Syntax                                      | Description                                                                                           |
@@ -37,23 +39,25 @@ Runnerty provides a bunch of different functions that can be used in the whole p
 | MODULUS                   | `@MODULUS(NUMBER, NUMBER)`                  | Returns the modulus of the numbers                                                                    |
 
 ### Strings
-| Function                  | Syntax                                                               | Description                                                                             |
-| :---                      | :---                                                                 | :---                                                                                    |
-| LPAD                      | `@LPAD(STRING)`                                                      | Returns a string that is left-padded with a specified string to a certain length        |
-| RPAD                      | `@RPAD(STRING)`                                                      | Returns a string that is right-padded with a specified string to a certain length       |
-| CONCAT                    | `@CONCAT(STRING, STRING [, ...])`                                    | Returns concatenates two or more expressions together                                   |
-| CONCATWS                  | `@CONCATWS(STRING_SEPARATOR, STRING, STRING [, ...])`                | Returns concatenates two or more expressions together and adds a separator between them |
-| UPPER                     | `@UPPER(STRING)`                                                     | Returns the string to upper-case                                                        |
-| LOWER                     | `@LOWER(STRING)`                                                     | Returns the string to lower-case                                                        |
-| TRIM                      | `@TRIM(STRING)`                                                      | Return trim string                                                                      |
-| LTRIM                     | `@LTRIM(STRING)`                                                     | Return left trim string                                                                 |
-| RTRIM                     | `@RTRIM(STRING)`                                                     | Return right trim string                                                                |
-| LENGTH                    | `@LENGTH(STRING)`                                                    | Returns the length of the specified string (in bytes)                                   |
-| CHARCODE                  | `@CHARCODE(CHAR)`                                                    | Returns the number code that represents the specific character                          |
-| SUBSTR                    | `@SUBSTR(STRING_TO_EXTRACT, NUMBER_START, NUMBER_CHARACTERS)`        | Returns a substring from a string (starting at any position)                            |
-| REPLACE                   | `@REPLACE(STRING, STRING_TO_FIND, STRING_REPLACEMENT, STRING_FLAGS)` | Replaces all occurrences of a specified string                                          |
-| INCLUDES                  | `@INCLUDES(STRING, STRING_TO_FIND)`                                  | Returns boolean depending on whether it finds or not a string in another string         |
-| INDEXOF                   | `@INDEXOF(STRING, STRING_TO_FIND)`                                   | Returns the position of the first occurrence of a string in another string else -1      |
+| Function                  | Syntax                                                               | Description                                                                                  |
+| :---                      | :---                                                                 | :---                                                                                         |
+| LPAD                      | `@LPAD(STRING)`                                                      | Returns a string that is left-padded with a specified string to a certain length             |
+| RPAD                      | `@RPAD(STRING)`                                                      | Returns a string that is right-padded with a specified string to a certain length            |
+| CONCAT                    | `@CONCAT(STRING, STRING [, ...])`                                    | Returns concatenates two or more expressions together                                        |
+| CONCATWS                  | `@CONCATWS(STRING_SEPARATOR, STRING, STRING [, ...])`                | Returns concatenates two or more expressions together and adds a separator between them      |
+| UPPER                     | `@UPPER(STRING)`                                                     | Returns the string to upper-case                                                             |
+| LOWER                     | `@LOWER(STRING)`                                                     | Returns the string to lower-case                                                             |
+| TRIM                      | `@TRIM(STRING)`                                                      | Return trim string                                                                           |
+| LTRIM                     | `@LTRIM(STRING)`                                                     | Return left trim string                                                                      |
+| RTRIM                     | `@RTRIM(STRING)`                                                     | Return right trim string                                                                     |
+| LENGTH                    | `@LENGTH(STRING)`                                                    | Returns the length of the specified string (in bytes)                                        |
+| CHARCODE                  | `@CHARCODE(CHAR)`                                                    | Returns the number code that represents the specific character                               |
+| SUBSTR                    | `@SUBSTR(STRING_TO_EXTRACT, NUMBER_START, NUMBER_CHARACTERS)`        | Returns a substring from a string (starting at any position)                                 |
+| REPLACE                   | `@REPLACE(STRING, STRING_TO_FIND, STRING_REPLACEMENT, STRING_FLAGS)` | Replaces all occurrences of a specified string                                               |
+| INCLUDES                  | `@INCLUDES(STRING, STRING_TO_FIND)`                                  | Returns boolean depending on whether it finds or not a string in another string              |
+| INDEXOF                   | `@INDEXOF(STRING, STRING_TO_FIND)`                                   | Returns the position of the first occurrence of a string in another string else -1           |
+| ESCAPE                    | `@ESCAPE(STRING)`                                                    | Return escaped string (Replacing no SingleStringCharacters or DoubleStringCharacters ECMA)   |
+| UNESCAPE                  | `@UNESCAPE(STRING)`                                                  | Return unescaped string (Restoring no SingleStringCharacters or DoubleStringCharacters ECMA) |
 
 Examples:
 ```

@@ -1,6 +1,7 @@
 # Usage (Application) - Runnerty
 
 ## Executions options
+
 ```
 -V, --version: get runnerty version
 -c, --config <path>: set config path. defaults to ${configFilePath}.
@@ -14,6 +15,7 @@
 -r, --restore: Restore backup plan (experimental).
 ```
 ### Samples
+
 ```bash
 runnerty -c /etc/runnerty/config.json -P /user/workdir/other_plan.json -f CHAIN_ONE --custom_values {\"YYYY\":\"1986\"}
 ```

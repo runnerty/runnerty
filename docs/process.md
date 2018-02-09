@@ -133,7 +133,7 @@ This is an example of usage of notifications in a process. In this case, we are 
   }
 }
 ```
-Note that in the example it is used the global value :PROCESS_ID, this value will have the id of the process. Know more about [global_values].
+>Note that in the example it is used the global value :PROCESS_ID, this value will have the id of the process. Know more about [global_values].
 
 There is an official list of the available notifiers [here](plugins.md).
 
@@ -197,8 +197,10 @@ You can have a look at the [chains](chains.md) documentation to see an usage exa
 
 ### TimeOut (timeout)
 
-The`timeout property it's used to set the maximun time to wait process ends.
+The timeout property it's used to set the maximun time to wait process ends.
+
 It is possible to establish two different actions, end or error. If the "error" action is indicated, the process will end with a failure and if "end" is indicated the process will end without failure. In both cases the function "kill" of the executor in question will be called.
+
 In addition to the action must indicate the mandatory property "delay" indicating the maximum timeout in milliseconds.
 
 For example:
@@ -252,8 +254,6 @@ Delay property understands the following strings:
 - `x yr`
 - `x y`
 
-The space after the number is optional so you can also write `1ms` instead of `1
-ms`. In addition to that it also accepts numbers and strings which only includes
-numbers and we assume that these are always in milliseconds.
+The space after the number is optional so you can also write `1ms` instead of `1 ms`. In addition to that it also accepts numbers and strings which only includes numbers and we assume that these are always in milliseconds.
 
 *From: [Millisecond module]*(https://github.com/unshiftio/millisecond)
