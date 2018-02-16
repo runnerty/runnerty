@@ -19,7 +19,7 @@ npm install -g runnerty
 
 ## Quick-start 
 You can download the quick start project and start managing your projects
-[Quick start repo](https://github.com/Coderty/runnerty-quick-start)!
+[Quick start repo](https://github.com/runnerty/runnerty-quick-start)!
 
 [downloads-image]: https://img.shields.io/npm/dm/runnerty.svg
 [npm-url]: https://www.npmjs.com/package/runnerty
