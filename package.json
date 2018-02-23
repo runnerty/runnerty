@@ -33,7 +33,7 @@
     "express": "^4.16.2",
     "express-jwt": "^5.3.0",
     "fs-extra": "^5.0.0",
-    "glob-to-regexp": "^0.3.0",
+    "glob-to-regexp": "^0.4.0",
     "helmet": "^3.9.0",
     "ical2json": "^1.2.0",
     "jsonwebtoken": "^8.1.1",
@@ -76,7 +76,7 @@
     "node": ">=8.9.4"
   },
   "devDependencies": {
-    "all-contributors-cli": "4.10.1",
+    "all-contributors-cli": "4.10.2",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.17.0",
