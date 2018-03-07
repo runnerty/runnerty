@@ -1,5 +1,15 @@
 # Runnerty ChangeLog
 
+<a name="2.0.3"></a>
+# [2.0.3] (07/03/2018)
+
+### Features
+* **interpreter:** string function `quote` to quote given string. [docs](./docs/functions.md) #101
+* **interpreter:** string function `stringify` to JSON stringify given object. [docs](./docs/functions.md)
+
+### Bug Fixes
+* **interpreter:** resolution of GetValue functions as values [docs](./docs/functions.md)
+
 <a name="2.0.2"></a>
 # [2.0.2] (01/03/2018)
 
