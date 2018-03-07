@@ -58,6 +58,7 @@ Runnerty provides a bunch of different functions that can be used in the whole p
 | INDEXOF                           | `@INDEXOF(STRING, STRING_TO_FIND)`                                   | Returns the position of the first occurrence of a string in another string else -1             |
 | ESCAPE                            | `@ESCAPE(STRING)`                                                    | Returns escaped string (Replacing no SingleStringCharacters or DoubleStringCharacters ECMA)   |
 | UNESCAPE                          | `@UNESCAPE(STRING)`                                                  | Returns unescaped string (Restoring no SingleStringCharacters or DoubleStringCharacters ECMA) |
+| QUOTE                             | `@QUOTE(STRING,QUOTE_STRING)`                                        | Return quoted string                                                                          |
 | JSONSTRINGIFY *(STRINGIFY ALIAS)* | `@UNESCAPE(OBJECT)`                                                  | Returns the JSON stringified object                                                            |
 
 Examples:
