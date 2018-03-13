@@ -47,7 +47,7 @@ module.exports = () => {
   }
 
   if (server) {
-    server.listen(config.api.port, (err) => {
+    server.listen(port, (err) => {
       if (err) {
         logger.error("Cannot start the server");
         logger.error(err);
