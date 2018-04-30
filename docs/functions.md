@@ -20,7 +20,7 @@ Runnerty provides a bunch of different functions that can be used in the whole p
 | ASIN                      | `@ASIN(NUMBER)`                             | Returns the arcsine (in radians) of a number                                                          |
 | ATAN                      | `@ATAN(NUMBER)`                             | Returns the arctangent (in radians) of a number                                                       |
 | CEIL                      | `@CEIL(NUMBER)`                             | Returns the smallest integer greater than or equal to a given number                                  |
-| COS                       | `@COS(NUMBER)`                              | Returns the cosine of the specified angle, which must be specified in radians                         |
+| COS                       | `@COS(NUMBER)`                              | Returns the cosine of the specified angle, which must be specified in radians                           |
 | FLOOR                     | `@FLOOR(NUMBER)`                            | Returns the largest integer less than or equal to a given number                                      |
 | LOG                       | `@LOG(NUMBER)`                              | Returns the natural logarithm (base e) of a number                                                    |
 | MAX                       | `@MAX(NUMBER, NUMBER [, ...])`              | Returns the largest of numbers                                                                        |
@@ -39,25 +39,27 @@ Runnerty provides a bunch of different functions that can be used in the whole p
 | MODULUS                   | `@MODULUS(NUMBER, NUMBER)`                  | Returns the modulus of the numbers                                                                    |
 
 ### Strings
-| Function                  | Syntax                                                               | Description                                                                                  |
-| :---                      | :---                                                                 | :---                                                                                         |
-| LPAD                      | `@LPAD(STRING)`                                                      | Returns a string that is left-padded with a specified string to a certain length             |
-| RPAD                      | `@RPAD(STRING)`                                                      | Returns a string that is right-padded with a specified string to a certain length            |
-| CONCAT                    | `@CONCAT(STRING, STRING [, ...])`                                    | Returns concatenates two or more expressions together                                        |
-| CONCATWS                  | `@CONCATWS(STRING_SEPARATOR, STRING, STRING [, ...])`                | Returns concatenates two or more expressions together and adds a separator between them      |
-| UPPER                     | `@UPPER(STRING)`                                                     | Returns the string to upper-case                                                             |
-| LOWER                     | `@LOWER(STRING)`                                                     | Returns the string to lower-case                                                             |
-| TRIM                      | `@TRIM(STRING)`                                                      | Return trim string                                                                           |
-| LTRIM                     | `@LTRIM(STRING)`                                                     | Return left trim string                                                                      |
-| RTRIM                     | `@RTRIM(STRING)`                                                     | Return right trim string                                                                     |
-| LENGTH                    | `@LENGTH(STRING)`                                                    | Returns the length of the specified string (in bytes)                                        |
-| CHARCODE                  | `@CHARCODE(CHAR)`                                                    | Returns the number code that represents the specific character                               |
-| SUBSTR                    | `@SUBSTR(STRING_TO_EXTRACT, NUMBER_START, NUMBER_CHARACTERS)`        | Returns a substring from a string (starting at any position)                                 |
-| REPLACE                   | `@REPLACE(STRING, STRING_TO_FIND, STRING_REPLACEMENT, STRING_FLAGS)` | Replaces all occurrences of a specified string                                               |
-| INCLUDES                  | `@INCLUDES(STRING, STRING_TO_FIND)`                                  | Returns boolean depending on whether it finds or not a string in another string              |
-| INDEXOF                   | `@INDEXOF(STRING, STRING_TO_FIND)`                                   | Returns the position of the first occurrence of a string in another string else -1           |
-| ESCAPE                    | `@ESCAPE(STRING)`                                                    | Return escaped string (Replacing no SingleStringCharacters or DoubleStringCharacters ECMA)   |
-| UNESCAPE                  | `@UNESCAPE(STRING)`                                                  | Return unescaped string (Restoring no SingleStringCharacters or DoubleStringCharacters ECMA) |
+| Function                          | Syntax                                                               | Description                                                                                   |
+| :---                              | :---                                                                 | :---                                                                                          |
+| LPAD                              | `@LPAD(STRING)`                                                      | Returns a string that is left-padded with a specified string to a certain length               |
+| RPAD                              | `@RPAD(STRING)`                                                      | Returns a string that is right-padded with a specified string to a certain length              |
+| CONCAT                            | `@CONCAT(STRING, STRING [, ...])`                                    | Returns concatenates two or more expressions together                                         |
+| CONCATWS                          | `@CONCATWS(STRING_SEPARATOR, STRING, STRING [, ...])`                | Returns concatenates two or more expressions together and adds a separator between them       |
+| UPPER                             | `@UPPER(STRING)`                                                     | Returns the string to upper-case                                                              |
+| LOWER                             | `@LOWER(STRING)`                                                     | Returns the string to lower-case                                                              |
+| TRIM                              | `@TRIM(STRING)`                                                      | Returns trim string                                                                           |
+| LTRIM                             | `@LTRIM(STRING)`                                                     | Returns left trim string                                                                      |
+| RTRIM                             | `@RTRIM(STRING)`                                                     | Returns right trim string                                                                     |
+| LENGTH                            | `@LENGTH(STRING)`                                                    | Returns the length of the specified string (in bytes)                                          |
+| CHARCODE                          | `@CHARCODE(CHAR)`                                                    | Returns the number code that represents the specific character                                 |
+| SUBSTR                            | `@SUBSTR(STRING_TO_EXTRACT, NUMBER_START, NUMBER_CHARACTERS)`        | Returns a substring from a string (starting at any position)                                  |
+| REPLACE                           | `@REPLACE(STRING, STRING_TO_FIND, STRING_REPLACEMENT, STRING_FLAGS)` | Replaces all occurrences of a specified string                                                 |
+| INCLUDES                          | `@INCLUDES(STRING, STRING_TO_FIND)`                                  | Returns boolean depending on whether it finds or not a string in another string                |
+| INDEXOF                           | `@INDEXOF(STRING, STRING_TO_FIND)`                                   | Returns the position of the first occurrence of a string in another string else -1             |
+| ESCAPE                            | `@ESCAPE(STRING)`                                                    | Returns escaped string (Replacing no SingleStringCharacters or DoubleStringCharacters ECMA)   |
+| UNESCAPE                          | `@UNESCAPE(STRING)`                                                  | Returns unescaped string (Restoring no SingleStringCharacters or DoubleStringCharacters ECMA) |
+| QUOTE                             | `@QUOTE(STRING,QUOTE_STRING)`                                        | Return quoted string. If QUOTE_STRING is not set, it will be set by default with single quote  |
+| JSONSTRINGIFY *(STRINGIFY ALIAS)* | `@UNESCAPE(OBJECT)`                                                  | Returns the JSON stringified object                                                            |
 
 Examples:
 ```
@@ -84,7 +86,7 @@ Examples:
 ### Evaluation
 | Function                  | Syntax                                                               | Description                                                                             |
 | :---                      | :---                                                                 | :---                                                                                    |
-| IF                        | `@IF(BOOLEAN, OUTPUT_ON_TRUE, OUTPUT_ON_FALSE)`                      | Returns a string that is left-padded with a specified string to a certain length        |
+| IF                        | `@IF(BOOLEAN, OUTPUT_ON_TRUE, OUTPUT_ON_FALSE)`                      | Returns a string that is left-padded with a specified string to a certain length         |
 | IFNULL                    | `@IFNULL(OPER, OUTPUT_IF_NULL, OUTPUT_IF_NOT_NULL)`                  | Returns an alternative value if an expression is null and optionally other if not       |
 | EQ                        | `@EQ(OPER_ONE, OPER_TWO)`                                            | Returns boolean depending on whether it OPER_LEFT == OPER_RIGHT                         |
 | NE                        | `@NE(OPER_ONE, OPER_TWO)`                                            | Returns boolean depending on whether it OPER_LEFT != OPER_RIGHT                         |
@@ -97,7 +99,7 @@ Examples:
 ### Dates
 | Function                  | Syntax                                                                                    | Description                                                        |
 | :---                      | :---                                                                                      | :---                                                               |
-| GETDATE                   | `@GETDATE(STRING_FORMAT, STRIN_LANGUAGE, STRING_PERIOD, NUMBER_INCREMENT, BOOLEAN_UPPER)` | Returns string as specified by a format mask, language and period  |
+| GETDATE                   | `@GETDATE(STRING_FORMAT, STRIN_LANGUAGE, STRING_PERIOD, NUMBER_INCREMENT, BOOLEAN_UPPER)` | Returns string as specified by a format mask, language and period   |
 
 ```
 Format: http://momentjs.com/docs/#/parsing/string-format/
@@ -116,7 +118,7 @@ Examples:
 ### Paths/Urls
 | Function                  | Syntax                                         | Description                                                                                   |
 | :---                      | :---                                           | :---                                                                                          |
-| PATHPARSE                 | `@PATHPARSE(STRING_PATH, STRING_PROPERTIE)`    | Returns a string with specified propertie of path. PROPERTIES: `root, dir, base, ext or name` |
+| PATHPARSE                 | `@PATHPARSE(STRING_PATH, STRING_PROPERTIE)`    | Returns a string with specified propertie of path. PROPERTIES: `root, dir, base, ext or name`  |
 | PATHNORMALIZE             | `@PATHNORMALIZE(STRING_PATH)`                  | If multiple, sequential path segment separation characters are found (e.g. / on POSIX and either \ or / on Windows), they are replaced by a single instance of the platform specific path segment separator. Trailing separators are preserved |
 | PATHJOIN                  | `@PATHJOIN(STRING_PATH, STRING_PATH [, ...]))` | Return joined all given path segments together using the platform specific separator as a delimiter, then normalizes the resulting path.|
 | URLPARSE                  | `@URLPARSE(STRING_URL, STRING_PROPERTIE)`      | Returns a string with specified propertie of url. PROPERTIES: `protocol, slashes, auth, host, port, hostname, hash, search, query, pathname, path, href` | 

@@ -67,6 +67,58 @@
                 }
               }]
             },
+            "servers":{
+              "type": "array",
+              "items": {
+                "type": "object",
+                "anyOf": [{
+                  "required": ["id","endpoint","port"],
+                  "properties": {
+                    "id": {"type": ["string"]},
+                    "endpoint": {"type": ["string"]},
+                    "port": {"type": ["number"]},
+                    "secret": {"type": "string"},
+                    "limite_req": {"type": "string"},
+                    "token_expiration_time": {"type": "number"},
+                    "log_display_level": {
+                      "type": "string",
+                      "pattern": "(combined|common|dev|short|tiny)"
+                    }
+                  }
+                }, {
+                  "required": ["id","endpoint","unix_socket"],
+                  "properties": {
+                    "id": {"type": ["string"]},
+                    "endpoint": {"type": ["string"]},
+                    "unix_socket": {"type": "string"},
+                    "secret": {"type": "string"},
+                    "limite_req": {"type": "string"},
+                    "token_expiration_time": {"type": "number"},
+                    "log_display_level": {
+                      "type": "string",
+                      "pattern": "(combined|common|dev|short|tiny)"
+                    }
+                  }
+                }, {
+                  "required": ["id","endpoint","port", "ssl"],
+                  "properties": {
+                    "id": {"type": ["string"]},
+                    "endpoint": {"type": ["string"]},
+                    "port": {"type": ["string"]},
+                    "ssl": {"type": "boolean"},
+                    "key": {"type": "string"},
+                    "cert": {"type": "string"},
+                    "secret": {"type": "string"},
+                    "limite_req": {"type": "string"},
+                    "token_expiration_time": {"type": "number"},
+                    "log_display_level": {
+                      "type": "string",
+                      "pattern": "(combined|common|dev|short|tiny)"
+                    }
+                  }
+                }]
+              }
+            },
             "queues":{
               "type": "object",
               "properties": {
