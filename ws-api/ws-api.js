@@ -230,16 +230,16 @@ module.exports = () => {
    * - chainId (string)
    * 
    * Body input:
-   * - inputIterableValues (objects array) input for an iterable chain
-   * - customValues (JSON) custom values to replace in chain processes
+   * - input (objects array) input for an iterable chain
+   * - custom_values (JSON) custom values to replace in chain processes
    */
   router.post("/chain/forceStart/:chainId", (req, res) => {
     const chainId = req.params.chainId;
     let chain = apiPlan.getChainById(chainId);
 
     if(chain){
-      chain.inputValues = req.body.inputIterableValues || chain.inputValues;
-      chain.customValues = req.body.customValues || chain.customValues;
+      chain.input = req.body.input || chain.input;
+      chain.custom_values = req.body.custom_values || chain.custom_values;
 
       queueProcess.queueChain(chain);
       res.send();
