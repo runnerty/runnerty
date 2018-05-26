@@ -44,6 +44,18 @@
       ]
     },
     "calendarsPath": "/calendars_dir/",
+    "servers":[
+      {
+        "id":"srvId",
+        "port":8080,
+        "endpoint":"/test_one"
+      },
+      {
+        "id":"srvIdTwo",
+        "port":8181,
+        "endpoint":"/test_two"
+      }
+    ],
     "history": {
       "disable":true,
       "mongodb":{
