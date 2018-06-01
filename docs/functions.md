@@ -5,12 +5,14 @@ Runnerty provides a bunch of different functions that can be used in the whole p
 ## All functions
 
 ### Values
-| Function                              | Syntax                          | Description                                                                                                                                    |
-| :---                                  | :---                            | :---                                                                                                                                           |
-| GV                                    | `@GV(VALUE_ID)`                 | Used to get values. Learn more about *values* [here](values.md).                                                                               |
-| GETVALUE *(GV ALIAS)*                 | `@GETVALUE(VALUE_ID)`           | Used to get values. Learn more about *values* [here](values.md).                                                                               |
-| GETVALUEESCAPE *(GVESCAPE ALIAS)*     | `@GETVALUEESCAPE(VALUE_ID)`     | Used to get values escaped (Replacing no SingleStringCharacters or DoubleStringCharacters ECMA). Learn more about *values* [here](values.md).  |
-| GETVALUEUNESCAPE *(GVUNCESCAPE ALIAS)*| `@GETVALUEUNESCAPE(VALUE_ID)`   | Used to get values unescaped (Restoring no SingleStringCharacters or DoubleStringCharacters ECMA). Learn more about *values* [here](values.md).|
+| Function                              | Syntax                                     | Description                                                                                                                                              |
+| :---                                  | :---                                       | :---                                                                                                                                                     |
+| GV                                    | `@GV(VALUE_ID [,QUOTE_STRING])`            | Used to get values. Optionally you can set quote_string. Learn more about *values* [here](values.md).                                                    |
+| GETVALUE *(GV ALIAS)*                 | `@GETVALUE(VALUE_ID [,QUOTE_STRING])`      | Used to get values. Optionally you can set quote_string. Learn more about *values* [here](values.md).                                                    |
+| GVQ                                   | `@GVQ(VALUE_ID [,QUOTE_STRING])`           | Used to get values and quote them. If QUOTE_STRING is not set, it will be set by default with single quote. Learn more about *values* [here](values.md). |
+| GETVALUEQUOTE *(GVQ ALIAS)*           | `@GETVALUEQUOTE(VALUE_ID [,QUOTE_STRING])` | Used to get values and quote them. If QUOTE_STRING is not set, it will be set by default with single quote. Learn more about *values* [here](values.md). |
+| GETVALUEESCAPE *(GVESCAPE ALIAS)*     | `@GETVALUEESCAPE(VALUE_ID)`                | Used to get values escaped (Replacing no SingleStringCharacters or DoubleStringCharacters ECMA). Learn more about *values* [here](values.md).            |
+| GETVALUEUNESCAPE *(GVUNCESCAPE ALIAS)*| `@GETVALUEUNESCAPE(VALUE_ID)`              | Used to get values unescaped (Restoring no SingleStringCharacters or DoubleStringCharacters ECMA). Learn more about *values* [here](values.md).          |
 
 ### Math
 | Function                  | Syntax                                      | Description                                                                                           |
@@ -59,7 +61,7 @@ Runnerty provides a bunch of different functions that can be used in the whole p
 | ESCAPE                            | `@ESCAPE(STRING)`                                                    | Returns escaped string (Replacing no SingleStringCharacters or DoubleStringCharacters ECMA)   |
 | UNESCAPE                          | `@UNESCAPE(STRING)`                                                  | Returns unescaped string (Restoring no SingleStringCharacters or DoubleStringCharacters ECMA) |
 | QUOTE                             | `@QUOTE(STRING,QUOTE_STRING)`                                        | Return quoted string. If QUOTE_STRING is not set, it will be set by default with single quote  |
-| JSONSTRINGIFY *(STRINGIFY ALIAS)* | `@STRINGIFY(OBJECT)`                                                  | Returns the JSON stringified object                                                            |
+| JSONSTRINGIFY *(STRINGIFY ALIAS)* | `@STRINGIFY(OBJECT)`                                                 | Returns the JSON stringified object                                                            |
 
 Examples:
 ```

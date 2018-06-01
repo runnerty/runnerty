@@ -11,8 +11,7 @@ const http = require("http");
 const https = require("https");
 const helmet = require("helmet");
 const fs = require("fs");
-const utils = require("../lib/utils.js");
-const logger = utils.logger;
+const logger = require("../lib/logger.js");
 const config = global.config.general;
 const queueProcess = require("../lib/queue-process-memory.js");
 
