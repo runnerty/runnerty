@@ -3,7 +3,7 @@
 ## Executions options
 
 ```
--V, --version: get runnerty version
+-v, --version: get runnerty version
 -c, --config <path>: set config path. defaults to ${configFilePath}.
 -P, --plan <path>: Overwrite path file plan of config file.
 -p, --password <password>: Master cryptor password.

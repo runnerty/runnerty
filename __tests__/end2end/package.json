@@ -1,25 +1,11 @@
 {
-  "name": "runnerty-modules",
+  "name": "runnerty-tests-modules",
   "version": "0.0.1",
   "private": false,
   "dependencies": {
-    "@runnerty/executor-decompress": "latest",
-    "@runnerty/executor-filesystem": "latest",
-    "@runnerty/executor-iconv": "latest",
-    "@runnerty/executor-iterable": "latest",
-    "@runnerty/executor-mail": "latest",
-    "@runnerty/executor-mysql": "latest",
-    "@runnerty/executor-pdf": "latest",
-    "@runnerty/executor-postgres": "latest",
-    "@runnerty/executor-redis": "latest",
-    "@runnerty/executor-s3": "latest",
-    "@runnerty/executor-scp": "latest",
     "@runnerty/executor-shell": "latest",
     "@runnerty/executor-wait": "latest",
     "@runnerty/notifier-console": "latest",
-    "@runnerty/notifier-mail": "latest",
-    "@runnerty/notifier-slack": "latest",
-    "@runnerty/notifier-telegram": "latest",
     "@runnerty/trigger-schedule": "latest"
   }
 }
