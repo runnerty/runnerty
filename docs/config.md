@@ -47,6 +47,12 @@ The triggers are plugins which provoked the execution of a chain.
 The most common case is the schedule trigger which allows us to execute a chain with a periodicity like CRON. 
 
 Another example is the file watcher trigger. This trigger let us to execute a chain based on the events defined over a directory or file.
+Have a look at: [triggers](triggers.md)
+
+### Servers
+Servers nos permite abstraernos de la implementación de endpoints en el desarollo de triggers. Runnerty levantará los servidores web que se indiquen en la configuración y se encargará del enrutado poniendo a disposición de los triggers un propiedad (on_request) en la que se recibirán las peticiones dirigidas a su endpoint, además permite la personalización de la respuesta tanto status code como el envio de un objeto de respuesta.
+Have a look at: [triggers](triggers.md)
+
 
 ### Executors
 The executors are plugins which enclose functionalities. This plugins allows Runnerty execute processes, data bases operations, use external services, etc. This is a list of the official available [here](plugins.md)
