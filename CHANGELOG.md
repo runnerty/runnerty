@@ -4,7 +4,7 @@
 # [2.1.0] (25/06/2018)
 
 ### Features
-* **triggers:** servers support. [docs](./docs/triggers.md) #101
+* **triggers:** servers support. [docs](./docs/triggers.md)
 * **interpreter:** string function `GVQ/GETVALUEQUOTED` and `GV` allows quote param. [docs](./docs/functions.md)
 * **common:** input/custom_values with more than one object level are converted to key/value. [docs](./docs/usage.md)
 
@@ -26,7 +26,7 @@
 # [2.0.3] (07/03/2018)
 
 ### Features
-* **interpreter:** string function `quote` to quote given string. [docs](./docs/functions.md) #101
+* **interpreter:** string function `quote` to quote given string. [docs](./docs/functions.md)
 * **interpreter:** string function `stringify` to JSON stringify given object. [docs](./docs/functions.md)
 
 ### Bug Fixes
