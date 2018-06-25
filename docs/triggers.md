@@ -133,7 +133,7 @@ Calendars can be used for both, enabling or disabling execution dates through th
 ```
 
 ### Servers
-Servers nos permite abstraernos de la implementación de endpoints en el desarollo de triggers. Runnerty levantará los servidores web que se indiquen en la configuración y se encargará del enrutado poniendo a disposición de los triggers un propiedad (on_request) en la que se recibirán las peticiones dirigidas a su endpoint, además permite la personalización de la respuesta tanto status code como el envio de un objeto de respuesta.
+Servers allow us to forget about the endpoints implementation in the triggers development. Runnerty will pull up the web servers indicted in the config file and will also manage the routing. It will make available the trigger's property "on_request". This will receive the requests to it's endpoint. Additionally, It allows us to customize the response either sending the status code and the response object.
 
 ```json
 {
