@@ -237,10 +237,7 @@ module.exports = () => {
     let chain = apiPlan.getChainById(chainId);
 
     if(chain){
-      chain.input = req.body.input || chain.input;
-      chain.custom_values = req.body.custom_values || chain.custom_values;
-
-      queueProcess.queueChain(chain);
+      queueProcess.queueChain(chain, req.body.input, req.body.custom_values);
       res.send();
     }else{
       res.status(404).send("Chain not found");
