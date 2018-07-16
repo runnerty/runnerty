@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "2.1.0-rc6",
+  "version": "2.1.0-rc7",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -41,7 +41,7 @@
     "lodash": "^4.17.10",
     "millisecond": "^0.1.2",
     "moment": "^2.22.2",
-    "mongoose": "^5.1.4",
+    "mongoose": "^5.2.3",
     "morgan": "^1.9.0",
     "natives": "^1.1.4",
     "object-sizeof": "^1.2.0",
@@ -82,10 +82,10 @@
     "all-contributors-cli": "4.11.2",
     "commitizen": "^2.9.6",
     "cz-conventional-changelog": "^2.1.0",
-    "eslint": "^4.19.1",
+    "eslint": "^5.1.0",
     "eslint-plugin-jest": "^21.17.0",
-    "jest": "^23.1.0",
-    "jest-cli": "^23.1.0",
+    "jest": "^23.4.1",
+    "jest-cli": "^23.4.1",
     "runnerty-tests-modules": "file:__tests__/end2end"
   },
   "jest": {
