@@ -17,7 +17,7 @@ const basic_config_mockup = {
   global_values: [],
   historyEnabled: false };
 
-const basic_config_mockup_cryptoPassword = { 
+const basic_config_mockup_cryptoPassword = {
   executors: [ { id: "shell_default", type: "@runnerty-executor-shell", crypted_password:"test" } ],
   general: { 
     api:{ 
@@ -34,11 +34,11 @@ const basic_config_mockup_cryptoPassword = {
   
 describe("Encrypt", () => {
   test("It should encrypt the string Coderty", () => {
-    expect(encrypt("Coderty", "password")).toBe("e86ad3e3633795");
+    expect(encrypt("Coderty", "password", "aes-256-cbc")).toBe("453b330dbc064d46d697d9131c88a3d3");
   });
 
   test("It should decrypt the string Coderty", () => {
-    expect(decrypt("e86ad3e3633795", "password")).toBe("Coderty");
+    expect(decrypt("453b330dbc064d46d697d9131c88a3d3", "password", "aes-256-cbc")).toBe("Coderty");
   });
 });
 

@@ -15,6 +15,13 @@
             "notifiersPath": {"type": "string"},
             "triggersPath": {"type": "string"},
             "modulesPath": {"type": "string"},
+            "crypto": {
+              "type": "object",
+              "properties": {
+                "algorithm": {"type": "string"},
+                "iv": {"type": "string"}
+              }
+            },
             "api": {
               "type": "object",
               "anyOf": [{
