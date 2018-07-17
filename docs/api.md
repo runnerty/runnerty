@@ -75,7 +75,7 @@ Executes the indicated chain if it is not runnning yet
 http://sample_host.com/api/chain/forceStart/CHAIN_SAMPLE
 
 + Body parameters
-    + customValues (object)
+    + custom_values (object)
         + GLOBAL_VALUE_KEY:VALUE_KEY (Global variable and custom value)
 
 + Sample (body)

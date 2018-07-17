@@ -11,8 +11,7 @@ const http = require("http");
 const https = require("https");
 const helmet = require("helmet");
 const fs = require("fs");
-const utils = require("../lib/utils.js");
-const logger = utils.logger;
+const logger = require("../lib/logger.js");
 const config = global.config.general;
 const queueProcess = require("../lib/queue-process-memory.js");
 
@@ -47,7 +46,7 @@ module.exports = () => {
   }
 
   if (server) {
-    server.listen(config.api.port, (err) => {
+    server.listen(port, (err) => {
       if (err) {
         logger.error("Cannot start the server");
         logger.error(err);
@@ -230,18 +229,15 @@ module.exports = () => {
    * - chainId (string)
    * 
    * Body input:
-   * - inputIterableValues (objects array) input for an iterable chain
-   * - customValues (JSON) custom values to replace in chain processes
+   * - input (objects array) input for an iterable chain
+   * - custom_values (JSON) custom values to replace in chain processes
    */
   router.post("/chain/forceStart/:chainId", (req, res) => {
     const chainId = req.params.chainId;
     let chain = apiPlan.getChainById(chainId);
 
     if(chain){
-      chain.inputValues = req.body.inputIterableValues || chain.inputValues;
-      chain.customValues = req.body.customValues || chain.customValues;
-
-      queueProcess.queueChain(chain);
+      queueProcess.queueChain(chain, req.body.input, req.body.custom_values);
       res.send();
     }else{
       res.status(404).send("Chain not found");

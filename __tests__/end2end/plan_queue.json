@@ -20,14 +20,14 @@
         "on_fail": [
                 {
               "id": "console_default",
-              "message": "AVISO CADENA!! ABORTADA @GV(CHAIN_ID)",
+              "message": "ALERT CHAIN ABORT! @GV(CHAIN_ID)",
               "mode": "info"
                 }
         ],
         "on_retry": [
             {
               "id": "console_default",
-              "message": "RETRY CHAIN DE cadena @GV(CHAIN_ID)"
+              "message": "RETRY CHAIN @GV(CHAIN_ID)"
             }
         ],
         "on_end":[
@@ -105,7 +105,7 @@
         "on_fail": [
                 {
               "id": "console_default",
-              "message": "AVISO CADENA!! ABORTADA @GV(CHAIN_ID)",
+              "message": "ALERT CHAIN ABORT! @GV(CHAIN_ID)",
               "mode": "info"
                 }
         ],
@@ -173,7 +173,7 @@
         "on_fail": [
                 {
               "id": "console_default",
-              "message": "AVISO CADENA!! ABORTADA @GV(CHAIN_ID)",
+              "message": "ALERT CHAIN ABORT! @GV(CHAIN_ID)",
               "mode": "info"
                 }
         ],

@@ -131,3 +131,46 @@ Calendars can be used for both, enabling or disabling execution dates through th
     }
 }
 ```
+
+### Servers
+Servers allow us to forget about the endpoints implementation in the triggers development. Runnerty will pull up the web servers indicted in the config file and will also manage the routing. It will make available the trigger's property "on_request". This will receive the requests to it's endpoint. Additionally, It allows us to customize the response either sending the status code and the response object.
+
+```json
+{
+  "general": {
+    "servers":[
+      {
+        "id":"server_sample_one",
+        "port":8080,
+        "endpoint":"/one"
+      },
+      {
+        "id":"server_sample_two",
+        "port":8181,
+        "endpoint":"/two"
+      }
+    ]
+  }
+}
+```
+
+## Usage
+```json
+{
+  "chains": [
+    {
+      "...":"...",
+      "triggers":[
+        {
+          "id":"trigger_server_default",
+          "server":{
+            "id":"server_sample_one",
+            "path":"/samplepath",
+            "method":"get"
+          }
+        }
+      ]
+    }
+  ]
+}
+```

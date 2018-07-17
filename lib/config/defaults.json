@@ -33,6 +33,9 @@
         "duration_humanized"
       ]
     },
+    "crypto":{
+      "algorithm":"aes-256-cbc"
+    },
     "queues":{
       "refreshInterval": 5000
     }
