@@ -103,37 +103,37 @@ This is an example of usage of notifications in a process. In this case, we are 
     "on_start": [
       {
         "id": "telegram_default",
-        "message": "THE PROCESS :PROCESS_ID HAS STARTED"
+        "message": "THE PROCESS @GV(PROCESS_ID)HAS STARTED"
       }
       ],
     "on_fail": [
       {
         "id": "telegram_default",
-        "message": "THE PROCESS :PROCESS_ID HAS FAILED"
+        "message": "THE PROCESS @GV(PROCESS_ID)HAS FAILED"
       }
       ],
     "on_end": [
       {
         "id": "telegram_default",
-        "message": "THE PROCESS :PROCESS_ID HAS FINISHED"
+        "message": "THE PROCESS @GV(PROCESS_ID)HAS FINISHED"
       }
       ],
     "on_queue": [
      {
        "id": "telegram_default",
-       "message": "THE PROCESS :PROCESS_ID HAS QUEUE"
+       "message": "THE PROCESS @GV(PROCESS_ID)HAS QUEUE"
      }
      ],
     "on_timeout": [
      {
        "id": "telegram_default",
-       "message": "THE PROCESS :PROCESS_ID HAS TIMEOUT"
+       "message": "THE PROCESS @GV(PROCESS_ID)HAS TIMEOUT"
      }
      ]
   }
 }
 ```
->Note that in the example it is used the global value :PROCESS_ID, this value will have the id of the process. Know more about [global_values].
+>Note that in the example it is used the global value PROCESS_ID, this value will have the id of the process. Know more about [global_values].
 
 There is an official list of the available notifiers [here](plugins.md).
 
@@ -152,7 +152,7 @@ Another property of ther processes is that we can redirect the output of a proce
       },
   "output": [{
 			"file_name": "/var/log/runnerty/general.log", 
-			"write": ["EXECUTION *:PROCESS_ID* :DD-:MM-:YY :HH::mm::ss\n"], 
+			"write": ["EXECUTION *@GV(PROCESS_ID)* @GETDATE(DD-MM-YY HH:mm:ss)\n"], 
 			"concat": true, 
 			"maxsize": "1mb"
 			}]
@@ -179,7 +179,7 @@ For example:
         { "id": "mysql_default",
           "command": "SELECT email FROM USERS WHERE ID = 1"
         },
-      "output_share": [{"key":"USER","name":"EMAIL","value":":PROCESS_EXEC_MSG_OUTPUT"}]
+      "output_share": [{"key":"USER","name":"EMAIL","value":"@GV(PROCESS_EXEC_MSG_OUTPUT)"}]
     }
   ]
 }
@@ -187,7 +187,7 @@ For example:
 
 In this example we are getting the email of an user from the database using the @runnerty/executor_mysql and assigning it to a value. This way we can use the `:USER_EMAIL` value anywhere of the chain.
 
-Note that in this example we are are using the value `:PROCESS_EXEC_MSG_OUTPUT` This is a global_value that contains the return of the process. Have a look at the [values](values.md) documentation.
+Note that in this example we are are using the value `PROCESS_EXEC_MSG_OUTPUT` This is a global_value that contains the return of the process. Have a look at the [values](values.md) documentation.
 
 ### OutputI terable (output_iterable)
 

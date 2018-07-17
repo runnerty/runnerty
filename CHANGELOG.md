@@ -1,26 +1,31 @@
 # Runnerty ChangeLog
 
 <a name="2.1.0"></a>
-# [2.1.0] (25/06/2018)
+# [2.1.0] (17/07/2018)
 
 ### Features
 * **triggers:** servers support. [docs](./docs/triggers.md)
 * **interpreter:** string function `GVQ/GETVALUEQUOTED` and `GV` allows quote param. [docs](./docs/functions.md)
 * **common:** input/custom_values with more than one object level are converted to key/value. [docs](./docs/usage.md)
+* **common:** add config crypto to set password crypto algorithm
+* **common:** support Node.js 10.x 
 
 ### Bug Fixes
 * **common:** typo
 * **common:** replaceWithSmart ignore global_values when objParams is empty
 * **common:** ws api custom_value wrong variable setting
 * **common:** the functions of the config file are not interpreted
+* **common:** output_share: overwriting config.global_values instead of config_raw
+* **common:** ws customs_values overwrite default customs_values
+* **common:** dynamic recalculate global_values to allow the use dates (@GETDATE)
 * **cli:** input_values param ignored in command line force execution mode
 * **interpreter:** stringifying errors as empty strings
 * **interpreter:** error uncatched
-* **interpreter:** logger removed from interpreter-functions throw erros
+* **interpreter:** logger removed from interpreter-functions throw errors
 * **triggers:** compatibility in triggers with input_values that are not array
-* **triggers:**  triggers send chain information to the interpreter
-* **triggers:**  triggers send chain information to the interpreter
-* **tests:**  paths of the config test modules modified for global node_modules support
+* **triggers:** triggers send chain information to the interpreter
+* **triggers:** triggers send chain information to the interpreter
+* **tests:** paths of the config test modules modified for global node_modules support
 
 <a name="2.0.3"></a>
 # [2.0.3] (07/03/2018)
