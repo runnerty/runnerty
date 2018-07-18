@@ -1,5 +1,11 @@
 # Runnerty ChangeLog
 
+<a name="2.1.1"></a>
+# [2.1.1] (18/07/2018)
+
+### Bug Fixes
+* **common:** CPU 100% usage trying interpret functions of the config
+
 <a name="2.1.0"></a>
 # [2.1.0] (17/07/2018)
 
