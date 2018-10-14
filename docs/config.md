@@ -50,7 +50,8 @@ Another example is the file watcher trigger. This trigger let us to execute a ch
 Have a look at: [triggers](triggers.md)
 
 ### Servers
-Servers nos permite abstraernos de la implementación de endpoints en el desarollo de triggers. Runnerty levantará los servidores web que se indiquen en la configuración y se encargará del enrutado poniendo a disposición de los triggers un propiedad (on_request) en la que se recibirán las peticiones dirigidas a su endpoint, además permite la personalización de la respuesta tanto status code como el envio de un objeto de respuesta.
+Servers allow us to abstract ourselves of the endpoints implementation in a trigger development. Runnerty will set the servers indicated in the config file. It will take care about the routing and will serve one property for the triggers (on_request). In this property it will receive the requests of the endpoint. Moreover it allows customization of the response, also the status code and the possibility so send an object.
+
 Have a look at: [triggers](triggers.md)
 
 

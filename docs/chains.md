@@ -35,7 +35,7 @@ This is an example of a basic chain with one process:
 
 A chain has two identification fields:
 
-**id**, identifies the chain. with this identifier Runnerty will provide a global value (*:CHAIN_ID*) that can be used in the whole chain. To know more about global values have a look [here](config.md)
+**id** Which identifies the chain. with this identifier Runnerty will provide a global value (*:CHAIN_ID*) that can be used in the whole chain. To know more about global values have a look [here](config.md)
 
 ```json
 {
@@ -43,7 +43,7 @@ A chain has two identification fields:
 }
 ```
 
-**name**, it is a description of the chain. Runnerty will also provide the global value *:CHAIN_NAME*
+**name** It is a description of the chain. Runnerty will also provide the global value *:CHAIN_NAME*
 
 ```json
 {
@@ -54,7 +54,7 @@ A chain has two identification fields:
 
 
 ### Execution (Triggers)
-The way to execute chains is by using [triggers](triggers.md)
+A chain can be fired by using ***triggers***. There is a bunch of different triggers, have a look at them and how to use them [here](triggers.md) 
 
 
 ### Custom values
@@ -114,40 +114,37 @@ The following example shows how to set up notifications for the different states
     "on_start": [
       {
         "id": "telegram_default",
-        "message": "THE CHAIN :CHAIN_ID HAS STARTED"
+        "message": "THE CHAIN @GV(CHAIN_ID) HAS STARTED"
       }
     ],
     "on_fail": [
       {
         "id": "telegram_default",
-        "message": "THE CHAIN :CHAIN_ID HAS FAILED"
+        "message": "THE CHAIN @GV(CHAIN_ID) HAS FAILED"
       }
     ],
     "on_end": [
       {
         "id": "telegram_default",
-        "message": "THE CHAIN :CHAIN_ID HAS FINISHED"
+        "message": "THE CHAIN @GV(CHAIN_ID) HAS FINISHED"
       }
     ],
     "on_retry": [
       {
         "id": "telegram_default",
-        "message": "THE CHAIN :CHAIN_ID HAS RETRY"
+        "message": "THE CHAIN @GV(CHAIN_ID) HAS RETRY"
       }
     ],
     "on_queue": [
       {
         "id": "telegram_default",
-        "message": "THE CHAIN :CHAIN_ID HAS QUEUE"
+        "message": "THE CHAIN @GV(CHAIN_ID) HAS QUEUE"
       }
     ]
   }
 }
 ```
->Note the usage of the *global value :CHAIN_ID* on the previous example. This value will be replaced with the chain's *id*. Know more about global values [here](config.md)
-
-
-(List of avaliable officialy notifiers coming out soon).
+>Note the usage of the *global value and function @GV(CHAIN_ID)* on the previous example. This value will be replaced with the chain's *id*. Know more about global values [here](config.md). Know more about functions [here](functions.md)
 
 Learn more about notifiers and how to configure them [here](notifiers.md).
 
