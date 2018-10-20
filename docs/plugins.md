@@ -7,6 +7,7 @@ This is the list of the official plugins availables.
 - [Shell](https://www.npmjs.com/package/@runnerty/executor-shell)
 - [Iterable](https://www.npmjs.com/package/@runnerty/executor-iterable)
 - [Mysql](https://www.npmjs.com/package/@runnerty/executor-mysql)
+- [SQL Server](https://www.npmjs.com/package/@runnerty/executor-sqlserver)
 - [Redis](https://www.npmjs.com/package/@runnerty/executor-redis)
 - [Postgres](https://www.npmjs.com/package/@runnerty/executor-postgres)
 - [Mail](https://www.npmjs.com/package/@runnerty/executor-mail)
@@ -22,6 +23,7 @@ This is the list of the official plugins availables.
 - [Decompress (tar, unzip, gunzip, 7z and rar)](https://www.npmjs.com/package/@runnerty/executor-decompress)
 - [Confirmation](https://www.npmjs.com/package/@runnerty/executor-confirmation)
 - [XML/JSON Parser](https://www.npmjs.com/package/@runnerty/executor-parse-xml-json)
+- [Twitter](https://www.npmjs.com/package/@runnerty/executor-twitter)
 
 ## Notifiers
 
@@ -29,8 +31,11 @@ This is the list of the official plugins availables.
 - [Slack](https://www.npmjs.com/package/@runnerty/notifier-slack)
 - [Telegram](https://www.npmjs.com/package/@runnerty/notifier-telegram)
 - [Console](https://www.npmjs.com/package/@runnerty/notifier-console)
+- [Twilio](https://www.npmjs.com/package/@runnerty/notifier-twilio)
 
 ## Triggers
 
 - [Schedule](https://www.npmjs.com/package/@runnerty/trigger-schedule)
 - [File Watcher](https://www.npmjs.com/package/@runnerty/trigger-file-watcher)
+- [Twitter](https://www.npmjs.com/package/@runnerty/trigger-twitter)
+- [Firebase](https://www.npmjs.com/package/@runnerty/trigger-firebase)
