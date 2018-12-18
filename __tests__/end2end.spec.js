@@ -5,8 +5,8 @@ describe("Queues", () => {
   jest.setTimeout(10000);
 
   const successOutput = `info: 1 CHAIN_ONE
-info: 2 CHAIN_TWO
-info: 3 CHAIN_ONE_PROC_ONE QUEUE
+info: 2 CHAIN_ONE_PROC_ONE QUEUE
+info: 3 CHAIN_TWO
 info: 4 CHAIN_TWO_PROC_ONE
 info: 5 CHAIN_TWO_PROC_TWO
 info: 6 CHAIN_TWO END

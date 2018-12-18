@@ -74,7 +74,7 @@ In this example we are using our shell_default executor, the configuration for t
   "executors": [
     {
       "id": "shell_default",
-      "type": "@runnerty/executor-shell"
+      "type": "@runnerty-executor-shell"
     }
   ]
 }

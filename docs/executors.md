@@ -13,7 +13,7 @@ In the config.json file of the project we are going to write the configuration o
   "executors": [
     {
       "id": "shell_default",
-      "type": "@runnerty/executor-shell"
+      "type": "@runnerty-executor-shell"
     },
     {
       "id": "mysql_default",
@@ -28,20 +28,20 @@ In the config.json file of the project we are going to write the configuration o
 }
 ```
 
-This is an example of the configuration of two executors: `@runnerty/executor-shell` and `@runnerty/executor-mysql`. Each executor has it's owns properties, some of them are mandatory, you can have a look at each executor documentation to know how to use them.
+This is an example of the configuration of two executors: `@runnerty-executor-shell` and `@runnerty-executor-mysql`. Each executor has it's owns properties, some of them are mandatory, you can have a look at each executor documentation to know how to use them.
 
 ### Usage
 
 The destination of an executor is to use it in our plan's processes. We could say that using an executor has two parts: `configuration` and `params`.
 
- The configuration properties are set in the [config.json](config.md). They are the identifiers fields of the executor. For example, this is the configuration properties for the @runnerty/executor-shell:
+ The configuration properties are set in the [config.json](config.md). They are the identifiers fields of the executor. For example, this is the configuration properties for the @runnerty-executor-shell:
 
 ```json
 {
   "executors": [
     {
       "id": "shell_default",
-      "type": "@runnerty/executor-shell"
+      "type": "@runnerty-executor-shell"
     }
   ]
 }
@@ -49,7 +49,7 @@ The destination of an executor is to use it in our plan's processes. We could sa
 
 The `id` is the name given for the executor configuration. Note that we could have all the differents configuratios that we want for the same executor. The `type` is the name of the executor. 
 
-In the processes are set the variable properties (params) for the executor. This is an example of the usage of the @runnerty/executor-shell in a process
+In the processes are set the variable properties (params) for the executor. This is an example of the usage of the @runnerty-executor-shell in a process
 
 ```json
 {

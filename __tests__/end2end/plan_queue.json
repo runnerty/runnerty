@@ -62,7 +62,7 @@
             "on_queue": [
                 {
               "id": "console_default",
-              "message": "3 @GV(PROCESS_ID) QUEUE",
+              "message": "2 @GV(PROCESS_ID) QUEUE",
               "mode": "info"
                 }
               ]
@@ -98,7 +98,7 @@
         "on_start": [
             {
               "id": "console_default",
-              "message": "2 @GV(CHAIN_ID)",
+              "message": "3 @GV(CHAIN_ID)",
               "mode": "info"
             }
           ],

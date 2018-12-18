@@ -4,7 +4,7 @@ const decrypt = utils.decrypt;
 const loadConfigSection = utils.loadConfigSection;
 
 const basic_config_mockup = { 
-  executors: [ { id: "shell_default", type: "@runnerty-executor-shell" } ],
+  executors: [ { id: "shell_default", type: "@runnerty/executor-shell" } ],
   general: { 
     api:{ 
       port: 3456,
@@ -17,21 +17,6 @@ const basic_config_mockup = {
   global_values: [],
   historyEnabled: false };
 
-const basic_config_mockup_cryptoPassword = {
-  executors: [ { id: "shell_default", type: "@runnerty-executor-shell", crypted_password:"test" } ],
-  general: { 
-    api:{ 
-      port: 3456,
-      secret: "YOUR_SECRET",
-      limite_req: "20mb",
-      propertiesExcludesInResponse: [Array] },
-    planFilePath: "~/plan.json" 
-  },
-  notifiers: [],
-  global_values: [],
-  historyEnabled: false 
-};
-  
 describe("Encrypt", () => {
   test("It should encrypt the string Coderty", () => {
     expect(encrypt("Coderty", "password", "aes-256-cbc")).toBe("453b330dbc064d46d697d9131c88a3d3");
@@ -71,14 +56,5 @@ describe("loadConfigSection function", () => {
   it("It should return an object with the config section", async () => {
     await expect( loadConfigSection(basic_config_mockup, "executors", "shell_default") ).resolves.toEqual( { id: "shell_default", type: "@runnerty/executor-shell" } );
   });
-  
-  it("It should throw an exception if crypted_password is defined but global.cryptoPassword is not defined", async () => {
-    await expect( loadConfigSection(basic_config_mockup_cryptoPassword, "executors", "shell_default") ).rejects.toEqual( "No crypto password set for encrypt crypted_password of section executors id shell_default." );
-  });
-  
-  it("It should works", async () => {
-    global.cryptoPassword = "CODERTY";
-    await expect( loadConfigSection(basic_config_mockup_cryptoPassword, "executors", "shell_default") ).resolves.toEqual( {"crypted_password": "test", "id": "shell_default", "password": "", "type": "@runnerty/executor-shell"} );
-  });
-
+ 
 });

@@ -27,7 +27,7 @@ In the config.json file is set the configuration of the different triggers, exec
   "executors": [
     {
       "id": "shell_default",
-      "type": "@runnerty/executor-shell"
+      "type": "@runnerty-executor-shell"
     }
   ],
   "notifiers": [
@@ -67,11 +67,11 @@ This is an example of the configuration of two executors (shell and mysql):
   "executors": [
     {
       "id": "shell_default",
-      "type": "@runnerty/executor-shell"
+      "type": "@runnerty-executor-shell"
     },
     {
       "id": "mysql_default",
-      "type": "@runnerty/executor-mysql",
+      "type": "@runnerty-executor-mysql",
       "user": "mysqlusr",
       "password": "mysqlpass",
       "database": "MYDB",
