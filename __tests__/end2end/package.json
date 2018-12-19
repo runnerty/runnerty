@@ -5,6 +5,7 @@
   "dependencies": {
     "@runnerty/executor-shell": "latest",
     "@runnerty/executor-wait": "latest",
+    "@runnerty/executor-iterable": "latest",
     "@runnerty/notifier-console": "latest",
     "@runnerty/trigger-schedule": "latest"
   }
