@@ -218,3 +218,43 @@ describe('SimpleIterFailNotEnd', () => {
     );
   });
 });
+
+describe('ComplexDependencies', () => {
+  jest.setTimeout(10000);
+
+  const successOutput = `info: CHAIN CHAIN_ONE START
+  info: PROCESS PROCESS_ONE START
+  info: PROCESS PROCESS_ONE END
+  info: PROCESS PROCESS_TWO START
+  info: PROCESS PROCESS_TWO END
+  info: PROCESS PROCESS_THREE START
+  info: PROCESS PROCESS_THREE FAILS
+  info: PROCESS PROCESS_FOUR START
+  info: PROCESS PROCESS_FOUR END
+  info: PROCESS PROCESS_FIVE START
+  info: PROCESS PROCESS_FIVE END
+  info: CHAIN CHAIN_ONE FAIL`;
+  
+  test('Execution End2End: ComplexDependencies', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-P',
+        './__tests__/end2end/plan_complex_dependencies.json',
+        '-f',
+        'CHAIN_ONE'
+      ],
+      9000,
+      res => {
+        const _res = res.substring(res.indexOf('\n') + 1);
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
+        done();
+      }
+    );
+  });
+});
