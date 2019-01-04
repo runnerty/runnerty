@@ -1,5 +1,20 @@
 # Runnerty ChangeLog
 
+<a name="2.1.3"></a>
+# [2.1.3] (04/01/2019)
+
+### Tests
+* **common:** more general tests added to the project
+
+### Bug Fixes
+* **triggers:** trim function remove line terminator characters
+
+<a name="2.1.2"></a>
+# [2.1.2] (18/12/2018)
+
+### Bug Fixes
+* **common:** errors in the execution of an iterable processes can cause looped
+
 <a name="2.1.1"></a>
 # [2.1.1] (18/07/2018)
 
