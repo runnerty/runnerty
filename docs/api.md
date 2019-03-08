@@ -130,3 +130,40 @@ http://sample_host.com/api/process/kill
   "processId":"PROCESS_ONE"
 }
 ```
+
+## CORS Configuation
+CORS API configuration parameters:
+
+### Options
+You can see the configuration options in the module documentation [expressjs/cors](https://github.com/expressjs/cors/blob/master/README.md#configuration-options)
+
+Sample:
+```json
+{
+  "general": {
+    "api": {
+      "port": 3456,
+      "users": [
+        {
+          "user": "runnerty",
+          "password": "password_runnerty"
+        },
+        {
+          "user": "usr_test",
+          "password": "pass_test"
+        }
+      ],
+      "secret": "RUNNERTY_SECRET_SAMPLE",
+      "limite_req": "20mb",
+      "cors": {
+        "origin": "*",
+        "methods": "GET,POST",
+        "allowedHeaders": "X-Requested-With,content-type",
+        "credentials": false,
+        "preflightContinue": false,
+        "optionsSuccessStatus": 204
+      }
+    }
+  }
+}
+```
