@@ -77,23 +77,34 @@ In this example process E will start only if process A or B fails and process C 
 
 ## Evaluations
 
-With Runnerty we can also establish dependencies of an evaluation using values from our processes or chains. If you want to know more about the usage of values in Runnerty, please click [here](values.md).
+With Runnerty we can also establish dependencies of an evaluation using values of our processes or chains. If you want to know more about the use of values in Runnerty, click on [here](values.md).
 
-### Conditions
-
+### Evaluators
+The structure of the evaluator is {"value 1"; "$condition": "value 2"}.
+Of course in these values you can make use of all the [functions] (functions.md).
+These are the evaluators you can use:
 ```
-$eq    - equal
-$gt    - greater than 
-$gte   - greater than equal. Exmaple: {2:{"$gte":1}
+$eq    - equal. Examples: {"VAL_1": {"$eq": "VAL_2"}}, {"@GV(VAR1)": {"$eq": "@GV(VAR2)"}}
+$ne    - not equal. Example: {"@UPPER(str_sample)": {"$ne": "@GV(VAR2)"}}
+$match - supports regular expressions. Example: {"aBc":{"$match":"/ABC/i"}}
+$gt    - greater than. Example: {"@LENGTH(str_sample)": {"$gt": "@GV(VAR_INT_1)"}}
+$gte   - greater than equal. Example: {2:{"$gte":1}
 $lt    - less than
 $lte   - less than equal
-$ne    - not equal
-$in    - in the list. Example: {"A":{"$in":["Z","X","A","O"]}}
-$nin   - not in the list. Example: {"A":{"$nin":["Z","X","Y","O"]}}
-$match - supports regular expressions. Example: "depends_process":{"$and":[{"aBc":{"$match":"/ABC/i"}}]}
+$true  - its a boolean evaluator. This evaluator has a special structure: {"$true":"value"}. Examples: {"$true":"@INCLUDES(sample,a)"}, {"$true":"@GT(42, @GV(VAL1))"}
+$false - its a boolean evaluator. It works like $true (opposite).
 ```
 
-This is an example of how to use conditions in the dependencies of a proecess:
+These are some examples of how to use evaluators in the dependencies of a process:
+
+```json
+{
+  "id": "PROCESS_B",
+  "name": "Second process of the chain",
+  "depends_process": {"@GV(V1)": {"$eq": "GO!"}},
+  [...]
+}
+```
 
 ```json
 {
@@ -102,9 +113,24 @@ This is an example of how to use conditions in the dependencies of a proecess:
   "depends_process": {
     "$and": [
         {"VAL_1": {"$eq": "VAL_2"}},
-        {"VAL_2": {"$gte": "VAL_3"}}
+        {"42": {"$gte": "1"}}
       ]
     }
+  [...]
+}
+```
+
+```json
+{
+  "id": "PROCESS_B",
+  "name": "Second process of the chain",
+  "depends_process": {
+    "$and": [
+        {"$end": "PROCESS_A"},
+        {"$true": "@INCLUDES(@GV(PROC_A_OUTPUT_DATE), @GETDATE('YYYY-MM-DD'))"}
+      ]
+    }
+  [...]
 }
 ```
 
