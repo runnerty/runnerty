@@ -8,17 +8,20 @@ function _exec(cmd, args, timeOut, callback) {
 
   shell = spawn(cmd, args, {shell: true});
 
-  shell.stdout.on("data", function (chunk) {
+  shell.stdout.on("data", (chunk) => {
     stdout += chunk;
   });
 
-  shell.on("close", function (code, signal) {
+  shell.on("close", (code, signal) =>{
     callback(stdout.toString());
   });
 
-  setTimeout(() => {
-    callback(stdout.toString());
-  }, timeOut);
+  if(timeOut){
+    setTimeout(() => {
+      callback(stdout.toString());
+    }, timeOut);    
+  }
+
 }
 
 module.exports = _exec;
