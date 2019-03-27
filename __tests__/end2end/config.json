@@ -14,6 +14,9 @@
           "host": "localhost",
           "database": "runnerty",
           "port": 32769
+        },
+        "runnerty.io": {
+          "apikey": "1234123412341234123abcabcabcabcabca11111."
         }
       },
       "queues": {
