@@ -1,5 +1,19 @@
 # Runnerty ChangeLog
 
+<a name="2.2.0"></a>
+# [2.2.0-rc1] (29/05/2019)
+
+### Tests
+* **common:** fix general tests
+
+### Bug Fixes
+* **queues:** there may be overlapping chains where no queue indicates
+* **queues:** internal queue of executions in progress was not being cleaned
+
+### Features
+* **cors:** API cors config is enabled [docs](./docs/api.md)
+* **
+
 <a name="2.1.3"></a>
 # [2.1.3] (04/01/2019)
 

@@ -191,7 +191,11 @@
               "required": ["apikey"],
               "properties": {
                 "apikey": { "type": "string" },
-                "disable": { "type": "boolean" }
+                "disable": { "type": "boolean" },
+                "protocol": {
+                  "type": "string",
+                  "pattern": "(http|https)"
+                }
               }
             }
           }
