@@ -76,7 +76,7 @@
   ],
   "engineStrict": true,
   "engines": {
-    "node": ">=10.15.3"
+    "node": ">=10.16.0"
   },
   "devDependencies": {
     "all-contributors-cli": "6.6.1",
