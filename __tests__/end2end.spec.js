@@ -1,4 +1,4 @@
-const exec = require('../exec.js');
+const exec = require('./test_src/exec.js');
 
 describe('Queues', () => {
   jest.setTimeout(10000);
@@ -132,7 +132,7 @@ describe('SimpleIterFail', () => {
   info: - 7      [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE START
   info: - 9   [I:lol PROCESS-LAUNCHER_4] CHAIN CHAIN-ITERABLE END
   info: ERR!        [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE FAIL: /bin/sh:lol:commandnotfound`;
-  
+
   test('Execution End2End: SimpleIterFail', done => {
     exec(
       'node',
@@ -186,15 +186,15 @@ describe('SimpleIterFailNotEnd', () => {
   info: - 6       [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-ONE OF CHAIN CHAIN-ITERABLE END
   info: - 7      [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE START
   info: ERR!        [I:lol PROCESS-LAUNCHER_4] CHAIN CHAIN-ITERABLE FAIL
-  info: - 4     [I:echo PROCESS-LAUNCHER_5] CHAIN CHAIN-ITERABLE START
   info: ERR!        [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE FAIL: /bin/sh:lol:commandnotfound
+  info: - 4     [I:echo PROCESS-LAUNCHER_5] CHAIN CHAIN-ITERABLE START
   info: - 5       [I:echo PROCESS-LAUNCHER_5] PROCESS PROCESS-ITER-ONE OF CHAIN CHAIN-ITERABLE START
   info: - 6       [I:echo PROCESS-LAUNCHER_5] PROCESS PROCESS-ITER-ONE OF CHAIN CHAIN-ITERABLE END
   info: - 7      [I:echo PROCESS-LAUNCHER_5] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE START
   info: - 8      [I:echo PROCESS-LAUNCHER_5] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE END
   info: - 9   [I:echo PROCESS-LAUNCHER_5] CHAIN CHAIN-ITERABLE END
   info: ERR! CHAIN CHAIN-LAUNCHER FAIL`;
-  
+
   test('Execution End2End: SimpleIterFailNotEnd', done => {
     exec(
       'node',
@@ -234,7 +234,7 @@ describe('ComplexDependencies', () => {
   info: PROCESS PROCESS_FIVE START
   info: PROCESS PROCESS_FIVE END
   info: CHAIN CHAIN_ONE FAIL`;
-  
+
   test('Execution End2End: ComplexDependencies', done => {
     exec(
       'node',
