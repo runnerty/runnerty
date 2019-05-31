@@ -31,7 +31,15 @@
         "started_at",
         "ended_at",
         "duration_humanized"
-      ]
+      ],
+      "cors": {
+        "origin": false,
+        "methods": "GET,POST",
+        "allowedHeaders": "X-Requested-With,content-type",
+        "credentials": false,
+        "preflightContinue": false,
+        "optionsSuccessStatus": 204
+      }
     },
     "crypto":{
       "algorithm":"aes-256-cbc"

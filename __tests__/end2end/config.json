@@ -3,18 +3,14 @@
     "general": {
       "binBackup": "/tmp/bin.json",
       "planFilePath": "plan.json",
-      "executorsPath": "./node_modules/",
-      "notifiersPath": "./node_modules/",
-      "triggersPath": "./node_modules/",
+      "executorsPath": "./__tests__/end2end/node_modules/",
+      "notifiersPath": "./__tests__/end2end/node_modules/",
+      "triggersPath": "./__tests__/end2end/node_modules/",
       "refreshIntervalBinBackup": 2000,
       "api": {},
-      "history": {
-        "disable": true,
-        "mongodb": {
-          "host": "localhost",
-          "database": "runnerty",
-          "port": 32769
-        }
+      "runnerty.io": {
+        "apikey": "TEST_API_KEY_RUNNERTYIO",
+        "disable": true
       },
       "queues": {
         "refreshInterval": 4000

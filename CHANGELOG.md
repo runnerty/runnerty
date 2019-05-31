@@ -1,5 +1,20 @@
 # Runnerty ChangeLog
 
+<a name="2.2.0"></a>
+# [2.2.0-rc1] (29/05/2019)
+
+### Features
+* **cors:** API cors config is enabled [docs](./docs/api.md)
+* **telemetry** alpha telemetry service runnerty.io
+* **dependencies** update
+
+### Bug Fixes
+* **queues:** there may be overlapping chains where no queue indicates
+
+### Tests
+* **common:** fix general tests
+* **common:** fix general tests
+
 <a name="2.1.3"></a>
 # [2.1.3] (04/01/2019)
 

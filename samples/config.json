@@ -44,27 +44,24 @@
       ]
     },
     "calendarsPath": "/calendars_dir/",
-    "servers":[
+    "servers": [
       {
-        "id":"srvId",
-        "port":8080,
-        "endpoint":"/test_one"
+        "id": "srvId",
+        "port": 8080,
+        "endpoint": "/test_one"
       },
       {
-        "id":"srvIdTwo",
-        "port":8181,
-        "endpoint":"/test_two"
+        "id": "srvIdTwo",
+        "port": 8181,
+        "endpoint": "/test_two"
       }
     ],
-    "history": {
-      "disable":true,
-      "mongodb":{
-        "host":"localhost",
-        "port":"32769"
-      }
+    "runnerty.io": {
+      "apikey": "",
+      "disable": true
     },
-    "queue_notifications":{
-      "queue":"redis",
+    "queue_notifications": {
+      "queue": "redis",
       "host": "127.0.0.1",
       "port": "32768",
       "password": "redis_password",
@@ -73,28 +70,28 @@
   },
   "triggers": [
     {
-      "id":"schedule_default",
-      "type":"@runnerty-trigger-schedule"
+      "id": "schedule_default",
+      "type": "@runnerty-trigger-schedule"
     },
     {
-      "id":"filewatcher_default",
-      "type":"@runnerty-trigger-file-watcher"
+      "id": "filewatcher_default",
+      "type": "@runnerty-trigger-file-watcher"
     }
-    ],
+  ],
   "executors": [
     {
-      "id":"scp_default",
-      "type":"@runnerty-executor-scp",
+      "id": "scp_default",
+      "type": "@runnerty-executor-scp",
       "identityFile": "/.ssh/my.pem"
     },
     {
-      "id":"s3_default",
-      "type":"@runnerty-executor-s3",
+      "id": "s3_default",
+      "type": "@runnerty-executor-s3",
       "apiVersion": "2006-03-01",
       "accessKeyId": "ABC123",
       "secretAccessKey": "ABC123",
-      "bucket":"my.s3bucket.com",
-      "method":"upload",
+      "bucket": "my.s3bucket.com",
+      "method": "upload",
       "region": "eu-west-1"
     },
     {
@@ -131,13 +128,14 @@
       "host": "mysqlhost.com",
       "port": "3306"
     },
-    {"id":"postgres_default",
-      "type":"@runnerty-executor-postgres",
-      "user":"postgres_user",
-      "password":"postgres_password",
-      "database":"MYDB",
-      "host":"postgreshost.com",
-      "port":"5439"
+    {
+      "id": "postgres_default",
+      "type": "@runnerty-executor-postgres",
+      "user": "postgres_user",
+      "password": "postgres_password",
+      "database": "MYDB",
+      "host": "postgreshost.com",
+      "port": "5439"
     },
     {
       "id": "redis_default",
@@ -152,7 +150,7 @@
     {
       "id": "slack_default",
       "type": "@runnerty-notifier-slack",
-      "webhookurl":"https://hooks.slack.com/services/ABC123/ABC123/ABC123",
+      "webhookurl": "https://hooks.slack.com/services/ABC123/ABC123/ABC123",
       "bot_name": "Runnerty-Sentinel",
       "channel": "my_runnerty_channel",
       "maxConcurrents": 1,
@@ -189,10 +187,30 @@
     },
     {
       "MY_LISTS": {
-        "LIST_ZERO": {"value":["@GETDATE(YYYY)","-CA-","@GETDATE(MM)","-TO-","@GETDATE(DD)"], "format":"text"},
-        "LIST_ONE": {"value":["VAL1","VAL2@GETDATE(MM)","VAL3"], "format":"text", "delimiter":",", "quotechar":"\""},
-        "LIST_TWO": {"value":["VAL1","VAL2","VAL3"], "format":"json"},
-        "LIST_THREE": {"value":[{"KEY1": "VAL1", "KEY2": "VAL2"}, {"KEY1": "VAL1", "KEY2": "VAL2"}], "format":"json"}
+        "LIST_ZERO": {
+          "value": [
+            "@GETDATE(YYYY)",
+            "-CA-",
+            "@GETDATE(MM)",
+            "-TO-",
+            "@GETDATE(DD)"
+          ],
+          "format": "text"
+        },
+        "LIST_ONE": {
+          "value": ["VAL1", "VAL2@GETDATE(MM)", "VAL3"],
+          "format": "text",
+          "delimiter": ",",
+          "quotechar": "\""
+        },
+        "LIST_TWO": { "value": ["VAL1", "VAL2", "VAL3"], "format": "json" },
+        "LIST_THREE": {
+          "value": [
+            { "KEY1": "VAL1", "KEY2": "VAL2" },
+            { "KEY1": "VAL1", "KEY2": "VAL2" }
+          ],
+          "format": "json"
+        }
       }
     }
   ]

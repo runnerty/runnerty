@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require("express");
+const cors = require('cors');
 const bodyParser = require("body-parser");
 const router = express.Router();
 const morgan = require("morgan");
@@ -96,12 +97,8 @@ module.exports = () => {
   // = SECURITY =====================================
   app.use(helmet()); 
   app.disable("x-powered-by");
-
-  app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST");
-    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
-    next();
-  });
+  // = CORS =========================================
+  app.use(cors(config.api.cors));
   // ================================================
 
   // = API ==========================================
