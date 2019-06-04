@@ -48,6 +48,13 @@ Es importante tener en cuenta que en todas las llamadas a la API (excepto /auth/
 `Content-Type: application/json`
 `Authorization: Bearer [TOKEN_RESULTANTE_DE_AUTH]`
 
+## Consultar el estado del servicio
+Devuelve un http 200 si runnerty está ejecutándose
+### GET [/health/]
+
++ Sample (url)
+http://sample_host.com/api/health
+
 ## Consultar cadenas
 Consultar cadenas cargadas
 ### GET [/chains/]
