@@ -49,6 +49,13 @@ Important! all the API calls (except /auth/) must content the headers:
 `Content-Type: application/json`
 `Authorization: Bearer [TOKEN_RESULTANTE_DE_AUTH]`
 
+## Check service status
+Returns http 200 if runnerty is working 
+### GET [/health/]
+
++ Sample (url)
+http://sample_host.com/api/health
+
 ## Get chains
 Gets loaded chains
 ### GET [/chains/]
