@@ -24,8 +24,8 @@ You can download the quick start project and start managing your projects
 [downloads-image]: https://img.shields.io/npm/dm/runnerty.svg
 [npm-url]: https://www.npmjs.com/package/runnerty
 [npm-image]: https://img.shields.io/npm/v/runnerty.svg
-[david-badge]: https://david-dm.org/coderty/runnerty.svg
-[david-badge-url]: https://david-dm.org/coderty/runnerty
+[david-badge]: https://david-dm.org/runnerty/runnerty.svg
+[david-badge-url]: https://david-dm.org/runnerty/runnerty
 
 ## Documentation
  
@@ -39,7 +39,7 @@ You can download the quick start project and start managing your projects
 | [<img src="https://avatars0.githubusercontent.com/u/18547138?v=4" width="80px;"/><br /><sub>Francis Molina</sub>](http://www.coderty.com)<br /> |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-Contributors are more than welcome. If you want to help please have a look to the [contributing guide](https://github.com/Coderty/runnerty/blob/master/CONTRIBUTING.md)
+Contributors are more than welcome. If you want to help please have a look to the [contributing guide](https://github.com/runnerty/runnerty/blob/master/CONTRIBUTING.md)
 
 ## Sponsors
 <p>
