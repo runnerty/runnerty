@@ -1,5 +1,14 @@
 # Runnerty ChangeLog
 
+<a name="2.4.0"></a>
+
+# [2.4.0](04/07/2019)
+
+### Features
+
+- **common:** standard Node.js module resolution paths
+- **common:** it is possible to indicate the plan object in config.json
+
 <a name="2.3.0"></a>
 
 # [2.3.0](04/07/2019)
