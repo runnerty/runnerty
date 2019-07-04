@@ -138,7 +138,7 @@ Calendars can be used for both, enabling or disabling execution dates through th
 
 Servers allow us to forget about the endpoints implementation in the triggers development. Runnerty will pull up the web servers indicted in the config file and will also manage the routing. It will make available the trigger's property "on_request". This will receive the requests to it's endpoint. Additionally, It allows us to customize the response either sending the status code and the response object.
 
-## Configuration
+#### Configuration
 
 ```json
 {
@@ -160,7 +160,7 @@ Servers allow us to forget about the endpoints implementation in the triggers de
 }
 ```
 
-## Plan
+#### Plan
 
 ```json
 {
@@ -179,7 +179,7 @@ Servers allow us to forget about the endpoints implementation in the triggers de
 }
 ```
 
-## Usage
+#### Usage
 
 Both the values that arrive by "query" and those that arrive in "body" will be available in the chain (via customValues).
 So if for example we make a "post" like this:
