@@ -9,50 +9,98 @@
         "general": {
           "type": "object",
           "properties": {
-            "binBackup": { "type": "string" },
-            "planFilePath": { "type": "string" },
-            "refreshIntervalBinBackup": { "type": "number" },
-            "executorsPath": { "type": "string" },
-            "notifiersPath": { "type": "string" },
-            "triggersPath": { "type": "string" },
-            "modulesPath": { "type": "string" },
+            "binBackup": {
+              "type": "string"
+            },
+            "planFilePath": {
+              "type": "string"
+            },
+            "plan": {
+              "type": "object"
+            },
+            "refreshIntervalBinBackup": {
+              "type": "number"
+            },
+            "executorsPath": {
+              "type": "string"
+            },
+            "notifiersPath": {
+              "type": "string"
+            },
+            "triggersPath": {
+              "type": "string"
+            },
+            "modulesPath": {
+              "type": "string"
+            },
             "crypto": {
               "type": "object",
               "properties": {
-                "algorithm": { "type": "string" },
-                "iv": { "type": "string" }
+                "algorithm": {
+                  "type": "string"
+                },
+                "iv": {
+                  "type": "string"
+                }
               }
             },
             "api": {
               "type": "object",
-              "anyOf": [
-                {
+              "anyOf": [{
                   "required": ["port"],
                   "properties": {
-                    "port": { "type": ["number"] },
-                    "users": { "type": "array" },
-                    "secret": { "type": "string" },
-                    "limite_req": { "type": "string" },
-                    "token_expiration_time": { "type": "number" },
+                    "port": {
+                      "type": ["number"]
+                    },
+                    "users": {
+                      "type": "array"
+                    },
+                    "secret": {
+                      "type": "string"
+                    },
+                    "limite_req": {
+                      "type": "string"
+                    },
+                    "token_expiration_time": {
+                      "type": "number"
+                    },
                     "log_display_level": {
                       "type": "string",
                       "pattern": "(combined|common|dev|short|tiny)"
                     },
-                    "chainsFieldsResponse": { "type": "array" },
-                    "processFieldsResponse": { "type": "array" },
+                    "chainsFieldsResponse": {
+                      "type": "array"
+                    },
+                    "processFieldsResponse": {
+                      "type": "array"
+                    },
                     "cors": {
                       "type": "object",
                       "properties": {
                         "origin": {
                           "type": ["boolean", "string", "array", "object"]
                         },
-                        "methods": { "type": ["array", "string"] },
-                        "allowedHeaders": { "type": ["array", "string"] },
-                        "exposedHeaders": { "type": ["array", "string"] },
-                        "credentials": { "type": "boolean" },
-                        "maxAge": { "type": "number" },
-                        "preflightContinue": { "type": "boolean" },
-                        "optionsSuccessStatus": { "type": "number" }
+                        "methods": {
+                          "type": ["array", "string"]
+                        },
+                        "allowedHeaders": {
+                          "type": ["array", "string"]
+                        },
+                        "exposedHeaders": {
+                          "type": ["array", "string"]
+                        },
+                        "credentials": {
+                          "type": "boolean"
+                        },
+                        "maxAge": {
+                          "type": "number"
+                        },
+                        "preflightContinue": {
+                          "type": "boolean"
+                        },
+                        "optionsSuccessStatus": {
+                          "type": "number"
+                        }
                       }
                     }
                   }
@@ -60,30 +108,58 @@
                 {
                   "required": ["unix_socket"],
                   "properties": {
-                    "unix_socket": { "type": "string" },
-                    "users": { "type": "array" },
-                    "secret": { "type": "string" },
-                    "limite_req": { "type": "string" },
-                    "token_expiration_time": { "type": "number" },
+                    "unix_socket": {
+                      "type": "string"
+                    },
+                    "users": {
+                      "type": "array"
+                    },
+                    "secret": {
+                      "type": "string"
+                    },
+                    "limite_req": {
+                      "type": "string"
+                    },
+                    "token_expiration_time": {
+                      "type": "number"
+                    },
                     "log_display_level": {
                       "type": "string",
                       "pattern": "(combined|common|dev|short|tiny)"
                     },
-                    "chainsFieldsResponse": { "type": "array" },
-                    "processFieldsResponse": { "type": "array" },
+                    "chainsFieldsResponse": {
+                      "type": "array"
+                    },
+                    "processFieldsResponse": {
+                      "type": "array"
+                    },
                     "cors": {
                       "type": "object",
                       "properties": {
                         "origin": {
                           "type": ["boolean", "string", "array", "object"]
                         },
-                        "methods": { "type": ["array", "string"] },
-                        "allowedHeaders": { "type": ["array", "string"] },
-                        "exposedHeaders": { "type": ["array", "string"] },
-                        "credentials": { "type": "boolean" },
-                        "maxAge": { "type": "number" },
-                        "preflightContinue": { "type": "boolean" },
-                        "optionsSuccessStatus": { "type": "number" }
+                        "methods": {
+                          "type": ["array", "string"]
+                        },
+                        "allowedHeaders": {
+                          "type": ["array", "string"]
+                        },
+                        "exposedHeaders": {
+                          "type": ["array", "string"]
+                        },
+                        "credentials": {
+                          "type": "boolean"
+                        },
+                        "maxAge": {
+                          "type": "number"
+                        },
+                        "preflightContinue": {
+                          "type": "boolean"
+                        },
+                        "optionsSuccessStatus": {
+                          "type": "number"
+                        }
                       }
                     }
                   }
@@ -91,33 +167,67 @@
                 {
                   "required": ["port", "ssl"],
                   "properties": {
-                    "port": { "type": ["string"] },
-                    "ssl": { "type": "boolean" },
-                    "key": { "type": "string" },
-                    "cert": { "type": "string" },
-                    "users": { "type": "array" },
-                    "secret": { "type": "string" },
-                    "limite_req": { "type": "string" },
-                    "token_expiration_time": { "type": "number" },
+                    "port": {
+                      "type": ["string"]
+                    },
+                    "ssl": {
+                      "type": "boolean"
+                    },
+                    "key": {
+                      "type": "string"
+                    },
+                    "cert": {
+                      "type": "string"
+                    },
+                    "users": {
+                      "type": "array"
+                    },
+                    "secret": {
+                      "type": "string"
+                    },
+                    "limite_req": {
+                      "type": "string"
+                    },
+                    "token_expiration_time": {
+                      "type": "number"
+                    },
                     "log_display_level": {
                       "type": "string",
                       "pattern": "(combined|common|dev|short|tiny)"
                     },
-                    "chainsFieldsResponse": { "type": "array" },
-                    "processFieldsResponse": { "type": "array" },
+                    "chainsFieldsResponse": {
+                      "type": "array"
+                    },
+                    "processFieldsResponse": {
+                      "type": "array"
+                    },
                     "cors": {
                       "type": "object",
                       "properties": {
                         "origin": {
                           "type": ["boolean", "string", "array", "object"]
                         },
-                        "methods": { "type": ["array", "string"] },
-                        "allowedHeaders": { "type": ["array", "string"] },
-                        "exposedHeaders": { "type": ["array", "string"] },
-                        "credentials": { "type": "boolean" },
-                        "maxAge": { "type": "number" },
-                        "preflightContinue": { "type": "boolean" },
-                        "optionsSuccessStatus": { "type": "number" }
+                        "methods": {
+                          "type": ["array", "string"]
+                        },
+                        "allowedHeaders": {
+                          "type": ["array", "string"]
+                        },
+                        "exposedHeaders": {
+                          "type": ["array", "string"]
+                        },
+                        "credentials": {
+                          "type": "boolean"
+                        },
+                        "maxAge": {
+                          "type": "number"
+                        },
+                        "preflightContinue": {
+                          "type": "boolean"
+                        },
+                        "optionsSuccessStatus": {
+                          "type": "number"
+                        }
                       }
                     }
                   }
@@ -128,16 +238,27 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "anyOf": [
-                  {
+                "anyOf": [{
                     "required": ["id", "endpoint", "port"],
                     "properties": {
-                      "id": { "type": ["string"] },
-                      "endpoint": { "type": ["string"] },
-                      "port": { "type": ["number"] },
-                      "secret": { "type": "string" },
-                      "limite_req": { "type": "string" },
-                      "token_expiration_time": { "type": "number" },
+                      "id": {
+                        "type": ["string"]
+                      },
+                      "endpoint": {
+                        "type": ["string"]
+                      },
+                      "port": {
+                        "type": ["number"]
+                      },
+                      "secret": {
+                        "type": "string"
+                      },
+                      "limite_req": {
+                        "type": "string"
+                      },
+                      "token_expiration_time": {
+                        "type": "number"
+                      },
                       "log_display_level": {
                         "type": "string",
                         "pattern": "(combined|common|dev|short|tiny)"
@@ -147,12 +268,24 @@
                   {
                     "required": ["id", "endpoint", "unix_socket"],
                     "properties": {
-                      "id": { "type": ["string"] },
-                      "endpoint": { "type": ["string"] },
-                      "unix_socket": { "type": "string" },
-                      "secret": { "type": "string" },
-                      "limite_req": { "type": "string" },
-                      "token_expiration_time": { "type": "number" },
+                      "id": {
+                        "type": ["string"]
+                      },
+                      "endpoint": {
+                        "type": ["string"]
+                      },
+                      "unix_socket": {
+                        "type": "string"
+                      },
+                      "secret": {
+                        "type": "string"
+                      },
+                      "limite_req": {
+                        "type": "string"
+                      },
+                      "token_expiration_time": {
+                        "type": "number"
+                      },
                       "log_display_level": {
                         "type": "string",
                         "pattern": "(combined|common|dev|short|tiny)"
@@ -162,15 +295,33 @@
                   {
                     "required": ["id", "endpoint", "port", "ssl"],
                     "properties": {
-                      "id": { "type": ["string"] },
-                      "endpoint": { "type": ["string"] },
-                      "port": { "type": ["string"] },
-                      "ssl": { "type": "boolean" },
-                      "key": { "type": "string" },
-                      "cert": { "type": "string" },
-                      "secret": { "type": "string" },
-                      "limite_req": { "type": "string" },
-                      "token_expiration_time": { "type": "number" },
+                      "id": {
+                        "type": ["string"]
+                      },
+                      "endpoint": {
+                        "type": ["string"]
+                      },
+                      "port": {
+                        "type": ["string"]
+                      },
+                      "ssl": {
+                        "type": "boolean"
+                      },
+                      "key": {
+                        "type": "string"
+                      },
+                      "cert": {
+                        "type": "string"
+                      },
+                      "secret": {
+                        "type": "string"
+                      },
+                      "limite_req": {
+                        "type": "string"
+                      },
+                      "token_expiration_time": {
+                        "type": "number"
+                      },
                       "log_display_level": {
                         "type": "string",
                         "pattern": "(combined|common|dev|short|tiny)"
@@ -183,15 +334,21 @@
             "queues": {
               "type": "object",
               "properties": {
-                "refreshInterval": { "type": "number" }
+                "refreshInterval": {
+                  "type": "number"
+                }
               }
             },
             "runnerty.io": {
               "type": "object",
               "required": ["apikey"],
               "properties": {
-                "apikey": { "type": "string" },
-                "disable": { "type": "boolean" },
+                "apikey": {
+                  "type": "string"
+                },
+                "disable": {
+                  "type": "boolean"
+                },
                 "protocol": {
                   "type": "string",
                   "pattern": "(http|https)"
@@ -216,10 +373,18 @@
             "additionalProperties": {
               "type": "object",
               "properties": {
-                "value": { "type": ["string", "array", "object"] },
-                "format": { "type": "string" },
-                "delimiter": { "type": "string" },
-                "quotechar": { "type": "string" }
+                "value": {
+                  "type": ["string", "array", "object"]
+                },
+                "format": {
+                  "type": "string"
+                },
+                "delimiter": {
+                  "type": "string"
+                },
+                "quotechar": {
+                  "type": "string"
+                }
               }
             }
           }
