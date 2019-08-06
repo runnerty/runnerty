@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "2.4.0-rc",
+  "version": "2.4.0-rc1",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -37,10 +37,10 @@
     "express-jwt": "5.3.1",
     "fs-extra": "8.1.0",
     "glob-to-regexp": "0.4.1",
-    "helmet": "3.18.0",
+    "helmet": "3.20.0",
     "ical2json": "2.0.0",
     "jsonwebtoken": "8.5.1",
-    "lodash": "4.17.11",
+    "lodash": "4.17.15",
     "millisecond": "0.1.2",
     "moment": "2.24.0",
     "morgan": "1.9.1",
@@ -80,11 +80,11 @@
     "node": ">=10.16.0"
   },
   "devDependencies": {
-    "all-contributors-cli": "6.7.0",
-    "commitizen": "3.1.1",
-    "cz-conventional-changelog": "2.1.0",
-    "eslint": "6.0.1",
-    "eslint-plugin-jest": "22.7.2",
+    "all-contributors-cli": "6.8.1",
+    "commitizen": "4.0.3",
+    "cz-conventional-changelog": "3.0.2",
+    "eslint": "6.1.0",
+    "eslint-plugin-jest": "22.13.6",
     "jest": "24.8.0",
     "jest-cli": "24.8.0",
     "runnerty-tests-modules": "file:__tests__/end2end"
