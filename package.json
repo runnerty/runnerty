@@ -40,7 +40,7 @@
     "helmet": "3.18.0",
     "ical2json": "2.0.0",
     "jsonwebtoken": "8.5.1",
-    "lodash": "4.17.11",
+    "lodash": "4.17.13",
     "millisecond": "0.1.2",
     "moment": "2.24.0",
     "morgan": "1.9.1",
