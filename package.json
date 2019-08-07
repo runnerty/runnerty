@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "2.4.0-rc1",
+  "version": "2.4.0-rc2",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -84,7 +84,7 @@
     "commitizen": "4.0.3",
     "cz-conventional-changelog": "3.0.2",
     "eslint": "6.1.0",
-    "eslint-plugin-jest": "22.13.6",
+    "eslint-plugin-jest": "22.14.1",
     "jest": "24.8.0",
     "jest-cli": "24.8.0",
     "runnerty-tests-modules": "file:__tests__/end2end"
