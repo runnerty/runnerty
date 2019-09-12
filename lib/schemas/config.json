@@ -352,6 +352,9 @@
                 "protocol": {
                   "type": "string",
                   "pattern": "(http|https)"
+                },
+                "healthChecker": {
+                  "type": "boolean"
                 }
               }
             }
