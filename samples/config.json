@@ -58,7 +58,8 @@
     ],
     "runnerty.io": {
       "apikey": "",
-      "disable": true
+      "disable": true,
+      "healthChecker": true
     },
     "queue_notifications": {
       "queue": "redis",
