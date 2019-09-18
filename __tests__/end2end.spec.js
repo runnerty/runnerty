@@ -131,7 +131,8 @@ describe('SimpleIterFail', () => {
   info: - 6       [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-ONE OF CHAIN CHAIN-ITERABLE END
   info: - 7      [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE START
   info: - 9   [I:lol PROCESS-LAUNCHER_4] CHAIN CHAIN-ITERABLE END
-  info: ERR!        [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE FAIL: /bin/sh:lol:commandnotfound`;
+  info: ERR! CHAIN CHAIN-LAUNCHER FAIL
+  info: ERR!        [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE FAIL: /bin/sh: lol: command not found`;
 
   test('Execution End2End: SimpleIterFail', done => {
     exec(

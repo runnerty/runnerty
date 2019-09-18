@@ -255,6 +255,9 @@ module.exports = () => {
    * - custom_values (JSON) custom values to replace in chain processes
    */
   router.post('/chain/forceStart/:chainId', (req, res) => {
+    logger.info(
+      `API - CHAIN START FORCED: chainId:${chainId}, custom_values:${req.body.custom_values}, input:${req.body.input}`
+    );
     const chainId = req.params.chainId;
     let chain = apiPlan.getChainById(chainId);
 
@@ -413,9 +416,7 @@ module.exports = () => {
     const continueChain = req.body.continueChain || false;
 
     logger.info(
-      `Setting process "${processId}" to end, from chain "${chainId}" by ${
-        req.user
-      }`
+      `Setting process "${processId}" to end, from chain "${chainId}" by ${req.user}`
     );
 
     let chain = apiPlan.getChainById(chainId, uniqueId);
@@ -436,9 +437,8 @@ module.exports = () => {
               .then({})
               .catch(err => {
                 logger.error(
-                  `Error in startProcesses next to set end process "${processId}" from chain "${chainId}" by ${
-                    req.user
-                  }:` + err
+                  `Error in startProcesses next to set end process "${processId}" from chain "${chainId}" by ${req.user}:` +
+                    err
                 );
               });
           }
@@ -446,9 +446,7 @@ module.exports = () => {
           res
             .status(423)
             .send(
-              `It's not possible to set process "${processId}" from chain "${chainId}" to end because it's ${
-                process.status
-              }`
+              `It's not possible to set process "${processId}" from chain "${chainId}" to end because it's ${process.status}`
             );
         }
       } else {
@@ -494,9 +492,7 @@ module.exports = () => {
           res
             .status(423)
             .send(
-              `Is not posible kill process "${processId}" from chain "${chainId}" to end because is ${
-                process.status
-              }`
+              `Is not posible kill process "${processId}" from chain "${chainId}" to end because is ${process.status}`
             );
         }
       } else {
