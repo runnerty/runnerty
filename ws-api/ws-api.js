@@ -255,10 +255,20 @@ module.exports = () => {
    * - custom_values (JSON) custom values to replace in chain processes
    */
   router.post('/chain/forceStart/:chainId', (req, res) => {
-    logger.info(
-      `API - CHAIN START FORCED: chainId:${chainId}, custom_values:${req.body.custom_values}, input:${req.body.input}`
-    );
     const chainId = req.params.chainId;
+    let custom_values_str = '';
+    let input_str = '';
+    try {
+      custom_values_str = JSON.stringify(req.body.custom_values);
+    } catch (err) {}
+
+    try {
+      input_str = JSON.stringify(req.body.input);
+    } catch (err) {}
+
+    logger.info(
+      `API - CHAIN START FORCED: chainId:${chainId}, custom_values:${custom_values_str}, input:${input_str}`
+    );
     let chain = apiPlan.getChainById(chainId);
 
     if (chain) {
