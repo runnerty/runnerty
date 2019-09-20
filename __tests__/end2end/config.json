@@ -9,7 +9,7 @@
       "refreshIntervalBinBackup": 2000,
       "api": {},
       "runnerty.io": {
-        "apikey": "TEST_API_KEY_RUNNERTYIO",
+        "apikey": "YOUR_RUNNERTY.IO_PROJECT_TOKEN",
         "disable": true
       },
       "queues": {
