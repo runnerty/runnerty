@@ -37,6 +37,7 @@
               { "CMDPROC": "echo @GV(PROCESS_ID)_5" }
             ]
           },
+          "fail_on_child_fail": true,
           "notifications": {
             "on_start": [
               {

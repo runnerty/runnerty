@@ -1,5 +1,26 @@
 # Runnerty ChangeLog
 
+<a name="2.4.0"></a>
+
+# [2.4.0](23/09/2019)
+
+### Features
+
+- **telemetry:** beta telemetry service runnerty.io!
+- **common:** standard Node.js module resolution paths
+- **common:** it is possible to indicate the plan object in config.json
+- **common:** capture of errors uncaught in executors
+- **dependencies:** minor dependency updates
+
+### Tests
+
+- **common:** new general tests
+
+### Bug Fixes
+
+- **common:** correction of errors related to the end of iterable strings in case of process error
+- **interpreter:** path&urlParse avoid excep. without value
+
 <a name="2.3.0"></a>
 
 # [2.3.0](04/07/2019)

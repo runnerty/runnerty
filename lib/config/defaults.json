@@ -46,6 +46,10 @@
     },
     "queues":{
       "refreshInterval": 5000
+    },
+    "runnerty.io": {
+      "apikey": "",
+      "healthChecker": true
     }
   },
   "executors": [],

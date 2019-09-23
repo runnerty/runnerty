@@ -1,24 +1,42 @@
 # Plan
 
-The chain or chains that are going to be executed are defined in the plan.json file. 
+The chain or chains that are going to be executed are defined in the plan.json file or in its defect we can indicate in the plan object of the configuration within the general section.
 
-It is possible to load a chain from an external file using "chain_path". 
+config.json:
 
 ```json
 {
-  "chains":[
-    {"chain_path": "/var/runnerty/chains/my-chain-one.json"},
-    {"chain_path": "/var/runnerty/chains/my-chain-two.json"},
-    {"...": "..."}
+  "general": {
+    "...": "...",
+    "plan": {
+      "chains": [
+        {
+          "id": "MY_CHAIN_ONE",
+          "...": "..."
+        }
+      ]
+    }
+  }
+}
+```
+
+It is possible to load a chain from an external file using "chain_path".
+
+```json
+{
+  "chains": [
+    { "chain_path": "/var/runnerty/chains/my-chain-one.json" },
+    { "chain_path": "/var/runnerty/chains/my-chain-two.json" },
+    { "...": "..." }
   ]
 }
 ```
 
-Or directly as an object of the `chains` array: 
+Or directly as an object of the `chains` array:
 
 ```json
 {
-  "chains":[
+  "chains": [
     {
       "id": "MY_CHAIN_ONE",
       "...": "..."
@@ -45,7 +63,7 @@ This is the basic structure of a plan with chain with one process:
 
 ```json
 {
-  "chains":[
+  "chains": [
     {
       "id": "EXAMPLE_CHAIN",
       "name": "Name of the sample chain",
@@ -65,4 +83,3 @@ This is the basic structure of a plan with chain with one process:
   ]
 }
 ```
-
