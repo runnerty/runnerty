@@ -48,7 +48,7 @@
     "redis": "2.8.0",
     "request": "2.88.0",
     "request-promise-native": "1.0.7",
-    "winston": "2.4.2"
+    "winston": "3.2.1"
   },
   "keywords": [
     "runnerty",
