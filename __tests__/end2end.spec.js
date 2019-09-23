@@ -1,8 +1,7 @@
 const exec = require('./test_src/exec.js');
+jest.setTimeout(80000);
 
 describe('Queues', () => {
-  jest.setTimeout(10000);
-
   const successOutput = `info: 1 CHAIN_ONE
 info: CHAIN
 info: CHAIN
@@ -40,8 +39,72 @@ info: 13 CHAIN_ONE END
   });
 });
 
+
+describe('Iterable-end-ok-ignore-process', () => {
+
+  const successOutput = `info: 1 CHAIN CHAIN-LAUNCHER START
+  info: 2 Inicio: PROC-1
+  info: 3 Fin: PROC-1
+  info: 4 Inicio: PROCESS-LAUNCHER-2
+  info: 5 Fin: PROCESS-LAUNCHER-2
+  info: -> [5-echo PROCESS-LAUNCHER-2_1] CHAIN CHAIN-ITERABLE-2 START
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_1-1] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 START
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_1-2] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 END
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_1-3] PROCESS PROCESS-ITER-2-3 OF CHAIN CHAIN-ITERABLE-2 START
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_1-4] PROCESS PROCESS-ITER-2-3 OF CHAIN CHAIN-ITERABLE-2 END
+  info: -> [5-echo PROCESS-LAUNCHER-2_1] CHAIN CHAIN-ITERABLE-2 END
+  info: -> [5-lol PROCESS-LAUNCHER-2_2] CHAIN CHAIN-ITERABLE-2 START
+  info: -> -> [5-lol PROCESS-LAUNCHER-2_2-1] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 START
+  error: ERR! [I:lol PROCESS-LAUNCHER-2_2] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 FAIL
+  info: -> [5-echo PROCESS-LAUNCHER-2_3] CHAIN CHAIN-ITERABLE-2 START
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_3-1] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 START
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_3-2] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 END
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_3-3] PROCESS PROCESS-ITER-2-3 OF CHAIN CHAIN-ITERABLE-2 START
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_3-4] PROCESS PROCESS-ITER-2-3 OF CHAIN CHAIN-ITERABLE-2 END
+  info: -> [5-echo PROCESS-LAUNCHER-2_3] CHAIN CHAIN-ITERABLE-2 END
+  info: 6 Inicio: PROCESS-LAUNCHER-3
+  info: 8 Inicio: PROC-FIN
+  info: 7 Fin: PROCESS-LAUNCHER-3
+  info: 9 Fin: PROC-FIN
+  info: -> [6-1] CHAIN CHAIN-ITERABLE-3 START
+  info: -> -> [6-1-1] PROCESS PROCESS-ITER-3-2 OF CHAIN CHAIN-ITERABLE-3 START
+  info: -> -> [6-1-2] PROCESS PROCESS-ITER-3-2 OF CHAIN CHAIN-ITERABLE-3 END
+  info: -> [6-1] CHAIN CHAIN-ITERABLE-3 END
+  info: -> [6-2] CHAIN CHAIN-ITERABLE-3 START
+  info: -> -> [6-2-1] PROCESS PROCESS-ITER-3-2 OF CHAIN CHAIN-ITERABLE-3 START
+  info: -> -> [6-2-2] PROCESS PROCESS-ITER-3-2 OF CHAIN CHAIN-ITERABLE-3 END
+  info: -> [6-2] CHAIN CHAIN-ITERABLE-3 END
+  info: -> [6-3] CHAIN CHAIN-ITERABLE-3 START
+  info: -> -> [6-3-1] PROCESS PROCESS-ITER-3-2 OF CHAIN CHAIN-ITERABLE-3 START
+  info: -> -> [6-3-2] PROCESS PROCESS-ITER-3-2 OF CHAIN CHAIN-ITERABLE-3 END
+  info: 10 CHAIN CHAIN-LAUNCHER END
+  info: -> [6-3] CHAIN CHAIN-ITERABLE-3 END`;
+
+  test('Execution End2End: Iterable-end-ok-ignore-process', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-P',
+        './__tests__/end2end/plan_check_iter_end_ok.json',
+        '-f',
+        'CHAIN-LAUNCHER'
+      ],
+      16000,
+      res => {
+        const _res = res.substring(res.indexOf('\n') + 1);
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
+        done();
+      }
+    );
+  });
+});
+
 describe('SimpleIter', () => {
-  jest.setTimeout(10000);
 
   const successOutput = `info: 1 CHAIN CHAIN-LAUNCHER START
   info: 2   PROCESS PROCESS-LAUNCHER OF CHAIN CHAIN-LAUNCHER START
@@ -103,7 +166,6 @@ describe('SimpleIter', () => {
 });
 
 describe('SimpleIterFail', () => {
-  jest.setTimeout(10000);
 
   const successOutput = `info: 1 CHAIN CHAIN-LAUNCHER START
   info: 2   PROCESS PROCESS-LAUNCHER OF CHAIN CHAIN-LAUNCHER START
@@ -130,8 +192,8 @@ describe('SimpleIterFail', () => {
   info: - 5       [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-ONE OF CHAIN CHAIN-ITERABLE START
   info: - 6       [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-ONE OF CHAIN CHAIN-ITERABLE END
   info: - 7      [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE START
-  info: - 9   [I:lol PROCESS-LAUNCHER_4] CHAIN CHAIN-ITERABLE END
   info: ERR! CHAIN CHAIN-LAUNCHER FAIL
+  info: - 9   [I:lol PROCESS-LAUNCHER_4] CHAIN CHAIN-ITERABLE END
   info: ERR!        [I:lol PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE FAIL: /bin/sh: lol: command not found`;
 
   test('Execution End2End: SimpleIterFail', done => {
@@ -159,7 +221,6 @@ describe('SimpleIterFail', () => {
 });
 
 describe('SimpleIterFailNotEnd', () => {
-  jest.setTimeout(10000);
 
   const successOutput = `info: 1 CHAIN CHAIN-LAUNCHER START
   info: 2   PROCESS PROCESS-LAUNCHER OF CHAIN CHAIN-LAUNCHER START
@@ -221,7 +282,6 @@ describe('SimpleIterFailNotEnd', () => {
 });
 
 describe('ComplexDependencies', () => {
-  jest.setTimeout(10000);
 
   const successOutput = `info: CHAIN CHAIN_ONE START
   info: PROCESS PROCESS_ONE START
@@ -247,6 +307,50 @@ describe('ComplexDependencies', () => {
         './__tests__/end2end/plan_complex_dependencies.json',
         '-f',
         'CHAIN_ONE'
+      ],
+      9000,
+      res => {
+        const _res = res.substring(res.indexOf('\n') + 1);
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
+        done();
+      }
+    );
+  });
+});
+
+describe('Iterable-end-error-abort-serie', () => {
+
+  const successOutput = `info: 1 CHAIN CHAIN-LAUNCHER START
+  info: 2 Inicio: PROC-1
+  info: 3 Fin: PROC-1
+  info: 4 Inicio: PROCESS-LAUNCHER-2
+  info: 5 Fin: PROCESS-LAUNCHER-2
+  info: -> [5-echo PROCESS-LAUNCHER-2_1] CHAIN CHAIN-ITERABLE-2 START
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_1-1] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 START
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_1-2] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 END
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_1-3] PROCESS PROCESS-ITER-2-3 OF CHAIN CHAIN-ITERABLE-2 START
+  info: -> -> [5-echo PROCESS-LAUNCHER-2_1-4] PROCESS PROCESS-ITER-2-3 OF CHAIN CHAIN-ITERABLE-2 END
+  info: -> [5-echo PROCESS-LAUNCHER-2_1] CHAIN CHAIN-ITERABLE-2 END
+  info: -> [5-lol PROCESS-LAUNCHER-2_2] CHAIN CHAIN-ITERABLE-2 START
+  info: -> -> [5-lol PROCESS-LAUNCHER-2_2-1] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 START
+  info: -> [5-lol PROCESS-LAUNCHER-2_2] CHAIN CHAIN-ITERABLE-2 END
+  error: ERR! [I:lol PROCESS-LAUNCHER-2_2] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 FAIL
+  error: ERR CHAIN! [I:lol PROCESS-LAUNCHER-2_2] CHAIN CHAIN-ITERABLE-2 FAIL
+  error: ERR! CHAIN CHAIN-LAUNCHER FAIL`;
+
+  test('Execution End2End: Iterable-end-error-abort-serie', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-P',
+        './__tests__/end2end/plan_check_iter_end_error.json',
+        '-f',
+        'CHAIN-LAUNCHER'
       ],
       9000,
       res => {
