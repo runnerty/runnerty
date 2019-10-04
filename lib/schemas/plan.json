@@ -1,13 +1,16 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "required": ["chains"],
   "properties": {
-    "chains":{
-      "type":"array",
+    "chains": {
+      "type": "array",
       "items": {
         "type": "object",
-        "properties":{
-          "chain_path":{"type":"string"}
+        "properties": {
+          "chain_path": {
+            "type": "string"
+          }
         }
       }
     }

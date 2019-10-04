@@ -28,7 +28,7 @@
   "global": false,
   "dependencies": {
     "@runnerty/trigger-server": "0.0.1",
-    "ajv": "5.5.2",
+    "ajv": "^6.10.2",
     "body-parser": "1.19.0",
     "bytes": "3.1.0",
     "commander": "3.0.2",

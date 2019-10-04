@@ -1,14 +1,29 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "required": ["id","name","processes"],
+  "required": ["id", "name", "processes"],
   "properties": {
-    "id": {"type": "string"},
-    "name": {"type": "string"},
-    "execId": {"type": "string"},
-    "queue": {"type": "string"},
-    "priority": {"type": "number"},
-    "input": {"type": "array"},
-    "custom_values": {"type": "object"},
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "execId": {
+      "type": "string"
+    },
+    "queue": {
+      "type": "string"
+    },
+    "priority": {
+      "type": "number"
+    },
+    "input": {
+      "type": "array"
+    },
+    "custom_values": {
+      "type": "object"
+    },
     "triggers": {
       "type": "array",
       "items": {
@@ -17,14 +32,20 @@
           "calendars": {
             "type": "object",
             "properties": {
-              "enable":{"type": "string"},
-              "disable":{"type": "string"}
+              "enable": {
+                "type": "string"
+              },
+              "disable": {
+                "type": "string"
+              }
             }
           }
         }
       }
     },
-    "depends_chains": {"type": ["array","object"]},
+    "depends_chains": {
+      "type": ["array", "object"]
+    },
     "notifications": {
       "type": "object",
       "properties": {
@@ -34,7 +55,9 @@
             "type": "object",
             "required": ["id"],
             "properties": {
-              "id": {"type": "string"}
+              "id": {
+                "type": "string"
+              }
             }
           }
         },
@@ -44,7 +67,9 @@
             "type": "object",
             "required": ["id"],
             "properties": {
-              "id": {"type": "string"}
+              "id": {
+                "type": "string"
+              }
             }
           }
         },
@@ -54,7 +79,9 @@
             "type": "object",
             "required": ["id"],
             "properties": {
-              "id": {"type": "string"}
+              "id": {
+                "type": "string"
+              }
             }
           }
         },
@@ -64,7 +91,9 @@
             "type": "object",
             "required": ["id"],
             "properties": {
-              "id": {"type": "string"}
+              "id": {
+                "type": "string"
+              }
             }
           }
         },
@@ -74,12 +103,16 @@
             "type": "object",
             "required": ["id"],
             "properties": {
-              "id": {"type": "string"}
+              "id": {
+                "type": "string"
+              }
             }
           }
         }
       }
     },
-    "processes": {"$ref": "processSchema"}
+    "processes": {
+      "$ref": "processSchema"
+    }
   }
 }
