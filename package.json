@@ -77,10 +77,10 @@
   ],
   "engineStrict": true,
   "engines": {
-    "node": ">=10.16.0"
+    "node": ">=10.16.3"
   },
   "devDependencies": {
-    "all-contributors-cli": "6.9.1",
+    "all-contributors-cli": "^6.9.1",
     "commitizen": "4.0.3",
     "cz-conventional-changelog": "3.0.2",
     "eslint": "6.5.1",
