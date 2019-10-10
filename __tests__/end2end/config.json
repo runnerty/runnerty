@@ -3,9 +3,7 @@
     "general": {
       "binBackup": "/tmp/bin.json",
       "planFilePath": "plan.json",
-      "executorsPath": "./__tests__/end2end/node_modules/",
-      "notifiersPath": "./__tests__/end2end/node_modules/",
-      "triggersPath": "./__tests__/end2end/node_modules/",
+      "modulesPath": "./__tests__/end2end/node_modules/",
       "refreshIntervalBinBackup": 2000,
       "api": {},
       "runnerty.io": {
