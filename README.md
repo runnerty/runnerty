@@ -1,6 +1,6 @@
 <p align="center">
   <a href="http://runnerty.io">
-    <img height="257" src="http://coderty.com/img/runnerty.png">
+    <img height="257" src="https://runnerty.io/assets/header/logo-stroked.png">
   </a>
   <p align="center">A new way for processes managing</p>
 </p>
@@ -8,16 +8,19 @@
 [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] [![Dependency Status][david-badge]][david-badge-url]
 
 ## What is?
+
 Runnerty is an orchestrator of processes, an open source tool written in Node.js which allows you to manage and plan workflows and processes. Focus on the business logic and keep yourself away of dependencies between processes, data exchange, schedule jobs and error notifications.
 
 Install and configure it in a few minutes to manage the processes that you already have developed. Instantly, you will have a powerful monitoring system with notifications of your workflows, logs system, and much more.
 
 ## Installation
+
 ```bash
 npm install -g runnerty
 ```
 
-## Quick-start 
+## Quick-start
+
 You can download the quick start project and start managing your projects
 [Quick start repo](https://github.com/runnerty/runnerty-quick-start)!
 
@@ -28,23 +31,42 @@ You can download the quick start project and start managing your projects
 [david-badge-url]: https://david-dm.org/runnerty/runnerty
 
 ## Documentation
- 
- Want to know more? have a look at the documentation [here](http://docs.runnerty.io)!
+
+Want to know more? have a look at the documentation [here](http://docs.runnerty.io)!
 
 ## Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-| [<img src="https://avatars0.githubusercontent.com/u/2606030?v=4" width="80px;"/><br /><sub>Carlos Carmona</sub>](https://github.com/CarlosCarmona)<br /> | [<img src="https://avatars3.githubusercontent.com/u/20872950?v=4" width="80px;"/><br /><sub>José Antonio Ruiz</sub>](https://github.com/Jhonsensf)<br /> | [<img src="https://avatars2.githubusercontent.com/u/234613?v=4" width="80px;"/><br /><sub>Alvaro Quirós</sub>](http://coderty.com)<br /> | [<img src="https://avatars1.githubusercontent.com/u/62855?v=4" width="80px;"/><br /><sub>Rafa Prats</sub>](https://github.com/raprav)<br /> | [<img src="https://avatars3.githubusercontent.com/u/15797756?v=4" width="80px;"/><br /><sub>Antonio Genaro</sub>](https://github.com/antoniogenaro)<br /> | [<img src="https://avatars3.githubusercontent.com/u/545420?v=4" width="80px;"/><br /><sub>David Rodríguez López</sub>](http://www.baldboy.es)<br /> | [<img src="https://avatars2.githubusercontent.com/u/20567140?v=4" width="80px;"/><br /><sub>Alberto Gómez</sub>](http://albertogomez.es)<br /> |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| [<img src="https://avatars0.githubusercontent.com/u/18547138?v=4" width="80px;"/><br /><sub>Francis Molina</sub>](http://www.coderty.com)<br /> |
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/CarlosCarmona"><img src="https://avatars0.githubusercontent.com/u/2606030?v=4" width="80px;" alt="Carlos Carmona"/><br /><sub><b>Carlos Carmona</b></sub></a><br /></td>
+    <td align="center"><a href="http://coderty.com"><img src="https://avatars2.githubusercontent.com/u/234613?v=4" width="80px;" alt="Alvaro Quirós"/><br /><sub><b>Alvaro Quirós</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/raprav"><img src="https://avatars1.githubusercontent.com/u/62855?v=4" width="80px;" alt="Rafa Prats"/><br /><sub><b>Rafa Prats</b></sub></a><br /></td>
+    <td align="center"><a href="http://www.coderty.com"><img src="https://avatars0.githubusercontent.com/u/18547138?v=4" width="80px;" alt="Francis Molina"/><br /><sub><b>Francis Molina</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/antoniogenaro"><img src="https://avatars3.githubusercontent.com/u/15797756?v=4" width="80px;" alt="Antonio Genaro"/><br /><sub><b>Antonio Genaro</b></sub></a><br /></td>
+    <td align="center"><a href="http://albertogomez.es"><img src="https://avatars2.githubusercontent.com/u/20567140?v=4" width="80px;" alt="Alberto Gómez"/><br /><sub><b>Alberto Gómez</b></sub></a><br /></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/judmft"><img src="https://avatars0.githubusercontent.com/u/49159375?s=400&v=4" width="80px;" alt="Judith Martínez"/><br /><sub><b>Judith Martínez</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/jlozper"><img src="https://avatars3.githubusercontent.com/u/48140531?s=400&v=4" width="80px;" alt="Jon Lozano"/><br /><sub><b>Jon Lozano</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/Jhonsensf"><img src="https://avatars3.githubusercontent.com/u/20872950?v=4" width="80px;" alt="José Antonio Ruiz"/><br /><sub><b>José Antonio Ruiz</b></sub></a><br /></td>
+    <td align="center"><a href="http://www.baldboy.es"><img src="https://avatars3.githubusercontent.com/u/545420?v=4" width="80px;" alt="David Rodríguez López"/><br /><sub><b>David Rodríguez López</b></sub></a><br /></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 Contributors are more than welcome. If you want to help please have a look to the [contributing guide](https://github.com/runnerty/runnerty/blob/master/CONTRIBUTING.md)
 
 ## Sponsors
+
 <p>
   <a href="http://coderty.com">
-    <img height="120" src="http://www.coderty.com/img/codertysvg.svg">
+    <img height="120" src="https://www.coderty.com/assets/external/coderty.svg">
   </a>
 </p>
-

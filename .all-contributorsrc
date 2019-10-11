@@ -5,6 +5,7 @@
     "README.md"
   ],
   "imageSize": 80,
+  "contributorsPerLine": 6,
   "commit": false,
   "contributors": [
     {
@@ -47,6 +48,20 @@
       "name": "Alberto Gómez",
       "avatar_url": "https://avatars2.githubusercontent.com/u/20567140?v=4",
       "profile": "http://albertogomez.es",
+      "contributions": []
+    },
+    {
+      "login": "judmft",
+      "name": "Judith Martínez",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/49159375?s=400&v=4",
+      "profile": "https://github.com/judmft",
+      "contributions": []
+    },
+    {
+      "login": "jlozper",
+      "name": "Jon Lozano",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/48140531?s=400&v=4",
+      "profile": "https://github.com/jlozper",
       "contributions": []
     },
     {

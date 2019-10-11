@@ -25,12 +25,15 @@ module.exports = () => {
 
   switch (true) {
     case !!config.api.ssl &&
-      !!config.api.key &&
-      !!config.api.cert &&
-      config.api.port:
+    !!config.api.key &&
+    !!config.api.cert &&
+    config.api.port:
       const privateKey = fs.readFileSync(config.api.key, 'utf8');
       const certificate = fs.readFileSync(config.api.cert, 'utf8');
-      server = https.createServer({ key: privateKey, cert: certificate }, app);
+      server = https.createServer({
+        key: privateKey,
+        cert: certificate
+      }, app);
       port = config.api.port;
 
       logger.info('Starting [HTTPS] private API on port ' + port);
@@ -93,8 +96,12 @@ module.exports = () => {
     };
   }
 
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json({ limit: config.api.limite_req }));
+  app.use(bodyParser.urlencoded({
+    extended: true
+  }));
+  app.use(bodyParser.json({
+    limit: config.api.limite_req
+  }));
   // ================================================
 
   // = SECURITY =====================================
@@ -133,7 +140,9 @@ module.exports = () => {
 
   app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
-      res.status(401).send({ message: 'Unauthorized' });
+      res.status(401).send({
+        message: 'Unauthorized'
+      });
     } else {
       next();
     }
@@ -173,7 +182,10 @@ module.exports = () => {
           token: token
         });
       } else {
-        res.json({ success: false, message: 'Authentication failed.' });
+        res.json({
+          success: false,
+          message: 'Authentication failed.'
+        });
       }
     }
   });
@@ -391,8 +403,8 @@ module.exports = () => {
           process
             .start(true, once)
             .then({})
-            .catch(function(e) {
-              logger.error('Retrying process:' + e);
+            .catch((err) => {
+              logger.error('Retrying process:' + err);
             });
         } else {
           res
@@ -448,7 +460,7 @@ module.exports = () => {
               .catch(err => {
                 logger.error(
                   `Error in startProcesses next to set end process "${processId}" from chain "${chainId}" by ${req.user}:` +
-                    err
+                  err
                 );
               });
           }
@@ -493,10 +505,10 @@ module.exports = () => {
           res.send();
           process.stop(
             req.user +
-              ' REQUEST KILL PROCESS ' +
-              processId +
-              ' FROM CHAIN ' +
-              chainId
+            ' REQUEST KILL PROCESS ' +
+            processId +
+            ' FROM CHAIN ' +
+            chainId
           );
         } else {
           res

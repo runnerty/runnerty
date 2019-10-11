@@ -1,61 +1,123 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "depende_process_object": {
+      "type": "object",
+      "properties": {
+        "$and": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/depende_process_object" }
+        },
+        "$or": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/depende_process_object" }
+        }
+      }
+    }
+  },
   "type": "array",
   "items": {
     "type": "object",
-    "required": ["id","name","exec"],
+    "required": ["id", "name", "exec"],
     "properties": {
-      "id": {"type": "string"},
-      "name": {"type": "string"},
-      "depends_process":{"type": ["object","array","string"]},
-      "queue": {"type": "string"},
-      "priority": {"type": "number"},
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "depends_process": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          { "$ref": "#/definitions/depende_process_object" }
+        ]
+      },
+      "queue": {
+        "type": "string"
+      },
+      "priority": {
+        "type": "number"
+      },
       "exec": {
         "type": "object",
         "required": ["id"],
         "properties": {
           "id": {
-            "type": "string"},
+            "type": "string"
+          },
           "command": {
-            "type": "string"},
+            "type": "string"
+          },
           "command_file": {
-            "type": "string"}
+            "type": "string"
+          }
         }
       },
-      "retries": {"type": "number"},
-      "retry_delay": {"type": ["number","string"]},
-      "notificate_only_last_fail": {"type": "boolean"},
+      "retries": {
+        "type": "number"
+      },
+      "retry_delay": {
+        "type": ["number", "string"]
+      },
+      "notificate_only_last_fail": {
+        "type": "boolean"
+      },
       "timeout": {
         "type": "object",
         "required": ["delay"],
         "properties": {
-          "action": {"type": "string"},
-          "delay": {"type": ["number","string"]}
+          "action": {
+            "type": "string"
+          },
+          "delay": {
+            "type": ["number", "string"]
+          }
         }
       },
       "chain_action_on_fail": {
         "type": "object",
         "required": ["action"],
         "properties": {
-          "action": {"type": "string"},
-          "delay": {"type": ["number","string"]},
-          "retries": {"type": "number"}
+          "action": {
+            "type": "string"
+          },
+          "delay": {
+            "type": ["number", "string"]
+          },
+          "retries": {
+            "type": "number"
+          }
         }
       },
       "output": {
         "type": "array",
         "items": {
           "type": "object",
-          "required": ["file_name","write"],
+          "required": ["file_name", "write"],
           "properties": {
-            "file_name": {"type": "string"},
+            "file_name": {
+              "type": "string"
+            },
             "write": {
               "type": "array",
               "items": {
                 "type": "string"
               }
             },
-            "concat": {"type": "boolean"},
-            "maxsize": {"type": "string"}
+            "concat": {
+              "type": "boolean"
+            },
+            "maxsize": {
+              "type": "string"
+            }
           }
         }
       },
@@ -63,11 +125,17 @@
         "type": "array",
         "items": {
           "type": "object",
-          "required": ["key","name","value"],
+          "required": ["key", "name", "value"],
           "properties": {
-            "key": {"type": "string"},
-            "name": {"type": "string"},
-            "value": {"type": "string"}
+            "key": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
           }
         }
       },
@@ -80,7 +148,9 @@
               "type": "object",
               "required": ["id"],
               "properties": {
-                "id": {"type": "string"}
+                "id": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -90,7 +160,9 @@
               "type": "object",
               "required": ["id"],
               "properties": {
-                "id": {"type": "string"}
+                "id": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -100,7 +172,9 @@
               "type": "object",
               "required": ["id"],
               "properties": {
-                "id": {"type": "string"}
+                "id": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -110,7 +184,9 @@
               "type": "object",
               "required": ["id"],
               "properties": {
-                "id": {"type": "string"}
+                "id": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -120,7 +196,9 @@
               "type": "object",
               "required": ["id"],
               "properties": {
-                "id": {"type": "string"}
+                "id": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -130,7 +208,9 @@
               "type": "object",
               "required": ["id"],
               "properties": {
-                "id": {"type": "string"}
+                "id": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -140,7 +220,9 @@
               "type": "object",
               "required": ["id"],
               "properties": {
-                "id": {"type": "string"}
+                "id": {
+                  "type": "string"
+                }
               }
             }
           }

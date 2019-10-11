@@ -24,10 +24,11 @@ info: 13 CHAIN_ONE END
         'index.js',
         '-c',
         './__tests__/end2end/config.json',
-        '-P',
+        '-p',
         './__tests__/end2end/plan_queue.json',
         '-f',
-        'CHAIN_ONE,CHAIN_TWO,CHAIN_THREE'
+        'CHAIN_ONE,CHAIN_TWO,CHAIN_THREE',
+        '--end'
       ],
       9000,
       res => {
@@ -39,9 +40,7 @@ info: 13 CHAIN_ONE END
   });
 });
 
-
 describe('Iterable-end-ok-ignore-process', () => {
-
   const successOutput = `info: 1 CHAIN CHAIN-LAUNCHER START
   info: 2 Inicio: PROC-1
   info: 3 Fin: PROC-1
@@ -87,10 +86,11 @@ describe('Iterable-end-ok-ignore-process', () => {
         'index.js',
         '-c',
         './__tests__/end2end/config.json',
-        '-P',
+        '-p',
         './__tests__/end2end/plan_check_iter_end_ok.json',
         '-f',
-        'CHAIN-LAUNCHER'
+        'CHAIN-LAUNCHER',
+        '--end'
       ],
       16000,
       res => {
@@ -105,7 +105,6 @@ describe('Iterable-end-ok-ignore-process', () => {
 });
 
 describe('SimpleIter', () => {
-
   const successOutput = `info: 1 CHAIN CHAIN-LAUNCHER START
   info: 2   PROCESS PROCESS-LAUNCHER OF CHAIN CHAIN-LAUNCHER START
   info: 3    PROCESS PROCESS-LAUNCHER OF CHAIN CHAIN-LAUNCHER END
@@ -148,10 +147,11 @@ describe('SimpleIter', () => {
         'index.js',
         '-c',
         './__tests__/end2end/config.json',
-        '-P',
+        '-p',
         './__tests__/end2end/plan_simple_iter.json',
         '-f',
-        'CHAIN-LAUNCHER'
+        'CHAIN-LAUNCHER',
+        '--end'
       ],
       9000,
       res => {
@@ -166,7 +166,6 @@ describe('SimpleIter', () => {
 });
 
 describe('SimpleIterFail', () => {
-
   const successOutput = `info: 1 CHAIN CHAIN-LAUNCHER START
   info: 2   PROCESS PROCESS-LAUNCHER OF CHAIN CHAIN-LAUNCHER START
   info: 3    PROCESS PROCESS-LAUNCHER OF CHAIN CHAIN-LAUNCHER END
@@ -203,10 +202,11 @@ describe('SimpleIterFail', () => {
         'index.js',
         '-c',
         './__tests__/end2end/config.json',
-        '-P',
+        '-p',
         './__tests__/end2end/plan_simple_iter_fail.json',
         '-f',
-        'CHAIN-LAUNCHER'
+        'CHAIN-LAUNCHER',
+        '--end'
       ],
       9000,
       res => {
@@ -221,7 +221,6 @@ describe('SimpleIterFail', () => {
 });
 
 describe('SimpleIterFailNotEnd', () => {
-
   const successOutput = `info: 1 CHAIN CHAIN-LAUNCHER START
   info: 2   PROCESS PROCESS-LAUNCHER OF CHAIN CHAIN-LAUNCHER START
   info: 3    PROCESS PROCESS-LAUNCHER OF CHAIN CHAIN-LAUNCHER END
@@ -264,10 +263,11 @@ describe('SimpleIterFailNotEnd', () => {
         'index.js',
         '-c',
         './__tests__/end2end/config.json',
-        '-P',
+        '-p',
         './__tests__/end2end/plan_simple_iter_fail_not_end.json',
         '-f',
-        'CHAIN-LAUNCHER'
+        'CHAIN-LAUNCHER',
+        '--end'
       ],
       9000,
       res => {
@@ -282,7 +282,6 @@ describe('SimpleIterFailNotEnd', () => {
 });
 
 describe('ComplexDependencies', () => {
-
   const successOutput = `info: CHAIN CHAIN_ONE START
   info: PROCESS PROCESS_ONE START
   info: PROCESS PROCESS_ONE END
@@ -303,10 +302,11 @@ describe('ComplexDependencies', () => {
         'index.js',
         '-c',
         './__tests__/end2end/config.json',
-        '-P',
+        '-p',
         './__tests__/end2end/plan_complex_dependencies.json',
         '-f',
-        'CHAIN_ONE'
+        'CHAIN_ONE',
+        '--end'
       ],
       9000,
       res => {
@@ -321,7 +321,6 @@ describe('ComplexDependencies', () => {
 });
 
 describe('Iterable-end-error-abort-serie', () => {
-
   const successOutput = `info: 1 CHAIN CHAIN-LAUNCHER START
   info: 2 Inicio: PROC-1
   info: 3 Fin: PROC-1
@@ -347,10 +346,11 @@ describe('Iterable-end-error-abort-serie', () => {
         'index.js',
         '-c',
         './__tests__/end2end/config.json',
-        '-P',
+        '-p',
         './__tests__/end2end/plan_check_iter_end_error.json',
         '-f',
-        'CHAIN-LAUNCHER'
+        'CHAIN-LAUNCHER',
+        '--end'
       ],
       9000,
       res => {
