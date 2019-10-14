@@ -47,7 +47,8 @@
             },
             "api": {
               "type": "object",
-              "anyOf": [{
+              "anyOf": [
+                {
                   "required": ["port"],
                   "properties": {
                     "port": {
@@ -239,7 +240,8 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "anyOf": [{
+                "anyOf": [
+                  {
                     "required": ["id", "endpoint", "port"],
                     "properties": {
                       "id": {
@@ -355,6 +357,9 @@
                   "pattern": "(http|https)"
                 },
                 "healthChecker": {
+                  "type": "boolean"
+                },
+                "debug": {
                   "type": "boolean"
                 }
               }
