@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "2.4.1-rc6",
+  "version": "2.4.1-rc7",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -28,8 +28,9 @@
   "global": false,
   "dependencies": {
     "@runnerty/trigger-server": "0.0.1",
-    "ajv": "^6.10.2",
-    "better-ajv-errors": "^0.6.7",
+    "ajv": "6.10.2",
+    "async-exit-hook": "2.0.1",
+    "better-ajv-errors": "0.6.7",
     "body-parser": "1.19.0",
     "bytes": "3.1.0",
     "commander": "3.0.2",
