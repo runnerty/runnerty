@@ -6,22 +6,22 @@
 
 ### Features
 
-- **common:** improvement in error reporting
-- **telemetry:** runnerty.io communication debug
-- **telemetry:** send version on access
+- **common:** error reporting improvement
 - **common:** add --end parameter
+- **telemetry:** runnerty.io communication debug
+- **telemetry:** add execution version on access communication
+- **telemetry:** historicize iter-serie process executionId
 - **dependencies:** minor dependency updates
 - **dependencies:** ajv 6 JSON Schema draft-07 compatibility
-- **telemetry:** historicize iter-serie process executionId
-
+-
 ### Tests
 
-- **common:** adaptation of the tests to the changes
-
+- **common:** update tests to match changes and generate new
+-
 ### Bug Fixes
 
 - **common:** wrong notification order
-- **common:** log messages correction
+- **common:** incorrect log messages visualization
 - **common:** complex prod depen. could cause double exec
 - **telemetry:** async pre-death communication resolved
 -
