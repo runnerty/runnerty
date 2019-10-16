@@ -41,18 +41,19 @@
         "optionsSuccessStatus": 204
       }
     },
-    "crypto":{
-      "algorithm":"aes-256-cbc"
+    "crypto": {
+      "algorithm": "aes-256-cbc"
     },
-    "queues":{
+    "queues": {
       "refreshInterval": 5000
     },
     "runnerty.io": {
       "apikey": "",
-      "healthChecker": true
+      "healthChecker": true,
+      "debug": false
     }
   },
   "executors": [],
   "notifiers": [],
-  "global_values":[]
+  "global_values": []
 }

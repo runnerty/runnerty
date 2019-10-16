@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "2.4.1-rc4",
+  "version": "2.5.0",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -28,8 +28,9 @@
   "global": false,
   "dependencies": {
     "@runnerty/trigger-server": "0.0.1",
-    "ajv": "^6.10.2",
-    "better-ajv-errors": "^0.6.7",
+    "ajv": "6.10.2",
+    "async-exit-hook": "2.0.1",
+    "better-ajv-errors": "0.6.7",
     "body-parser": "1.19.0",
     "bytes": "3.1.0",
     "commander": "3.0.2",
@@ -45,7 +46,7 @@
     "millisecond": "0.1.2",
     "moment": "2.24.0",
     "morgan": "1.9.1",
-    "object-sizeof": "1.5.1",
+    "object-sizeof": "1.5.2",
     "redis": "2.8.0",
     "request": "2.88.0",
     "request-promise-native": "1.0.7",
@@ -85,7 +86,7 @@
     "commitizen": "4.0.3",
     "cz-conventional-changelog": "3.0.2",
     "eslint": "6.5.1",
-    "eslint-plugin-jest": "22.17.0",
+    "eslint-plugin-jest": "22.19.0",
     "jest": "24.9.0",
     "jest-cli": "24.9.0",
     "runnerty-tests-modules": "file:__tests__/end2end"
