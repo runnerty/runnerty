@@ -1,5 +1,30 @@
 # Runnerty ChangeLog
 
+<a name="2.5.0"></a>
+
+# [2.5.0](16/10/2019)
+
+### Features
+
+- **common:** improvement in error reporting
+- **telemetry:** runnerty.io communication debug
+- **telemetry:** send version on access
+- **common:** add --end parameter
+- **dependencies:** minor dependency updates
+- **dependencies:** ajv 6 JSON Schema draft-07 compatibility
+- **telemetry:** historicize iter-serie process executionId
+
+### Tests
+
+- **common:** adaptation of the tests to the changes
+
+### Bug Fixes
+
+- **common:** wrong notification order
+- **common:** log messages correction
+- **common:** complex prod depen. could cause double exec
+- **telemetry:** async pre-death communication resolved
+-
 <a name="2.4.0"></a>
 
 # [2.4.0](23/09/2019)
