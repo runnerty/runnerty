@@ -2,12 +2,11 @@
 
 Runnerty provides a powerful feature to establish dependencies between processes. Not only it is possible to set up dependencies to other processes end states. You can also use operators to evaluate values, add complex conditions using operators and multiple expressions.
 
-
 ## Process dependencies
 
 It is very easy to establish dependencies between processes using the property `"depends_process"` in our processes. If you want to know how to configure and use processes in your chains, please click [here](process.md).
 
-We can set up a dependencie to other process end state using `"$end"`  and `"$fail"` operators:
+We can set up a dependencie to other process end state using `"$end"` and `"$fail"` operators:
 
 In the example below `PROCESS_B` will start when `PROCESS_A` ends:
 
@@ -15,10 +14,11 @@ In the example below `PROCESS_B` will start when `PROCESS_A` ends:
 {
   "id": "PROCESS_B",
   "name": "Second process of the chain",
-  "depends_process": {"$end": "PROCESS_A"},
+  "depends_process": { "$end": "PROCESS_A" },
   "...": "..."
 }
 ```
+
 Note than we can simplify this action just by adding `"depends_process": ["PROCESS_A"]`
 
 In this example `PROCESS_B` will start if `PROCESS_A` fails:
@@ -27,7 +27,7 @@ In this example `PROCESS_B` will start if `PROCESS_A` fails:
 {
   "id": "PROCESS_B",
   "name": "Second process of the chain",
-  "depends_process": {"$fail": "PROCESS_A"},
+  "depends_process": { "$fail": "PROCESS_A" },
   "...": "..."
 }
 ```
@@ -42,15 +42,16 @@ Dependencies of two processes:
 {
   "id": "PROCESS_C",
   "name": "Second process of the chain",
-  "depends_process": {"$and": [{"$end": "PROCESS_A"},{"$end": "PROCESS_B"}]},
+  "depends_process": { "$and": [{ "$end": "PROCESS_A" }, { "$end": "PROCESS_B" }] },
   "...": "..."
 }
 ```
+
 Note than we can simplify this action just by adding `"depends_process": ["PROCESS_A","PROCESS_B"]`
 
 ### Complex dependencies:
 
-Using operatios Runnerty offers the possibility to add complex dependencies between our processes. 
+Using operatios Runnerty offers the possibility to add complex dependencies between our processes.
 
 In this example process E will start only if process A or B fails and process C and D end:
 
@@ -61,16 +62,10 @@ In this example process E will start only if process A or B fails and process C 
   "depends_process": {
     "$and": [
       {
-        "$or": [
-          {"$fail": "PROCESS_A"},
-          {"$fail": "PROCESS_B"}
-        ]
+        "$or": [{ "$fail": "PROCESS_A" }, { "$fail": "PROCESS_B" }]
       }
     ],
-    "$and": [
-      {"$end": "PROCESS_C"},
-      {"$end": "PROCESS_D"}
-    ]
+    "$and": [{ "$end": "PROCESS_C" }, { "$end": "PROCESS_D" }]
   }
 }
 ```
@@ -80,9 +75,11 @@ In this example process E will start only if process A or B fails and process C 
 With Runnerty we can also establish dependencies of an evaluation using values of our processes or chains. If you want to know more about the use of values in Runnerty, click on [here](values.md).
 
 ### Evaluators
-The structure of the evaluator is {"value 1"; "$condition": "value 2"}.
-Of course in these values you can make use of all the [functions] (functions.md).
+
+The structure of the evaluator is {"value 1"; "\$condition": "value 2"}.
+Of course in these values you can make use of all the [functions](functions.md).
 These are the evaluators you can use:
+
 ```
 $eq    - equal. Examples: {"VAL_1": {"$eq": "VAL_2"}}, {"@GV(VAR1)": {"$eq": "@GV(VAR2)"}}
 $ne    - not equal. Example: {"@UPPER(str_sample)": {"$ne": "@GV(VAR2)"}}
@@ -141,24 +138,12 @@ Moreover, we can use the conditions however we want in the `"depends_process"` p
   "id": "PROCESS_B",
   "name": "Second process of the chain",
   "depends_process": {
-      "$and": [
-        {"$or": [
-            {"VAL_1": {"$eq": "VAL_2"}},
-            {"VAL_1": {"$eq": "VAL_3"}}
-          ]
-        },
-        {"$or": [
-            {"VAL_2": {"$gte": "VAL_4"}},
-            {"VAL_2": {"$gte": "VAL_5"}}
-          ]
-        },
-        {"$and": [
-            {"VAL_3": {"$eq": "VAL_6"}},
-            {"VAL_4": {"$eq": "VAL_7"}}
-          ]
-        }
-      ]
-    }
+    "$and": [
+      { "$or": [{ "VAL_1": { "$eq": "VAL_2" } }, { "VAL_1": { "$eq": "VAL_3" } }] },
+      { "$or": [{ "VAL_2": { "$gte": "VAL_4" } }, { "VAL_2": { "$gte": "VAL_5" } }] },
+      { "$and": [{ "VAL_3": { "$eq": "VAL_6" } }, { "VAL_4": { "$eq": "VAL_7" } }] }
+    ]
+  }
 }
 ```
 
@@ -172,22 +157,14 @@ At this point, you probably imagine that it is also possible to mix dependencies
   "name": "Second process of the chain",
   "depends_process": {
     "$and": [
-      {"$end": "PROCESS_A"}, 
-      {"$and": [
-          {"$or":[
-              {"VAL1":{"$eq":"VAL1"}},
-              {"VAL1":{"$eq":"VAL3"}}
-            ]
-          },
-          {"$or":[
-              {"VAL4":{"$ne":"VAL4"}},
-              {"VAL4":{"$ne":"VAL5"}}
-            ]
-          }
+      { "$end": "PROCESS_A" },
+      {
+        "$and": [
+          { "$or": [{ "VAL1": { "$eq": "VAL1" } }, { "VAL1": { "$eq": "VAL3" } }] },
+          { "$or": [{ "VAL4": { "$ne": "VAL4" } }, { "VAL4": { "$ne": "VAL5" } }] }
         ]
       }
     ]
   }
 }
 ```
-

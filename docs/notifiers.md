@@ -1,6 +1,6 @@
 # Notifiers
 
-The notifiers are plugins for Runnerty used for notify events occurred in the processes or chains. 
+The notifiers are plugins for Runnerty used for notify events occurred in the processes or chains.
 
 There are a bunch of notifiers for different channels. You can have a look at the official list [here](executors.md).
 
@@ -23,7 +23,7 @@ In the [config.json](config.md) file of the project we are going to write the co
       "disable": false,
       "from": "Runnerty Notifier <my@sender.com>",
       "transport": "smtp://my%mailsender.com:pass@smtp.host.com/?pool=true",
-      "bcc":["mycc@mail.com"],
+      "bcc": ["mycc@mail.com"],
       "templateDir": "/etc/runnerty/templates",
       "template": "alerts",
       "ejsRender": true
@@ -53,21 +53,20 @@ The configuration properties are set in the [config.json](config.md). They are t
 }
 ```
 
-The `id` is the name given for the executor configuration. Note that we could have all the differents configurations that we want for the same executor. The `type` is the name of the executor. The `token` and `chat_id` and configuration properties needed for the executor to work properly. 
+The `id` is the name given for the executor configuration. Note that we could have all the differents configurations that we want for the same executor. The `type` is the name of the executor. The `token` and `chat_id` and configuration properties needed for the executor to work properly.
 
 In the processes are set the variable properties (params) of the notifier. This is an example of the usage of the @runnerty/executor-telegram in a process
 
 ```json
 {
-  "id":"PROCESS_ONE",
-  "name":"First process of the chain",
-  "exec":
-    {
-      "id":"shell_default",
-      "command":"echo 'Hello world'"
-    },
+  "id": "PROCESS_ONE",
+  "name": "First process of the chain",
+  "exec": {
+    "id": "shell_default",
+    "command": "echo 'Hello world'"
+  },
   "notifications": {
-    "on_end":[
+    "on_end": [
       {
         "id": "telegram_default",
         "message": "THE PROCESS HAS FINISHED"
@@ -83,15 +82,14 @@ It is important to know that it is possible to overwrite some configuration prop
 
 ```json
 {
-  "id":"PROCESS_ONE",
-  "name":"First process of the chain",
-  "exec":
-    {
-      "id":"shell_default",
-      "command":"echo 'Hello world'"
-    },
+  "id": "PROCESS_ONE",
+  "name": "First process of the chain",
+  "exec": {
+    "id": "shell_default",
+    "command": "echo 'Hello world'"
+  },
   "notifications": {
-    "on_fail":[
+    "on_fail": [
       {
         "id": "telegram_default",
         "token": "MyDangerTokenId",
@@ -99,7 +97,7 @@ It is important to know that it is possible to overwrite some configuration prop
         "message": "THE PROCESS HAS ABORTED"
       }
     ],
-    "on_end":[
+    "on_end": [
       {
         "id": "telegram_default",
         "message": "THE PROCESS HAS FINISHED"
@@ -109,4 +107,4 @@ It is important to know that it is possible to overwrite some configuration prop
 }
 ```
 
->Note that when the process ends with fail it will overwrite the `token` and `chat_id` properties of the [config.json](config.md) and it will send the message to a different chat.
+> Note that when the process ends with fail it will overwrite the `token` and `chat_id` properties of the [config.json](config.md) and it will send the message to a different chat.

@@ -10,8 +10,8 @@ In the config.json file can be configured the refresh interval of the queues. It
 
 ```json
 {
-  "queues":{
-    "refreshInterval":5000
+  "queues": {
+    "refreshInterval": 5000
   }
 }
 ```
@@ -28,7 +28,7 @@ In the chain:
   "name": "Name of the sample chain",
   "queue": "queue_sample",
   "priority": 10,
-  "...":"..."
+  "...": "..."
 }
 ```
 
@@ -36,14 +36,14 @@ In a process:
 
 ```json
 {
-  "processes":[
-      {
-        "id": "EXAMPLE_PROCESS",
-        "name": "Example process",
-        "queue": "queue_sample",
-        "priority": 5,
-        "...":"..."
-      }
-    ]
+  "processes": [
+    {
+      "id": "EXAMPLE_PROCESS",
+      "name": "Example process",
+      "queue": "queue_sample",
+      "priority": 5,
+      "...": "..."
+    }
+  ]
 }
 ```

@@ -1,20 +1,22 @@
 # Functions
 
-Runnerty provides a bunch of different functions that can be used in the whole plan of our chains. They are very useful to operate, transform or generate values or mix it with dependencies, etc... 
+Runnerty provides a bunch of different functions that can be used in the whole plan of our chains. They are very useful to operate, transform or generate values or mix it with dependencies, etc...
 
 ## All functions
 
 ### Values
+
 | Function                               | Syntax                                     | Description                                                                                                                                              |
 | :------------------------------------- | :----------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GV                                     | `@GV(VALUE_ID [,QUOTE_STRING])`            | Used to get values. Optionally you can set quote_string. Learn more about *values* [here](values.md).                                                    |
-| GETVALUE *(GV ALIAS)*                  | `@GETVALUE(VALUE_ID [,QUOTE_STRING])`      | Used to get values. Optionally you can set quote_string. Learn more about *values* [here](values.md).                                                    |
-| GVQ                                    | `@GVQ(VALUE_ID [,QUOTE_STRING])`           | Used to get values and quote them. If QUOTE_STRING is not set, it will be set by default with single quote. Learn more about *values* [here](values.md). |
-| GETVALUEQUOTE *(GVQ ALIAS)*            | `@GETVALUEQUOTE(VALUE_ID [,QUOTE_STRING])` | Used to get values and quote them. If QUOTE_STRING is not set, it will be set by default with single quote. Learn more about *values* [here](values.md). |
-| GETVALUEESCAPE *(GVESCAPE ALIAS)*      | `@GETVALUEESCAPE(VALUE_ID)`                | Used to get values escaped (Replacing no SingleStringCharacters or DoubleStringCharacters ECMA). Learn more about *values* [here](values.md).            |
-| GETVALUEUNESCAPE *(GVUNCESCAPE ALIAS)* | `@GETVALUEUNESCAPE(VALUE_ID)`              | Used to get values unescaped (Restoring no SingleStringCharacters or DoubleStringCharacters ECMA). Learn more about *values* [here](values.md).          |
+| GV                                     | `@GV(VALUE_ID [,QUOTE_STRING])`            | Used to get values. Optionally you can set quote_string. Learn more about _values_ [here](values.md).                                                    |
+| GETVALUE _(GV ALIAS)_                  | `@GETVALUE(VALUE_ID [,QUOTE_STRING])`      | Used to get values. Optionally you can set quote_string. Learn more about _values_ [here](values.md).                                                    |
+| GVQ                                    | `@GVQ(VALUE_ID [,QUOTE_STRING])`           | Used to get values and quote them. If QUOTE_STRING is not set, it will be set by default with single quote. Learn more about _values_ [here](values.md). |
+| GETVALUEQUOTE _(GVQ ALIAS)_            | `@GETVALUEQUOTE(VALUE_ID [,QUOTE_STRING])` | Used to get values and quote them. If QUOTE_STRING is not set, it will be set by default with single quote. Learn more about _values_ [here](values.md). |
+| GETVALUEESCAPE _(GVESCAPE ALIAS)_      | `@GETVALUEESCAPE(VALUE_ID)`                | Used to get values escaped (Replacing no SingleStringCharacters or DoubleStringCharacters ECMA). Learn more about _values_ [here](values.md).            |
+| GETVALUEUNESCAPE _(GVUNCESCAPE ALIAS)_ | `@GETVALUEUNESCAPE(VALUE_ID)`              | Used to get values unescaped (Restoring no SingleStringCharacters or DoubleStringCharacters ECMA). Learn more about _values_ [here](values.md).          |
 
 ### Math
+
 | Function | Syntax                                      | Description                                                                   |
 | :------- | :------------------------------------------ | :---------------------------------------------------------------------------- |
 | ABS      | `@ABS(NUMBER)`                              | Returns the absolute value of a number                                        |
@@ -41,6 +43,7 @@ Runnerty provides a bunch of different functions that can be used in the whole p
 | MODULUS  | `@MODULUS(NUMBER, NUMBER)`                  | Returns the modulus of the numbers                                            |
 
 ### Strings
+
 | Function                          | Syntax                                                               | Description                                                                                                                       |
 | :-------------------------------- | :------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
 | LPAD                              | `@LPAD(STRING)`                                                      | Returns a string that is left-padded with a specified string to a certain length                                                  |
@@ -61,9 +64,10 @@ Runnerty provides a bunch of different functions that can be used in the whole p
 | ESCAPE                            | `@ESCAPE(STRING)`                                                    | Returns escaped string (Replacing no SingleStringCharacters or DoubleStringCharacters ECMA)                                       |
 | UNESCAPE                          | `@UNESCAPE(STRING)`                                                  | Returns unescaped string (Restoring no SingleStringCharacters or DoubleStringCharacters ECMA)                                     |
 | QUOTE                             | `@QUOTE(STRING,QUOTE_STRING)`                                        | Return quoted string. If QUOTE_STRING is not set, it will be set by default with single quote                                     |
-| JSONSTRINGIFY *(STRINGIFY ALIAS)* | `@STRINGIFY(OBJECT)`                                                 | Returns the JSON stringified object                                                                                               |
+| JSONSTRINGIFY _(STRINGIFY ALIAS)_ | `@STRINGIFY(OBJECT)`                                                 | Returns the JSON stringified object                                                                                               |
 
 Examples:
+
 ```
 @LENGTH('RUNNERTY') -> 8
 @LOWER(hELLo) -> hello
@@ -71,6 +75,7 @@ Examples:
 ```
 
 ### Crypto
+
 | Function | Syntax                                                           | Description                                                                                            |
 | :------- | :--------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
 | HASH     | `@HASH(STRING_TO_HASH, STRING_HASH, STRING_DIGEST)`              | Returns hashed string. HASH: `openssl list-message-digest-algorithms`. DIGEST: `hex, base64 or latin1` |
@@ -78,6 +83,7 @@ Examples:
 | DECRYPT  | `@DECRYPT(STRING_TO_DECRYPT, STRING_ALGORITHM, STRING_PASSWORD)` | Returns decrypt string. HASH: `openssl list-cipher-algorithms`.                                        |
 
 Examples:
+
 ```
 @HASH('RUNNERTY','md5','base64') -> wBM7mLwJnIpMlpRBHiLxBw==
 @HASH('RUNNERTY','sha256','hex') -> 5e557b12c62c361fac4f480ba30d7afe1bc9b8a1dd1cd26807fb3f1c7ef0b18d
@@ -86,6 +92,7 @@ Examples:
 ```
 
 ### Evaluation
+
 | Function | Syntax                                              | Description                                                                       |
 | :------- | :-------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | IF       | `@IF(BOOLEAN, OUTPUT_ON_TRUE, OUTPUT_ON_FALSE)`     | Returns a string that is left-padded with a specified string to a certain length  |
@@ -97,8 +104,8 @@ Examples:
 | LT       | `@LT(OPER_LEFT, OPER_RIGHT)`                        | Returns boolean depending on whether it OPER_LEFT < OPER_RIGHT                    |
 | LTE      | `@LTE(OPER_LEFT, OPER_RIGHT)`                       | Returns boolean depending on whether it OPER_LEFT <= OPER_RIGHT                   |
 
-
 ### Dates
+
 | Function | Syntax                                                                                    | Description                                                       |
 | :------- | :---------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
 | GETDATE  | `@GETDATE(STRING_FORMAT, STRIN_LANGUAGE, STRING_PERIOD, NUMBER_INCREMENT, BOOLEAN_UPPER)` | Returns string as specified by a format mask, language and period |
@@ -112,12 +119,14 @@ Uppercase: Boolean to set if output must be returned upper
 ```
 
 Examples:
+
 ```
 @GETDATE('MMMM','es','months',2,true) - Add 2 months to current date and output month name upper: 'ENERO'
 @GETDATE('YYYY-MM-DD HH:mm:ss') - Return current date formated like the mask 'YYYY-MM-DD HH:mm:ss': '2018-01-01 23:59:59'
 ```
 
 ### Paths/Urls
+
 | Function      | Syntax                                         | Description                                                                                                                                                                                                                                    |
 | :------------ | :--------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | PATHPARSE     | `@PATHPARSE(STRING_PATH, STRING_PROPERTIE)`    | Returns a string with specified propertie of path. PROPERTIES: `root, dir, base, ext or name`                                                                                                                                                  |
@@ -126,12 +135,12 @@ Examples:
 | URLPARSE      | `@URLPARSE(STRING_URL, STRING_PROPERTIE)`      | Returns a string with specified propertie of url. PROPERTIES: `protocol, slashes, auth, host, port, hostname, hash, search, query, pathname, path, href`                                                                                       |
 
 Examples:
+
 ```
 @PATHPARSE('/etc/runnerty/plan.json', 'NAME') -> plan
 @PATHPARSE('/etc/runnerty/plan.json', 'base') -> plan.json
 @PATHNORMALIZE('/foo/bar//baz/asdf/quux/..')  -> /foo/bar/baz/asdf
-@PATHJOIN('/etc','runnerty/',plan.json)       -> /etc/runnerty/plan.json 
+@PATHJOIN('/etc','runnerty/',plan.json)       -> /etc/runnerty/plan.json
 @URLPARSE('http://user:pass@sub.host.com:8080/p/a/t/h?query=string#hash','hostname') -> sub.host.com
 @URLPARSE('http://user:pass@sub.host.com:8080/p/a/t/h?query=string#hash','port')     -> 8080
 ```
-

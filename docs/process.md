@@ -26,7 +26,7 @@ Each process has two identification fields: `id` and `name`
 
 ### Dependencies
 
-With Runnerty is possible to establish dependencies betwwen processes. Runnerty provides a powerful feature for this task. 
+With Runnerty is possible to establish dependencies betwwen processes. Runnerty provides a powerful feature for this task.
 
 In the example below we can see how `PROCESS_ONE` has a dependcien with `PROCESS_TWO`. This way, `PROCESS_TWO` will only start when `PROCESS_ONE` had finished.
 
@@ -37,7 +37,7 @@ In the example below we can see how `PROCESS_ONE` has a dependcien with `PROCESS
       "id": "PROCESS_TWO",
       "name": "Second process of the chain",
       "depends_process": ["PROCESS_ONE"],
-      "...":"..."
+      "...": "..."
     }
   ]
 }
@@ -49,24 +49,24 @@ It is highly recommended to have a look at **dependencies** documentation [here]
 
 ### Exec
 
-In the exec property are the fields that identify the executor that is going to be used and the params needed. 
+In the exec property are the fields that identify the executor that is going to be used and the params needed.
 
 ```json
 {
-  "processes":[
-      {
-        "id": "PROCESS_ONE",
-        "name": "First process of the chain",
-        "exec":
-          {
-            "id": "shell_default",
-            "command": "echo 'Hello world'",
-            "...":"..."
-          }
+  "processes": [
+    {
+      "id": "PROCESS_ONE",
+      "name": "First process of the chain",
+      "exec": {
+        "id": "shell_default",
+        "command": "echo 'Hello world'",
+        "...": "..."
       }
-    ]
+    }
+  ]
 }
 ```
+
 In this example we are using our shell_default executor, the configuration for this executor should be in our config.json file:
 
 ```json
@@ -94,72 +94,73 @@ This is an example of usage of notifications in a process. In this case, we are 
 {
   "id": "PROCESS_ONE",
   "name": "First process of the chain",
-  "exec":
-    {
-      "id": "shell_default",
-      "command": "echo 'Hello world'"
-    },
+  "exec": {
+    "id": "shell_default",
+    "command": "echo 'Hello world'"
+  },
   "notifications": {
     "on_start": [
       {
         "id": "telegram_default",
         "message": "THE PROCESS @GV(PROCESS_ID)HAS STARTED"
       }
-      ],
+    ],
     "on_fail": [
       {
         "id": "telegram_default",
         "message": "THE PROCESS @GV(PROCESS_ID)HAS FAILED"
       }
-      ],
+    ],
     "on_end": [
       {
         "id": "telegram_default",
         "message": "THE PROCESS @GV(PROCESS_ID)HAS FINISHED"
       }
-      ],
+    ],
     "on_queue": [
-     {
-       "id": "telegram_default",
-       "message": "THE PROCESS @GV(PROCESS_ID)HAS QUEUE"
-     }
-     ],
+      {
+        "id": "telegram_default",
+        "message": "THE PROCESS @GV(PROCESS_ID)HAS QUEUE"
+      }
+    ],
     "on_timeout": [
-     {
-       "id": "telegram_default",
-       "message": "THE PROCESS @GV(PROCESS_ID)HAS TIMEOUT"
-     }
-     ]
+      {
+        "id": "telegram_default",
+        "message": "THE PROCESS @GV(PROCESS_ID)HAS TIMEOUT"
+      }
+    ]
   }
 }
 ```
->Note that in the example it is used the global value PROCESS_ID, this value will have the id of the process. Know more about [global_values].
+
+> Note that in the example it is used the global value PROCESS_ID, this value will have the id of the process. Know more about [global_values].
 
 There is an official list of the available notifiers [here](plugins.md).
 
 ### Output
 
-Another property of ther processes is that we can redirect the output of a process to a file. 
+Another property of ther processes is that we can redirect the output of a process to a file.
 
 ```json
 {
   "id": "PROCESS_ONE",
-  	"name": "First process of the chain",
-    "exec":
-      {
-        "id": "shell_default",
-        "command": "echo 'Hello world'"
-      },
-  "output": [{
-			"file_name": "/var/log/runnerty/general.log", 
-			"write": ["EXECUTION *@GV(PROCESS_ID)* @GETDATE(DD-MM-YY HH:mm:ss)\n"], 
-			"concat": true, 
-			"maxsize": "1mb"
-			}]
+  "name": "First process of the chain",
+  "exec": {
+    "id": "shell_default",
+    "command": "echo 'Hello world'"
+  },
+  "output": [
+    {
+      "file_name": "/var/log/runnerty/general.log",
+      "write": ["EXECUTION *@GV(PROCESS_ID)* @GETDATE(DD-MM-YY HH:mm:ss)\n"],
+      "concat": true,
+      "maxsize": "1mb"
+    }
+  ]
 }
 ```
 
-Runnerty provides some options to manage logs. Using the property `concat` we can indicate Runnerty if we want to concatente the output or overwrite it. 
+Runnerty provides some options to manage logs. Using the property `concat` we can indicate Runnerty if we want to concatente the output or overwrite it.
 
 With the maxsize option we indicate Runnerty the maximun size that the log's file could have. Runnerty will automatically delete the firt lines of the file when it is full and needs to continue writting.
 
@@ -171,15 +172,12 @@ For example:
 
 ```json
 {
-  "processes":[
+  "processes": [
     {
       "id": "GET-USER-EMAIL",
       "name": "it get an user email",
-      "exec":
-        { "id": "mysql_default",
-          "command": "SELECT email FROM USERS WHERE ID = 1"
-        },
-      "output_share": [{"key":"USER","name":"EMAIL","value":"@GV(PROCESS_EXEC_MSG_OUTPUT)"}]
+      "exec": { "id": "mysql_default", "command": "SELECT email FROM USERS WHERE ID = 1" },
+      "output_share": [{ "key": "USER", "name": "EMAIL", "value": "@GV(PROCESS_EXEC_MSG_OUTPUT)" }]
     }
   ]
 }
@@ -204,15 +202,16 @@ It is possible to establish two different actions, end or error. If the "error" 
 In addition to the action must indicate the mandatory property "delay" indicating the maximum timeout in milliseconds.
 
 For example:
+
 ```json
 {
-  "processes":[
+  "processes": [
     {
       "...": "...",
-      "timeout":{
+      "timeout": {
         "action": "error",
         "delay": "3s"
-        }
+      }
     }
   ]
 }
@@ -256,4 +255,4 @@ Delay property understands the following strings:
 
 The space after the number is optional so you can also write `1ms` instead of `1 ms`. In addition to that it also accepts numbers and strings which only includes numbers and we assume that these are always in milliseconds.
 
-*From: [Millisecond module]*(https://github.com/unshiftio/millisecond)
+_From: [Millisecond module]_(https://github.com/unshiftio/millisecond)
