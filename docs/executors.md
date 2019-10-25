@@ -2,7 +2,7 @@
 
 The executors are plugins for Runnerty which encapsulate functionalities. The processes of a chain use executors to realize different actions.
 
-There are a bunch of executors for different purposes. Execute sentences in different databases like mysql, postgres, etc. Sending mails, operations with S3 files. You can have a look at the official list of executors [here](plugins.md).
+There are a bunch of executors for different purposes. Execute sentences in different databases like mysql, postgres, etc. Sending mails, operations with S3 files. You can have a look at the official list of executors [here](plugins.md#Executors).
 
 ### Configuration
 
