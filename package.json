@@ -82,11 +82,11 @@
     "node": ">=10.16.3"
   },
   "devDependencies": {
-    "all-contributors-cli": "6.10.0",
+    "all-contributors-cli": "6.11.0",
     "commitizen": "4.0.3",
     "cz-conventional-changelog": "3.0.2",
     "eslint": "6.6.0",
-    "eslint-plugin-jest": "23.0.2",
+    "eslint-plugin-jest": "23.0.4",
     "jest": "24.9.0",
     "jest-cli": "24.9.0",
     "runnerty-tests-modules": "file:__tests__/end2end"
