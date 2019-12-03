@@ -1,5 +1,17 @@
 # Runnerty ChangeLog
 
+<a name="2.5.1"></a>
+
+# [2.5.1](3/12/2019)
+
+### Features
+
+- **dependencies:** minor dependency updates
+
+### Bug Fixes
+
+- **common:** avoid abortion in uncaughtException
+
 <a name="2.5.0"></a>
 
 # [2.5.0](16/10/2019)
@@ -13,18 +25,18 @@
 - **telemetry:** historicize iter-serie process executionId
 - **dependencies:** minor dependency updates
 - **dependencies:** ajv 6 JSON Schema draft-07 compatibility
--
+
 ### Tests
 
 - **common:** update tests to match changes and generate new
--
+
 ### Bug Fixes
 
 - **common:** wrong notification order
 - **common:** incorrect log messages visualization
 - **common:** complex prod depen. could cause double exec
 - **telemetry:** async pre-death communication resolved
--
+
 <a name="2.4.0"></a>
 
 # [2.4.0](23/09/2019)
