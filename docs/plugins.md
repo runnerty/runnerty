@@ -1,6 +1,6 @@
 # List of plugins availables
 
-This is the list of the official plugins availables. 
+This is the list of the official plugins availables.
 
 ## Executors
 
@@ -39,3 +39,4 @@ This is the list of the official plugins availables.
 - [File Watcher](https://www.npmjs.com/package/@runnerty/trigger-file-watcher)
 - [Twitter](https://www.npmjs.com/package/@runnerty/trigger-twitter)
 - [Firebase](https://www.npmjs.com/package/@runnerty/trigger-firebase)
+- [Server](https://www.npmjs.com/package/@runnerty/trigger-server)
