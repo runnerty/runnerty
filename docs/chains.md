@@ -389,3 +389,93 @@ Now, we can use these values anywhere in our iterable chain:
 ```
 
 In the example :email will be replaced with the user's email and :name will be replaced with the user's name.
+
+### Default properties for processes
+
+It is possible to define a default value for all the processes in a chain of `notifications`,`output` and `chain_action_on_fail`, depending on the `defaults_processes` property of a chain.
+
+For example:
+
+```json
+{
+      "id": "CHAIN_SAMPLE",
+      "name": "CHAIN_SAMPLE",
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "console_default",
+              "message": "PROCESS @GV(PROCESS_ID) START"
+            }
+          ],
+          "on_fail": [
+            {
+              "id": "console_default",
+              "message": "ERR! PROCESS @GV(PROCESS_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+            }
+          ],
+          "on_end": [
+            {
+              "id": "console_default",
+              "message": "PROCESS @GV(PROCESS_ID) END"
+            }
+          ]
+        },
+        "output": [
+          {
+            "file_name": "./test.log",
+            "write": [
+              "@GETDATE('YYYY-MM-DD HH:mm:sS') - @GV(CHAIN_ID)/@GV(PROCESS_ID)/@GV(PROCESS_EXEC_COMMAND_EXECUTED)\n"
+            ],
+            "concat": true,
+            "maxsize": "10mb"
+          }
+        ],
+        "chain_action_on_fail": {
+          "action": "abort"
+        }
+      },
+      "processes": [...]
+```
+
+It is also possible to overwrite the default values (`defaults_processes`) in each of the processes.
+For example, in this case the default value of the `on_start` event of `notifications` is overwritten in the `PROCESS_SAMPLE` process, the rest of the `notifications` values will be those defined by default:
+
+```json
+{
+      "id": "CHAIN_SAMPLE",
+      "name": "CHAIN SAMPLE",
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "console_default",
+              "message": "PROCESS @GV(PROCESS_ID) START"
+            }
+          ],
+          "on_fail": [
+            {
+              "id": "console_default",
+              "message": "ERR! PROCESS @GV(PROCESS_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+            }
+          ]
+        }
+      },
+      "processes": [
+        {
+          "id": "PROCESS_SAMPLE",
+          "name": "PROCESS SAMPLE",
+          "exec": {
+            "id": "shell_default",
+            "command": "echo hello world"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "OVERRIDE: PROCESS @GV(PROCESS_ID) START"
+              }
+            ]
+          }
+        }]
+```

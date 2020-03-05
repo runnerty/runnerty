@@ -111,6 +111,18 @@
         }
       }
     },
+    "defaults_processes": {
+      "type": "object",
+      "properties": {
+        "notifications": {
+          "$ref": "processSchema#/definitions/notifications_process"
+        },
+        "chain_action_on_fail": {
+          "$ref": "processSchema#/definitions/chain_action_on_fail_process"
+        },
+        "output": { "$ref": "processSchema#/definitions/output_process" }
+      }
+    },
     "processes": {
       "$ref": "processSchema"
     }

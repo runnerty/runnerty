@@ -362,3 +362,36 @@ describe('Iterable-end-error-abort-serie', () => {
     );
   });
 });
+
+describe('SimpleDefaultsProcess', () => {
+  const successOutput = `info: CHAIN CHAIN_ONE START
+  info: [[OVERR-PROC]] PROCESS PROCESS_ONE START
+  info: [[DP]]! PROCESS PROCESS_ONE END
+  info: [[DP]]! PROCESS PROCESS_TWO START
+  info: [[DP]]! PROCESS PROCESS_TWO END
+  info: CHAIN CHAIN_ONE END`;
+
+  test('Execution End2End: SimpleDefaultsProcess', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_defaults_processes.json',
+        '-f',
+        'CHAIN_ONE',
+        '--end'
+      ],
+      9000,
+      res => {
+        const _res = res.substring(res.indexOf('\n') + 1);
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
+        done();
+      }
+    );
+  });
+});

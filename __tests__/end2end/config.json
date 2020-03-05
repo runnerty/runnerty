@@ -5,22 +5,6 @@
       "planFilePath": "plan.json",
       "modulesPath": "./__tests__/end2end/node_modules/",
       "refreshIntervalBinBackup": 2000,
-      "api": {
-        "port": 3457,
-        "users": [
-          {
-            "user": "coderty",
-            "password": "runnerty"
-          },
-          {
-            "user": "usr_test",
-            "password": "pass_test"
-          }
-        ],
-        "secret": "RUNNERTY_BY_CODERTY",
-        "limite_req": "20mb",
-        "log_display_level": "dev"
-      },
       "runnerty.io": {
         "apikey": "YOUR_RUNNERTY.IO_PROJECT_TOKEN",
         "disable": true
