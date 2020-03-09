@@ -106,12 +106,13 @@ Examples:
 
 ### Dates
 
-| Function | Syntax                                                                                    | Description                                                       |
-| :------- | :---------------------------------------------------------------------------------------- | :---------------------------------------------------------------- |
-| GETDATE  | `@GETDATE(STRING_FORMAT, STRIN_LANGUAGE, STRING_PERIOD, NUMBER_INCREMENT, BOOLEAN_UPPER)` | Returns string as specified by a format mask, language and period |
-
+| Function   | Syntax                                                                                                                                 | Description                                                                                   |
+| :--------- | :------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------- |
+| GETDATE    | `@GETDATE(STRING_FORMAT, STRING_LANGUAGE, STRING_PERIOD, NUMBER_INCREMENT, BOOLEAN_UPPER)`                                             | Returns string as specified by a format mask, language and period with current day            |
+| LASTDAY    | `@LASTDAY(STRING_DATE, STRING_INPUT_FORMAT, STRING_OUTPUT_FORMAT, STRING_LANGUAGE, BOOLEAN_UPPER)`                                     | Returns string as specified by a format mask and language with the last day of the input date |
+| DATEFORMAT | `@DATEFORMAT(STRING_DATE, STRING_INPUT_FORMAT, STRING_OUTPUT_FORMAT, STRING_LANGUAGE, STRING_PERIOD, NUMBER_INCREMENT, BOOLEAN_UPPER)` | Returns string as specified by a format mask and language and period of the input date        |
 ```
-Format: http://momentjs.com/docs/#/parsing/string-format/
+Format: https://momentjs.com/docs/#/parsing/string-format/
 Language: Use country Abbreviations ('en','es','cn','fr',...) - http://momentjs.com/docs/#/i18n/
 Period: It is posible use a key or shorthand key of a perior: years or y, quarters or Q, months or M, weeks or w, days or d, hours or h, minutes or m, seconds or s, milliseconds or ms
 Increment: Number (+/-) to increment a period
@@ -123,6 +124,10 @@ Examples:
 ```
 @GETDATE('MMMM','es','months',2,true) - Add 2 months to current date and output month name upper: 'ENERO'
 @GETDATE('YYYY-MM-DD HH:mm:ss') - Return current date formated like the mask 'YYYY-MM-DD HH:mm:ss': '2018-01-01 23:59:59'
+@LASTDAY('01-01-2020','DD-MM-YYYY','MMMM','es',true)
+@LASTDAY('20200220','YYYYMMDD','DD/MM/YYYY')
+@LASTDAY(@GETDATE())
+@DATEFORMAT('20201231','YYYYMMDD','MMMM','en','month','-1',true)
 ```
 
 ### Paths/Urls
