@@ -12,6 +12,26 @@
           "schedule_interval": "*/1 * * * *"
         }
       ],
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "mail_default",
+              "subject": "RUNNERTY SAMPLE",
+              "message": "PROCESS @GV(PROCESS_NAME) START"
+            }
+          ],
+          "on_fail": [],
+          "on_retry": [],
+          "on_end": [
+            {
+              "id": "mail_default",
+              "subject": "RUNNERTY SAMPLE",
+              "message": "PROCESS @GV(PROCESS_NAME) END. RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
+            }
+          ]
+        }
+      },
       "notifications": {
         "on_start": [
           {
@@ -51,25 +71,7 @@
               "concat": true,
               "maxsize": "10mb"
             }
-          ],
-          "notifications": {
-            "on_start": [
-              {
-                "id": "mail_default",
-                "subject": "RUNNERTY SAMPLE",
-                "message": "PROCESS @GV(PROCESS_NAME) START"
-              }
-            ],
-            "on_fail": [],
-            "on_retry": [],
-            "on_end": [
-              {
-                "id": "mail_default",
-                "subject": "RUNNERTY SAMPLE",
-                "message": "PROCESS @GV(PROCESS_NAME) END. RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
-              }
-            ]
-          }
+          ]
         },
         {
           "id": "PROCESS_TWO",
@@ -93,25 +95,7 @@
               "concat": true,
               "maxsize": "10mb"
             }
-          ],
-          "notifications": {
-            "on_start": [
-              {
-                "id": "mail_default",
-                "subject": "RUNNERTY SAMPLE",
-                "message": "PROCESS @GV(PROCESS_NAME) START"
-              }
-            ],
-            "on_fail": [],
-            "on_retry": [],
-            "on_end": [
-              {
-                "id": "mail_default",
-                "subject": "RUNNERTY SAMPLE",
-                "message": "PROCESS @GV(PROCESS_NAME) END. RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
-              }
-            ]
-          }
+          ]
         }
       ]
     }

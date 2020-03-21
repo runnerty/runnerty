@@ -25,3 +25,11 @@
 ```bash
 runnerty -c /etc/runnerty/config.json -p /user/workdir/other_plan.json -f CHAIN_ONE --custom_values {\"YYYY\":\"1986\"} --end
 ```
+
+```bash
+runnerty -c /etc/runnerty/config.json -p /user/workdir/other_plan.json -f CHAIN_ONE --custom_values '{"YYYY":"1986"}' --end
+```
+
+```bash
+runnerty -c /etc/runnerty/config.json -p /user/workdir/other_plan.json -f CHAIN_ONE --custom_values '{"YYYY":"1986"}' --input_values '[{"KEY_1":"1-1", "KEY_2":"1-2"},{"KEY_1":"2-1", "KEY_2":"2-2"}]' --end
+```

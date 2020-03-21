@@ -395,3 +395,77 @@ describe('SimpleDefaultsProcess', () => {
     );
   });
 });
+
+describe('ArgsCustomValuesProcess', () => {
+  const successOutput = `info: CHAIN CHAIN_ONE START
+  info: PROCESS PROCESS_ONE CV: L1 / 2 / I1 / I2
+  info: CHAIN CHAIN_ONE END
+  info: CHAIN CHAIN_ONE START
+  info: PROCESS PROCESS_ONE CV: L1 / 2 / I3 / I4
+  info: CHAIN CHAIN_ONE END`;
+
+  test('Execution End2End: ArgsCustomValuesProcess', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_args_custom-values.json',
+        '-f',
+        'CHAIN_ONE',
+        '--custom_values',
+        '\'{"KV_1":"L1"}\'',
+        '--input_values',
+        '\'[{"KI1":"I1", "KI2":"I2"},{"KI1":"I3", "KI2":"I4"}]\'',
+        '--end'
+      ],
+      9000,
+      res => {
+        const _res = res.substring(res.indexOf('\n') + 1);
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
+        done();
+      }
+    );
+  });
+});
+
+describe('RetryProcess', () => {
+  const successOutput = `info: CHAIN CHAIN_ONE START
+  info: [[DP]]! PROCESS PROCESS_ONE START - TS:
+  info: [[DP]]! PROCESS PROCESS_TWO START - TS:
+  info: [[DP]]! ERR! PROCESS PROCESS_TWO FAIL: expr: syntax error
+  info: [[DP]]! RETRY PROCESS PROCESS_TWO:  - TS:
+  info: [[DP]]! ERR! PROCESS PROCESS_TWO FAIL: expr: syntax error
+  info: [[DP]]! PROCESS PROCESS_ONE END - TS:
+  info: [[DP]]! RETRY PROCESS PROCESS_TWO:  - TS:1
+  info: [[DP]]! PROCESS PROCESS_TWO END - TS:1
+  info: CHAIN CHAIN_ONE END`;
+
+  test('Execution End2End: RetryProcess', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_retry.json ',
+        '-f',
+        'CHAIN_ONE',
+        '--end'
+      ],
+      9000,
+      res => {
+        const _res = res.substring(res.indexOf('\n') + 1);
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
+        done();
+      }
+    );
+  });
+});

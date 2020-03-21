@@ -1,0 +1,52 @@
+{
+  "chains": [
+    {
+      "id": "CHAIN_ONE",
+      "name": "CHAIN_ONE",
+      "iterable": "serie",
+      "custom_values": {
+        "KV_1": "1",
+        "KV_2": "2"
+      },
+      "input": [{ "POST_KI1": "KI1" }, { "POST_KI2": "KI2" }],
+      "notifications": {
+        "on_start": [
+          {
+            "id": "console_default",
+            "message": "CHAIN @GV(CHAIN_ID) START"
+          }
+        ],
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "CHAIN @GV(CHAIN_ID) END"
+          }
+        ],
+        "on_fail": [
+          {
+            "id": "console_default",
+            "message": "CHAIN @GV(CHAIN_ID) FAIL"
+          }
+        ]
+      },
+      "processes": [
+        {
+          "id": "PROCESS_ONE",
+          "name": "PROCESS_ONE",
+          "exec": {
+            "id": "shell_default",
+            "command": "echo 1"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) CV: @GV(KV_1) / @GV(KV_2) / @GV(POST_KI1) / @GV(POST_KI2)"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
