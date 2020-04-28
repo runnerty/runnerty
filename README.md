@@ -50,7 +50,6 @@ Want to know more? have a look at the documentation [here](http://docs.runnerty.
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/judmft"><img src="https://avatars0.githubusercontent.com/u/49159375?s=400&v=4" width="80px;" alt="Judith Martínez-Falero"/><br /><sub><b>Judith Martínez-Falero</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/jlozper"><img src="https://avatars3.githubusercontent.com/u/48140531?s=400&v=4" width="80px;" alt="Jon Lozano"/><br /><sub><b>Jon Lozano</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/Jhonsensf"><img src="https://avatars3.githubusercontent.com/u/20872950?v=4" width="80px;" alt="José Antonio Ruiz"/><br /><sub><b>José Antonio Ruiz</b></sub></a><br /></td>
     <td align="center"><a href="http://www.baldboy.es"><img src="https://avatars3.githubusercontent.com/u/545420?v=4" width="80px;" alt="David Rodríguez"/><br /><sub><b>David Rodríguez</b></sub></a><br /></td>
   </tr>

@@ -128,19 +128,7 @@
       }
     },
     "chain_action_on_fail_process": {
-      "type": "object",
-      "required": ["action"],
-      "properties": {
-        "action": {
-          "type": "string"
-        },
-        "delay": {
-          "type": ["number", "string"]
-        },
-        "retries": {
-          "type": "number"
-        }
-      }
+      "type": "string"
     }
   },
   "type": "array",

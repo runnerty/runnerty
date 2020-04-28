@@ -24,6 +24,7 @@ This is the list of the official plugins availables.
 - [Confirmation](https://www.npmjs.com/package/@runnerty/executor-confirmation)
 - [XML/JSON Parser](https://www.npmjs.com/package/@runnerty/executor-parse-xml-json)
 - [Twitter](https://www.npmjs.com/package/@runnerty/executor-twitter)
+- [Puppeteer](https://github.com/runnerty/executor-puppeteer-export)
 
 ## Notifiers
 

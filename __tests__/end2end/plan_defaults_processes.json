@@ -34,9 +34,7 @@
             "maxsize": "10mb"
           }
         ],
-        "chain_action_on_fail": {
-          "action": "abort"
-        }
+        "chain_action_on_fail": "abort"
       },
       "notifications": {
         "on_start": [

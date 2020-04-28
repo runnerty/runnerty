@@ -469,3 +469,46 @@ describe('RetryProcess', () => {
     );
   });
 });
+
+
+describe('RetryProcessCAOF', () => {
+  const successOutput = `info: CHAIN CHAIN_ONE START
+  info: [[DP]]! PROCESS PROCESS_ONE START - TS:
+  info: [[DP]]! PROCESS PROCESS_TWO START - TS:
+  info: [[DP]]! ERR! PROCESS PROCESS_TWO FAIL
+  info: [[DP]]! PROCESS PROCESS_ONE END - TS:
+  info: CHAIN CHAIN_ONE FAIL
+  info: CHAIN CHAIN_ONE RETRY
+  info: CHAIN CHAIN_ONE END
+  info: CHAIN CHAIN_ONE START
+  info: [[DP]]! PROCESS PROCESS_TWO START - TS:1
+  info: [[DP]]! PROCESS PROCESS_ONE START - TS:1
+  info: [[DP]]! PROCESS PROCESS_TWO END - TS:1
+  info: [[DP]]! PROCESS PROCESS_ONE END - TS:1
+  info: CHAIN CHAIN_ONE END`;
+
+  test('Execution End2End: RetryProcessCAOF', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_retry_caof_obj.json',
+        '-f',
+        'CHAIN_ONE',
+        '--end'
+      ],
+      9000,
+      res => {
+        const _res = res.substring(res.indexOf('\n') + 1);
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
+        done();
+      }
+    );
+  });
+});
+

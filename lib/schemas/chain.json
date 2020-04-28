@@ -24,6 +24,12 @@
     "custom_values": {
       "type": "object"
     },
+    "retries": {
+      "type": "number"
+    },
+    "retry_delay": {
+      "type": ["number", "string"]
+    },
     "triggers": {
       "type": "array",
       "items": {

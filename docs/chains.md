@@ -170,26 +170,25 @@ Learn more about _processes_ and how to configure them [here](process.md).
 
 ### Actions for a chain when a process fails
 
-It is possible to define what action (abort or retry) to perform at the chain level in case a process fails.
-
-Retry it 2 times with a delay of 2 seconds (2000ms) if the process fails:
+It is possible to define what action (abort or retry) to perform at the chain level in case a process fails. The number of `retries` and delay (`retry_delay`) settings will be set at the chain level.
 
 ```json
 {
-  "...": "...",
+  "id": "CHAIN_SAMPLE",
+  "name": "Chain with retries",
+  "retries": 1,
+  "retry_delay": "1 min",
   "processes": [
     {
       "id": "SAMPLE-PROCESS",
       "...": "...",
-      "chain_action_on_fail": {
-        "action": "retry",
-        "delay": "2 secs",
-        "retries": 2
-      }
+      "chain_action_on_fail": "retry"
     }
   ]
 }
 ```
+
+
 
 Abort the chain if the process fails (this action ends the chain's flow so no other processes will be executed):
 
@@ -200,9 +199,7 @@ Abort the chain if the process fails (this action ends the chain's flow so no ot
     {
       "id": "SAMPLE-PROCESS",
       "...": "...",
-      "chain_action_on_fail": {
-        "action": "abort"
-      }
+      "chain_action_on_fail": "abort"
     }
   ]
 }
@@ -292,6 +289,8 @@ Now we are going to define the iterable chain _"send-mail-to-user"_
 {
   "id": "SEND-MAIL-TO-USERS",
   "name": "it sends an email to the users returned",
+  "retries": 1,
+  "retry_delay": "1 min",
   "depends_chains": {
     "chain_id": "GET-USERS-EMAIL",
     "process_id": "GET-USER-EMAIL"
@@ -315,11 +314,7 @@ Now we are going to define the iterable chain _"send-mail-to-user"_
         "message": "Hello :name",
         "title": "Message set by Runnerty"
       },
-      "chain_action_on_fail": {
-        "action": "retry",
-        "delay": "1 min",
-        "retries": 1
-      }
+      "chain_action_on_fail": "retry"
     }
   ]
 }
@@ -431,9 +426,7 @@ For example:
             "maxsize": "10mb"
           }
         ],
-        "chain_action_on_fail": {
-          "action": "abort"
-        }
+        "chain_action_on_fail": "abort"
       },
       "processes": [...]
 ```

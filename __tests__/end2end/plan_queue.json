@@ -5,6 +5,8 @@
       "name": "CHAIN_ONE",
       "queue": "TEST",
       "priority": 10,
+      "retries": 1,
+      "retry_delay": 2000,
       "__custom_values": {
         "KEY_VAL_CHAIN_ONE": "1",
         "KEY_VAL_CHAIN_TWO": "2",
@@ -47,11 +49,7 @@
           "name": "CHAIN_ONE_PROC_ONE",
           "queue": "TEST_TWO",
           "priority": 5,
-          "chain_action_on_fail": {
-            "action": "retry",
-            "delay": 2000,
-            "retries": 1
-          },
+          "chain_action_on_fail": "retry",
           "exec": {
             "id": "shell_default",
             "command": "echo x"
