@@ -25,9 +25,9 @@ module.exports = () => {
 
   switch (true) {
     case !!config.api.ssl &&
-    !!config.api.key &&
-    !!config.api.cert &&
-    config.api.port:
+      !!config.api.key &&
+      !!config.api.cert &&
+      config.api.port:
       const privateKey = fs.readFileSync(config.api.key, 'utf8');
       const certificate = fs.readFileSync(config.api.cert, 'utf8');
       server = https.createServer({
@@ -272,11 +272,11 @@ module.exports = () => {
     let input_str = '';
     try {
       custom_values_str = JSON.stringify(req.body.custom_values);
-    } catch (err) {}
+    } catch (err) { }
 
     try {
       input_str = JSON.stringify(req.body.input);
-    } catch (err) {}
+    } catch (err) { }
 
     logger.info(
       `API - CHAIN START FORCED: chainId:${chainId}, custom_values:${custom_values_str}, input:${input_str}`
@@ -326,16 +326,14 @@ module.exports = () => {
     const chainId = req.params.chainId;
     const uniqueId = req.params.uniqueId || req.params.chainId + '_main';
 
-    apiPlan
-      .stopChain(chainId, uniqueId)
-      .then(() => {
-        logger.info(`Chain "${chainId}" killed by ${req.user}`);
-        res.json('');
-      })
-      .catch(err => {
-        res.status(404).send(err);
-        logger.error('loadChainToPlan scheduleChain', err);
-      });
+    try {
+      apiPlan.stopChain(chainId, uniqueId);
+      logger.info(`Chain "${chainId}" killed by ${req.user}`);
+      res.json('');
+    } catch (err) {
+      res.status(404).send(err);
+      logger.error('loadChainToPlan scheduleChain', err);
+    }
   });
 
   /**
@@ -451,7 +449,7 @@ module.exports = () => {
 
           process.execute_return = '';
           process.execute_err_return = '';
-          process.end().then(() => {});
+          process.end().then(() => { });
 
           if (continueChain) {
             chain

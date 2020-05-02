@@ -190,7 +190,7 @@ It is possible to define what action (abort or retry) to perform at the chain le
 
 
 
-Abort the chain if the process fails (this action ends the chain's flow so no other processes will be executed):
+Abort the chain if the process fails (this action ends the chain's flow so no other processes will be executed). It is not necessary to indicate, is the default value:
 
 ```json
 {

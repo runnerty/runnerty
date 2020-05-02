@@ -128,7 +128,20 @@
       }
     },
     "chain_action_on_fail_process": {
-      "type": "string"
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "required": ["action"],
+          "properties": {
+            "action": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     }
   },
   "type": "array",
