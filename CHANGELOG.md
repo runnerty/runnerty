@@ -1,13 +1,15 @@
 # Runnerty ChangeLog
 
-<a name="2.6.0-rc3"></a>
+<a name="2.6.0-rc5"></a>
 
-# [2.6.0-rc3](21/03/2020)
+# [2.6.0-rc5](02/05/2020)
 
 ### Features
 
 - **dependencies:** minor dependency updates
 - **common:** new default properties for processes [docs](./docs/chains.md)
+- **common:** improvements in handling chains retries [docs](./docs/chains.md)
+- **common:** code cleaning and refactoring
 - **interpreter:** new date interpreter functions (`DATEFORMAT` and `LASTDAY`) [docs](./docs/functions.md)
 
 ### Bug Fixes

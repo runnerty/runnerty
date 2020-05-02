@@ -59,9 +59,7 @@
           },
           "retries": 0,
           "retry_delay": 0,
-          "chain_action_on_fail": {
-            "action": "end"
-          },
+          "chain_action_on_fail": "abort",
           "output": [
             {
               "file_name": "/etc/runnerty/test.log",
@@ -83,9 +81,7 @@
           },
           "retries": 0,
           "retry_delay": 0,
-          "chain_action_on_fail": {
-            "action": "end"
-          },
+          "chain_action_on_fail": "abort",
           "output": [
             {
               "file_name": "/etc/runnerty/test.log",
