@@ -23,7 +23,8 @@
   "scripts": {
     "commit": "git-cz",
     "test": "RUNNERTY_TEST=true jest --runInBand --detectOpenHandles",
-    "test-watch": "RUNNERTY_TEST=true jest --runInBand --detectOpenHandles --watch"
+    "test-watch": "RUNNERTY_TEST=true jest --runInBand --detectOpenHandles --watch",
+    "lint": "eslint '**/*.js' && prettier --check '**'"
   },
   "global": false,
   "dependencies": {
@@ -87,10 +88,13 @@
     "all-contributors-cli": "6.14.2",
     "commitizen": "4.0.5",
     "cz-conventional-changelog": "3.1.0",
-    "eslint": "6.8.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-jest": "23.8.2",
+    "eslint-plugin-prettier": "^3.1.3",
     "jest": "25.5.4",
     "jest-cli": "25.5.4",
+    "prettier": "^2.0.5",
     "runnerty-tests-modules": "file:__tests__/end2end"
   },
   "jest": {

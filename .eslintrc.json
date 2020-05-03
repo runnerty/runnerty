@@ -4,7 +4,7 @@
     "node": true,
     "jest/globals": true
   },
-  "extends": "eslint:recommended",
+  "extends": ["plugin:prettier/recommended"],
   "globals": {
     "Promise": true,
     "global": true
@@ -17,22 +17,10 @@
     }
   },
   "rules": {
-    "indent": ["error", 2, {"SwitchCase":1}],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
     "default-case": "error",
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-    "quotes": [
-      "error",
-      "double"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ]
+    "linebreak-style": ["error", "unix"],
+    "semi": ["error", "always"]
   },
-  "plugins": [
-    "jest"
-  ]
+  "plugins": ["jest"]
 }

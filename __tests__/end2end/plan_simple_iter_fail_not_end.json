@@ -1,59 +1,75 @@
 {
-  "chains": [{
+  "chains": [
+    {
       "id": "CHAIN-LAUNCHER",
       "name": "CHAIN-LAUNCHER",
       "notifications": {
-        "on_start": [{
-          "id": "console_default",
-          "message": "1 CHAIN @GV(CHAIN_ID) START"
-        }],
-        "on_end": [{
-          "id": "console_default",
-          "message": "10 CHAIN @GV(CHAIN_ID) END"
-        }],
-        "on_fail": [{
-          "id": "console_default",
-          "message": "ERR! 10 CHAIN @GV(CHAIN_ID) FAIL"
-        }]
+        "on_start": [
+          {
+            "id": "console_default",
+            "message": "1 CHAIN @GV(CHAIN_ID) START"
+          }
+        ],
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "10 CHAIN @GV(CHAIN_ID) END"
+          }
+        ],
+        "on_fail": [
+          {
+            "id": "console_default",
+            "message": "ERR! 10 CHAIN @GV(CHAIN_ID) FAIL"
+          }
+        ]
       },
-      "processes": [{
-        "id": "PROCESS-LAUNCHER",
-        "name": "PROCESS-LAUNCHER",
-        "exec": {
-          "id": "iterable_default",
-          "objects": [{
-              "CMDPROC": "echo @GV(PROCESS_ID)_1"
-            },
-            {
-              "CMDPROC": "echo @GV(PROCESS_ID)_2"
-            },
-            {
-              "CMDPROC": "echo @GV(PROCESS_ID)_3"
-            },
-            {
-              "CMDPROC": "lol @GV(PROCESS_ID)_4"
-            },
-            {
-              "CMDPROC": "echo @GV(PROCESS_ID)_5"
-            }
-          ]
-        },
-        "notifications": {
-          "on_start": [{
-            "id": "console_default",
-            "message": "2   PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) START"
-          }],
-          "on_fail": [{
-            "id": "console_default",
-            "message": "ERR! PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
-          }],
-          "on_end": [{
-            "id": "console_default",
-            "message": "3    PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) END"
-          }]
-        },
-        "output_iterable": "PROCESS_EXEC_DATA_OUTPUT"
-      }]
+      "processes": [
+        {
+          "id": "PROCESS-LAUNCHER",
+          "name": "PROCESS-LAUNCHER",
+          "exec": {
+            "id": "iterable_default",
+            "objects": [
+              {
+                "CMDPROC": "echo @GV(PROCESS_ID)_1"
+              },
+              {
+                "CMDPROC": "echo @GV(PROCESS_ID)_2"
+              },
+              {
+                "CMDPROC": "echo @GV(PROCESS_ID)_3"
+              },
+              {
+                "CMDPROC": "lol @GV(PROCESS_ID)_4"
+              },
+              {
+                "CMDPROC": "echo @GV(PROCESS_ID)_5"
+              }
+            ]
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "2   PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) START"
+              }
+            ],
+            "on_fail": [
+              {
+                "id": "console_default",
+                "message": "ERR! PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+              }
+            ],
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "3    PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) END"
+              }
+            ]
+          },
+          "output_iterable": "PROCESS_EXEC_DATA_OUTPUT"
+        }
+      ]
     },
     {
       "id": "CHAIN-ITERABLE",
@@ -63,24 +79,33 @@
         "chain_id": "CHAIN-LAUNCHER",
         "process_id": "PROCESS-LAUNCHER"
       },
-      "input": [{
-        "CMDPROC": "CMDPROC"
-      }],
+      "input": [
+        {
+          "CMDPROC": "CMDPROC"
+        }
+      ],
       "notifications": {
-        "on_start": [{
-          "id": "console_default",
-          "message": "- 4     [I:@GV(CMDPROC)] CHAIN @GV(CHAIN_ID) START"
-        }],
-        "on_end": [{
-          "id": "console_default",
-          "message": "- 9   [I:@GV(CMDPROC)] CHAIN @GV(CHAIN_ID) END"
-        }],
-        "on_fail": [{
-          "id": "console_default",
-          "message": "ERR!  [I:@GV(CMDPROC)] CHAIN @GV(CHAIN_ID) FAIL"
-        }]
+        "on_start": [
+          {
+            "id": "console_default",
+            "message": "- 4     [I:@GV(CMDPROC)] CHAIN @GV(CHAIN_ID) START"
+          }
+        ],
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "- 9   [I:@GV(CMDPROC)] CHAIN @GV(CHAIN_ID) END"
+          }
+        ],
+        "on_fail": [
+          {
+            "id": "console_default",
+            "message": "ERR!  [I:@GV(CMDPROC)] CHAIN @GV(CHAIN_ID) FAIL"
+          }
+        ]
       },
-      "processes": [{
+      "processes": [
+        {
           "id": "PROCESS-ITER-ONE",
           "name": "PROCESS-ITER-ONE",
           "exec": {
@@ -88,18 +113,24 @@
             "command": "echo @GV(PROCESS_ID)"
           },
           "notifications": {
-            "on_start": [{
-              "id": "console_default",
-              "message": "- 5       [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) START"
-            }],
-            "on_fail": [{
-              "id": "console_default",
-              "message": "ERR!      [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
-            }],
-            "on_end": [{
-              "id": "console_default",
-              "message": "- 6       [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) END"
-            }]
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "- 5       [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) START"
+              }
+            ],
+            "on_fail": [
+              {
+                "id": "console_default",
+                "message": "ERR!      [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+              }
+            ],
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "- 6       [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) END"
+              }
+            ]
           }
         },
         {
@@ -111,18 +142,24 @@
             "command": "@GV(CMDPROC)"
           },
           "notifications": {
-            "on_start": [{
-              "id": "console_default",
-              "message": "- 7      [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) START"
-            }],
-            "on_fail": [{
-              "id": "console_default",
-              "message": "ERR!        [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
-            }],
-            "on_end": [{
-              "id": "console_default",
-              "message": "- 8      [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) END"
-            }]
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "- 7      [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) START"
+              }
+            ],
+            "on_fail": [
+              {
+                "id": "console_default",
+                "message": "ERR!        [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+              }
+            ],
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "- 8      [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) END"
+              }
+            ]
           }
         }
       ]

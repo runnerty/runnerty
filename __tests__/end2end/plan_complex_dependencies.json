@@ -1,205 +1,254 @@
 {
-  "chains": [{
-    "id": "CHAIN_ONE",
-    "name": "CHAIN_ONE",
-    "notifications": {
-      "on_start": [{
-        "id": "console_default",
-        "message": "CHAIN @GV(CHAIN_ID) START"
-      }],
-      "on_end": [{
-        "id": "console_default",
-        "message": "CHAIN @GV(CHAIN_ID) END"
-      }],
-      "on_fail": [{
-        "id": "console_default",
-        "message": "CHAIN @GV(CHAIN_ID) FAIL"
-      }]
-    },
-    "defaults_processes":{
-      "chain_action_on_fail":"continue",
-      "ignore_in_final_chain_status":false
-    },
-    "processes": [{
-        "id": "PROCESS_ONE",
-        "name": "PROCESS_ONE",
-        "exec": {
-          "id": "shell_default",
-          "command": "echo 10"
-        },
-        "notifications": {
-          "on_start": [{
+  "chains": [
+    {
+      "id": "CHAIN_ONE",
+      "name": "CHAIN_ONE",
+      "notifications": {
+        "on_start": [
+          {
             "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) START"
-          }],
-          "on_fail": [{
+            "message": "CHAIN @GV(CHAIN_ID) START"
+          }
+        ],
+        "on_end": [
+          {
             "id": "console_default",
-            "message": "ERR! PROCESS @GV(PROCESS_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
-          }],
-          "on_end": [{
+            "message": "CHAIN @GV(CHAIN_ID) END"
+          }
+        ],
+        "on_fail": [
+          {
             "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) END"
-          }]
-        },
-        "output_share": [{
-          "key": "VALUE",
-          "name": "10",
-          "value": "@TRIM(@GV(PROCESS_EXEC_MSG_OUTPUT))"
-        }]
+            "message": "CHAIN @GV(CHAIN_ID) FAIL"
+          }
+        ]
       },
-      {
-        "id": "PROCESS_TWO",
-        "name": "only if the value from process one is greater than 8 ",
-        "depends_process": {
-          "$and": [{
-              "$end": "PROCESS_ONE"
-            },
-            {
-              "@GV(VALUE_10)": {
-                "$gt": "8"
+      "defaults_processes": {
+        "chain_action_on_fail": "continue",
+        "ignore_in_final_chain_status": false
+      },
+      "processes": [
+        {
+          "id": "PROCESS_ONE",
+          "name": "PROCESS_ONE",
+          "exec": {
+            "id": "shell_default",
+            "command": "echo 10"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) START"
               }
-            },
-            {
-              "A": {
-                "$in": ["Z", "X", "A", "O"]
+            ],
+            "on_fail": [
+              {
+                "id": "console_default",
+                "message": "ERR! PROCESS @GV(PROCESS_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
               }
+            ],
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) END"
+              }
+            ]
+          },
+          "output_share": [
+            {
+              "key": "VALUE",
+              "name": "10",
+              "value": "@TRIM(@GV(PROCESS_EXEC_MSG_OUTPUT))"
             }
           ]
         },
-        "exec": {
-          "id": "shell_default",
-          "command": "sleep .1 && echo A"
-        },
-        "notifications": {
-          "on_start": [{
-            "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) START"
-          }],
-          "on_fail": [{
-            "id": "console_default",
-            "message": "ERR! PROCESS @GV(PROCESS_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
-          }],
-          "on_end": [{
-            "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) END"
-          }]
-        },
-        "output_share": [{
-          "key": "VALUE",
-          "name": "A",
-          "value": "@GV(PROCESS_EXEC_MSG_OUTPUT)"
-        }]
-      },
-      {
-        "id": "PROCESS_THREE",
-        "name": "only if the value from process one is greater equal to A. This process also fails",
-        "depends_process": {
-          "$and": [{
-              "$end": "PROCESS_TWO"
-            },
-            {
-              "@GV(VALUE_A)": {
-                "$eq": "A"
-              }
-            }
-          ]
-        },
-        "exec": {
-          "id": "shell_default",
-          "command": "sleep .1 && lol A"
-        },
-        "notifications": {
-          "on_start": [{
-            "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) START"
-          }],
-          "on_fail": [{
-            "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) FAILS"
-          }],
-          "on_end": [{
-            "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) END"
-          }]
-        }
-      },
-      {
-        "id": "PROCESS_FOUR",
-        "name": "only if the value from process one is greater equal to A. This process also fails",
-        "depends_process": {
-          "$fail": "PROCESS_THREE"
-        },
-        "exec": {
-          "id": "shell_default",
-          "command": "sleep .1 && echo four"
-        },
-        "notifications": {
-          "on_start": [{
-            "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) START"
-          }],
-          "on_fail": [{
-            "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) FAILS"
-          }],
-          "on_end": [{
-            "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) END"
-          }]
-        }
-      },
-      {
-        "id": "PROCESS_FIVE",
-        "name": "only if the value from process one is greater equal to A. This process also fails",
-        "depends_process": {
-          "$or": [{
-              "$and": [{
-                  "$end": "PROCESS_ONE"
-                },
-                {
-                  "$end": "PROCESS_TWO"
-                },
-                {
-                  "$end": "PROCESS_FOUR"
-                },
-                {
-                  "@GV(VALUE_10)": {
-                    "$gt": "8"
-                  }
-                },
-                {
-                  "@GV(VALUE_A)": {
-                    "$eq": "A"
-                  }
+        {
+          "id": "PROCESS_TWO",
+          "name": "only if the value from process one is greater than 8 ",
+          "depends_process": {
+            "$and": [
+              {
+                "$end": "PROCESS_ONE"
+              },
+              {
+                "@GV(VALUE_10)": {
+                  "$gt": "8"
                 }
-              ]
-            },
+              },
+              {
+                "A": {
+                  "$in": ["Z", "X", "A", "O"]
+                }
+              }
+            ]
+          },
+          "exec": {
+            "id": "shell_default",
+            "command": "sleep .1 && echo A"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) START"
+              }
+            ],
+            "on_fail": [
+              {
+                "id": "console_default",
+                "message": "ERR! PROCESS @GV(PROCESS_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+              }
+            ],
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) END"
+              }
+            ]
+          },
+          "output_share": [
             {
-              "$and": [{
-                "$end": "PROCESS"
-              }]
+              "key": "VALUE",
+              "name": "A",
+              "value": "@GV(PROCESS_EXEC_MSG_OUTPUT)"
             }
           ]
         },
-        "exec": {
-          "id": "shell_default",
-          "command": "echo four"
+        {
+          "id": "PROCESS_THREE",
+          "name": "only if the value from process one is greater equal to A. This process also fails",
+          "depends_process": {
+            "$and": [
+              {
+                "$end": "PROCESS_TWO"
+              },
+              {
+                "@GV(VALUE_A)": {
+                  "$eq": "A"
+                }
+              }
+            ]
+          },
+          "exec": {
+            "id": "shell_default",
+            "command": "sleep .1 && lol A"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) START"
+              }
+            ],
+            "on_fail": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) FAILS"
+              }
+            ],
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) END"
+              }
+            ]
+          }
         },
-        "notifications": {
-          "on_start": [{
-            "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) START"
-          }],
-          "on_fail": [{
-            "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) FAILS"
-          }],
-          "on_end": [{
-            "id": "console_default",
-            "message": "PROCESS @GV(PROCESS_ID) END"
-          }]
+        {
+          "id": "PROCESS_FOUR",
+          "name": "only if the value from process one is greater equal to A. This process also fails",
+          "depends_process": {
+            "$fail": "PROCESS_THREE"
+          },
+          "exec": {
+            "id": "shell_default",
+            "command": "sleep .1 && echo four"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) START"
+              }
+            ],
+            "on_fail": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) FAILS"
+              }
+            ],
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) END"
+              }
+            ]
+          }
+        },
+        {
+          "id": "PROCESS_FIVE",
+          "name": "only if the value from process one is greater equal to A. This process also fails",
+          "depends_process": {
+            "$or": [
+              {
+                "$and": [
+                  {
+                    "$end": "PROCESS_ONE"
+                  },
+                  {
+                    "$end": "PROCESS_TWO"
+                  },
+                  {
+                    "$end": "PROCESS_FOUR"
+                  },
+                  {
+                    "@GV(VALUE_10)": {
+                      "$gt": "8"
+                    }
+                  },
+                  {
+                    "@GV(VALUE_A)": {
+                      "$eq": "A"
+                    }
+                  }
+                ]
+              },
+              {
+                "$and": [
+                  {
+                    "$end": "PROCESS"
+                  }
+                ]
+              }
+            ]
+          },
+          "exec": {
+            "id": "shell_default",
+            "command": "echo four"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) START"
+              }
+            ],
+            "on_fail": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) FAILS"
+              }
+            ],
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) END"
+              }
+            ]
+          }
         }
-      }
-    ]
-  }]
+      ]
+    }
+  ]
 }
