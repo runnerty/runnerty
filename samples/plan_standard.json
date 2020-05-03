@@ -63,9 +63,7 @@
           "output": [
             {
               "file_name": "/etc/runnerty/test.log",
-              "write": [
-                "> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
-              ],
+              "write": ["> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"],
               "concat": true,
               "maxsize": "10mb"
             }
@@ -85,9 +83,7 @@
           "output": [
             {
               "file_name": "/etc/runnerty/test.log",
-              "write": [
-                "> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
-              ],
+              "write": ["> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"],
               "concat": true,
               "maxsize": "10mb"
             }

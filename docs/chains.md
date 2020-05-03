@@ -188,8 +188,6 @@ It is possible to define what action (abort or retry) to perform at the chain le
 }
 ```
 
-
-
 Abort the chain if the process fails (this action ends the chain's flow so no other processes will be executed). It is not necessary to indicate, is the default value:
 
 ```json
@@ -207,8 +205,8 @@ Abort the chain if the process fails (this action ends the chain's flow so no ot
 
 Also you can skip this option (`chain_action_on_fail`) so though any process failed, the chain will continue while the dependencies between processes are met (by using `depends_process` propertie).
 
-
 Also, it is possible to indicate in the process that the execution continues even though an error occurs:
+
 ```json
 {
   "...": "...",
@@ -224,6 +222,7 @@ Also, it is possible to indicate in the process that the execution continues eve
 
 This will cause the process error to be reported but the string continue and end without error.
 Additionally, it could force the chain to end with an error indicating that the process error is taken into account for the final state of the chain:
+
 ```json
 {
   "...": "...",
@@ -237,7 +236,6 @@ Additionally, it could force the chain to end with an error indicating that the 
   ]
 }
 ```
-
 
 Delay property understands the following strings:
 

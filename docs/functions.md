@@ -111,6 +111,7 @@ Examples:
 | GETDATE    | `@GETDATE(STRING_FORMAT, STRING_LANGUAGE, STRING_PERIOD, NUMBER_INCREMENT, BOOLEAN_UPPER)`                                             | Returns string as specified by a format mask, language and period with current day            |
 | LASTDAY    | `@LASTDAY(STRING_DATE, STRING_INPUT_FORMAT, STRING_OUTPUT_FORMAT, STRING_LANGUAGE, BOOLEAN_UPPER)`                                     | Returns string as specified by a format mask and language with the last day of the input date |
 | DATEFORMAT | `@DATEFORMAT(STRING_DATE, STRING_INPUT_FORMAT, STRING_OUTPUT_FORMAT, STRING_LANGUAGE, STRING_PERIOD, NUMBER_INCREMENT, BOOLEAN_UPPER)` | Returns string as specified by a format mask and language and period of the input date        |
+
 ```
 Format: https://momentjs.com/docs/#/parsing/string-format/
 Language: Use country Abbreviations ('en','es','cn','fr',...) - http://momentjs.com/docs/#/i18n/

@@ -1,15 +1,15 @@
 {
-  "chains":[
+  "chains": [
     {
-      "id":"CHAIN_ONE",
-      "name":"Chain one sample",
-      "processes":[
+      "id": "CHAIN_ONE",
+      "name": "Chain one sample",
+      "processes": [
         {
-          "id":"PROCESS_ONE",
-          "name":"Process one sample",
-          "exec":{
-            "id":"shell_default",
-            "command":"echo hello word!"
+          "id": "PROCESS_ONE",
+          "name": "Process one sample",
+          "exec": {
+            "id": "shell_default",
+            "command": "echo hello word!"
           }
         }
       ]
