@@ -207,6 +207,38 @@ Abort the chain if the process fails (this action ends the chain's flow so no ot
 
 Also you can skip this option (`chain_action_on_fail`) so though any process failed, the chain will continue while the dependencies between processes are met (by using `depends_process` propertie).
 
+
+Also, it is possible to indicate in the process that the execution continues even though an error occurs:
+```json
+{
+  "...": "...",
+  "processes": [
+    {
+      "id": "SAMPLE-PROCESS",
+      "...": "...",
+      "chain_action_on_fail": "continue"
+    }
+  ]
+}
+```
+
+This will cause the process error to be reported but the string continue and end without error.
+Additionally, it could force the chain to end with an error indicating that the process error is taken into account for the final state of the chain:
+```json
+{
+  "...": "...",
+  "processes": [
+    {
+      "id": "SAMPLE-PROCESS",
+      "...": "...",
+      "chain_action_on_fail": "continue",
+      "ignore_in_final_chain_status": false
+    }
+  ]
+}
+```
+
+
 Delay property understands the following strings:
 
 - `x milliseconds`
