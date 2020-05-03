@@ -214,6 +214,9 @@
       "chain_action_on_fail": {
         "$ref": "#/definitions/chain_action_on_fail_process"
       },
+      "ignore_in_final_chain_status":{
+        "type": "boolean"
+      },
       "output": { "$ref": "#/definitions/output_process" },
       "output_share": {
         "type": "array",
