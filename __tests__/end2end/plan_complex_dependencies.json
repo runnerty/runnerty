@@ -16,6 +16,10 @@
         "message": "CHAIN @GV(CHAIN_ID) FAIL"
       }]
     },
+    "defaults_processes":{
+      "chain_action_on_fail":"continue",
+      "ignore_in_final_chain_status":false
+    },
     "processes": [{
         "id": "PROCESS_ONE",
         "name": "PROCESS_ONE",

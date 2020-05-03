@@ -175,7 +175,7 @@
             "id": "shell_default",
             "command": "@GV(CMDPROC)"
           },
-          "ignore_in_chain_status": true,
+          "chain_action_on_fail":"continue",
           "notifications": {
             "on_start": [{
               "id": "console_default",
