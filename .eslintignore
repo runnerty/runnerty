@@ -2,3 +2,6 @@
 api
 node_modules
 samples
+*.md
+*.json
+LICENSE
