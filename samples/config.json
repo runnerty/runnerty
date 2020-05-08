@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/config-2.6.json",
   "general": {
     "binBackup": "/tmp/bin.json",
     "planFilePath": "/etc/runnerty/plan.json",

@@ -1,51 +1,50 @@
 {
-  "config": {
-    "general": {
-      "binBackup": "/tmp/bin.json",
-      "planFilePath": "plan.json",
-      "modulesPath": "./__tests__/end2end/node_modules/",
-      "refreshIntervalBinBackup": 2000,
-      "runnerty.io": {
-        "apikey": "YOUR_RUNNERTY.IO_PROJECT_TOKEN",
-        "disable": true
-      },
-      "queues": {
-        "refreshInterval": 4000
-      }
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/config-2.6.json",
+  "general": {
+    "binBackup": "/tmp/bin.json",
+    "planFilePath": "plan.json",
+    "modulesPath": "./__tests__/end2end/node_modules/",
+    "refreshIntervalBinBackup": 2000,
+    "runnerty.io": {
+      "apikey": "YOUR_RUNNERTY.IO_PROJECT_TOKEN",
+      "disable": true
     },
-    "triggers": [
-      {
-        "id": "schedule_default",
-        "type": "@runnerty-trigger-schedule"
+    "queues": {
+      "refreshInterval": 4000
+    }
+  },
+  "triggers": [
+    {
+      "id": "schedule_default",
+      "type": "@runnerty-trigger-schedule"
+    }
+  ],
+  "executors": [
+    {
+      "id": "iterable_default",
+      "type": "@runnerty-executor-iterable"
+    },
+    {
+      "id": "shell_default",
+      "type": "@runnerty-executor-shell"
+    },
+    {
+      "id": "wait_default",
+      "type": "@runnerty-executor-wait",
+      "seconds": "60"
+    }
+  ],
+  "notifiers": [
+    {
+      "id": "console_default",
+      "type": "@runnerty-notifier-console"
+    }
+  ],
+  "global_values": [
+    {
+      "myparams": {
+        "sample": "sample_value"
       }
-    ],
-    "executors": [
-      {
-        "id": "iterable_default",
-        "type": "@runnerty-executor-iterable"
-      },
-      {
-        "id": "shell_default",
-        "type": "@runnerty-executor-shell"
-      },
-      {
-        "id": "wait_default",
-        "type": "@runnerty-executor-wait",
-        "seconds": "60"
-      }
-    ],
-    "notifiers": [
-      {
-        "id": "console_default",
-        "type": "@runnerty-notifier-console"
-      }
-    ],
-    "global_values": [
-      {
-        "myparams": {
-          "sample": "sample_value"
-        }
-      }
-    ]
-  }
+    }
+  ]
 }

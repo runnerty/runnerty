@@ -1,4 +1,6 @@
 {
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/config-2.6.json",
+  "general": {},
   "executors": [
     {
       "id": "shell_default",

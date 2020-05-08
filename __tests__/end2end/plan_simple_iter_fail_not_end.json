@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/plan-2.6.json",
   "chains": [
     {
       "id": "CHAIN-LAUNCHER",
