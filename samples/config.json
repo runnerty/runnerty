@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/config-2.6.json",
   "general": {
     "binBackup": "/tmp/bin.json",
     "planFilePath": "/etc/runnerty/plan.json",
@@ -33,15 +34,7 @@
         "processes.ended_at",
         "processes.duration_humanized"
       ],
-      "processFieldsResponse": [
-        "id",
-        "name",
-        "status",
-        "retries",
-        "started_at",
-        "ended_at",
-        "duration_humanized"
-      ]
+      "processFieldsResponse": ["id", "name", "status", "retries", "started_at", "ended_at", "duration_humanized"]
     },
     "calendarsPath": "/calendars_dir/",
     "servers": [
@@ -189,13 +182,7 @@
     {
       "MY_LISTS": {
         "LIST_ZERO": {
-          "value": [
-            "@GETDATE(YYYY)",
-            "-CA-",
-            "@GETDATE(MM)",
-            "-TO-",
-            "@GETDATE(DD)"
-          ],
+          "value": ["@GETDATE(YYYY)", "-CA-", "@GETDATE(MM)", "-TO-", "@GETDATE(DD)"],
           "format": "text"
         },
         "LIST_ONE": {

@@ -1,5 +1,29 @@
 # Runnerty ChangeLog
 
+<a name="2.6.0"></a>
+
+# [2.6.0](08/05/2020)
+
+### Features
+
+- **common:** code cleaning and refactoring
+- **common:** modified default behavior, when a process fails the chain fails
+- **common:** new default properties for processes [docs](./docs/chains.md)
+- **common:** improvements in handling chains retries [docs](./docs/chains.md)
+- **dependencies:** minor dependency updates
+- **dependencies:** replaced request by axios module
+- **interpreter:** new date interpreter functions (`DATEFORMAT` and `LASTDAY`) [docs](./docs/functions.md)
+
+### Bug Fixes
+
+- **common:** end of chain ignoring `retry` in progress
+- **common:** minor fixes
+
+### Tests
+
+- **common:** new retry test
+- **common:** new customsvalues and inputvalues test
+
 <a name="2.5.1"></a>
 
 # [2.5.1](3/12/2019)

@@ -55,6 +55,7 @@ describe('Iterable-end-ok-ignore-process', () => {
   info: -> [5-lol PROCESS-LAUNCHER-2_2] CHAIN CHAIN-ITERABLE-2 START
   info: -> -> [5-lol PROCESS-LAUNCHER-2_2-1] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 START
   error: ERR! [I:lol PROCESS-LAUNCHER-2_2] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 FAIL
+  info: -> [5-lol PROCESS-LAUNCHER-2_2] CHAIN CHAIN-ITERABLE-2 END
   info: -> [5-echo PROCESS-LAUNCHER-2_3] CHAIN CHAIN-ITERABLE-2 START
   info: -> -> [5-echo PROCESS-LAUNCHER-2_3-1] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 START
   info: -> -> [5-echo PROCESS-LAUNCHER-2_3-2] PROCESS PROCESS-ITER-2-2 OF CHAIN CHAIN-ITERABLE-2 END
@@ -95,9 +96,7 @@ describe('Iterable-end-ok-ignore-process', () => {
       16000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
         done();
       }
     );
@@ -156,9 +155,7 @@ describe('SimpleIter', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
         done();
       }
     );
@@ -211,9 +208,7 @@ describe('SimpleIterFail', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
         done();
       }
     );
@@ -272,9 +267,7 @@ describe('SimpleIterFailNotEnd', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
         done();
       }
     );
@@ -311,9 +304,7 @@ describe('ComplexDependencies', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
         done();
       }
     );
@@ -354,9 +345,153 @@ describe('Iterable-end-error-abort-serie', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        done();
+      }
+    );
+  });
+});
+
+describe('SimpleDefaultsProcess', () => {
+  const successOutput = `info: CHAIN CHAIN_ONE START
+  info: [[OVERR-PROC]] PROCESS PROCESS_ONE START
+  info: [[DP]]! PROCESS PROCESS_ONE END
+  info: [[DP]]! PROCESS PROCESS_TWO START
+  info: [[DP]]! PROCESS PROCESS_TWO END
+  info: CHAIN CHAIN_ONE END`;
+
+  test('Execution End2End: SimpleDefaultsProcess', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_defaults_processes.json',
+        '-f',
+        'CHAIN_ONE',
+        '--end'
+      ],
+      9000,
+      res => {
+        const _res = res.substring(res.indexOf('\n') + 1);
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        done();
+      }
+    );
+  });
+});
+
+describe('ArgsCustomValuesProcess', () => {
+  const successOutput = `info: CHAIN CHAIN_ONE START
+  info: PROCESS PROCESS_ONE CV: L1 / 2 / I1 / I2
+  info: CHAIN CHAIN_ONE END
+  info: CHAIN CHAIN_ONE START
+  info: PROCESS PROCESS_ONE CV: L1 / 2 / I3 / I4
+  info: CHAIN CHAIN_ONE END`;
+
+  test('Execution End2End: ArgsCustomValuesProcess', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_args_custom-values.json',
+        '-f',
+        'CHAIN_ONE',
+        '--custom_values',
+        '\'{"KV_1":"L1"}\'',
+        '--input_values',
+        '\'[{"KI1":"I1", "KI2":"I2"},{"KI1":"I3", "KI2":"I4"}]\'',
+        '--end'
+      ],
+      9000,
+      res => {
+        const _res = res.substring(res.indexOf('\n') + 1);
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        done();
+      }
+    );
+  });
+});
+
+describe('RetryProcess', () => {
+  const successOutput = `info: CHAIN CHAIN_ONE START
+  info: [[DP]]! PROCESS PROCESS_ONE START - TS:
+  info: [[DP]]! PROCESS PROCESS_TWO START - TS:
+  info: [[DP]]! ERR! PROCESS PROCESS_TWO FAIL: expr: syntax error
+  info: [[DP]]! RETRY PROCESS PROCESS_TWO:  - TS:
+  info: [[DP]]! ERR! PROCESS PROCESS_TWO FAIL: expr: syntax error
+  info: [[DP]]! PROCESS PROCESS_ONE END - TS:
+  info: [[DP]]! RETRY PROCESS PROCESS_TWO:  - TS:1
+  info: [[DP]]! PROCESS PROCESS_TWO END - TS:1
+  info: CHAIN CHAIN_ONE END`;
+
+  test('Execution End2End: RetryProcess', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_retry.json ',
+        '-f',
+        'CHAIN_ONE',
+        '--end'
+      ],
+      9000,
+      res => {
+        const _res = res.substring(res.indexOf('\n') + 1);
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        done();
+      }
+    );
+  });
+});
+
+describe('RetryProcessCAOF', () => {
+  const successOutput = `info: CHAIN CHAIN_ONE START 
+  info: [[DP]]! PROCESS PROCESS_ONE START - TS:
+  info: [[DP]]! PROCESS PROCESS_ONE END - TS:
+  info: [[DP]]! PROCESS PROCESS_TWO START - TS:
+  info: [[DP]]! ERR! PROCESS PROCESS_TWO FAIL
+  info: CHAIN CHAIN_ONE RETRY
+  info: CHAIN CHAIN_ONE END
+  info: CHAIN CHAIN_ONE START 
+  info: [[DP]]! PROCESS PROCESS_ONE START - TS:
+  info: [[DP]]! PROCESS PROCESS_ONE END - TS:
+  info: [[DP]]! PROCESS PROCESS_TWO START - TS:
+  info: [[DP]]! ERR! PROCESS PROCESS_TWO FAIL
+  info: CHAIN CHAIN_ONE RETRY
+  info: CHAIN CHAIN_ONE END
+  info: CHAIN CHAIN_ONE START 1
+  info: [[DP]]! PROCESS PROCESS_ONE START - TS:
+  info: [[DP]]! PROCESS PROCESS_ONE END - TS:
+  info: [[DP]]! PROCESS PROCESS_TWO START - TS:1
+  info: [[DP]]! PROCESS PROCESS_TWO END - TS:1
+  info: CHAIN CHAIN_ONE END`;
+
+  test('Execution End2End: RetryProcessCAOF', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_retry_caof_obj.json',
+        '-f',
+        'CHAIN_ONE',
+        '--end'
+      ],
+      9000,
+      res => {
+        const _res = res.substring(res.indexOf('\n') + 1);
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
         done();
       }
     );

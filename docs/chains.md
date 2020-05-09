@@ -170,28 +170,25 @@ Learn more about _processes_ and how to configure them [here](process.md).
 
 ### Actions for a chain when a process fails
 
-It is possible to define what action (abort or retry) to perform at the chain level in case a process fails.
-
-Retry it 2 times with a delay of 2 seconds (2000ms) if the process fails:
+It is possible to define what action (abort or retry) to perform at the chain level in case a process fails. The number of `retries` and delay (`retry_delay`) settings will be set at the chain level.
 
 ```json
 {
-  "...": "...",
+  "id": "CHAIN_SAMPLE",
+  "name": "Chain with retries",
+  "retries": 1,
+  "retry_delay": "1 min",
   "processes": [
     {
       "id": "SAMPLE-PROCESS",
       "...": "...",
-      "chain_action_on_fail": {
-        "action": "retry",
-        "delay": "2 secs",
-        "retries": 2
-      }
+      "chain_action_on_fail": "retry"
     }
   ]
 }
 ```
 
-Abort the chain if the process fails (this action ends the chain's flow so no other processes will be executed):
+Abort the chain if the process fails (this action ends the chain's flow so no other processes will be executed). It is not necessary to indicate, is the default value:
 
 ```json
 {
@@ -200,15 +197,45 @@ Abort the chain if the process fails (this action ends the chain's flow so no ot
     {
       "id": "SAMPLE-PROCESS",
       "...": "...",
-      "chain_action_on_fail": {
-        "action": "abort"
-      }
+      "chain_action_on_fail": "abort"
     }
   ]
 }
 ```
 
 Also you can skip this option (`chain_action_on_fail`) so though any process failed, the chain will continue while the dependencies between processes are met (by using `depends_process` propertie).
+
+Also, it is possible to indicate in the process that the execution continues even though an error occurs:
+
+```json
+{
+  "...": "...",
+  "processes": [
+    {
+      "id": "SAMPLE-PROCESS",
+      "...": "...",
+      "chain_action_on_fail": "continue"
+    }
+  ]
+}
+```
+
+This will cause the process error to be reported but the string continue and end without error.
+Additionally, it could force the chain to end with an error indicating that the process error is taken into account for the final state of the chain:
+
+```json
+{
+  "...": "...",
+  "processes": [
+    {
+      "id": "SAMPLE-PROCESS",
+      "...": "...",
+      "chain_action_on_fail": "continue",
+      "ignore_in_final_chain_status": false
+    }
+  ]
+}
+```
 
 Delay property understands the following strings:
 
@@ -292,6 +319,8 @@ Now we are going to define the iterable chain _"send-mail-to-user"_
 {
   "id": "SEND-MAIL-TO-USERS",
   "name": "it sends an email to the users returned",
+  "retries": 1,
+  "retry_delay": "1 min",
   "depends_chains": {
     "chain_id": "GET-USERS-EMAIL",
     "process_id": "GET-USER-EMAIL"
@@ -315,11 +344,7 @@ Now we are going to define the iterable chain _"send-mail-to-user"_
         "message": "Hello :name",
         "title": "Message set by Runnerty"
       },
-      "chain_action_on_fail": {
-        "action": "retry",
-        "delay": "1 min",
-        "retries": 1
-      }
+      "chain_action_on_fail": "retry"
     }
   ]
 }
@@ -389,3 +414,91 @@ Now, we can use these values anywhere in our iterable chain:
 ```
 
 In the example :email will be replaced with the user's email and :name will be replaced with the user's name.
+
+### Default properties for processes
+
+It is possible to define a default value for all the processes in a chain of `notifications`,`output` and `chain_action_on_fail`, depending on the `defaults_processes` property of a chain.
+
+For example:
+
+```json
+{
+      "id": "CHAIN_SAMPLE",
+      "name": "CHAIN_SAMPLE",
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "console_default",
+              "message": "PROCESS @GV(PROCESS_ID) START"
+            }
+          ],
+          "on_fail": [
+            {
+              "id": "console_default",
+              "message": "ERR! PROCESS @GV(PROCESS_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+            }
+          ],
+          "on_end": [
+            {
+              "id": "console_default",
+              "message": "PROCESS @GV(PROCESS_ID) END"
+            }
+          ]
+        },
+        "output": [
+          {
+            "file_name": "./test.log",
+            "write": [
+              "@GETDATE('YYYY-MM-DD HH:mm:sS') - @GV(CHAIN_ID)/@GV(PROCESS_ID)/@GV(PROCESS_EXEC_COMMAND_EXECUTED)\n"
+            ],
+            "concat": true,
+            "maxsize": "10mb"
+          }
+        ],
+        "chain_action_on_fail": "abort"
+      },
+      "processes": [...]
+```
+
+It is also possible to overwrite the default values (`defaults_processes`) in each of the processes.
+For example, in this case the default value of the `on_start` event of `notifications` is overwritten in the `PROCESS_SAMPLE` process, the rest of the `notifications` values will be those defined by default:
+
+```json
+{
+      "id": "CHAIN_SAMPLE",
+      "name": "CHAIN SAMPLE",
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "console_default",
+              "message": "PROCESS @GV(PROCESS_ID) START"
+            }
+          ],
+          "on_fail": [
+            {
+              "id": "console_default",
+              "message": "ERR! PROCESS @GV(PROCESS_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+            }
+          ]
+        }
+      },
+      "processes": [
+        {
+          "id": "PROCESS_SAMPLE",
+          "name": "PROCESS SAMPLE",
+          "exec": {
+            "id": "shell_default",
+            "command": "echo hello world"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "OVERRIDE: PROCESS @GV(PROCESS_ID) START"
+              }
+            ]
+          }
+        }]
+```

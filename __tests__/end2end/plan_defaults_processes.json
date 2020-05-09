@@ -1,0 +1,91 @@
+{
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/plan-2.6.json",
+  "chains": [
+    {
+      "id": "CHAIN_ONE",
+      "name": "CHAIN_ONE",
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "console_default",
+              "message": "[[DP]]! PROCESS @GV(PROCESS_ID) START"
+            }
+          ],
+          "on_fail": [
+            {
+              "id": "console_default",
+              "message": "[[DP]]! ERR! PROCESS @GV(PROCESS_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+            }
+          ],
+          "on_end": [
+            {
+              "id": "console_default",
+              "message": "[[DP]]! PROCESS @GV(PROCESS_ID) END"
+            }
+          ]
+        },
+        "output": [
+          {
+            "file_name": "./test.log",
+            "write": [
+              "[!] EXECUTION @GETDATE('YYYY-MM-DD HH:mm:ss') - @GV(CHAIN_ID) / @GV(PROCESS_ID) / @GV(PROCESS_EXEC_COMMAND_EXECUTED)\n"
+            ],
+            "concat": true,
+            "maxsize": "10mb"
+          }
+        ],
+        "chain_action_on_fail": "abort"
+      },
+      "notifications": {
+        "on_start": [
+          {
+            "id": "console_default",
+            "message": "CHAIN @GV(CHAIN_ID) START"
+          }
+        ],
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "CHAIN @GV(CHAIN_ID) END"
+          }
+        ],
+        "on_fail": [
+          {
+            "id": "console_default",
+            "message": "CHAIN @GV(CHAIN_ID) FAIL"
+          }
+        ]
+      },
+      "processes": [
+        {
+          "id": "PROCESS_ONE",
+          "name": "PROCESS_ONE",
+          "exec": {
+            "id": "shell_default",
+            "command": "echo 1"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "[[OVERR-PROC]] PROCESS @GV(PROCESS_ID) START"
+              }
+            ]
+          }
+        },
+        {
+          "id": "PROCESS_TWO",
+          "name": "only if the value from process one is greater than 8 ",
+          "depends_process": {
+            "$and": [{ "$end": "PROCESS_ONE" }]
+          },
+          "exec": {
+            "id": "shell_default",
+            "command": "echo 2"
+          }
+        }
+      ]
+    }
+  ]
+}

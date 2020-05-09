@@ -24,6 +24,12 @@
     "custom_values": {
       "type": "object"
     },
+    "retries": {
+      "type": "number"
+    },
+    "retry_delay": {
+      "type": ["number", "string"]
+    },
     "triggers": {
       "type": "array",
       "items": {
@@ -109,6 +115,21 @@
             }
           }
         }
+      }
+    },
+    "defaults_processes": {
+      "type": "object",
+      "properties": {
+        "notifications": {
+          "$ref": "processSchema#/definitions/notifications_process"
+        },
+        "chain_action_on_fail": {
+          "$ref": "processSchema#/definitions/chain_action_on_fail_process"
+        },
+        "ignore_in_final_chain_status": {
+          "type": "boolean"
+        },
+        "output": { "$ref": "processSchema#/definitions/output_process" }
       }
     },
     "processes": {

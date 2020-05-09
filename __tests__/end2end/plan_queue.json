@@ -1,41 +1,48 @@
 {
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/plan-2.6.json",
   "chains": [
     {
       "id": "CHAIN_ONE",
       "name": "CHAIN_ONE",
       "queue": "TEST",
       "priority": 10,
-      "__custom_values":{"KEY_VAL_CHAIN_ONE":"1","KEY_VAL_CHAIN_TWO":"2","KEY_VAL_CHAIN_THREE":"3"},
-      "execId":"@GV(CHAIN_ID)_@GV(KEY)_@GV(VALUE)",
-      "triggers":[],
+      "retries": 1,
+      "retry_delay": 2000,
+      "__custom_values": {
+        "KEY_VAL_CHAIN_ONE": "1",
+        "KEY_VAL_CHAIN_TWO": "2",
+        "KEY_VAL_CHAIN_THREE": "3"
+      },
+      "execId": "@GV(CHAIN_ID)_@GV(KEY)_@GV(VALUE)",
+      "triggers": [],
       "_depends_chains": {},
       "notifications": {
         "on_start": [
-            {
-              "id": "console_default",
-              "message": "1 @GV(CHAIN_ID)",
-              "mode": "info"
-            }
-          ],
+          {
+            "id": "console_default",
+            "message": "1 @GV(CHAIN_ID)",
+            "mode": "info"
+          }
+        ],
         "on_fail": [
-                {
-              "id": "console_default",
-              "message": "ALERT CHAIN ABORT! @GV(CHAIN_ID)",
-              "mode": "info"
-                }
+          {
+            "id": "console_default",
+            "message": "ALERT CHAIN ABORT! @GV(CHAIN_ID)",
+            "mode": "info"
+          }
         ],
         "on_retry": [
-            {
-              "id": "console_default",
-              "message": "RETRY CHAIN @GV(CHAIN_ID)"
-            }
+          {
+            "id": "console_default",
+            "message": "RETRY CHAIN @GV(CHAIN_ID)"
+          }
         ],
-        "on_end":[
-            {
-              "id": "console_default",
-              "message": "13 @GV(CHAIN_ID) END"
-            }
-          ]
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "13 @GV(CHAIN_ID) END"
+          }
+        ]
       },
       "processes": [
         {
@@ -43,30 +50,28 @@
           "name": "CHAIN_ONE_PROC_ONE",
           "queue": "TEST_TWO",
           "priority": 5,
-          "chain_action_on_fail": {
-            "action": "retry",
-            "delay": 2000,
-            "retries": 1
-            },
+          "chain_action_on_fail": "retry",
           "exec": {
             "id": "shell_default",
             "command": "echo x"
           },
           "notifications": {
-            "on_start": [{
-              "id": "console_default",
-              "message": "11 @GV(PROCESS_ID)",
-              "mode": "info"
-            }],
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "11 @GV(PROCESS_ID)",
+                "mode": "info"
+              }
+            ],
             "on_end": [],
             "on_queue": [
-                {
-              "id": "console_default",
-              "message": "CHAIN",
-              "mode": "info"
-                }
-              ]
-            }
+              {
+                "id": "console_default",
+                "message": "CHAIN",
+                "mode": "info"
+              }
+            ]
+          }
         },
         {
           "id": "CHAIN_ONE_PROC_TWO",
@@ -77,13 +82,15 @@
             "command": "echo x"
           },
           "notifications": {
-            "on_start": [{
-              "id": "console_default",
-              "message": "12 @GV(PROCESS_ID)",
-              "mode": "info"
-            }],
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "12 @GV(PROCESS_ID)",
+                "mode": "info"
+              }
+            ],
             "on_end": []
-            }
+          }
         }
       ]
     },
@@ -93,29 +100,29 @@
       "queue": "TEST_TWO",
       "priority": 10,
       "_depends_chains": [],
-      "triggers":[],
+      "triggers": [],
       "notifications": {
         "on_start": [
-            {
-              "id": "console_default",
-              "message": "CHAIN",
-              "mode": "info"
-            }
-          ],
+          {
+            "id": "console_default",
+            "message": "CHAIN",
+            "mode": "info"
+          }
+        ],
         "on_fail": [
-                {
-              "id": "console_default",
-              "message": "ALERT CHAIN ABORT! @GV(CHAIN_ID)",
-              "mode": "info"
-                }
+          {
+            "id": "console_default",
+            "message": "ALERT CHAIN ABORT! @GV(CHAIN_ID)",
+            "mode": "info"
+          }
         ],
         "on_retry": [],
-        "on_end":[
-            {
-              "id": "console_default",
-              "message": "6 @GV(CHAIN_ID) END"
-            }
-          ]
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "6 @GV(CHAIN_ID) END"
+          }
+        ]
       },
       "processes": [
         {
@@ -127,13 +134,15 @@
             "command": "echo proc2"
           },
           "notifications": {
-            "on_start": [{
-              "id": "console_default",
-              "message": "4 @GV(PROCESS_ID)",
-              "mode": "info"
-            }],
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "4 @GV(PROCESS_ID)",
+                "mode": "info"
+              }
+            ],
             "on_end": []
-            }
+          }
         },
         {
           "id": "CHAIN_TWO_PROC_TWO",
@@ -145,45 +154,47 @@
             "command": "echo proc2"
           },
           "notifications": {
-            "on_start": [{
-              "id": "console_default",
-              "message": "5 @GV(PROCESS_ID)",
-              "mode": "info"
-            }],
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "5 @GV(PROCESS_ID)",
+                "mode": "info"
+              }
+            ],
             "on_end": []
-            }
+          }
         }
       ]
     },
-{
+    {
       "id": "CHAIN_THREE",
       "name": "CHAIN_THREE",
       "queue": "TEST_TWO",
       "priority": 5,
       "_depends_chains": [],
-      "triggers":[],
+      "triggers": [],
       "notifications": {
         "on_start": [
-            {
-              "id": "console_default",
-              "message": "7 @GV(CHAIN_ID)",
-              "mode": "info"
-            }
-          ],
+          {
+            "id": "console_default",
+            "message": "7 @GV(CHAIN_ID)",
+            "mode": "info"
+          }
+        ],
         "on_fail": [
-                {
-              "id": "console_default",
-              "message": "ALERT CHAIN ABORT! @GV(CHAIN_ID)",
-              "mode": "info"
-                }
+          {
+            "id": "console_default",
+            "message": "ALERT CHAIN ABORT! @GV(CHAIN_ID)",
+            "mode": "info"
+          }
         ],
         "on_retry": [],
-        "on_end":[
-            {
-              "id": "console_default",
-              "message": "10 @GV(CHAIN_ID) END"
-            }
-          ]
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "10 @GV(CHAIN_ID) END"
+          }
+        ]
       },
       "processes": [
         {
@@ -195,13 +206,15 @@
             "command": "echo x"
           },
           "notifications": {
-            "on_start": [{
-              "id": "console_default",
-              "message": "8 @GV(PROCESS_ID)",
-              "mode": "info"
-            }],
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "8 @GV(PROCESS_ID)",
+                "mode": "info"
+              }
+            ],
             "on_end": []
-            }
+          }
         },
         {
           "id": "CHAIN_THREE_PROC_TWO",
@@ -213,13 +226,15 @@
             "command": "echo proc2"
           },
           "notifications": {
-            "on_start": [{
-              "id": "console_default",
-              "message": "9 @GV(PROCESS_ID)",
-              "mode": "info"
-            }],
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "9 @GV(PROCESS_ID)",
+                "mode": "info"
+              }
+            ],
             "on_end": []
-            }
+          }
         }
       ]
     }

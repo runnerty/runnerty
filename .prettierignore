@@ -1,0 +1,12 @@
+node_modules
+.all-contributorsrc
+.eslintignore
+.gitignore
+.prettierignore
+LICENSE
+*.png
+*.txt
+TODO
+docs/functions.md
+*.md
+test.log

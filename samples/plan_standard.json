@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/plan-2.6.json",
   "chains": [
     {
       "id": "CHAIN_ONE",
@@ -12,6 +13,26 @@
           "schedule_interval": "*/1 * * * *"
         }
       ],
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "mail_default",
+              "subject": "RUNNERTY SAMPLE",
+              "message": "PROCESS @GV(PROCESS_NAME) START"
+            }
+          ],
+          "on_fail": [],
+          "on_retry": [],
+          "on_end": [
+            {
+              "id": "mail_default",
+              "subject": "RUNNERTY SAMPLE",
+              "message": "PROCESS @GV(PROCESS_NAME) END. RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
+            }
+          ]
+        }
+      },
       "notifications": {
         "on_start": [
           {
@@ -39,37 +60,15 @@
           },
           "retries": 0,
           "retry_delay": 0,
-          "chain_action_on_fail": {
-            "action": "end"
-          },
+          "chain_action_on_fail": "abort",
           "output": [
             {
               "file_name": "/etc/runnerty/test.log",
-              "write": [
-                "> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
-              ],
+              "write": ["> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"],
               "concat": true,
               "maxsize": "10mb"
             }
-          ],
-          "notifications": {
-            "on_start": [
-              {
-                "id": "mail_default",
-                "subject": "RUNNERTY SAMPLE",
-                "message": "PROCESS @GV(PROCESS_NAME) START"
-              }
-            ],
-            "on_fail": [],
-            "on_retry": [],
-            "on_end": [
-              {
-                "id": "mail_default",
-                "subject": "RUNNERTY SAMPLE",
-                "message": "PROCESS @GV(PROCESS_NAME) END. RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
-              }
-            ]
-          }
+          ]
         },
         {
           "id": "PROCESS_TWO",
@@ -81,37 +80,15 @@
           },
           "retries": 0,
           "retry_delay": 0,
-          "chain_action_on_fail": {
-            "action": "end"
-          },
+          "chain_action_on_fail": "abort",
           "output": [
             {
               "file_name": "/etc/runnerty/test.log",
-              "write": [
-                "> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
-              ],
+              "write": ["> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"],
               "concat": true,
               "maxsize": "10mb"
             }
-          ],
-          "notifications": {
-            "on_start": [
-              {
-                "id": "mail_default",
-                "subject": "RUNNERTY SAMPLE",
-                "message": "PROCESS @GV(PROCESS_NAME) START"
-              }
-            ],
-            "on_fail": [],
-            "on_retry": [],
-            "on_end": [
-              {
-                "id": "mail_default",
-                "subject": "RUNNERTY SAMPLE",
-                "message": "PROCESS @GV(PROCESS_NAME) END. RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"
-              }
-            ]
-          }
+          ]
         }
       ]
     }
