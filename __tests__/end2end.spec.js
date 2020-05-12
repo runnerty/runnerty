@@ -96,7 +96,9 @@ describe('Iterable-end-ok-ignore-process', () => {
       16000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
         done();
       }
     );
@@ -155,7 +157,9 @@ describe('SimpleIter', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
         done();
       }
     );
@@ -208,7 +212,12 @@ describe('SimpleIterFail', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        expect(
+          _res
+            .replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+            .replace('/bin/sh:1:', '/bin/sh:')
+            .replace('commandnotfound', 'notfound')
+        ).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('commandnotfound', 'notfound'));
         done();
       }
     );
@@ -267,7 +276,12 @@ describe('SimpleIterFailNotEnd', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        expect(
+          _res
+            .replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+            .replace('/bin/sh:1:', '/bin/sh:')
+            .replace('commandnotfound', 'notfound')
+        ).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('commandnotfound', 'notfound'));
         done();
       }
     );
@@ -304,7 +318,9 @@ describe('ComplexDependencies', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
         done();
       }
     );
@@ -345,7 +361,9 @@ describe('Iterable-end-error-abort-serie', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
         done();
       }
     );
@@ -376,7 +394,9 @@ describe('SimpleDefaultsProcess', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
         done();
       }
     );
@@ -411,7 +431,9 @@ describe('ArgsCustomValuesProcess', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
         done();
       }
     );
@@ -446,7 +468,9 @@ describe('RetryProcess', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
         done();
       }
     );
@@ -491,7 +515,9 @@ describe('RetryProcessCAOF', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, ''));
+        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
+          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+        );
         done();
       }
     );

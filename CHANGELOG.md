@@ -1,5 +1,13 @@
 # Runnerty ChangeLog
 
+<a name="2.6.1"></a>
+
+# [2.6.1](11/05/2020)
+
+### Bug Fixes
+
+- **common:** fix typo bug
+
 <a name="2.6.0"></a>
 
 # [2.6.0](08/05/2020)
