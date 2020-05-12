@@ -212,9 +212,12 @@ describe('SimpleIterFail', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(
+          _res
+            .replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+            .replace('/bin/sh:1:', '/bin/sh:')
+            .replace('commandnotfound', 'notfound')
+        ).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('commandnotfound', 'notfound'));
         done();
       }
     );
@@ -273,9 +276,12 @@ describe('SimpleIterFailNotEnd', () => {
       9000,
       res => {
         const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(
+          _res
+            .replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+            .replace('/bin/sh:1:', '/bin/sh:')
+            .replace('commandnotfound', 'notfound')
+        ).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('commandnotfound', 'notfound'));
         done();
       }
     );
