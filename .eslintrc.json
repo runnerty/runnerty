@@ -10,7 +10,7 @@
     "global": true
   },
   "parserOptions": {
-    "ecmaVersion": 2017,
+    "ecmaVersion": 2018,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
@@ -20,7 +20,17 @@
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "default-case": "error",
     "linebreak-style": ["error", "unix"],
-    "semi": ["error", "always"]
+    "semi": ["error", "always"],
+    "no-console": "error",
+    "no-undef": "error",
+    "no-var": "error",
+    "no-caller": "error",
+    "no-throw-literal": "error",
+    "no-unneeded-ternary": "error",
+    "prefer-const": "error",
+    "comma-spacing": ["error", { "before": false, "after": true }],
+    "comma-style": ["error", "last"],
+    "handle-callback-err": ["error", "^(err|error)$"]
   },
   "plugins": ["jest"]
 }

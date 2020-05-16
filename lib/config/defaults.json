@@ -41,6 +41,7 @@
     },
     "runnerty.io": {
       "apikey": "",
+      "host": "https://telemetry.runnerty.io",
       "healthChecker": true,
       "debug": false
     }
