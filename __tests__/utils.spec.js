@@ -44,7 +44,7 @@ describe('loadConfigSection function', () => {
     try {
       await loadConfigSection();
     } catch (e) {
-      expect(e).toBe('Error: config must be defined.');
+      expect(e.message).toBe('config must be defined.');
     }
   });
 

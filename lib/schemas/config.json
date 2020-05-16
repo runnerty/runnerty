@@ -352,9 +352,8 @@
                 "disable": {
                   "type": "boolean"
                 },
-                "protocol": {
-                  "type": "string",
-                  "pattern": "(http|https)"
+                "host": {
+                  "type": "string"
                 },
                 "healthChecker": {
                   "type": "boolean"

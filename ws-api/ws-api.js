@@ -16,7 +16,7 @@ const logger = require('../lib/logger.js');
 const config = global.config.general;
 const queueProcess = require('../lib/queue-process-memory.js');
 
-let apiPlan = global.runtimePlan.plan;
+const apiPlan = global.runtimePlan.plan;
 
 module.exports = () => {
   // = SERVER =======================================
@@ -72,12 +72,12 @@ module.exports = () => {
   });
 
   function serializer() {
-    let stack = [];
-    let keys = [];
+    const stack = [];
+    const keys = [];
 
     return (key, value) => {
       if (stack.length > 0) {
-        let thisPos = stack.indexOf(this);
+        const thisPos = stack.indexOf(this);
         ~thisPos ? stack.splice(thisPos + 1) : stack.push(this);
         ~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key);
         if (~stack.indexOf(value)) {
@@ -158,8 +158,8 @@ module.exports = () => {
    * Output: object
    */
   router.post('/auth', (req, res) => {
-    let user = req.body.user;
-    let password = req.body.password;
+    const user = req.body.user;
+    const password = req.body.password;
 
     function checkAcces(up) {
       return up.user === user && up.password === password;
@@ -172,7 +172,7 @@ module.exports = () => {
       });
     } else if (user) {
       if (config.api.users.findIndex(checkAcces) !== -1) {
-        let token = jwt.sign(user, config.api.secret);
+        const token = jwt.sign(user, config.api.secret);
 
         res.json({
           success: true,
@@ -203,7 +203,7 @@ module.exports = () => {
    * Output: chains (JSON)
    */
   router.get('/chains', (req, res) => {
-    let output = apiPlan.getAllChains(config.api.chainsFieldsResponse);
+    const output = apiPlan.getAllChains(config.api.chainsFieldsResponse);
     res.send(JSON.stringify(output, serializer()));
   });
 
@@ -217,10 +217,10 @@ module.exports = () => {
    * - chains array (JSON)
    */
   router.get('/chains/status/:status', (req, res) => {
-    let status = req.params.status;
+    const status = req.params.status;
 
     if (status) {
-      let output = apiPlan.getChainsByStatus(status, config.api.chainsFieldsResponse);
+      const output = apiPlan.getChainsByStatus(status, config.api.chainsFieldsResponse);
       res.send(JSON.stringify(output, serializer()));
     } else {
       res.status(500).send('Param status not found');
@@ -238,7 +238,7 @@ module.exports = () => {
   router.get('/chain/:chainId/:uniqueId', (req, res) => {
     const chainId = req.params.chainId;
     const uniqueId = req.params.uniqueId || req.params.chainId + '_main';
-    let chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
+    const chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
       res.send(JSON.stringify(chain, serializer()));
@@ -270,7 +270,7 @@ module.exports = () => {
     } catch (err) {}
 
     logger.info(`API - CHAIN START FORCED: chainId:${chainId}, custom_values:${custom_values_str}, input:${input_str}`);
-    let chain = apiPlan.getChainById(chainId);
+    const chain = apiPlan.getChainById(chainId);
 
     if (chain) {
       queueProcess.queueChain(chain, req.body.input, req.body.custom_values);
@@ -292,7 +292,7 @@ module.exports = () => {
   router.get('/processes/:chainId/:uniqueId', (req, res) => {
     const chainId = req.params.chainId;
     const uniqueId = req.params.uniqueId || req.params.chainId + '_main';
-    let chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
+    const chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
       res.json(chain.processes || {});
@@ -335,10 +335,10 @@ module.exports = () => {
     const uniqueId = req.params.uniqueId || req.params.chainId + '_main';
     const processId = req.params.processId;
 
-    let chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
+    const chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
-      let process = chain.getProcessById(processId, config.api.processFieldsResponse);
+      const process = chain.getProcessById(processId, config.api.processFieldsResponse);
       if (process) {
         res.json(process);
       } else {
@@ -365,10 +365,10 @@ module.exports = () => {
 
     logger.info(`Retrying process "${processId}" from chain "${chainId}" by ${req.user}`);
 
-    let chain = apiPlan.getChainById(chainId, uniqueId);
+    const chain = apiPlan.getChainById(chainId, uniqueId);
 
     if (chain) {
-      let process = chain.getProcessById(processId);
+      const process = chain.getProcessById(processId);
       if (process) {
         if (process.isErrored()) {
           res.json('');
@@ -405,10 +405,10 @@ module.exports = () => {
 
     logger.info(`Setting process "${processId}" to end, from chain "${chainId}" by ${req.user}`);
 
-    let chain = apiPlan.getChainById(chainId, uniqueId);
+    const chain = apiPlan.getChainById(chainId, uniqueId);
 
     if (chain) {
-      let process = chain.getProcessById(processId);
+      const process = chain.getProcessById(processId);
       if (process) {
         if (!process.isEnded() && !process.isRunning()) {
           res.json();
@@ -456,10 +456,10 @@ module.exports = () => {
 
     logger.info(`Killing process "${processId}" from chain "${chainId}" by ${req.user}`);
 
-    let chain = apiPlan.getChainById(chainId, uniqueId);
+    const chain = apiPlan.getChainById(chainId, uniqueId);
 
     if (chain) {
-      let process = chain.getProcessById(processId);
+      const process = chain.getProcessById(processId);
       if (process) {
         if (process.isRunning()) {
           res.send();

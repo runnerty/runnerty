@@ -63,7 +63,7 @@
           "chain_action_on_fail": "abort",
           "output": [
             {
-              "file_name": "/etc/runnerty/test.log",
+              "file_name": "./@GV(PROCESS_ID).log",
               "write": ["> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"],
               "concat": true,
               "maxsize": "10mb"
@@ -83,9 +83,9 @@
           "chain_action_on_fail": "abort",
           "output": [
             {
-              "file_name": "/etc/runnerty/test.log",
+              "file_name": "./@GV(PROCESS_ID).log",
               "write": ["> EXEC :PROCESS_ID - @GETDATE('DD-MM-YY HH:mm:ss') RETURN: @GV(PROCESS_EXEC_MSG_OUTPUT)"],
-              "concat": true,
+              "concat": false,
               "maxsize": "10mb"
             }
           ]
