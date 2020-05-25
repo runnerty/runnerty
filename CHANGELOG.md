@@ -1,5 +1,31 @@
 # Runnerty ChangeLog
 
+<a name="2.6.4"></a>
+
+# [2.6.4](25/05/2020)
+
+### Features
+
+- **common:** code cleaning and refactoring
+- **dependencies:** minor dependency updates
+
+### Bug Fixes
+
+- **common:** error when trying to load a plan with links chain_path
+- **common:** minor fixes
+
+### Tests
+
+- **common:** new plan links chain_path
+
+<a name="2.6.3"></a>
+
+# [2.6.3](17/05/2020)
+
+### Features
+
+- **common:** minor fixes
+
 <a name="2.6.2"></a>
 
 # [2.6.2](16/05/2020)

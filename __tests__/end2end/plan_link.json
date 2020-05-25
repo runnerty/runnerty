@@ -1,0 +1,8 @@
+{
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/plan_chains_link-2.6.json",
+  "chains": [
+    {
+      "chain_path": "./plan_link_chain_sample.json"
+    }
+  ]
+}

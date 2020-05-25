@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -24,6 +24,7 @@
     "commit": "git-cz",
     "test": "RUNNERTY_TEST=true jest --runInBand --detectOpenHandles",
     "test-watch": "RUNNERTY_TEST=true jest --runInBand --detectOpenHandles --watch",
+    "debug": "node --nolazy --inspect-brk index.js",
     "lint": "eslint '**/*.js' && prettier --check '**'"
   },
   "global": false,
@@ -46,7 +47,7 @@
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.15",
     "millisecond": "0.1.2",
-    "moment": "2.25.3",
+    "moment": "2.26.0",
     "morgan": "1.10.0",
     "object-sizeof": "1.6.0",
     "redis": "3.0.2",
@@ -84,12 +85,11 @@
     "node": ">=12.16.3"
   },
   "devDependencies": {
-    "all-contributors-cli": "6.14.2",
     "commitizen": "4.1.2",
     "cz-conventional-changelog": "3.2.0",
-    "eslint": "7.0.0",
+    "eslint": "7.1.0",
     "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-jest": "23.13.0",
+    "eslint-plugin-jest": "23.13.1",
     "eslint-plugin-prettier": "^3.1.3",
     "jest": "26.0.1",
     "jest-cli": "26.0.1",
