@@ -1,5 +1,18 @@
 # Runnerty ChangeLog
 
+<a name="2.6.5"></a>
+
+# [2.6.5](01/06/2020)
+
+### Features
+
+- **common:** code cleaning and refactoring
+- **dependencies:** minor dependency updates
+
+### Bug Fixes
+
+- **common:** fix write output issue
+
 <a name="2.6.4"></a>
 
 # [2.6.4](25/05/2020)
