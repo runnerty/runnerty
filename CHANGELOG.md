@@ -1,5 +1,13 @@
 # Runnerty ChangeLog
 
+<a name="2.6.6"></a>
+
+# [2.6.6](03/06/2020)
+
+### Bug Fixes
+
+- **api:** minor fixes
+
 <a name="2.6.5"></a>
 
 # [2.6.5](01/06/2020)
