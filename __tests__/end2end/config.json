@@ -6,8 +6,9 @@
     "modulesPath": "./__tests__/end2end/node_modules/",
     "refreshIntervalBinBackup": 2000,
     "runnerty.io": {
-      "apikey": "YOUR_RUNNERTY.IO_PROJECT_TOKEN",
-      "disable": true
+      "host": "http://localhost:80",
+      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9qZWN0SWQiOiI2IiwiaWF0IjoxNTkzMDI2MDc4fQ.x1xGiDE0LsHWiUvcaDsBIh34M1WT5R9Vx6lboU2_wig",
+      "disable": false
     },
     "queues": {
       "refreshInterval": 4000
