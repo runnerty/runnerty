@@ -4,7 +4,7 @@
     "planFilePath": "plan.json",
     "modulesPath": "./__tests__/end2end/node_modules/",
     "runnerty.io": {
-      "host": "https://telemetry.runnerty.io",
+      "host": "https://ws-telemetry.runnerty.io",
       "apikey": "YOUR_APIKEY_PROJECT",
       "healthChecker": true,
       "remoteControl": true,
