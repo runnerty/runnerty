@@ -1,5 +1,16 @@
 # Runnerty ChangeLog
 
+<a name="2.7.0"></a>
+
+# [2.7.0](01/07/2020)
+
+### Bug Fixes
+
+### Features
+
+- **telemetry:** bidirectional communication with runnerty.io via websockets
+- **dependencies:** minor dependency updates
+
 <a name="2.6.6"></a>
 
 # [2.6.6](03/06/2020)

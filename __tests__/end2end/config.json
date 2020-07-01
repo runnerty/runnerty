@@ -1,14 +1,15 @@
 {
   "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/config-2.6.json",
   "general": {
-    "binBackup": "/tmp/bin.json",
     "planFilePath": "plan.json",
     "modulesPath": "./__tests__/end2end/node_modules/",
-    "refreshIntervalBinBackup": 2000,
     "runnerty.io": {
-      "host": "http://localhost:80",
-      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9qZWN0SWQiOiI2IiwiaWF0IjoxNTkzMDI2MDc4fQ.x1xGiDE0LsHWiUvcaDsBIh34M1WT5R9Vx6lboU2_wig",
-      "disable": false
+      "host": "https://telemetry.runnerty.io",
+      "apikey": "YOUR_APIKEY_PROJECT",
+      "healthChecker": true,
+      "remoteControl": true,
+      "debug": true,
+      "disable": true
     },
     "queues": {
       "refreshInterval": 4000
