@@ -1,14 +1,13 @@
 # Runnerty ChangeLog
 
-<a name="2.7.0"></a>
+<a name="2.7.0-rc"></a>
 
-# [2.7.0](01/07/2020)
-
-### Bug Fixes
+# [2.7.0-rc](02/07/2020)
 
 ### Features
 
 - **telemetry:** bidirectional communication with runnerty.io via websockets
+- **common:** replacement of global by runtime class
 - **dependencies:** minor dependency updates
 
 <a name="2.6.6"></a>
