@@ -7,6 +7,7 @@
 ### Features
 
 - **telemetry:** bidirectional communication with runnerty.io via websockets
+- **telemetry:** ready to be able to run and kill chains remotely from runnerty.io
 - **common:** replacement of global by runtime class
 - **dependencies:** minor dependency updates
 
