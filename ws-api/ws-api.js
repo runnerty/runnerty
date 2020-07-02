@@ -12,11 +12,12 @@ const http = require('http');
 const https = require('https');
 const helmet = require('helmet');
 const fs = require('fs');
+const runtime = require('./classes/runtime');
 const logger = require('../lib/logger.js');
-const config = global.config.general;
+const config = runtime.config.general;
 const queueProcess = require('../lib/queue-process-memory.js');
 
-const apiPlan = global.runtimePlan.plan;
+const apiPlan = runtime.plan;
 
 module.exports = () => {
   // = SERVER =======================================
