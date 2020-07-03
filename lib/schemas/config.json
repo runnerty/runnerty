@@ -10,17 +10,11 @@
         "general": {
           "type": "object",
           "properties": {
-            "binBackup": {
-              "type": "string"
-            },
             "planFilePath": {
               "type": "string"
             },
             "plan": {
               "type": "object"
-            },
-            "refreshIntervalBinBackup": {
-              "type": "number"
             },
             "executorsPath": {
               "type": "string"
@@ -356,6 +350,9 @@
                   "type": "string"
                 },
                 "healthChecker": {
+                  "type": "boolean"
+                },
+                "remoteControl": {
                   "type": "boolean"
                 },
                 "debug": {

@@ -1,12 +1,14 @@
 {
   "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/config-2.6.json",
   "general": {
-    "binBackup": "/tmp/bin.json",
     "planFilePath": "plan.json",
     "modulesPath": "./__tests__/end2end/node_modules/",
-    "refreshIntervalBinBackup": 2000,
     "runnerty.io": {
-      "apikey": "YOUR_RUNNERTY.IO_PROJECT_TOKEN",
+      "host": "https://ws-telemetry.runnerty.io",
+      "apikey": "YOUR_APIKEY_PROJECT",
+      "healthChecker": true,
+      "remoteControl": true,
+      "debug": true,
       "disable": true
     },
     "queues": {

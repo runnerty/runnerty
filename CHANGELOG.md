@@ -1,5 +1,16 @@
 # Runnerty ChangeLog
 
+<a name="2.7.0-rc"></a>
+
+# [2.7.0-rc](02/07/2020)
+
+### Features
+
+- **telemetry:** bidirectional communication with runnerty.io via websockets
+- **telemetry:** ready to be able to run and kill chains remotely from runnerty.io
+- **common:** replacement of global by runtime class
+- **dependencies:** minor dependency updates
+
 <a name="2.6.6"></a>
 
 # [2.6.6](03/06/2020)

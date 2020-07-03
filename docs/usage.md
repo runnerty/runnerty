@@ -7,7 +7,6 @@
 -c, --config <path>: set config path. defaults to ${configFilePath}.
 -p, --plan <path>: Overwrite path file plan of config file.
 -P, --plan <path>: Overwrite path file plan of config file.
--r, --restore: Restore backup plan (experimental).
 -password, --password <password>: Master cryptor password.
 -e, --encrypt <password_to_encrypt>: Util: Encrypt password (to use crypted_password in config instead of literal password)
 -m, --memorylimit <memoryLimitMb>: Set default memory space limit for Runnerty (--max-old-space-size). It is necessary to restart Runnerty.

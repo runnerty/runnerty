@@ -1,9 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/config-2.6.json",
   "general": {
-    "binBackup": "/tmp/bin.json",
     "planFilePath": "/etc/runnerty/plan.json",
-    "refreshIntervalBinBackup": 2000,
     "api": {
       "port": 3456,
       "users": [
