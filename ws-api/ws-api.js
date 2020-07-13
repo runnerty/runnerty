@@ -123,6 +123,7 @@ module.exports = () => {
   app.use(
     expressJwt({
       secret: config.api.secret,
+      algorithms: ['HS256'],
       getToken: req => {
         // Gets token from authorization or url query
         if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
