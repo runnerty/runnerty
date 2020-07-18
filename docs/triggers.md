@@ -159,6 +159,41 @@ Servers allow us to forget about the endpoints implementation in the triggers de
   ]
 }
 ```
+#### You can use two different authentication strategies, basic auth or API Key.
+Basic Auth (standard):
+```json
+{
+  "general": {
+    "servers": [
+      {
+        "id": "my_srv_sample",
+        "port": 8080,
+        "endpoint": "/my_endpoint",
+        "users":[
+            {"user":"user_one", "password":"pass_one"},
+            {"user":"user_two", "password":"pass_two"}
+          ]
+      }
+    ]
+  }
+}
+```
+API Key. You can send your API-Key in the endpoint call using the `api_key` query parameter or the `x-api-key` header.
+```json
+{
+  "general": {
+    "servers": [
+      {
+        "id": "my_srv_sample",
+        "port": 8080,
+        "endpoint": "/my_endpoint",
+        "apikey": "_API_KEY_SAMPLE_"
+      }
+    ]
+  }
+}
+```
+          
 
 #### Plan
 
@@ -187,9 +222,20 @@ So if for example we make a "post" like this:
 ```
 curl -X POST -H "Content-Type: application/json" -d '{"MY_VALUE_ONE":"ONE","MY_VALUE_TWO":"2"}' http://localhost:8080/my_endpoint/test
 ```
-
 We can make use of the values through the "get values" function:
 
 ```
  @GV(MY_VALUE_ONE) / @GV(MY_VALUE_TWO) / @GV(my_query_value)
 ```
+
+Examples of `api-key` authentication:
+
+```
+curl -X POST -H "Content-Type: application/json" -H "x-api-key: _API_KEY_SAMPLE_" http://localhost:8080/my_endpoint/test
+```
+
+```
+curl -X POST -H 'Content-Type: application/json' 'localhost:8080/my_endpoint/test?api_key=_API_KEY_SAMPLE_'
+```
+
+

@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "2.7.0-rc2",
+  "version": "2.7.0-rc3",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -29,7 +29,7 @@
   },
   "global": false,
   "dependencies": {
-    "@runnerty/trigger-server": "0.0.1",
+    "@runnerty/trigger-server": "2.0.0",
     "ajv": "6.12.3",
     "async-exit-hook": "2.0.1",
     "axios": "^0.19.2",
@@ -39,6 +39,7 @@
     "commander": "5.1.0",
     "cors": "2.8.5",
     "express": "4.17.1",
+    "express-basic-auth": "^1.2.0",
     "express-jwt": "6.0.0",
     "fs-extra": "9.0.1",
     "glob-to-regexp": "0.4.1",

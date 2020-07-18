@@ -49,7 +49,18 @@
                       "type": ["number"]
                     },
                     "users": {
-                      "type": "array"
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user": {
+                            "type": "string"
+                          },
+                          "password": {
+                            "type": "string"
+                          }
+                        }
+                      }
                     },
                     "secret": {
                       "type": "string"
@@ -108,7 +119,18 @@
                       "type": "string"
                     },
                     "users": {
-                      "type": "array"
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "user": {
+                            "type": "string"
+                          },
+                          "password": {
+                            "type": "string"
+                          }
+                        }
+                      }
                     },
                     "secret": {
                       "type": "string"
@@ -247,14 +269,25 @@
                       "port": {
                         "type": ["number"]
                       },
-                      "secret": {
+                      "users": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "user": {
+                              "type": "string"
+                            },
+                            "password": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "apikey": {
                         "type": "string"
                       },
                       "limite_req": {
                         "type": "string"
-                      },
-                      "token_expiration_time": {
-                        "type": "number"
                       },
                       "log_display_level": {
                         "type": "string",
@@ -274,14 +307,25 @@
                       "unix_socket": {
                         "type": "string"
                       },
-                      "secret": {
+                      "users": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "user": {
+                              "type": "string"
+                            },
+                            "password": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "apikey": {
                         "type": "string"
                       },
                       "limite_req": {
                         "type": "string"
-                      },
-                      "token_expiration_time": {
-                        "type": "number"
                       },
                       "log_display_level": {
                         "type": "string",
@@ -310,14 +354,25 @@
                       "cert": {
                         "type": "string"
                       },
-                      "secret": {
+                      "users": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "user": {
+                              "type": "string"
+                            },
+                            "password": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "apikey": {
                         "type": "string"
                       },
                       "limite_req": {
                         "type": "string"
-                      },
-                      "token_expiration_time": {
-                        "type": "number"
                       },
                       "log_display_level": {
                         "type": "string",
