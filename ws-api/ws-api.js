@@ -16,6 +16,7 @@ const runtime = require('../lib/classes/runtime');
 const logger = require('../lib/logger.js');
 const config = runtime.config.general;
 const queueProcess = require('../lib/queue-process-memory.js');
+const circularJSON = require('flatted');
 
 const apiPlan = runtime.plan;
 
@@ -71,28 +72,6 @@ module.exports = () => {
     res.header('Content-Type', 'application/json');
     next();
   });
-
-  function serializer() {
-    const stack = [];
-    const keys = [];
-
-    return (key, value) => {
-      if (stack.length > 0) {
-        const thisPos = stack.indexOf(this);
-        ~thisPos ? stack.splice(thisPos + 1) : stack.push(this);
-        ~thisPos ? keys.splice(thisPos, Infinity, key) : keys.push(key);
-        if (~stack.indexOf(value)) {
-          if (stack[0] === value) {
-            value = '[Circular ~]';
-          }
-          value = '[Circular ~.' + keys.slice(0, stack.indexOf(value)).join('.') + ']';
-        }
-      } else {
-        stack.push(value);
-      }
-      return value;
-    };
-  }
 
   app.use(
     bodyParser.urlencoded({
@@ -206,7 +185,7 @@ module.exports = () => {
    */
   router.get('/chains', (req, res) => {
     const output = apiPlan.getAllChains(config.api.chainsFieldsResponse);
-    res.send(JSON.stringify(output, serializer()));
+    res.send(circularJSON.stringify(output));
   });
 
   /**
@@ -223,7 +202,7 @@ module.exports = () => {
 
     if (status) {
       const output = apiPlan.getChainsByStatus(status, config.api.chainsFieldsResponse);
-      res.send(JSON.stringify(output, serializer()));
+      res.send(circularJSON.stringify(output));
     } else {
       res.status(500).send('Param status not found');
     }
@@ -243,7 +222,7 @@ module.exports = () => {
     const chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
-      res.send(JSON.stringify(chain, serializer()));
+      res.send(circularJSON.stringify(chain);
     } else {
       res.status(404).send(`Chain "${chainId}" not found`);
     }
