@@ -8,7 +8,9 @@
 
 - **telemetry:** bidirectional communication with runnerty.io via websockets
 - **telemetry:** ready to be able to run and kill chains remotely from runnerty.io
+- **servers:** basic auth and apikey authentication available
 - **common:** replacement of global by runtime class
+- **common:** maximum size limitation of objects for the interpreter
 - **dependencies:** minor dependency updates
 
 <a name="2.6.6"></a>
@@ -230,7 +232,7 @@
 ### Bug Fixes
 
 - **common:** typo
-- **common:** replaceWithSmart ignore global_values when objParams is empty
+- **common:** replaceWithSmart (recursiveObjectInterpreter) ignore global_values when objParams is empty
 - **common:** ws api custom_value wrong variable setting
 - **common:** the functions of the config file are not interpreted
 - **common:** output_share: overwriting config.global_values instead of config_raw

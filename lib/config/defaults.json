@@ -45,7 +45,8 @@
       "healthChecker": true,
       "remoteControl": true,
       "debug": false
-    }
+    },
+    "interpreter_max_size": 5000000
   },
   "executors": [],
   "notifiers": [],
