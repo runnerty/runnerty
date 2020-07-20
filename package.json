@@ -41,11 +41,11 @@
     "express": "4.17.1",
     "express-basic-auth": "^1.2.0",
     "express-jwt": "6.0.0",
-    "flatted": "^3.0.4",
     "fs-extra": "9.0.1",
     "glob-to-regexp": "0.4.1",
     "helmet": "3.23.3",
     "ical2json": "3.0.0",
+    "json-stringify-safe": "^5.0.1",
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.19",
     "millisecond": "0.1.2",
@@ -85,13 +85,13 @@
   ],
   "engineStrict": true,
   "engines": {
-    "node": ">=12.16.3"
+    "node": ">=12.18.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "commitizen": "4.1.2",
     "cz-conventional-changelog": "3.2.0",
-    "eslint": "7.4.0",
+    "eslint": "7.5.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-jest": "23.18.0",
     "eslint-plugin-prettier": "^3.1.4",

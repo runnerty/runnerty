@@ -16,7 +16,7 @@ const runtime = require('../lib/classes/runtime');
 const logger = require('../lib/logger.js');
 const config = runtime.config.general;
 const queueProcess = require('../lib/queue-process-memory.js');
-const circularJSON = require('flatted');
+const stringify = require('json-stringify-safe');
 
 const apiPlan = runtime.plan;
 
@@ -185,7 +185,7 @@ module.exports = () => {
    */
   router.get('/chains', (req, res) => {
     const output = apiPlan.getAllChains(config.api.chainsFieldsResponse);
-    res.send(circularJSON.stringify(output));
+    res.send(stringify(output));
   });
 
   /**
@@ -202,7 +202,7 @@ module.exports = () => {
 
     if (status) {
       const output = apiPlan.getChainsByStatus(status, config.api.chainsFieldsResponse);
-      res.send(circularJSON.stringify(output));
+      res.send(stringify(output));
     } else {
       res.status(500).send('Param status not found');
     }
@@ -222,7 +222,7 @@ module.exports = () => {
     const chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
-      res.send(circularJSON.stringify(chain);
+      res.send(stringify(chain));
     } else {
       res.status(404).send(`Chain "${chainId}" not found`);
     }
