@@ -251,7 +251,7 @@ module.exports = () => {
     } catch (err) {}
 
     logger.info(`API - CHAIN START FORCED: chainId:${chainId}, custom_values:${custom_values_str}, input:${input_str}`);
-    const chain = apiPlan.getChainById(chainId);
+    const chain = apiPlan.getChainById(chainId, chainId + '_main');
 
     if (chain) {
       queueProcess.queueChain(chain, req.body.input, req.body.custom_values);
