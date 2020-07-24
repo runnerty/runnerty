@@ -1,0 +1,106 @@
+{
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/plan-2.6.json",
+  "chains": [
+    {
+      "id": "CHAIN_ONE",
+      "name": "CHAIN_ONE",
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "console_default",
+              "message": "[[DP]]! PROCESS @GV(PROCESS_ID) START"
+            }
+          ],
+          "on_fail": [
+            {
+              "id": "console_default",
+              "message": "[[DP]]! ERR! PROCESS @GV(PROCESS_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+            }
+          ],
+          "on_end": [
+            {
+              "id": "console_default",
+              "message": "[[DP]]! PROCESS @GV(PROCESS_ID) END"
+            }
+          ]
+        },
+        "output": [
+          {
+            "file_name": "./test.log",
+            "write": [
+              "[!] EXECUTION @GETDATE('YYYY-MM-DD HH:mm:ss') - @GV(CHAIN_ID) / @GV(PROCESS_ID) / @GV(PROCESS_EXEC_COMMAND_EXECUTED)\n"
+            ],
+            "concat": true,
+            "maxsize": "10mb"
+          }
+        ],
+        "chain_action_on_fail": "abort"
+      },
+      "notifications": {
+        "on_start": [
+          {
+            "id": "console_default",
+            "message": "CHAIN @GV(CHAIN_ID) START"
+          }
+        ],
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "CHAIN @GV(CHAIN_ID) END"
+          }
+        ],
+        "on_fail": [
+          {
+            "id": "console_default",
+            "message": "CHAIN @GV(CHAIN_ID) FAIL"
+          }
+        ]
+      },
+      "processes": [
+        {
+          "id": "PROCESS_1_ERR",
+          "name": "PROCESS 1",
+          "exec": {
+            "id": "shell_default",
+            "command": "sleep 0.5 && cmd_fail"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "[[OVERR-PROC]] PROCESS @GV(PROCESS_ID) START"
+              }
+            ]
+          }
+        },
+        {
+          "id": "PROCESS_2_OK",
+          "name": "PROCESS 2",
+          "exec": {
+            "id": "shell_default",
+            "command": "sleep 1 && echo 2"
+          }
+        },
+        {
+          "id": "PROCESS_3_OK",
+          "name": "PROCESS 3",
+          "depends_process": ["PROCESS_2_OK"],
+          "exec": {
+            "id": "shell_default",
+            "command": "echo 3"
+          }
+        },
+        {
+          "id": "PROCESS_FINAL",
+          "name": "PROCESS FINAL",
+          "depends_process": ["PROCESS_1_ERR", "PROCESS_3_OK"],
+          "exec": {
+            "id": "shell_default",
+            "command": "echo FINAL"
+          }
+        }
+      ]
+    }
+  ]
+}

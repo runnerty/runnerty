@@ -1,20 +1,31 @@
 const exec = require('./test_src/exec.js');
 jest.setTimeout(80000);
 
+function flatOutput(output) {
+  return output
+    .substring(output.indexOf('\n') + 1)
+    .replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
+    .replace('/bin/sh:1:', '/bin/sh:')
+    .replace('commandnotfound', 'notfound');
+}
+function flatSuccessOutput(successOutput) {
+  return successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('commandnotfound', 'notfound');
+}
+
 describe('Queues', () => {
   const successOutput = `info: 1 CHAIN_ONE
-info: CHAIN
-info: CHAIN
-info: 4 CHAIN_TWO_PROC_ONE
-info: 5 CHAIN_TWO_PROC_TWO
-info: 6 CHAIN_TWO END
-info: 7 CHAIN_THREE
-info: 8 CHAIN_THREE_PROC_ONE
-info: 9 CHAIN_THREE_PROC_TWO
-info: 10 CHAIN_THREE END
-info: 11 CHAIN_ONE_PROC_ONE
-info: 12 CHAIN_ONE_PROC_TWO
-info: 13 CHAIN_ONE END
+  info: CHAIN
+  info: CHAIN
+  info: 4 CHAIN_TWO_PROC_ONE
+  info: 5 CHAIN_TWO_PROC_TWO
+  info: 6 CHAIN_TWO END
+  info: 7 CHAIN_THREE
+  info: 8 CHAIN_THREE_PROC_ONE
+  info: 9 CHAIN_THREE_PROC_TWO
+  info: 10 CHAIN_THREE END
+  info: 11 CHAIN_ONE_PROC_ONE
+  info: 12 CHAIN_ONE_PROC_TWO
+  info: 13 CHAIN_ONE END
 `;
 
   test('Execution End2End: Queues', done => {
@@ -32,8 +43,7 @@ info: 13 CHAIN_ONE END
       ],
       9000,
       res => {
-        const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res).toEqual(successOutput);
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
       }
     );
@@ -95,10 +105,7 @@ describe('Iterable-end-ok-ignore-process', () => {
       ],
       16000,
       res => {
-        const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
       }
     );
@@ -156,10 +163,7 @@ describe('SimpleIter', () => {
       ],
       9000,
       res => {
-        const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
       }
     );
@@ -211,13 +215,7 @@ describe('SimpleIterFail', () => {
       ],
       9000,
       res => {
-        const _res = res.substring(res.indexOf('\n') + 1);
-        expect(
-          _res
-            .replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-            .replace('/bin/sh:1:', '/bin/sh:')
-            .replace('commandnotfound', 'notfound')
-        ).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('commandnotfound', 'notfound'));
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
       }
     );
@@ -275,13 +273,7 @@ describe('SimpleIterFailNotEnd', () => {
       ],
       9000,
       res => {
-        const _res = res.substring(res.indexOf('\n') + 1);
-        expect(
-          _res
-            .replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-            .replace('/bin/sh:1:', '/bin/sh:')
-            .replace('commandnotfound', 'notfound')
-        ).toEqual(successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('commandnotfound', 'notfound'));
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
       }
     );
@@ -317,10 +309,7 @@ describe('ComplexDependencies', () => {
       ],
       9000,
       res => {
-        const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
       }
     );
@@ -360,10 +349,7 @@ describe('Iterable-end-error-abort-serie', () => {
       ],
       9000,
       res => {
-        const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
       }
     );
@@ -393,10 +379,7 @@ describe('SimpleDefaultsProcess', () => {
       ],
       9000,
       res => {
-        const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
       }
     );
@@ -430,10 +413,7 @@ describe('ArgsCustomValuesProcess', () => {
       ],
       9000,
       res => {
-        const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
       }
     );
@@ -467,10 +447,7 @@ describe('RetryProcess', () => {
       ],
       9000,
       res => {
-        const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
       }
     );
@@ -514,10 +491,39 @@ describe('RetryProcessCAOF', () => {
       ],
       9000,
       res => {
-        const _res = res.substring(res.indexOf('\n') + 1);
-        expect(_res.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('/bin/sh:1:', '/bin/sh:')).toEqual(
-          successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
-        );
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        done();
+      }
+    );
+  });
+});
+
+describe('ParallelError', () => {
+  const successOutput = `info: CHAIN CHAIN_ONE START
+  info: [[OVERR-PROC]] PROCESS PROCESS_1_ERR START
+  info: [[DP]]! PROCESS PROCESS_2_OK START
+  info: [[DP]]! ERR! PROCESS PROCESS_1_ERR FAIL: /bin/sh: cmd_fail: command not found
+  info: [[DP]]! PROCESS PROCESS_2_OK END
+  info: [[DP]]! PROCESS PROCESS_3_OK START
+  info: [[DP]]! PROCESS PROCESS_3_OK END
+  info: CHAIN CHAIN_ONE FAIL`;
+
+  test('Execution End2End: ParallelError', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_parallel_error.json',
+        '-f',
+        'CHAIN_ONE',
+        '--end'
+      ],
+      9000,
+      res => {
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
       }
     );
