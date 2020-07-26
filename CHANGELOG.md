@@ -11,7 +11,12 @@
 - **servers:** basic auth and apikey authentication available
 - **common:** replacement of global by runtime class
 - **common:** maximum size limitation of objects for the interpreter
+- **common:** code cleaning and refactoring
 - **dependencies:** minor dependency updates
+
+### Bug Fixes
+
+- **common:** incorrect notification of failed chain before the end of all processes when running in parallel
 
 <a name="2.6.6"></a>
 
