@@ -1,8 +1,8 @@
 # Runnerty ChangeLog
 
-<a name="2.7.0-rc"></a>
+<a name="2.7.0"></a>
 
-# [2.7.0-rc](02/07/2020)
+# [2.7.0](28/07/2020)
 
 ### Features
 
