@@ -1,5 +1,18 @@
 # Runnerty ChangeLog
 
+<a name="2.7.1"></a>
+
+# [2.7.1-rc](04/09/2020)
+
+### Features
+
+- **common:** code cleaning and refactoring
+- **dependencies:** minor dependency updates
+
+### Bug Fixes
+
+- **common:** inclusion of childs_chains_status in process cleaning function
+
 <a name="2.7.0"></a>
 
 # [2.7.0](28/07/2020)
