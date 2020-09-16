@@ -1,5 +1,14 @@
 # Runnerty ChangeLog
 
+<a name="2.8.0"></a>
+
+# [2.8.0-rc](16/09/2020)
+
+### Features
+
+- **telemetry:** sending the plan to runnerty.io is enabled for future viewing
+- **dependencies:** minor dependency updates
+
 <a name="2.7.1"></a>
 
 # [2.7.1](04/09/2020)

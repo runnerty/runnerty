@@ -44,6 +44,7 @@
       "host": "https://ws-telemetry.runnerty.io",
       "healthChecker": true,
       "remoteControl": true,
+      "syncPlan": true,
       "debug": false
     },
     "interpreter_max_size": 5000000

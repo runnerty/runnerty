@@ -410,6 +410,9 @@
                 "remoteControl": {
                   "type": "boolean"
                 },
+                "syncPlan": {
+                  "type": "boolean"
+                },
                 "debug": {
                   "type": "boolean"
                 }
