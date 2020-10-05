@@ -3,7 +3,7 @@
     "api": {
       "port": 3456,
       "secret": "YOUR_SECRET",
-      "limite_req": "20mb",
+      "limit_req": "20mb",
       "log_display_level": "dev",
       "chainsFieldsResponse": [
         "id",

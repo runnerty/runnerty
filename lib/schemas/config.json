@@ -65,7 +65,7 @@
                     "secret": {
                       "type": "string"
                     },
-                    "limite_req": {
+                    "limit_req": {
                       "type": "string"
                     },
                     "token_expiration_time": {
@@ -135,7 +135,7 @@
                     "secret": {
                       "type": "string"
                     },
-                    "limite_req": {
+                    "limit_req": {
                       "type": "string"
                     },
                     "token_expiration_time": {
@@ -203,7 +203,7 @@
                     "secret": {
                       "type": "string"
                     },
-                    "limite_req": {
+                    "limit_req": {
                       "type": "string"
                     },
                     "token_expiration_time": {
@@ -286,7 +286,7 @@
                       "apikey": {
                         "type": "string"
                       },
-                      "limite_req": {
+                      "limit_req": {
                         "type": "string"
                       },
                       "log_display_level": {
@@ -324,7 +324,7 @@
                       "apikey": {
                         "type": "string"
                       },
-                      "limite_req": {
+                      "limit_req": {
                         "type": "string"
                       },
                       "log_display_level": {
@@ -371,7 +371,7 @@
                       "apikey": {
                         "type": "string"
                       },
-                      "limite_req": {
+                      "limit_req": {
                         "type": "string"
                       },
                       "log_display_level": {

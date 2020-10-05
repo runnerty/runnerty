@@ -80,7 +80,7 @@ module.exports = () => {
   );
   app.use(
     bodyParser.json({
-      limit: config.api.limite_req
+      limit: config.api.limit_req
     })
   );
   // ================================================
