@@ -37,3 +37,9 @@ Contributors are more than welcome. If you want to help please have a look to th
     <img height="120" src="https://www.coderty.com/assets/external/coderty.svg">
   </a>
 </p>
+
+[downloads-image]: https://img.shields.io/npm/dm/runnerty.svg
+[npm-url]: https://www.npmjs.com/package/runnerty
+[npm-image]: https://img.shields.io/npm/v/runnerty.svg
+[david-badge]: https://david-dm.org/runnerty/runnerty.svg
+[david-badge-url]: https://david-dm.org/runnerty/runnerty
