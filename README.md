@@ -2,10 +2,10 @@
   <a href="http://runnerty.io">
     <img height="257" src="https://runnerty.io/assets/header/logo-stroked.png">
   </a>
-  <p align="center">A new way for processes managing</p>
+  <p align="center">Smart Processes Management</p>
 </p>
 
-[![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] [![Dependency Status][david-badge]][david-badge-url] 
+[![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] [![Dependency Status][david-badge]][david-badge-url]
 <a href="#badge">
   <img alt="code style: prettier" src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg">
 </a>
@@ -22,17 +22,6 @@ Install and configure it in a few minutes to manage the processes that you alrea
 npm install -g runnerty
 ```
 
-## Quick-start
-
-You can download the quick start project and start managing your projects
-[Quick start repo](https://github.com/runnerty/runnerty-quick-start)!
-
-[downloads-image]: https://img.shields.io/npm/dm/runnerty.svg
-[npm-url]: https://www.npmjs.com/package/runnerty
-[npm-image]: https://img.shields.io/npm/v/runnerty.svg
-[david-badge]: https://david-dm.org/runnerty/runnerty.svg
-[david-badge-url]: https://david-dm.org/runnerty/runnerty
-
 ## Documentation
 
 Want to know more? have a look at the documentation [here](http://docs.runnerty.io)!
@@ -48,3 +37,9 @@ Contributors are more than welcome. If you want to help please have a look to th
     <img height="120" src="https://www.coderty.com/assets/external/coderty.svg">
   </a>
 </p>
+
+[downloads-image]: https://img.shields.io/npm/dm/runnerty.svg
+[npm-url]: https://www.npmjs.com/package/runnerty
+[npm-image]: https://img.shields.io/npm/v/runnerty.svg
+[david-badge]: https://david-dm.org/runnerty/runnerty.svg
+[david-badge-url]: https://david-dm.org/runnerty/runnerty

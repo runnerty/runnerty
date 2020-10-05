@@ -1,6 +1,4 @@
 const utils = require('../lib/utils');
-const encrypt = utils.encrypt;
-const decrypt = utils.decrypt;
 const loadConfigSection = utils.loadConfigSection;
 
 const basic_config_mockup = {
@@ -9,7 +7,7 @@ const basic_config_mockup = {
     api: {
       port: 3456,
       secret: 'YOUR_SECRET',
-      limite_req: '20mb',
+      limit_req: '20mb',
       propertiesExcludesInResponse: [Array]
     },
     planFilePath: '~/plan.json'
@@ -18,26 +16,6 @@ const basic_config_mockup = {
   global_values: [],
   historyEnabled: false
 };
-
-describe('Encrypt', () => {
-  /*
-  test('It should encrypt the string Coderty', () => {
-    expect(
-      encrypt('Coderty', 'password00000000password00000000', 'aes-256-cbc')
-    ).toBe('68507eea5bdfb60b392f7c43099c2ca4');
-  });
-  */
-
-  test('It should decrypt the string Coderty', () => {
-    expect(
-      decrypt(
-        '6ff2432e1964c661d599e5c5fee4f4d8:37a1dcdd0a27151e1dcc59b52d0e479b',
-        'password00000000password00000000',
-        'aes-256-cbc'
-      )
-    ).toBe('Coderty');
-  });
-});
 
 describe('loadConfigSection function', () => {
   it('It should throw an error when config is undefined', async () => {
