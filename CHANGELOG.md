@@ -2,7 +2,7 @@
 
 <a name="2.8.0-rc"></a>
 
-# [2.8.0-rc](05/10/2020)
+# [2.8.0-rc](14/10/2020)
 
 ### Features
 
@@ -10,6 +10,10 @@
 - **dependencies:** minor dependency updates
 - **servers:** request limiter available
 - **common:** code cleaning and refactoring
+
+### Bug Fixes
+
+- **common:** an error in the writing of the output log can cause the closing of the application
 
 <a name="2.7.1"></a>
 
