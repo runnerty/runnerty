@@ -1,8 +1,8 @@
 # Runnerty ChangeLog
 
-<a name="2.8.0-rc"></a>
+<a name="2.8.0"></a>
 
-# [2.8.0-rc](14/10/2020)
+# [2.8.0](21/10/2020)
 
 ### Features
 
