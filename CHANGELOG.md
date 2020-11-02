@@ -1,5 +1,42 @@
 # Runnerty ChangeLog
 
+<a name="3.0.0-rc"></a>
+
+# [3.0.0-rc](08/01/2021)
+
+### Features
+
+- **common:** the definition of Runnerty modules is externalized to a package [module-core](https://www.npmjs.com/package/@runnerty/module-core)
+- **common:** output_fiter: new process property that allows filtering of output_data and extra_output (JSON)
+- **common:** output_order: new process property that allows sort of output_data and extra_output (JSON)
+- **common:** improvements in reading and parsing calendars (ics)
+- **common:** loading calendars by url (ics)
+- **common:** code cleaning and refactoring
+- **common:** new metadata fields for chains
+- **cli:** when we force the execution of a chain only this one will be executed and its dependents, the triggers of the chains will be ignored.
+- **cli:** error message is displayed when we indicate a non-existent chainId when forcing an execution
+- **cli:** new namespace functionality that allows/disallows to indicate the namespace of the chains to be loaded or ignored
+- **interpreter:** Added new UUID functions
+- **interpreter:** Added new HTML ESCAPE/UNESCAPE functions
+- **telemetry:** sending of plan in case of reconnection
+- **dependencies:** minor dependency updates
+
+<a name="2.9.0"></a>
+
+# [2.9.0](24/12/2020)
+
+### Features
+
+- **common:** the option of iterating over an array of strings is enabled, indicating in "input" the name of the variable instead of the mapping object
+
+<a name="2.8.3"></a>
+
+# [2.8.3](22/12/2020)
+
+### Features
+
+- **dependencies:** minor dependency updates
+
 <a name="2.8.2"></a>
 
 # [2.8.2](12/11/2020)
@@ -7,7 +44,6 @@
 ### Bug Fixes
 
 - **common:** windows incompatibility fix related to node_modules access
-
 
 <a name="2.8.1"></a>
 

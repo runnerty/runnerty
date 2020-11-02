@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/2.8/plan.json",
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.0/plan.json",
   "chains": [
     {
       "id": "CHAIN-LAUNCHER",
@@ -315,7 +315,7 @@
           "name": "PROCESS-ITER-3-2",
           "exec": {
             "id": "wait_default",
-            "seconds": "2"
+            "time": "2s"
           },
           "notifications": {
             "on_start": [

@@ -9,6 +9,9 @@
     "name": {
       "type": "string"
     },
+    "namespace": {
+      "type": "string"
+    },
     "execId": {
       "type": "string"
     },
@@ -19,7 +22,7 @@
       "type": "number"
     },
     "input": {
-      "type": "array"
+      "type": ["array", "string"]
     },
     "custom_values": {
       "type": "object"
@@ -30,6 +33,16 @@
     "retry_delay": {
       "type": ["number", "string"]
     },
+    "iterable": {
+      "type": "string",
+      "enum": ["serie", "parallel"]
+    },
+    "ignore_on_concurrence": {
+      "type": "boolean"
+    },
+    "abort_iteration_serie_on_error": {
+      "type": "boolean"
+    },
     "triggers": {
       "type": "array",
       "items": {
@@ -38,10 +51,10 @@
           "calendars": {
             "type": "object",
             "properties": {
-              "enable": {
+              "allow": {
                 "type": "string"
               },
-              "disable": {
+              "disallow": {
                 "type": "string"
               }
             }
@@ -134,6 +147,60 @@
     },
     "processes": {
       "$ref": "processSchema"
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "team": {
+          "type": "string"
+        },
+        "criticality": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "contacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fail_comments": {
+          "type": "string"
+        },
+        "relaunchable": {
+          "type": "boolean"
+        },
+        "input_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "max_expected_time": {
+          "type": "string"
+        }
+      }
     }
   }
 }

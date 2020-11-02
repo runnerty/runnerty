@@ -39,6 +39,15 @@
                 }
               }
             },
+            "calendars": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "calendarsFolder": {
+              "type": "string"
+            },
             "api": {
               "type": "object",
               "anyOf": [

@@ -1,18 +1,17 @@
 {
-  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/2.8/config.json",
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.0/config.json",
   "general": {
     "planFilePath": "plan.json",
-    "modulesPath": "./__tests__/end2end/node_modules/",
     "runnerty.io": {
-      "host": "https://ws-telemetry.runnerty.io",
+      "host": "https://ws-telemetry.runnerty.io/v3",
       "apikey": "YOUR_APIKEY_PROJECT",
       "healthChecker": true,
       "remoteControl": true,
-      "debug": true,
-      "disable": true
+      "debug": false,
+      "disable": false
     },
     "queues": {
-      "refreshInterval": 4000
+      "refreshInterval": 100
     }
   },
   "triggers": [
@@ -33,7 +32,7 @@
     {
       "id": "wait_default",
       "type": "@runnerty-executor-wait",
-      "seconds": "60"
+      "time": "60s"
     }
   ],
   "notifiers": [

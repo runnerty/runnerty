@@ -2,10 +2,10 @@
   <a href="http://runnerty.io">
     <img height="257" src="https://runnerty.io/assets/header/logo-stroked.png">
   </a>
-  <p align="center">Smart Processes Management</p>
+  <p align="center">A new way to develop</p>
 </p>
 
-[![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] [![Dependency Status][david-badge]][david-badge-url]
+[![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url]
 <a href="#badge">
   <img alt="code style: prettier" src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg">
 </a>
@@ -42,4 +42,3 @@ Contributors are more than welcome. If you want to help please have a look to th
 [npm-url]: https://www.npmjs.com/package/runnerty
 [npm-image]: https://img.shields.io/npm/v/runnerty.svg
 [david-badge]: https://david-dm.org/runnerty/runnerty.svg
-[david-badge-url]: https://david-dm.org/runnerty/runnerty

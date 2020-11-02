@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "2.8.2",
+  "version": "3.0.0-rc",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -11,7 +11,7 @@
     "bin": "./bin"
   },
   "bin": {
-    "runnerty": "./index.js"
+    "runnerty": "index.js"
   },
   "repository": {
     "type": "git",
@@ -21,7 +21,6 @@
     "url": "https://github.com/runnerty/runnerty/issues"
   },
   "scripts": {
-    "commit": "git-cz",
     "test": "RUNNERTY_TEST=true jest --runInBand --detectOpenHandles",
     "test-watch": "RUNNERTY_TEST=true jest --runInBand --detectOpenHandles --watch",
     "debug": "node --nolazy --inspect-brk index.js",
@@ -29,31 +28,33 @@
   },
   "global": false,
   "dependencies": {
-    "@runnerty/trigger-server": "2.0.0",
-    "ajv": "6.12.6",
+    "@runnerty/interpreter-core": "3.0.0",
+    "@runnerty/trigger-server": "3.0.1",
+    "ajv": "7.0.3",
     "async-exit-hook": "2.0.1",
-    "axios": "^0.21.0",
-    "better-ajv-errors": "0.6.7",
+    "axios": "0.21.1",
+    "better-ajv-errors": "0.7.0",
     "body-parser": "1.19.0",
     "bytes": "3.1.0",
-    "commander": "6.2.0",
+    "commander": "6.2.1",
     "cors": "2.8.5",
     "express": "4.17.1",
-    "express-basic-auth": "^1.2.0",
+    "express-basic-auth": "1.2.0",
     "express-jwt": "6.0.0",
     "fs-extra": "9.0.1",
     "glob-to-regexp": "0.4.1",
-    "helmet": "4.2.0",
-    "ical2json": "3.0.0",
-    "json-stringify-safe": "^5.0.1",
+    "helmet": "4.3.1",
+    "json-stringify-safe": "5.0.1",
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.20",
-    "millisecond": "0.1.2",
     "moment": "2.29.1",
     "morgan": "1.10.0",
+    "ms": "2.1.3",
+    "node-ical": "0.12.7",
     "object-sizeof": "1.6.1",
     "redis": "3.0.2",
-    "socket.io-client": "^2.3.1",
+    "socket.io-client": "3.0.5",
+    "update-notifier": "5.0.1",
     "winston": "3.3.3"
   },
   "keywords": [
@@ -86,19 +87,17 @@
   ],
   "engineStrict": true,
   "engines": {
-    "node": ">=12.18.0"
+    "node": ">=14.15.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "commitizen": "4.2.2",
-    "cz-conventional-changelog": "3.3.0",
-    "eslint": "7.13.0",
-    "eslint-config-prettier": "^6.12.0",
-    "eslint-plugin-jest": "^24.1.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "jest": "26.6.3",
-    "jest-cli": "26.6.3",
-    "prettier": "^2.1.2",
+    "eslint": "^7.17.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-jest": "^24.1.3",
+    "eslint-plugin-prettier": "^3.3.1",
+    "jest": "^26.6.3",
+    "jest-cli": "^26.6.3",
+    "prettier": "^2.2.1",
     "runnerty-tests-modules": "file:__tests__/end2end"
   },
   "jest": {
@@ -116,11 +115,6 @@
         "lines": 0,
         "statements": 0
       }
-    }
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
     }
   }
 }
