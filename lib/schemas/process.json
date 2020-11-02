@@ -14,6 +14,19 @@
         }
       }
     },
+    "output_filter": {
+      "type": "object",
+      "properties": {
+        "$and": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/output_filter" }
+        },
+        "$or": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/output_filter" }
+        }
+      }
+    },
     "output_process": {
       "type": "array",
       "items": {
@@ -218,6 +231,20 @@
         "type": "boolean"
       },
       "output": { "$ref": "#/definitions/output_process" },
+      "output_filter": {
+        "anyOf": [
+          {
+            "type": "object"
+          },
+          { "$ref": "#/definitions/output_filter" }
+        ]
+      },
+      "output_order": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
       "output_share": {
         "type": "array",
         "items": {

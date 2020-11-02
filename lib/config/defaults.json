@@ -37,7 +37,7 @@
       "algorithm": "aes-256-cbc"
     },
     "queues": {
-      "refreshInterval": 5000
+      "refreshInterval": 1000
     },
     "runnerty.io": {
       "apikey": "",

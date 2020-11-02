@@ -1,5 +1,19 @@
 # Runnerty ChangeLog
 
+<a name="3.0.0-rc"></a>
+
+# [3.0.0-rc](11/11/2020)
+
+### Features
+
+- **telemetry:** sending of plan in case of reconnection
+- **cli:** when we force the execution of a chain only this one will be executed and its dependents, the triggers of the chains will be ignored.
+- **cli:** error message is displayed when we indicate a non-existent chainId when forcing an execution
+- **interpreter:** Added new UUID functions
+- **common:** output_fiter: new process property that allows filtering of output_data and extra_output (JSON)
+- **common:** output_order: new process property that allows sort of output_data and extra_output (JSON)
+- **dependencies:** minor dependency updates
+
 <a name="2.8.2"></a>
 
 # [2.8.2](12/11/2020)
@@ -7,7 +21,6 @@
 ### Bug Fixes
 
 - **common:** windows incompatibility fix related to node_modules access
-
 
 <a name="2.8.1"></a>
 
