@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/2.8/chain.json",
   "id": "CHAIN_OF_PLAN_LINK",
   "name": "CHAIN_OF_PLAN_LINK",
   "defaults_processes": {
