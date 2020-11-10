@@ -1,5 +1,21 @@
 # Runnerty ChangeLog
 
+<a name="2.8.1"></a>
+
+# [2.8.1](10/11/2020)
+
+### Features
+
+- **dependencies:** minor dependency updates
+
+### Bug Fixes
+
+- **telemetry:** sending of plan in case of reconnection
+
+### Tests
+
+- **common:** schemas update
+
 <a name="2.8.0"></a>
 
 # [2.8.0](21/10/2020)

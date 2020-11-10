@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/src/plan_chains_link-2.6.json",
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/2.8/plan.json",
   "chains": [
     {
       "chain_path": "./plan_link_chain_sample.json"
