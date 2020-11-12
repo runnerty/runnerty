@@ -1,5 +1,14 @@
 # Runnerty ChangeLog
 
+<a name="2.8.2"></a>
+
+# [2.8.2](12/11/2020)
+
+### Bug Fixes
+
+- **common:** windows incompatibility fix related to node_modules access
+
+
 <a name="2.8.1"></a>
 
 # [2.8.1](10/11/2020)
