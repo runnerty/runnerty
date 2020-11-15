@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "private": false,
   "dependencies": {
-    "@runnerty/executor-shell": "latest",
-    "@runnerty/executor-wait": "latest",
-    "@runnerty/executor-iterable": "latest",
-    "@runnerty/notifier-console": "latest",
-    "@runnerty/trigger-schedule": "latest"
+    "@runnerty/executor-shell": "alpha",
+    "@runnerty/executor-wait": "alpha",
+    "@runnerty/executor-iterable": "alpha",
+    "@runnerty/notifier-console": "alpha",
+    "@runnerty/trigger-schedule": "alpha"
   }
 }
