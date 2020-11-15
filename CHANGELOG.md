@@ -6,6 +6,7 @@
 
 ### Features
 
+- **common:** the definition of Runnerty modules is externalized to a package [module-core](https://www.npmjs.com/package/@runnerty/module-core)
 - **telemetry:** sending of plan in case of reconnection
 - **cli:** when we force the execution of a chain only this one will be executed and its dependents, the triggers of the chains will be ignored.
 - **cli:** error message is displayed when we indicate a non-existent chainId when forcing an execution
