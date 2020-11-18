@@ -2,7 +2,7 @@
 
 <a name="3.0.0-rc"></a>
 
-# [3.0.0-rc](11/11/2020)
+# [3.0.0-rc](18/11/2020)
 
 ### Features
 
@@ -13,6 +13,7 @@
 - **interpreter:** Added new UUID functions
 - **common:** output_fiter: new process property that allows filtering of output_data and extra_output (JSON)
 - **common:** output_order: new process property that allows sort of output_data and extra_output (JSON)
+- **common:** improvements in reading and parsing calendars (ics)
 - **dependencies:** minor dependency updates
 
 <a name="2.8.2"></a>
