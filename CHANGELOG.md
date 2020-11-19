@@ -14,6 +14,7 @@
 - **common:** output_fiter: new process property that allows filtering of output_data and extra_output (JSON)
 - **common:** output_order: new process property that allows sort of output_data and extra_output (JSON)
 - **common:** improvements in reading and parsing calendars (ics)
+- **common:** loading calendars by url (ics)
 - **dependencies:** minor dependency updates
 
 <a name="2.8.2"></a>
