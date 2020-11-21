@@ -186,6 +186,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "max_expected_time": {
+          "type": "string"
         }
       }
     }
