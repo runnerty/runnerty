@@ -88,19 +88,19 @@
   ],
   "engineStrict": true,
   "engines": {
-    "node": ">=14.15.0"
+    "node": ">=14.15.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "commitizen": "4.2.2",
     "cz-conventional-changelog": "3.3.0",
-    "eslint": "7.13.0",
+    "eslint": "7.14.0",
     "eslint-config-prettier": "^6.12.0",
     "eslint-plugin-jest": "^24.1.0",
     "eslint-plugin-prettier": "^3.1.4",
     "jest": "26.6.3",
     "jest-cli": "26.6.3",
-    "prettier": "^2.1.2",
+    "prettier": "^2.2.0",
     "runnerty-tests-modules": "file:__tests__/end2end"
   },
   "jest": {

@@ -16,6 +16,7 @@
 - **common:** improvements in reading and parsing calendars (ics)
 - **common:** loading calendars by url (ics)
 - **common:** code cleaning and refactoring
+- **common:** new metadata fields for chains
 - **dependencies:** minor dependency updates
 
 <a name="2.8.2"></a>
