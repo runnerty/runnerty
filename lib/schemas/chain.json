@@ -9,6 +9,9 @@
     "name": {
       "type": "string"
     },
+    "namespace": {
+      "type": "string"
+    },
     "execId": {
       "type": "string"
     },
@@ -134,6 +137,57 @@
     },
     "processes": {
       "$ref": "processSchema"
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "team": {
+          "type": "string"
+        },
+        "criticality": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "contacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "fail_comments": {
+          "type": "string"
+        },
+        "relaunchable": {
+          "type": "boolean"
+        },
+        "input_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }
