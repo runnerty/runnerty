@@ -11,6 +11,7 @@
 - **cli:** when we force the execution of a chain only this one will be executed and its dependents, the triggers of the chains will be ignored.
 - **cli:** error message is displayed when we indicate a non-existent chainId when forcing an execution
 - **interpreter:** Added new UUID functions
+- **interpreter:** Added new HTML ESCAPE/UNESCAPE functions
 - **common:** output_fiter: new process property that allows filtering of output_data and extra_output (JSON)
 - **common:** output_order: new process property that allows sort of output_data and extra_output (JSON)
 - **common:** improvements in reading and parsing calendars (ics)
