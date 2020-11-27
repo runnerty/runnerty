@@ -2,22 +2,23 @@
 
 <a name="3.0.0-rc"></a>
 
-# [3.0.0-rc](18/11/2020)
+# [3.0.0-rc](27/11/2020)
 
 ### Features
 
 - **common:** the definition of Runnerty modules is externalized to a package [module-core](https://www.npmjs.com/package/@runnerty/module-core)
-- **telemetry:** sending of plan in case of reconnection
-- **cli:** when we force the execution of a chain only this one will be executed and its dependents, the triggers of the chains will be ignored.
-- **cli:** error message is displayed when we indicate a non-existent chainId when forcing an execution
-- **interpreter:** Added new UUID functions
-- **interpreter:** Added new HTML ESCAPE/UNESCAPE functions
 - **common:** output_fiter: new process property that allows filtering of output_data and extra_output (JSON)
 - **common:** output_order: new process property that allows sort of output_data and extra_output (JSON)
 - **common:** improvements in reading and parsing calendars (ics)
 - **common:** loading calendars by url (ics)
 - **common:** code cleaning and refactoring
 - **common:** new metadata fields for chains
+- **cli:** when we force the execution of a chain only this one will be executed and its dependents, the triggers of the chains will be ignored.
+- **cli:** error message is displayed when we indicate a non-existent chainId when forcing an execution
+- **cli:** new namespace functionality that allows to indicate the namespace of the chains to be loaded
+- **interpreter:** Added new UUID functions
+- **interpreter:** Added new HTML ESCAPE/UNESCAPE functions
+- **telemetry:** sending of plan in case of reconnection
 - **dependencies:** minor dependency updates
 
 <a name="2.8.2"></a>
