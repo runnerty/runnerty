@@ -33,6 +33,16 @@
     "retry_delay": {
       "type": ["number", "string"]
     },
+    "iterable": {
+      "type": "string",
+      "enum": ["serie", "parallel"]
+    },
+    "ignore_on_concurrence": {
+      "type": "boolean"
+    },
+    "abort_iteration_serie_on_error": {
+      "type": "boolean"
+    },
     "triggers": {
       "type": "array",
       "items": {

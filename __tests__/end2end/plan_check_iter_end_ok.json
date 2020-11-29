@@ -314,7 +314,7 @@
           "name": "PROCESS-ITER-3-2",
           "exec": {
             "id": "wait_default",
-            "seconds": "3"
+            "time": "3s"
           },
           "notifications": {
             "on_start": [

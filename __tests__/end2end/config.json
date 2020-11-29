@@ -32,7 +32,7 @@
     {
       "id": "wait_default",
       "type": "@runnerty-executor-wait",
-      "seconds": "60"
+      "time": "60s"
     }
   ],
   "notifiers": [
