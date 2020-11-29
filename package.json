@@ -11,7 +11,7 @@
     "bin": "./bin"
   },
   "bin": {
-    "runnerty": "./index.js"
+    "runnerty": "index.js"
   },
   "repository": {
     "type": "git",
@@ -48,9 +48,9 @@
     "json-stringify-safe": "^5.0.1",
     "jsonwebtoken": "8.5.1",
     "lodash": "4.17.20",
-    "millisecond": "0.1.2",
     "moment": "2.29.1",
     "morgan": "1.10.0",
+    "ms": "^2.1.2",
     "object-sizeof": "1.6.1",
     "redis": "3.0.2",
     "socket.io-client": "^2.3.1",
