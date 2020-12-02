@@ -15,7 +15,7 @@
 - **common:** new metadata fields for chains
 - **cli:** when we force the execution of a chain only this one will be executed and its dependents, the triggers of the chains will be ignored.
 - **cli:** error message is displayed when we indicate a non-existent chainId when forcing an execution
-- **cli:** new namespace functionality that allows to indicate the namespace of the chains to be loaded
+- **cli:** new namespace functionality that allows/disallows to indicate the namespace of the chains to be loaded or ignored
 - **interpreter:** Added new UUID functions
 - **interpreter:** Added new HTML ESCAPE/UNESCAPE functions
 - **telemetry:** sending of plan in case of reconnection
