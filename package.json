@@ -29,7 +29,8 @@
   },
   "global": false,
   "dependencies": {
-    "@runnerty/trigger-server": "3.0.0",
+    "@runnerty/interpreter-core": "alpha",
+    "@runnerty/trigger-server": "alpha",
     "ajv": "6.12.6",
     "async-exit-hook": "2.0.1",
     "axios": "0.21.0",
@@ -55,7 +56,6 @@
     "redis": "3.0.2",
     "socket.io-client": "2.3.1",
     "update-notifier": "5.0.1",
-    "uuid": "8.3.2",
     "winston": "3.3.3"
   },
   "keywords": [
