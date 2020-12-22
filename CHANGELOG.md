@@ -1,5 +1,13 @@
 # Runnerty ChangeLog
 
+<a name="2.8.3"></a>
+
+# [2.8.3](22/12/2020)
+
+### Features
+
+- **dependencies:** minor dependency updates
+
 <a name="2.8.2"></a>
 
 # [2.8.2](12/11/2020)
