@@ -22,7 +22,7 @@
       "type": "number"
     },
     "input": {
-      "type": "array"
+      "type": ["array", "string"]
     },
     "custom_values": {
       "type": "object"
