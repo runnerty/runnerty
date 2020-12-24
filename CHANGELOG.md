@@ -1,5 +1,13 @@
 # Runnerty ChangeLog
 
+<a name="2.9.0"></a>
+
+# [2.9.0](24/12/2020)
+
+### Features
+
+- **common:** the option of iterating over an array of strings is enabled, indicating in "input" the name of the variable instead of the mapping object
+
 <a name="2.8.3"></a>
 
 # [2.8.3](22/12/2020)
