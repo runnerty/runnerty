@@ -28,8 +28,8 @@
   },
   "global": false,
   "dependencies": {
-    "@runnerty/interpreter-core": "alpha",
-    "@runnerty/trigger-server": "alpha",
+    "@runnerty/interpreter-core": "3.0.0",
+    "@runnerty/trigger-server": "3.0.1",
     "ajv": "7.0.3",
     "async-exit-hook": "2.0.1",
     "axios": "0.21.1",
