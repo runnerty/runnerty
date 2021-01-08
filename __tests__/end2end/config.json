@@ -3,12 +3,14 @@
   "general": {
     "planFilePath": "plan.json",
     "runnerty.io": {
-      "host": "https://ws-telemetry.runnerty.io",
-      "apikey": "YOUR_APIKEY_PROJECT",
+      "_host": "https://ws-telemetry.runnerty.io",
+      "_apikey": "YOUR_APIKEY_PROJECT",
+      "host": "http://localhost:80",
+      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9qZWN0SWQiOjg2LCJpYXQiOjE1OTM3NTcxNTN9.H2qWNQBjPL2H3tt3aiAwSdOfTjQ6B4spnhKHbMNUnpA",
       "healthChecker": true,
       "remoteControl": true,
-      "debug": true,
-      "disable": true
+      "debug": false,
+      "disable": false
     },
     "queues": {
       "refreshInterval": 4000
