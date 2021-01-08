@@ -8,7 +8,7 @@
       "healthChecker": true,
       "remoteControl": true,
       "debug": false,
-      "disable": false
+      "disable": true
     },
     "queues": {
       "refreshInterval": 100
