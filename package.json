@@ -1,11 +1,11 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "3.0.0-rc",
+  "version": "3.0.0-rc1",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
-  "author": "Coderty",
+  "author": "Runnerty Tech",
   "homepage": "http://www.runnerty.io/",
   "directories": {
     "bin": "./bin"
