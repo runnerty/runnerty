@@ -146,7 +146,7 @@
             "on_start": [
               {
                 "id": "console_default",
-                "message": "- 7      [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) START"
+                "message": "- 7      [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) START @GV(CUSTOM_V1)"
               }
             ],
             "on_fail": [

@@ -3,7 +3,7 @@
   "general": {
     "planFilePath": "plan.json",
     "runnerty.io": {
-      "host": "https://ws-telemetry.runnerty.io/v3",
+      "host": "https://ws.runnerty.io",
       "apikey": "YOUR_APIKEY_PROJECT",
       "healthChecker": true,
       "remoteControl": true,
