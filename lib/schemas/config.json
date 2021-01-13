@@ -407,6 +407,9 @@
                 "apikey": {
                   "type": "string"
                 },
+                "version": {
+                  "type": "string"
+                },
                 "disable": {
                   "type": "boolean"
                 },

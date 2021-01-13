@@ -41,7 +41,8 @@
     },
     "runnerty.io": {
       "apikey": "",
-      "host": "https://ws-telemetry.runnerty.io",
+      "host": "https://ws.runnerty.io",
+      "version": "v3",
       "healthChecker": true,
       "remoteControl": true,
       "syncPlan": true,
