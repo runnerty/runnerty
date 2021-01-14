@@ -13,19 +13,20 @@ function flatSuccessOutput(successOutput) {
 }
 
 describe('Queues', () => {
-  const successOutput = `info: 1 CHAIN_ONE
-  info: CHAIN
-  info: CHAIN
-  info: 4 CHAIN_TWO_PROC_ONE
+  const successOutput = `info: 1 CHAIN_TWO
+  info: 2 CHAIN_TWO_PROC_ONE
+  info: 3 CHAIN_ONE
+  info: 4 CHAIN_ONE_PROC_ONE ON QUEUE
   info: 5 CHAIN_TWO_PROC_TWO
   info: 6 CHAIN_TWO END
   info: 7 CHAIN_THREE
   info: 8 CHAIN_THREE_PROC_ONE
   info: 9 CHAIN_THREE_PROC_TWO
   info: 10 CHAIN_THREE END
-  info: 11 CHAIN_ONE_PROC_ONE
-  info: 12 CHAIN_ONE_PROC_TWO
-  info: 13 CHAIN_ONE END
+  info: 11 CHAIN_ONE_PROC_ONE START
+  info: 12 CHAIN_ONE_PROC_ONE END
+  info: 13 CHAIN_ONE_PROC_TWO
+  info: 14 CHAIN_ONE END
 `;
 
   test('Execution End2End: Queues', done => {
