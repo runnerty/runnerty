@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "3.0.0-rc4",
+  "version": "3.0.0-rc5",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -53,7 +53,7 @@
     "object-sizeof": "1.6.1",
     "redis": "3.0.2",
     "semver": "7.3.4",
-    "socket.io-client": "3.0.5",
+    "socket.io-client": "3.1.0",
     "update-notifier": "5.0.1",
     "winston": "3.3.3"
   },
