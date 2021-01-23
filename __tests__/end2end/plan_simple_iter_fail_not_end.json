@@ -20,7 +20,8 @@
         "on_fail": [
           {
             "id": "console_default",
-            "message": "ERR! 10 CHAIN @GV(CHAIN_ID) FAIL"
+            "message": "ERR! 10 CHAIN @GV(CHAIN_ID) FAIL",
+            "mode": "error"
           }
         ]
       },
@@ -28,6 +29,7 @@
         {
           "id": "PROCESS-LAUNCHER",
           "name": "PROCESS-LAUNCHER",
+          "fail_on_child_fail": true,
           "exec": {
             "id": "iterable_default",
             "objects": [
@@ -58,7 +60,8 @@
             "on_fail": [
               {
                 "id": "console_default",
-                "message": "ERR! PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+                "message": "ERR! PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)",
+                "mode": "error"
               }
             ],
             "on_end": [
@@ -101,7 +104,8 @@
         "on_fail": [
           {
             "id": "console_default",
-            "message": "ERR!  [I:@GV(CMDPROC)] CHAIN @GV(CHAIN_ID) FAIL"
+            "message": "ERR!  [I:@GV(CMDPROC)] CHAIN @GV(CHAIN_ID) FAIL",
+            "mode": "error"
           }
         ]
       },
@@ -123,7 +127,8 @@
             "on_fail": [
               {
                 "id": "console_default",
-                "message": "ERR!      [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+                "message": "ERR!      [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)",
+                "mode": "error"
               }
             ],
             "on_end": [
@@ -152,7 +157,8 @@
             "on_fail": [
               {
                 "id": "console_default",
-                "message": "ERR!        [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
+                "message": "ERR!        [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)",
+                "mode": "error"
               }
             ],
             "on_end": [

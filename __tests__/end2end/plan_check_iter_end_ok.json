@@ -165,13 +165,6 @@
                 "message": "Error: @GV(PROCESS_ID) @GV(PROCESS_EXEC_ERR_OUTPUT)",
                 "mode": "error"
               }
-            ],
-            "on_end": [
-              {
-                "id": "console_default",
-                "message": "9 Fin: @GV(PROCESS_ID)",
-                "mode": "info"
-              }
             ]
           }
         }
@@ -314,7 +307,7 @@
           "name": "PROCESS-ITER-3-2",
           "exec": {
             "id": "wait_default",
-            "time": "3s"
+            "time": "1s"
           },
           "notifications": {
             "on_start": [
