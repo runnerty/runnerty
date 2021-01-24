@@ -6,6 +6,7 @@
 
 ### Features
 
+- **common:** improvements in the behavior of dependencies between chains
 - **common:** the definition of Runnerty modules is externalized to a package [module-core](https://www.npmjs.com/package/@runnerty/module-core)
 - **common:** output_fiter: new process property that allows filtering of output_data and extra_output (JSON)
 - **common:** output_order: new process property that allows sort of output_data and extra_output (JSON)

@@ -63,7 +63,40 @@
       }
     },
     "depends_chains": {
-      "type": ["array", "object"]
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "chain_id": {
+              "type": "string"
+            },
+            "process_id": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "chain_id": {
+                    "type": "string"
+                  },
+                  "process_id": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      ]
     },
     "notifications": {
       "type": "object",
