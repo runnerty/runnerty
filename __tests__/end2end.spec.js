@@ -101,6 +101,7 @@ describe('Iterable-end-ok-ignore-process', () => {
         './__tests__/end2end/plan_check_iter_end_ok.json',
         '-f',
         'CHAIN-LAUNCHER',
+        '-fd',
         '--end'
       ],
       16000,
@@ -161,6 +162,7 @@ describe('SimpleIter', () => {
         'CHAIN-LAUNCHER',
         '--custom_values',
         '\'{"CUSTOM_V1":"OK1"}\'',
+        '-fd',
         '--end'
       ],
       9000,
@@ -213,6 +215,7 @@ describe('SimpleIterFail', () => {
         './__tests__/end2end/plan_simple_iter_fail.json',
         '-f',
         'CHAIN-LAUNCHER',
+        '-fd',
         '--end'
       ],
       9000,
@@ -265,6 +268,7 @@ describe('SimpleIterFailNotEnd', () => {
         './__tests__/end2end/plan_simple_iter_fail_not_end.json',
         '-f',
         'CHAIN-LAUNCHER',
+        '-fd',
         '--end'
       ],
       9000,
@@ -341,6 +345,7 @@ describe('Iterable-end-error-abort-serie', () => {
         './__tests__/end2end/plan_check_iter_end_error.json',
         '-f',
         'CHAIN-LAUNCHER',
+        '-fd',
         '--end'
       ],
       9000,
@@ -515,6 +520,75 @@ describe('ParallelError', () => {
         './__tests__/end2end/plan_parallel_error.json',
         '-f',
         'CHAIN_ONE',
+        '--end'
+      ],
+      9000,
+      res => {
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        done();
+      }
+    );
+  });
+});
+
+describe('PlanFD-NOT-FD', () => {
+  const successOutput = `info: >1> START OF THE CHAIN: CHAIN_1
+  info: START: PROCESS C1_P1
+  info: END: PROCESS C1_P1
+  info: START: PROCESS C1_P2
+  info: END: PROCESS C1_P2
+  info: >1> END OF THE CHAIN: CHAIN_1`;
+
+  test('Execution End2End: ParallelError', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_fd.json',
+        '-f',
+        'CHAIN_1',
+        '--end'
+      ],
+      9000,
+      res => {
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        done();
+      }
+    );
+  });
+});
+
+describe('PlanFD-FD', () => {
+  const successOutput = `info: >1> START OF THE CHAIN: CHAIN_1
+  info: START: PROCESS C1_P1
+  info: END: PROCESS C1_P1
+  info:   >2> START OF THE CHAIN: CHAIN_2 MYVAR1:C1_P1
+  info:   START: PROCESS C2-P1 - C1_P1
+  info:   END: PROCESS C2-P1
+  info:   >2> END OF THE CHAIN: CHAIN_2
+  info: START: PROCESS C1_P2
+  info: END: PROCESS C1_P2
+  info: >1> END OF THE CHAIN: CHAIN_1
+  info: >3> START OF THE CHAIN: CHAIN_3
+  info: START: PROCESS C3_P1
+  info: END: PROCESS C3_P1
+  info: >3> END OF THE CHAIN: CHAIN_3`;
+
+  test('Execution End2End: ParallelError', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_fd.json',
+        '-f',
+        'CHAIN_1',
+        '-fd',
         '--end'
       ],
       9000,

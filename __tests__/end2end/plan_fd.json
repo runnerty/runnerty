@@ -1,0 +1,228 @@
+{
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.0/plan.json",
+  "chains": [
+    {
+      "id": "CHAIN_1",
+      "queue": "NO_MIX",
+      "priority": 10,
+      "name": "CHAIN_1",
+      "notifications": {
+        "on_start": [
+          {
+            "id": "console_default",
+            "message": ">1> START OF THE CHAIN: @GV(CHAIN_ID)"
+          }
+        ],
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": ">1> END OF THE CHAIN: @GV(CHAIN_ID)"
+          }
+        ],
+        "on_fail": [
+          {
+            "id": "console_default",
+            "message": "FAIL OF THE CHAIN: @GV(CHAIN_ID)",
+            "mode": "error"
+          }
+        ]
+      },
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "console_default",
+              "message": "START: PROCESS @GV(PROCESS_ID)"
+            }
+          ],
+          "on_fail": [
+            {
+              "id": "console_default",
+              "message": "ERROR: PROCESS @GV(PROCESS_ID): @GV(PROCESS_EXEC_ERR_OUTPUT)",
+              "mode": "error"
+            }
+          ],
+          "on_end": [
+            {
+              "id": "console_default",
+              "message": "END: PROCESS @GV(PROCESS_ID)"
+            }
+          ]
+        }
+      },
+      "processes": [
+        {
+          "id": "C1_P1",
+          "name": "C1_P1",
+          "fail_on_child_fail": true,
+          "exec": {
+            "id": "iterable_default",
+            "objects": [
+              {
+                "CMDPROC": "echo @GV(PROCESS_ID)_1"
+              },
+              {
+                "CMDPROC": "lol @GV(PROCESS_ID)_2"
+              }
+            ]
+          },
+          "output_share": [
+            {
+              "key": "TEST",
+              "name": "VALUE",
+              "value": "@GV(PROCESS_ID)"
+            },
+            {
+              "key": "TEST",
+              "name": "VALUE_2",
+              "value": "@GV(PROCESS_ID)_2"
+            }
+          ],
+          "output_iterable": "PROCESS_EXEC_DATA_OUTPUT"
+        },
+        {
+          "id": "C1_P2",
+          "name": "C1_P2",
+          "depends_process": ["C1_P1"],
+          "exec": {
+            "id": "wait_default",
+            "time": "5",
+            "_error": "Caused error for testing"
+          }
+        }
+      ]
+    },
+    {
+      "id": "CHAIN_2",
+      "name": "CHAIN_2",
+      "queue": "NO_MIX",
+      "priority": 10,
+      "input": [
+        {
+          "MYVAR1": "TEST_VALUE"
+        }
+      ],
+      "depends_chains": [
+        {
+          "chain_id": "CHAIN_1",
+          "process_id": "C1_P1"
+        }
+      ],
+      "notifications": {
+        "on_start": [
+          {
+            "id": "console_default",
+            "message": "  >2> START OF THE CHAIN: @GV(CHAIN_ID) MYVAR1:@GV(MYVAR1)"
+          }
+        ],
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "  >2> END OF THE CHAIN: @GV(CHAIN_ID)"
+          }
+        ],
+        "on_fail": [
+          {
+            "id": "console_default",
+            "message": "FAIL OF THE CHAIN: @GV(CHAIN_ID)",
+            "mode": "error"
+          }
+        ]
+      },
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "console_default",
+              "message": "  START: PROCESS @GV(PROCESS_ID) - @GV(MYVAR1)"
+            }
+          ],
+          "on_fail": [
+            {
+              "id": "console_default",
+              "message": "ERROR: PROCESS @GV(PROCESS_ID): @GV(PROCESS_EXEC_ERR_OUTPUT)",
+              "mode": "error"
+            }
+          ],
+          "on_end": [
+            {
+              "id": "console_default",
+              "message": "  END: PROCESS @GV(PROCESS_ID)"
+            }
+          ]
+        }
+      },
+      "processes": [
+        {
+          "id": "C2-P1",
+          "name": "C2-P1",
+          "exec": {
+            "id": "wait_default",
+            "time": "5"
+          }
+        }
+      ]
+    },
+    {
+      "id": "CHAIN_3",
+      "name": "CHAIN_3",
+      "queue": "NO_MIX",
+      "priority": 10,
+      "depends_chains": ["CHAIN_1"],
+      "notifications": {
+        "on_start": [
+          {
+            "id": "console_default",
+            "message": ">3> START OF THE CHAIN: @GV(CHAIN_ID)"
+          }
+        ],
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": ">3> END OF THE CHAIN: @GV(CHAIN_ID)"
+          }
+        ],
+        "on_fail": [
+          {
+            "id": "console_default",
+            "message": "FAIL OF THE CHAIN: @GV(CHAIN_ID)",
+            "mode": "error"
+          }
+        ]
+      },
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "console_default",
+              "message": "START: PROCESS @GV(PROCESS_ID)"
+            }
+          ],
+          "on_fail": [
+            {
+              "id": "console_default",
+              "message": "ERROR: PROCESS @GV(PROCESS_ID): @GV(PROCESS_EXEC_ERR_OUTPUT)",
+              "mode": "error"
+            }
+          ],
+          "on_end": [
+            {
+              "id": "console_default",
+              "message": "END: PROCESS @GV(PROCESS_ID)"
+            }
+          ]
+        }
+      },
+      "processes": [
+        {
+          "id": "C3_P1",
+          "name": "C3_P1",
+          "exec": {
+            "id": "wait_default",
+            "time": "5"
+          }
+        }
+      ]
+    }
+  ]
+}
