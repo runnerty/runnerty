@@ -21,7 +21,7 @@
     "url": "https://github.com/runnerty/runnerty/issues"
   },
   "scripts": {
-    "test": "RUNNERTY_TEST=true jest --runInBand --detectOpenHandles",
+    "test": "RUNNERTY_TEST=true jest --runInBand --detectOpenHandles --forceExit",
     "test-watch": "RUNNERTY_TEST=true jest --runInBand --detectOpenHandles --watch",
     "debug": "node --nolazy --inspect-brk index.js",
     "lint": "eslint '**/*.js' && prettier --check '**'"

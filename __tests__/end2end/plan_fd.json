@@ -6,6 +6,11 @@
       "queue": "NO_MIX",
       "priority": 10,
       "name": "CHAIN_1",
+      "triggers": [
+        {
+          "id":"immediate"
+        }
+      ],
       "notifications": {
         "on_start": [
           {

@@ -42,7 +42,7 @@ describe('Queues', () => {
         'CHAIN_ONE,CHAIN_TWO,CHAIN_THREE',
         '--end'
       ],
-      9000,
+      8000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
@@ -307,7 +307,7 @@ describe('ComplexDependencies', () => {
         'CHAIN_ONE',
         '--end'
       ],
-      9000,
+      8000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
@@ -348,7 +348,7 @@ describe('Iterable-end-error-abort-serie', () => {
         '-fd',
         '--end'
       ],
-      9000,
+      8000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
@@ -378,7 +378,7 @@ describe('SimpleDefaultsProcess', () => {
         'CHAIN_ONE',
         '--end'
       ],
-      9000,
+      8000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
@@ -412,7 +412,7 @@ describe('ArgsCustomValuesProcess', () => {
         '\'[{"KI1":"I1", "KI2":"I2"},{"KI1":"I3", "KI2":"I4"}]\'',
         '--end'
       ],
-      9000,
+      8000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
@@ -446,7 +446,7 @@ describe('RetryProcess', () => {
         'CHAIN_ONE',
         '--end'
       ],
-      9000,
+      8000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
@@ -490,7 +490,7 @@ describe('RetryProcessCAOF', () => {
         'CHAIN_ONE',
         '--end'
       ],
-      9000,
+      8000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
@@ -522,7 +522,7 @@ describe('ParallelError', () => {
         'CHAIN_ONE',
         '--end'
       ],
-      9000,
+      8000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
@@ -552,7 +552,7 @@ describe('PlanFD-NOT-FD', () => {
         'CHAIN_1',
         '--end'
       ],
-      9000,
+      8000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();
@@ -591,7 +591,36 @@ describe('PlanFD-FD', () => {
         '-fd',
         '--end'
       ],
-      9000,
+      8000,
+      res => {
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        done();
+      }
+    );
+  });
+});
+
+describe('PlanFD-NOT-FORCED', () => {
+  const successOutput = `info: >1> START OF THE CHAIN: CHAIN_1
+  info: START: PROCESS C1_P1
+  info: END: PROCESS C1_P1
+  info:   >2> START OF THE CHAIN: CHAIN_2 MYVAR1:C1_P1
+  info:   START: PROCESS C2-P1 - C1_P1
+  info:   END: PROCESS C2-P1
+  info:   >2> END OF THE CHAIN: CHAIN_2
+  info: START: PROCESS C1_P2
+  info: END: PROCESS C1_P2
+  info: >1> END OF THE CHAIN: CHAIN_1
+  info: >3> START OF THE CHAIN: CHAIN_3
+  info: START: PROCESS C3_P1
+  info: END: PROCESS C3_P1
+  info: >3> END OF THE CHAIN: CHAIN_3`;
+
+  test('Execution End2End: ParallelError', done => {
+    exec(
+      'node',
+      ['index.js', '-c', './__tests__/end2end/config.json', '-p', './__tests__/end2end/plan_fd.json'],
+      2000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
         done();

@@ -18,6 +18,10 @@
     {
       "id": "schedule_default",
       "type": "@runnerty-trigger-schedule"
+    },
+    {
+      "id": "immediate",
+      "type": "@runnerty-trigger-immediate"
     }
   ],
   "executors": [
