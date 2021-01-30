@@ -8,7 +8,7 @@
       "name": "CHAIN_1",
       "triggers": [
         {
-          "id":"immediate"
+          "id": "immediate"
         }
       ],
       "notifications": {
