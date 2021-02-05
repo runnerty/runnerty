@@ -4,6 +4,22 @@
     {
       "id": "CHAIN_ONE",
       "name": "CHAIN_ONE",
+      "namespace": "RUNNERTY_NS_TEST",
+      "meta": {
+        "author": "Marty McFly",
+        "team": "TIMELINES",
+        "criticality": "high",
+        "contacts": [
+          {
+            "name": "Dr. Emmett Lathrop Brown",
+            "email": "doc@backtothefuture.com",
+            "phone": "880000000"
+          }
+        ],
+        "fail_comments": "Check flux capacitor and relaunch!",
+        "relaunchable": true,
+        "keywords": ["TRAVEL", "TIME"]
+      },
       "retries": 2,
       "retry_delay": 10,
       "defaults_processes": {

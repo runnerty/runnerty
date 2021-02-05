@@ -46,7 +46,9 @@
       "healthChecker": true,
       "remoteControl": true,
       "syncPlan": true,
-      "debug": false
+      "debug": false,
+      "waitForConnection": true,
+      "connectionTimeout": 5000
     },
     "interpreter_max_size": 5000000
   },

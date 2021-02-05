@@ -8,7 +8,9 @@
       "healthChecker": true,
       "remoteControl": true,
       "debug": false,
-      "disable": true
+      "disable": true,
+      "waitForConnection": true,
+      "connectionTimeout": 5000
     },
     "queues": {
       "refreshInterval": 100

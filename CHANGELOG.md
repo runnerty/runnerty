@@ -1,5 +1,15 @@
 # Runnerty ChangeLog
 
+<a name="3.0.1"></a>
+
+# [3.0.1](5/02/2021)
+
+### Features
+
+- **telemetry:** sending of chain namespace and meta
+- **telemetry:** If runnerty.io connection is enabled, by default it will wait for a connection before running to avoid loss of events, a timeout can also be established. Configurable from config.json/runnerty.io/ waitForConnection and connectionTimeout
+- **dependencies:** minor dependency updates
+
 <a name="3.0.0"></a>
 
 # [3.0.0](31/01/2021)
@@ -21,6 +31,18 @@
 - **interpreter:** Added new HTML ESCAPE/UNESCAPE functions
 - **telemetry:** sending of plan in case of reconnection
 - **dependencies:** minor dependency updates
+
+### Breaking Changes
+#### Chain dependencies
+  - When **depends_chains/chain_id** is defined in a determined chain, the dependent chain will be executed as soon as the depended one finishes.
+  - When **depends_chains/chain_id+process_id** is defined in a determined chain, that dependent chain will be executed as soon as the defined process finishes. The depended chain will wait until the dependent chain finishes. This behaviour is similar to how **iterable chains** works on Runnerty v2.
+  - On the other hand, **Iterable chains** definition is not altered at all. Iterable chains in Runnerty v2 are fully compatible with Runnerty v3.
+#### Forced chain execution (CLI)
+  - When we **force the execution** of a chain that chain is inmediately executed. Triggers will be ignored; if that chain have any dependent chain, they will not be executed.
+  - New parameter **-fd** (force dependents) when we **force execution**. When we force the execution of a chain with arg **-fd** it will also force the execution of its dependent chains.
+  - Error message is displayed when we indicate a non-existent chainId while forcing an execution.
+## Modules
+  - Runnerty v3.x is not compatible with versions of modules lower than v3.x
 
 <a name="2.9.0"></a>
 

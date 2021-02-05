@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -28,8 +28,8 @@
   },
   "dependencies": {
     "@runnerty/interpreter-core": "~3.0.0",
-    "@runnerty/trigger-server": "~3.0.1",
-    "ajv": "~7.0.3",
+    "@runnerty/trigger-server": "~3.0.2",
+    "ajv": "~7.0.4",
     "async-exit-hook": "~2.0.1",
     "axios": "~0.21.1",
     "better-ajv-errors": "~0.7.0",
@@ -55,7 +55,7 @@
     "object-sizeof": "~1.6.1",
     "redis": "~3.0.2",
     "semver": "~7.3.4",
-    "socket.io-client": "~3.1.0",
+    "socket.io-client": "~3.1.1",
     "update-notifier": "~5.1.0",
     "winston": "~3.3.3"
   },
