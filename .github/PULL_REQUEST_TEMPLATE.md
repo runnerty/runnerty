@@ -1,6 +1,6 @@
 **Please check if the PR fulfills these requirements**
 
-- [ ] The commit message follows our guidelines: https://github.com/Coderty/runnerty/blob/master/CONTRIGUTING.md#commit
+- [ ] The commit message follows our guidelines: https://github.com/Runnerty/runnerty/blob/master/CONTRIGUTING.md#commit
 - [ ] Docs have been added / updated (for bug fixes / features)
 
 **What kind of change does this PR introduce?** (check one with "x")

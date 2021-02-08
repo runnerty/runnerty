@@ -1,5 +1,13 @@
 # Runnerty ChangeLog
 
+<a name="3.0.2"></a>
+
+# [3.0.2](8/02/2021)
+
+### Bug Fixes
+
+- **telemetry:** error blocking plan synchronization in runnerty.io when starting connection
+
 <a name="3.0.1"></a>
 
 # [3.0.1](5/02/2021)
