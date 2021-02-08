@@ -45,13 +45,13 @@ We want to fix all the issues as soon as possible, but before fixing a bug we ne
 - 3rd-party libraries and their versions
 - and most importantly - a use-case that fails
 
-You can file new issues by filling out our [new issue form](https://github.com/Coderty/runnerty/issues/new).
+You can file new issues by filling out our [new issue form](https://github.com/Runnerty/runnerty/issues/new).
 
 
 ### <a name="submit-pr"></a> Submitting a Pull Request (PR)
 Before you submit your Pull Request (PR) consider the following guidelines:
 
-* Search [GitHub](https://github.com/Coderty/runnerty/pulls) for an open or closed PR
+* Search [GitHub](https://github.com/Runnerty/runnerty/pulls) for an open or closed PR
   that relates to your submission. You don't want to duplicate effort.
 * Make your changes in a new git branch:
 
@@ -207,5 +207,5 @@ reference GitHub issues that this commit **Closes**.
 
 **Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines. The rest of the commit message is then used for this.
 
-[github]: https://github.com/Coderty/runnerty
+[github]: https://github.com/Runnerty/runnerty
 [slack]: https://runnerty.slack.com/
