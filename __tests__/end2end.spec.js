@@ -539,7 +539,7 @@ describe('PlanFD-NOT-FD', () => {
   info: END: PROCESS C1_P2
   info: >1> END OF THE CHAIN: CHAIN_1`;
 
-  test('Execution End2End: ParallelError', done => {
+  test('Execution End2End: PlanFD-NOT-FD', done => {
     exec(
       'node',
       [
@@ -574,10 +574,12 @@ describe('PlanFD-FD', () => {
   info: >1> END OF THE CHAIN: CHAIN_1
   info: >3> START OF THE CHAIN: CHAIN_3
   info: START: PROCESS C3_P1
-  info: END: PROCESS C3_P1
+  info: END: PROCESS C3_P1 - A
+  info: START: PROCESS C3_P2
+  info: END: PROCESS C3_P2 - A
   info: >3> END OF THE CHAIN: CHAIN_3`;
 
-  test('Execution End2End: ParallelError', done => {
+  test('Execution End2End: PlanFD-FD', done => {
     exec(
       'node',
       [
@@ -613,10 +615,12 @@ describe('PlanFD-NOT-FORCED', () => {
   info: >1> END OF THE CHAIN: CHAIN_1
   info: >3> START OF THE CHAIN: CHAIN_3
   info: START: PROCESS C3_P1
-  info: END: PROCESS C3_P1
+  info: END: PROCESS C3_P1 - A
+  info: START: PROCESS C3_P2
+  info: END: PROCESS C3_P2 - A
   info: >3> END OF THE CHAIN: CHAIN_3`;
 
-  test('Execution End2End: ParallelError', done => {
+  test('Execution End2End: PlanFD-NOT-FORCED', done => {
     exec(
       'node',
       ['index.js', '-c', './__tests__/end2end/config.json', '-p', './__tests__/end2end/plan_fd.json'],
@@ -642,14 +646,16 @@ describe('PlanDepChains-NOT-FORCED', () => {
   info: >1> END OF THE CHAIN: CHAIN_1
   info: >3> START OF THE CHAIN: CHAIN_3
   info: START: PROCESS C3_P1
-  info: END: PROCESS C3_P1
-  info: >3> END OF THE CHAIN: CHAIN_3
+  info: END: PROCESS C3_P1 - A
+  info: START: PROCESS C3_P2
   info: >4> START OF THE CHAIN: CHAIN_4
   info: START: PROCESS C4_P1
+  info: END: PROCESS C3_P2 - A
+  info: >3> END OF THE CHAIN: CHAIN_3
   info: END: PROCESS C4_P1
   info: >4> END OF THE CHAIN: CHAIN_4`;
 
-  test('Execution End2End: ParallelError', done => {
+  test('Execution End2End: PlanDepChains-NOT-FORCED', done => {
     exec(
       'node',
       ['index.js', '-c', './__tests__/end2end/config.json', '-p', './__tests__/end2end/plan_dep_chains.json'],

@@ -234,6 +234,25 @@
           "type": "string"
         }
       }
+    },
+    "runnerty.io": {
+      "type": "object",
+      "properties": {
+        "remoteControl": {
+          "type": "boolean"
+        },
+        "sync": {
+          "type": "object",
+          "properties": {
+            "events": {
+              "type": "boolean"
+            },
+            "chain": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
     }
   }
 }

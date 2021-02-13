@@ -213,7 +213,7 @@
           "on_end": [
             {
               "id": "console_default",
-              "message": "END: PROCESS @GV(PROCESS_ID)"
+              "message": "END: PROCESS @GV(PROCESS_ID) - @GV(PROCESS_EXEC_MSG_OUTPUT)"
             }
           ]
         }
@@ -223,8 +223,24 @@
           "id": "C3_P1",
           "name": "C3_P1",
           "exec": {
-            "id": "wait_default",
-            "time": "0"
+            "id": "shell_default",
+            "command": "echo A"
+          },
+          "output_share": [
+            {
+              "key": "VAL",
+              "name": "A",
+              "value": "@GV(PROCESS_EXEC_MSG_OUTPUT)"
+            }
+          ]
+        },
+        {
+          "id": "C3_P2",
+          "name": "C3_P2",
+          "depends_process": ["C3_P1"],
+          "exec": {
+            "id": "shell_default",
+            "command": "echo @GV(VAL_A)"
           }
         }
       ]
@@ -283,7 +299,7 @@
           "name": "C4_P1",
           "exec": {
             "id": "wait_default",
-            "time": "0"
+            "time": "5"
           }
         }
       ]

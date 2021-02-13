@@ -1,5 +1,19 @@
 # Runnerty ChangeLog
 
+<a name="3.1.0"></a>
+
+# [3.1.0](13/02/2021)
+
+### Features
+
+- **telemetry:** new chain properties to disable "remoteControl" and sync of "events" and "chain"
+- **dependencies:** minor dependency updates
+
+### Tests
+
+- **common:** new chains dependences test
+
+
 <a name="3.0.2"></a>
 
 # [3.0.2](8/02/2021)
