@@ -4,9 +4,9 @@
     "planFilePath": "plan.json",
     "runnerty.io": {
       "host": "https://ws.runnerty.io",
-      "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwcm9qZWN0SWQiOjEwMiwiaWF0IjoxNjA0MDgyODY3fQ.7zgfmwflyBEC10QLkNsL_oKeu-Re6N5VbrfJVkPj_qY",
+      "apikey": "YOUR_APIKEY_PROJECT",
       "healthChecker": true,
-      "remoteControl": false,
+      "remoteControl": true,
       "debug": false,
       "disable": true,
       "waitForConnection": true,
