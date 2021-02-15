@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.0/plan.json",
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.1/plan.json",
   "chains": [
     {
       "id": "CHAIN-LAUNCHER",
@@ -23,6 +23,12 @@
             "message": "ERR! CHAIN @GV(CHAIN_ID) FAIL"
           }
         ]
+      },
+      "runnerty.io": {
+        "sync": {
+          "chain": false,
+          "events": false
+        }
       },
       "processes": [
         {
@@ -76,6 +82,12 @@
       "id": "CHAIN-ITERABLE",
       "name": "CHAIN-ITERABLE",
       "iterable": "serie",
+      "runnerty.io": {
+        "sync": {
+          "chain": false,
+          "events": true
+        }
+      },
       "depends_chains": {
         "chain_id": "CHAIN-LAUNCHER",
         "process_id": "PROCESS-LAUNCHER"

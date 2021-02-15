@@ -5,7 +5,7 @@
   "dependencies": {
     "@runnerty/executor-shell": "3.0.2",
     "@runnerty/executor-wait": "3.0.2",
-    "@runnerty/executor-iterable": "3.0.2",
+    "@runnerty/executor-iterable": "3.0.3",
     "@runnerty/notifier-console": "3.0.2",
     "@runnerty/trigger-schedule": "3.0.2",
     "@runnerty/trigger-immediate": "3.0.2"
