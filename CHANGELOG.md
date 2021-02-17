@@ -14,6 +14,10 @@
 - **common:** chains dependences test
 - **common:** process dependent on iterable failed ignored with end of chain
 
+### Bug Fixes
+
+- **common:** chain never ends when a process dependent on another that triggers the execution of an iterable chain (with errors) is ignored
+
 
 <a name="3.0.2"></a>
 
