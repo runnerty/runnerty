@@ -1,8 +1,8 @@
 # Runnerty ChangeLog
 
-<a name="3.1.0-rc"></a>
+<a name="3.1.0-rc1"></a>
 
-# [3.1.0-rc](15/02/2021)
+# [3.1.0-rc1](17/02/2021)
 
 ### Features
 
@@ -11,7 +11,8 @@
 
 ### Tests
 
-- **common:** new chains dependences test
+- **common:** chains dependences test
+- **common:** process dependent on iterable failed ignored with end of chain
 
 
 <a name="3.0.2"></a>

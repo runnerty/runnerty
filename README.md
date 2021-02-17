@@ -2,7 +2,7 @@
   <a href="http://runnerty.io">
     <img height="257" src="https://runnerty.io/assets/header/logo-stroked.png">
   </a>
-  <p align="center">A new way to develop</p>
+  <p align="center">Smart Processes Management</p>
 </p>
 
 [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url]

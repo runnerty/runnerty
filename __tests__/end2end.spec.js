@@ -667,3 +667,42 @@ describe('PlanDepChains-NOT-FORCED', () => {
     );
   });
 });
+
+describe('PlanIterEndsIgnoringProcess', () => {
+  const successOutput = `info: >>>> CHAIN CHAIN-ONE START
+  info: init: PROCESS-LAUNCHER
+  info: end: PROCESS-LAUNCHER 
+  info: - 4     [I:echo PROCESS-LAUNCHER_4] CHAIN CHAIN-ITERABLE START
+  info: - 7      [I:echo PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE START
+  info: - 8      [I:echo PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE END
+  info: - 9   [I:echo PROCESS-LAUNCHER_4] CHAIN CHAIN-ITERABLE END
+  info: - 4     [I:lol PROCESS-LAUNCHER_5] CHAIN CHAIN-ITERABLE START
+  info: - 7      [I:lol PROCESS-LAUNCHER_5] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE START
+  info: ERR!        [I:lol PROCESS-LAUNCHER_5] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE FAIL: /bin/sh: lol: command not found
+  info: ERR!  [I:lol PROCESS-LAUNCHER_5] CHAIN CHAIN-ITERABLE FAIL
+  info: init: PROCESS-FOUR
+  info: end: PROCESS-FOUR 
+  info: >>>> CHAIN CHAIN-ONE END`;
+
+  test('Execution End2End: PlanIterEndsIgnoringProcess', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_parallel_ends.json',
+        '-f',
+        'CHAIN-ONE',
+        '-fd',
+        '--end'
+      ],
+      2000,
+      res => {
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        done();
+      }
+    );
+  });
+});
