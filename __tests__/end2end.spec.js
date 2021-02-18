@@ -706,3 +706,33 @@ describe('PlanIterEndsIgnoringProcess', () => {
     );
   });
 });
+
+describe('PlanPrevFinalProcFails', () => {
+  const successOutput = `info: CHAIN START CHAIN-ONE
+  info: PROCESS START P-1
+  info: PROCESS END P-1 
+  info: PROCESS START P-2
+  error: PROCESS ERROR P-2 MSG ERROR
+  error: CHAIN FAIL CHAIN-ONE`;
+
+  test('Execution End2End: PlanPrevFinalProcFails', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_prev_final_proc_fails.json',
+        '-f',
+        'CHAIN-ONE',
+        '--end'
+      ],
+      2000,
+      res => {
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        done();
+      }
+    );
+  });
+});

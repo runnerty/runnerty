@@ -1,8 +1,8 @@
 # Runnerty ChangeLog
 
-<a name="3.1.0-rc2"></a>
+<a name="3.1.0-rc3"></a>
 
-# [3.1.0-rc2](17/02/2021)
+# [3.1.0-rc3](18/02/2021)
 
 ### Features
 
@@ -17,6 +17,7 @@
 ### Bug Fixes
 
 - **common:** chain never ends when a process dependent on another that triggers the execution of an iterable chain (with errors) is ignored
+- **common:** in complex circumstances a chain with failed processes might not finish
 - **telemetry:** send ended_at on process error 
 
 <a name="3.0.2"></a>

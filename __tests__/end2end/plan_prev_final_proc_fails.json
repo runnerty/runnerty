@@ -1,0 +1,87 @@
+{
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.1/plan.json",
+  "chains": [
+    {
+      "id": "CHAIN-ONE",
+      "name": "CHAIN-ONE",
+      "notifications": {
+        "on_start": [
+          {
+            "id": "console_default",
+            "message": "CHAIN START @GV(CHAIN_ID)",
+            "mode": "info"
+          }
+        ],
+        "on_fail": [
+          {
+            "id": "console_default",
+            "message": "CHAIN FAIL @GV(CHAIN_ID)",
+            "mode": "error"
+          }
+        ],
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "CHAIN END @GV(CHAIN_ID)",
+            "mode": "info"
+          }
+        ]
+      },
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "console_default",
+              "message": "PROCESS START @GV(PROCESS_ID)",
+              "mode": "info"
+            }
+          ],
+          "on_fail": [
+            {
+              "id": "console_default",
+              "message": "PROCESS ERROR @GV(PROCESS_ID) @GV(PROCESS_EXEC_ERR_OUTPUT)",
+              "mode": "error"
+            }
+          ],
+          "on_end": [
+            {
+              "id": "console_default",
+              "message": "PROCESS END @GV(PROCESS_ID) @GV(PROCESS_EXEC_MSG_OUTPUT)",
+              "mode": "info"
+            }
+          ]
+        }
+      },
+      "processes": [
+        {
+          "id": "P-1",
+          "name": "P-1",
+          "exec": {
+            "id": "wait_default",
+            "time": "0"
+          }
+        },
+        {
+          "id": "P-2",
+          "name": "P-2",
+          "depends_process": ["P-1"],
+          "chain_action_on_fail": "abort",
+          "exec": {
+            "id": "wait_default",
+            "time": "0",
+            "error": "MSG ERROR"
+          }
+        },
+        {
+          "id": "P-FINAL",
+          "name": "P-FINAL",
+          "depends_process": ["P-2"],
+          "exec": {
+            "id": "wait_default",
+            "time": "0"
+          }
+        }
+      ]
+    }
+  ]
+}
