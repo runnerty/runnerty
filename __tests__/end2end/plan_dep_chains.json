@@ -239,8 +239,9 @@
           "name": "C3_P2",
           "depends_process": ["C3_P1"],
           "exec": {
-            "id": "shell_default",
-            "command": "echo @GV(VAL_A)"
+            "id": "wait_default",
+            "time": "10ms",
+            "output": "@GV(VAL_A)"
           }
         }
       ]
