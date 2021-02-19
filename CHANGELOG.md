@@ -8,6 +8,7 @@
 
 - **telemetry:** new chain properties to disable "remoteControl" and sync of "events" and "chain"
 - **dependencies:** minor dependency updates
+- **common:** new chain value exposed CHAIN_QUEUE
 
 ### Tests
 
