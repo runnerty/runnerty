@@ -1,12 +1,13 @@
 # Runnerty ChangeLog
 
-<a name="3.1.0-rc3"></a>
+<a name="3.1.0-rc4"></a>
 
-# [3.1.0-rc3](18/02/2021)
+# [3.1.0-rc4](20/02/2021)
 
 ### Features
 
 - **telemetry:** new chain properties to disable "remoteControl" and sync of "events" and "chain"
+- **telemetry:** new meta chain properties to set extraId
 - **dependencies:** minor dependency updates
 - **common:** new chain value exposed CHAIN_QUEUE
 

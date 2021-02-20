@@ -24,12 +24,6 @@
           }
         ]
       },
-      "runnerty.io": {
-        "sync": {
-          "chain": false,
-          "events": false
-        }
-      },
       "processes": [
         {
           "id": "PROCESS-LAUNCHER",
@@ -82,12 +76,6 @@
       "id": "CHAIN-ITERABLE",
       "name": "CHAIN-ITERABLE",
       "iterable": "serie",
-      "runnerty.io": {
-        "sync": {
-          "chain": false,
-          "events": true
-        }
-      },
       "depends_chains": {
         "chain_id": "CHAIN-LAUNCHER",
         "process_id": "PROCESS-LAUNCHER"
@@ -97,6 +85,9 @@
           "CMDPROC": "CMDPROC"
         }
       ],
+      "meta": {
+        "extraId": "@GV(CMDPROC)"
+      },
       "notifications": {
         "on_start": [
           {
