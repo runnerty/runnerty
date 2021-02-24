@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "3.1.0-rc5",
+  "version": "3.1.0-rc6",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -93,7 +93,7 @@
   "devDependencies": {
     "babel-eslint": "^10.1.0",
     "eslint": "^7.20.0",
-    "eslint-config-prettier": "^8.0.0",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-jest": "^24.1.5",
     "eslint-plugin-prettier": "^3.3.1",
     "jest": "^26.6.3",

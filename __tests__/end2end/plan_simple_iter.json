@@ -86,7 +86,7 @@
         }
       ],
       "meta": {
-        "extraId": "@GV(CMDPROC)"
+        "extra_id": "@GV(CMDPROC)"
       },
       "notifications": {
         "on_start": [
