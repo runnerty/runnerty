@@ -2,27 +2,52 @@
   "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.1/plan.json",
   "chains": [
     {
-      "id": "CHAIN-LAUNCHER",
-      "name": "CHAIN-LAUNCHER",
+      "id": "CHAIN-ONE",
+      "name": "CHAIN-ONE",
       "notifications": {
         "on_start": [
           {
             "id": "console_default",
-            "message": "1 CHAIN @GV(CHAIN_ID) START"
+            "message": ">>>> CHAIN @GV(CHAIN_ID) START"
           }
         ],
         "on_end": [
           {
             "id": "console_default",
-            "message": "10 CHAIN @GV(CHAIN_ID) END"
+            "message": ">>>> CHAIN @GV(CHAIN_ID) END"
           }
         ],
         "on_fail": [
           {
             "id": "console_default",
-            "message": "ERR! 10 CHAIN @GV(CHAIN_ID) FAIL"
+            "message": "ERR! CHAIN @GV(CHAIN_ID) FAIL"
           }
         ]
+      },
+      "defaults_processes": {
+        "notifications": {
+          "on_start": [
+            {
+              "id": "console_default",
+              "message": "init: @GV(PROCESS_ID)",
+              "mode": "info"
+            }
+          ],
+          "on_fail": [
+            {
+              "id": "console_default",
+              "message": "error: @GV(PROCESS_ID) @GV(PROCESS_EXEC_ERR_OUTPUT)",
+              "mode": "error"
+            }
+          ],
+          "on_end": [
+            {
+              "id": "console_default",
+              "message": "end: @GV(PROCESS_ID) @GV(PROCESS_EXEC_MSG_OUTPUT)",
+              "mode": "info"
+            }
+          ]
+        }
       },
       "processes": [
         {
@@ -32,44 +57,35 @@
             "id": "iterable_default",
             "objects": [
               {
-                "CMDPROC": "echo @GV(PROCESS_ID)_1"
+                "CMDPROC": "echo @GV(PROCESS_ID)_4"
               },
               {
-                "CMDPROC": "echo @GV(PROCESS_ID)_2"
-              },
-              {
-                "CMDPROC": "echo @GV(PROCESS_ID)_3"
-              },
-              {
-                "CMDPROC": "lol @GV(PROCESS_ID)_4"
-              },
-              {
-                "CMDPROC": "echo @GV(PROCESS_ID)_5"
-              }
-            ]
-          },
-          "fail_on_child_fail": true,
-          "notifications": {
-            "on_start": [
-              {
-                "id": "console_default",
-                "message": "2   PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) START"
-              }
-            ],
-            "on_fail": [
-              {
-                "id": "console_default",
-                "message": "ERR! PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
-              }
-            ],
-            "on_end": [
-              {
-                "id": "console_default",
-                "message": "3    PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) END"
+                "CMDPROC": "lol @GV(PROCESS_ID)_5"
               }
             ]
           },
           "output_iterable": "PROCESS_EXEC_DATA_OUTPUT"
+        },
+        {
+          "id": "PROCESS-FOUR",
+          "name": "PROCESS-FOUR",
+          "depends_process": ["PROCESS-LAUNCHER"],
+          "exec": {
+            "id": "wait_default",
+            "time": "0s"
+          },
+          "output_share": [{ "key": "THE", "name": "VALUE", "value": "0" }]
+        },
+        {
+          "id": "PROCESS-FIVE",
+          "name": "PROCESS-FIVE",
+          "depends_process": {
+            "$and": [{ "$end": "PROCESS-FOUR" }, { "$and": [{ "@GV(THE_VALUE)": { "$gte": "1" } }] }]
+          },
+          "exec": {
+            "id": "wait_default",
+            "time": "0s"
+          }
         }
       ]
     },
@@ -78,7 +94,7 @@
       "name": "CHAIN-ITERABLE",
       "iterable": "serie",
       "depends_chains": {
-        "chain_id": "CHAIN-LAUNCHER",
+        "chain_id": "CHAIN-ONE",
         "process_id": "PROCESS-LAUNCHER"
       },
       "input": [
@@ -108,37 +124,8 @@
       },
       "processes": [
         {
-          "id": "PROCESS-ITER-ONE",
-          "name": "PROCESS-ITER-ONE",
-          "exec": {
-            "id": "shell_default",
-            "command": "echo @GV(PROCESS_ID)"
-          },
-          "notifications": {
-            "on_start": [
-              {
-                "id": "console_default",
-                "message": "- 5       [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) START"
-              }
-            ],
-            "on_fail": [
-              {
-                "id": "console_default",
-                "message": "ERR!      [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) FAIL: @GV(PROCESS_EXEC_ERR_OUTPUT)"
-              }
-            ],
-            "on_end": [
-              {
-                "id": "console_default",
-                "message": "- 6       [I:@GV(CMDPROC)] PROCESS @GV(PROCESS_ID) OF CHAIN @GV(CHAIN_ID) END"
-              }
-            ]
-          }
-        },
-        {
           "id": "PROCESS-ITER-TWO",
           "name": "PROCESS-ITER-TWO",
-          "depend_process": ["PROCESS-ITER-ONE"],
           "exec": {
             "id": "shell_default",
             "command": "@GV(CMDPROC)"

@@ -539,7 +539,7 @@ describe('PlanFD-NOT-FD', () => {
   info: END: PROCESS C1_P2
   info: >1> END OF THE CHAIN: CHAIN_1`;
 
-  test('Execution End2End: ParallelError', done => {
+  test('Execution End2End: PlanFD-NOT-FD', done => {
     exec(
       'node',
       [
@@ -574,10 +574,12 @@ describe('PlanFD-FD', () => {
   info: >1> END OF THE CHAIN: CHAIN_1
   info: >3> START OF THE CHAIN: CHAIN_3
   info: START: PROCESS C3_P1
-  info: END: PROCESS C3_P1
+  info: END: PROCESS C3_P1 - A
+  info: START: PROCESS C3_P2
+  info: END: PROCESS C3_P2 - A
   info: >3> END OF THE CHAIN: CHAIN_3`;
 
-  test('Execution End2End: ParallelError', done => {
+  test('Execution End2End: PlanFD-FD', done => {
     exec(
       'node',
       [
@@ -613,10 +615,12 @@ describe('PlanFD-NOT-FORCED', () => {
   info: >1> END OF THE CHAIN: CHAIN_1
   info: >3> START OF THE CHAIN: CHAIN_3
   info: START: PROCESS C3_P1
-  info: END: PROCESS C3_P1
+  info: END: PROCESS C3_P1 - A
+  info: START: PROCESS C3_P2
+  info: END: PROCESS C3_P2 - A
   info: >3> END OF THE CHAIN: CHAIN_3`;
 
-  test('Execution End2End: ParallelError', done => {
+  test('Execution End2End: PlanFD-NOT-FORCED', done => {
     exec(
       'node',
       ['index.js', '-c', './__tests__/end2end/config.json', '-p', './__tests__/end2end/plan_fd.json'],
@@ -642,17 +646,113 @@ describe('PlanDepChains-NOT-FORCED', () => {
   info: >1> END OF THE CHAIN: CHAIN_1
   info: >3> START OF THE CHAIN: CHAIN_3
   info: START: PROCESS C3_P1
-  info: END: PROCESS C3_P1
-  info: >3> END OF THE CHAIN: CHAIN_3
+  info: END: PROCESS C3_P1 - A
+  info: START: PROCESS C3_P2
   info: >4> START OF THE CHAIN: CHAIN_4
   info: START: PROCESS C4_P1
+  info: END: PROCESS C3_P2 - A
+  info: >3> END OF THE CHAIN: CHAIN_3
   info: END: PROCESS C4_P1
   info: >4> END OF THE CHAIN: CHAIN_4`;
 
-  test('Execution End2End: ParallelError', done => {
+  const successOutputB = `info:>1>STARTOFTHECHAIN:CHAIN_1
+  info:START:PROCESSC1_P1
+  info:END:PROCESSC1_P1
+  info:>2>STARTOFTHECHAIN:CHAIN_2MYVAR1:C1_P1
+  info:START:PROCESSC2-P1-C1_P1
+  info:END:PROCESSC2-P1
+  info:>2>ENDOFTHECHAIN:CHAIN_2
+  info:START:PROCESSC1_P2
+  info:END:PROCESSC1_P2
+  info:>1>ENDOFTHECHAIN:CHAIN_1
+  info:>3>STARTOFTHECHAIN:CHAIN_3
+  info:START:PROCESSC3_P1
+  info:END:PROCESSC3_P1-A
+  info:START:PROCESSC3_P2
+  info:END:PROCESSC3_P2-A
+  info:>3>ENDOFTHECHAIN:CHAIN_3
+  info:>4>STARTOFTHECHAIN:CHAIN_4
+  info:START:PROCESSC4_P1
+  info:END:PROCESSC4_P1
+  info:>4>ENDOFTHECHAIN:CHAIN_4`;
+
+  test('Execution End2End: PlanDepChains-NOT-FORCED', done => {
     exec(
       'node',
       ['index.js', '-c', './__tests__/end2end/config.json', '-p', './__tests__/end2end/plan_dep_chains.json'],
+      2000,
+      res => {
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        } catch (err) {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutputB));
+        }
+        done();
+      }
+    );
+  });
+});
+
+describe('PlanIterEndsIgnoringProcess', () => {
+  const successOutput = `info: >>>> CHAIN CHAIN-ONE START
+  info: init: PROCESS-LAUNCHER
+  info: end: PROCESS-LAUNCHER 
+  info: - 4     [I:echo PROCESS-LAUNCHER_4] CHAIN CHAIN-ITERABLE START
+  info: - 7      [I:echo PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE START
+  info: - 8      [I:echo PROCESS-LAUNCHER_4] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE END
+  info: - 9   [I:echo PROCESS-LAUNCHER_4] CHAIN CHAIN-ITERABLE END
+  info: - 4     [I:lol PROCESS-LAUNCHER_5] CHAIN CHAIN-ITERABLE START
+  info: - 7      [I:lol PROCESS-LAUNCHER_5] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE START
+  info: ERR!        [I:lol PROCESS-LAUNCHER_5] PROCESS PROCESS-ITER-TWO OF CHAIN CHAIN-ITERABLE FAIL: /bin/sh: lol: command not found
+  info: ERR!  [I:lol PROCESS-LAUNCHER_5] CHAIN CHAIN-ITERABLE FAIL
+  info: init: PROCESS-FOUR
+  info: end: PROCESS-FOUR 
+  info: >>>> CHAIN CHAIN-ONE END`;
+
+  test('Execution End2End: PlanIterEndsIgnoringProcess', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_parallel_ends.json',
+        '-f',
+        'CHAIN-ONE',
+        '-fd',
+        '--end'
+      ],
+      2000,
+      res => {
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        done();
+      }
+    );
+  });
+});
+
+describe('PlanPrevFinalProcFails', () => {
+  const successOutput = `info: CHAIN START CHAIN-ONE
+  info: PROCESS START P-1
+  info: PROCESS END P-1 
+  info: PROCESS START P-2
+  error: PROCESS ERROR P-2 MSG ERROR
+  error: CHAIN FAIL CHAIN-ONE`;
+
+  test('Execution End2End: PlanPrevFinalProcFails', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_prev_final_proc_fails.json',
+        '-f',
+        'CHAIN-ONE',
+        '--end'
+      ],
       2000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
