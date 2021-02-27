@@ -1,8 +1,8 @@
 # Runnerty ChangeLog
 
-<a name="3.1.0-rc6"></a>
+<a name="3.1.0"></a>
 
-# [3.1.0-rc6](24/02/2021)
+# [3.1.0](27/02/2021)
 
 ### Features
 
