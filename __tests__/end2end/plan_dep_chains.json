@@ -240,7 +240,7 @@
           "depends_process": ["C3_P1"],
           "exec": {
             "id": "wait_default",
-            "time": "10ms",
+            "time": "500ms",
             "output": "@GV(VAL_A)"
           }
         }

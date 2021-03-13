@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "3.1.0",
+  "version": "3.2.0-rc",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -29,7 +29,7 @@
   "dependencies": {
     "@runnerty/interpreter-core": "~3.0.1",
     "@runnerty/trigger-server": "~3.0.5",
-    "ajv": "~7.1.1",
+    "ajv": "~7.2.1",
     "async-exit-hook": "~2.0.1",
     "axios": "~0.21.1",
     "better-ajv-errors": "~0.7.0",
@@ -51,11 +51,11 @@
     "moment": "~2.29.1",
     "morgan": "~1.10.0",
     "ms": "~2.1.3",
-    "node-ical": "~0.12.8",
+    "node-ical": "~0.12.9",
     "object-sizeof": "~1.6.1",
     "redis": "~3.0.2",
     "semver": "~7.3.4",
-    "socket.io-client": "~3.1.1",
+    "socket.io-client": "~4.0.0",
     "update-notifier": "~5.1.0",
     "winston": "~3.3.3"
   },
@@ -92,7 +92,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.20.0",
+    "eslint": "^7.22.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-jest": "^24.1.5",
     "eslint-plugin-prettier": "^3.3.1",
