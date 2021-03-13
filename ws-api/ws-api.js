@@ -240,8 +240,8 @@ module.exports = () => {
    */
   router.post('/chain/forceStart/:chainId', (req, res) => {
     const chainId = req.params.chainId;
-    let custom_values_str = '';
-    let input_str = '';
+    let custom_values_str;
+    let input_str;
     try {
       custom_values_str = JSON.stringify(req.body.custom_values);
     } catch (err) {}
@@ -250,16 +250,16 @@ module.exports = () => {
       input_str = JSON.stringify(req.body.input);
     } catch (err) {}
 
-    logger.info(`API - CHAIN START FORCED: chainId:${chainId}, custom_values:${custom_values_str}, input:${input_str}`);
-    const chain = apiPlan.getChainById(chainId, chainId + '_main');
-
-    if (chain) {
-      queueProcess.queueChain(chain, req.body.input, req.body.custom_values);
-      res.send();
-    } else {
-      res.status(404).send('Chain not found');
-      logger.error('forceStart error', 'Chain not found');
-    }
+    logger.info(
+      `API - CHAIN START FORCED: chainId:${chainId}, process:${req.body.processId}, custom_values:${custom_values_str}, input:${input_str}`
+    );
+    runtime.plan.forceQueueChain(
+      chainId,
+      chainId + '_main',
+      req.body.input,
+      req.body.custom_values,
+      req.body.processId
+    );
   });
 
   /**
