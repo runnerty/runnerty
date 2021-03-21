@@ -7,7 +7,7 @@
 ### Features
 
 - **common:** the possibility of executing a chain from the indicated process is enabled
-- **common:** new default configuration for all strings and processes (config.json/defaults)
+- **common:** new default configuration for all chains and processes (config.json/defaults)
 ### Bug Fixes
 
 - **common:** in some cases a process with complex dependencies that should not be executed could cause the chain to never finish
