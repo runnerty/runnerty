@@ -1,5 +1,17 @@
 # Runnerty ChangeLog
 
+<a name="3.2.0"></a>
+
+# [3.2.0](21/03/2021)
+
+### Features
+
+- **common:** the possibility of executing a chain from the indicated process is enabled
+### Bug Fixes
+
+- **common:** in some cases a process with complex dependencies that should not be executed could cause the chain to never finish
+
+
 <a name="3.1.0"></a>
 
 # [3.1.0](27/02/2021)
