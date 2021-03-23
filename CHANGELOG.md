@@ -1,17 +1,19 @@
 # Runnerty ChangeLog
 
-<a name="3.2.0"></a>
+<a name="3.2.0-rc"></a>
 
-# [3.2.0](21/03/2021)
+# [3.2.0-rc](23/03/2021)
 
 ### Features
 
 - **common:** the possibility of executing a chain from the indicated process is enabled
 - **common:** new default configuration for all chains and processes (config.json/defaults)
 - **common:** Graceful shutdown, wait for the end of the chains that are running
+
 ### Bug Fixes
 
 - **common:** in some cases a process with complex dependencies that should not be executed could cause the chain to never finish
+
 ### Tests
 
 <a name="3.1.0"></a>
