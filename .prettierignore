@@ -10,3 +10,6 @@ LICENSE
 TODO
 test.log
 .DS_Store
+.npmignore
+lib/cli/base-migration/gitignore
+lib/cli/base/gitignore

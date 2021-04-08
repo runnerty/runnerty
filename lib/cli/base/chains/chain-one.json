@@ -1,0 +1,75 @@
+{
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.1/chain.json",
+  "id": "CHAIN_ONE",
+  "name": "Chain one sample",
+  "triggers": [
+    {
+      "id": "schedule_default",
+      "schedule_interval": "*/1 * * * *"
+    }
+  ],
+  "notifications": {
+    "on_start": [
+      {
+        "id": "console_default",
+        "message": "@GETDATE('YYYY-MM-DD HH:mm:ss') START OF THE CHAIN: @GV(CHAIN_ID)"
+      }
+    ],
+    "on_end": [
+      {
+        "id": "console_default",
+        "message": "@GETDATE('YYYY-MM-DD HH:mm:ss') END OF THE CHAIN: @GV(CHAIN_ID)"
+      }
+    ],
+    "on_fail": [
+      {
+        "id": "console_default",
+        "message": "@GETDATE('YYYY-MM-DD HH:mm:ss') FAIL OF THE CHAIN: @GV(CHAIN_ID)",
+        "mode": "error"
+      }
+    ]
+  },
+  "defaults_processes": {
+    "notifications": {
+      "on_start": [
+        {
+          "id": "console_default",
+          "message": "@GETDATE('YYYY-MM-DD HH:mm:ss') START: PROCESS @GV(PROCESS_ID)"
+        }
+      ],
+      "on_fail": [
+        {
+          "id": "console_default",
+          "message": "@GETDATE('YYYY-MM-DD HH:mm:ss') ERROR: PROCESS @GV(PROCESS_ID): @GV(PROCESS_EXEC_ERR_OUTPUT)",
+          "mode": "error"
+        }
+      ],
+      "on_end": [
+        {
+          "id": "console_default",
+          "message": "@GETDATE('YYYY-MM-DD HH:mm:ss') END: PROCESS @GV(PROCESS_ID): @GV(PROCESS_EXEC_MSG_OUTPUT)"
+        }
+      ]
+    },
+    "output": [
+      {
+        "file_name": "@GV(LOGS_PATH)/@GETVALUE(PROCESS_ID).log",
+        "write": [
+          "EXECUTION @GV(PROCESS_ID) - AT @GETDATE('YYYY-MM-DD HH:mm:ss')\n @GV(PROCESS_EXEC_ERR_OUTPUT) @GV(PROCESS_EXEC_MSG_OUTPUT)"
+        ],
+        "concat": true,
+        "maxsize": "10mb"
+      }
+    ]
+  },
+  "processes": [
+    {
+      "id": "PROCESS_ONE",
+      "name": "Proccess One",
+      "exec": {
+        "id": "shell_default",
+        "command": "echo hello world!"
+      }
+    }
+  ]
+}

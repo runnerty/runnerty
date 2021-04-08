@@ -1,0 +1,36 @@
+{
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.1/config.json",
+  "general": {},
+  "triggers": [
+    {
+      "id": "schedule_default",
+      "type": "@runnerty-trigger-schedule"
+    }
+  ],
+  "executors": [
+    {
+      "id": "shell_default",
+      "type": "@runnerty-executor-shell"
+    }
+  ],
+  "notifiers": [
+    {
+      "id": "console_default",
+      "type": "@runnerty-notifier-console"
+    }
+  ],
+  "global_values": [
+    {
+      "WORKDIR": {
+        "PATH": ".",
+        "BATCH": "batch",
+        "SQL": "sql"
+      }
+    },
+    {
+      "LOGS": {
+        "PATH": "./logs"
+      }
+    }
+  ]
+}

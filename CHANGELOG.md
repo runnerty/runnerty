@@ -9,6 +9,7 @@
 - **common:** A new possibility is enabled to execute a specific process (-fp) and indicate whether its dependencies should be executed (-fpd) or not
 - **common:** new default configuration for all chains and processes (config.json/defaults)
 - **common:** Graceful shutdown, wait for the end of the chains that are running
+- **common:** takes over functionalities of runnerty-cli
 - **dependencies:** minor dependency updates
 
 ### Bug Fixes
