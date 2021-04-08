@@ -736,3 +736,77 @@ describe('PlanPrevFinalProcFails', () => {
     );
   });
 });
+
+describe('PlanForcedProcForcedfdfp', () => {
+  const successOutput = `info: >1> START OF THE CHAIN: CHAIN_1
+  info: START: PROCESS C1_P1
+  info: END: PROCESS C1_P1
+  info: >1> END OF THE CHAIN: CHAIN_1`;
+
+  test('Execution End2End: PlanForcedProcForcedfdfp', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_fd.json',
+        '-f',
+        'CHAIN_1',
+        '-fp',
+        'C1_P1',
+        '--end'
+      ],
+      2000,
+      res => {
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        done();
+      }
+    );
+  });
+});
+
+describe('PlanForcedProcForcedfdfpfpd', () => {
+  const successOutput = `info: >1> START OF THE CHAIN: CHAIN_1
+  info: START: PROCESS C1_P1
+  info: END: PROCESS C1_P1
+  info:   >2> START OF THE CHAIN: CHAIN_2 MYVAR1:C1_P1
+  info:   START: PROCESS C2-P1 - C1_P1
+  info:   END: PROCESS C2-P1
+  info:   >2> END OF THE CHAIN: CHAIN_2
+  info: START: PROCESS C1_P2
+  info: END: PROCESS C1_P2
+  info: >1> END OF THE CHAIN: CHAIN_1
+  info: >3> START OF THE CHAIN: CHAIN_3
+  info: START: PROCESS C3_P1
+  info: END: PROCESS C3_P1 - A
+  info: START: PROCESS C3_P2
+  info: END: PROCESS C3_P2 - A
+  info: >3> END OF THE CHAIN: CHAIN_3`;
+
+  test('Execution End2End: PlanForcedProcForcedfdfpfpd', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_fd.json',
+        '-f',
+        'CHAIN_1',
+        '-fd',
+        '-fp',
+        'C1_P1',
+        '-fpd',
+        '--end'
+      ],
+      2000,
+      res => {
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        done();
+      }
+    );
+  });
+});

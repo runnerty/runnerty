@@ -2,11 +2,11 @@
 
 <a name="3.2.0-rc"></a>
 
-# [3.2.0-rc](23/03/2021)
+# [3.2.0-rc](08/04/2021)
 
 ### Features
 
-- **common:** the possibility of executing a chain from the indicated process is enabled
+- **common:** A new possibility is enabled to execute a specific process (-fp) and indicate whether its dependencies should be executed (-fpd) or not
 - **common:** new default configuration for all chains and processes (config.json/defaults)
 - **common:** Graceful shutdown, wait for the end of the chains that are running
 - **dependencies:** minor dependency updates
