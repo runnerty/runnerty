@@ -9,6 +9,7 @@
 - **common:** the possibility of executing a chain from the indicated process is enabled
 - **common:** new default configuration for all chains and processes (config.json/defaults)
 - **common:** Graceful shutdown, wait for the end of the chains that are running
+- **dependencies:** minor dependency updates
 
 ### Bug Fixes
 
