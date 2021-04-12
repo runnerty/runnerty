@@ -3,7 +3,6 @@ jest.setTimeout(80000);
 
 function flatOutput(output) {
   return output
-    .substring(output.indexOf('\n') + 1)
     .replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
     .replace('/bin/sh:1:', '/bin/sh:')
     .replace('commandnotfound', 'notfound');
