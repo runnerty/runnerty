@@ -1,4 +1,4 @@
 {
-  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.1/plan.json",
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.2/plan.json",
   "chains": [{ "chain_path": "./chains/chain-one.json" }]
 }

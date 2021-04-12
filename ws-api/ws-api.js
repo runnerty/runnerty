@@ -2,7 +2,6 @@
 
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const router = express.Router();
 const morgan = require('morgan');
 const jwt = require('jsonwebtoken');
@@ -15,7 +14,6 @@ const fs = require('fs');
 const runtime = require('../lib/classes/runtime');
 const logger = require('../lib/logger.js');
 const config = runtime.config.general;
-const queueProcess = require('../lib/queue-process-memory.js');
 const stringify = require('json-stringify-safe');
 
 const apiPlan = runtime.plan;
@@ -74,12 +72,12 @@ module.exports = () => {
   });
 
   app.use(
-    bodyParser.urlencoded({
+    express.urlencoded({
       extended: true
     })
   );
   app.use(
-    bodyParser.json({
+    express.json({
       limit: config.api.limit_req
     })
   );
@@ -96,8 +94,6 @@ module.exports = () => {
   if (config.api.log_display_level) {
     app.use(morgan(config.api.log_display_level));
   }
-
-  app.use(bodyParser.json());
 
   app.use(
     expressJwt({
