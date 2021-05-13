@@ -622,7 +622,7 @@ describe('PlanFD-NOT-FORCED', () => {
   test('Execution End2End: PlanFD-NOT-FORCED', done => {
     exec(
       'node',
-      ['index.js', '-c', './__tests__/end2end/config.json', '-p', './__tests__/end2end/plan_fd.json'],
+      ['index.js', '-c', './__tests__/end2end/config.json', '-p', './__tests__/end2end/plan_fd.json','--end'],
       2000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
@@ -657,7 +657,7 @@ describe('PlanDepChains-NOT-FORCED', () => {
   test('Execution End2End: PlanDepChains-NOT-FORCED', done => {
     exec(
       'node',
-      ['index.js', '-c', './__tests__/end2end/config.json', '-p', './__tests__/end2end/plan_dep_chains.json'],
+      ['index.js', '-c', './__tests__/end2end/config.json', '-p', './__tests__/end2end/plan_dep_chains.json','--end'],
       2000,
       res => {
         expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
