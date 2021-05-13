@@ -1,5 +1,23 @@
 # Runnerty ChangeLog
 
+<a name="3.2.0"></a>
+
+# [3.2.0](25/04/2021)
+
+### Features
+
+- **common:** new default configuration for all chains and processes (config.json/defaults)
+- **common:** a new possibility is enabled to execute a specific process (-fp) and indicate whether its dependencies should be executed (-fpd) or not
+- **common:** graceful shutdown, wait for the end of the chains that are running
+- **common:** takes over functionalities of runnerty-cli
+- **dependencies:** minor dependency updates
+
+### Bug Fixes
+
+- **common:** in some cases a process with complex dependencies that should not be executed could cause the chain to never finish
+
+### Tests
+
 <a name="3.1.0"></a>
 
 # [3.1.0](27/02/2021)
@@ -11,6 +29,7 @@
 - **telemetry:** new meta chain properties to set extra_id
 - **dependencies:** minor dependency updates
 - **common:** code cleaning and refactoring
+
 ### Bug Fixes
 
 - **common:** chain never ends when a process dependent on another that triggers the execution of an iterable chain (with errors) is ignored
@@ -64,16 +83,22 @@
 - **dependencies:** minor dependency updates
 
 ### Breaking Changes
+
 #### Chain dependencies
-  - When **depends_chains/chain_id** is defined in a determined chain, the dependent chain will be executed as soon as the depended one finishes.
-  - When **depends_chains/chain_id+process_id** is defined in a determined chain, that dependent chain will be executed as soon as the defined process finishes. The depended chain will wait until the dependent chain finishes. This behaviour is similar to how **iterable chains** works on Runnerty v2.
-  - On the other hand, **Iterable chains** definition is not altered at all. Iterable chains in Runnerty v2 are fully compatible with Runnerty v3.
+
+- When **depends_chains/chain_id** is defined in a determined chain, the dependent chain will be executed as soon as the depended one finishes.
+- When **depends_chains/chain_id+process_id** is defined in a determined chain, that dependent chain will be executed as soon as the defined process finishes. The depended chain will wait until the dependent chain finishes. This behaviour is similar to how **iterable chains** works on Runnerty v2.
+- On the other hand, **Iterable chains** definition is not altered at all. Iterable chains in Runnerty v2 are fully compatible with Runnerty v3.
+
 #### Forced chain execution (CLI)
-  - When we **force the execution** of a chain that chain is inmediately executed. Triggers will be ignored; if that chain have any dependent chain, they will not be executed.
-  - New parameter **-fd** (force dependents) when we **force execution**. When we force the execution of a chain with arg **-fd** it will also force the execution of its dependent chains.
-  - Error message is displayed when we indicate a non-existent chainId while forcing an execution.
+
+- When we **force the execution** of a chain that chain is inmediately executed. Triggers will be ignored; if that chain have any dependent chain, they will not be executed.
+- New parameter **-fd** (force dependents) when we **force execution**. When we force the execution of a chain with arg **-fd** it will also force the execution of its dependent chains.
+- Error message is displayed when we indicate a non-existent chainId while forcing an execution.
+
 ## Modules
-  - Runnerty v3.x is not compatible with versions of modules lower than v3.x
+
+- Runnerty v3.x is not compatible with versions of modules lower than v3.x
 
 <a name="2.9.0"></a>
 

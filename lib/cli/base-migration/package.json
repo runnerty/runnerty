@@ -1,0 +1,21 @@
+{
+  "name": "runnerty-migration-project",
+  "version": "1.0.0",
+  "description": "Runnerty crontab migration",
+  "scripts": {
+    "start": "runnerty",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {},
+  "keywords": [
+    "runnerty",
+    "migration"
+  ],
+  "author": "Runnerty Tech",
+  "license": "MIT",
+  "dependencies": {
+    "@runnerty/executor-shell": "^3.1.0",
+    "@runnerty/notifier-console": "^3.0.3",
+    "@runnerty/trigger-schedule": "^3.0.3"
+  }
+}

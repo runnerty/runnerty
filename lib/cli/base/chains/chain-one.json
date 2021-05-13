@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.2/chain.json",
+  "id": "CHAIN_ONE",
+  "name": "Chain one sample",
+  "triggers": [
+    {
+      "id": "schedule_default",
+      "schedule_interval": "*/1 * * * *"
+    }
+  ],
+  "processes": [
+    {
+      "id": "PROCESS_ONE",
+      "name": "Proccess One",
+      "exec": {
+        "id": "shell_default",
+        "command": "echo hello world!"
+      }
+    }
+  ]
+}

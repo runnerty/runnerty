@@ -30,7 +30,8 @@
     "prefer-const": "error",
     "comma-spacing": ["error", { "before": false, "after": true }],
     "comma-style": ["error", "last"],
-    "handle-callback-err": ["error", "^(err|error)$"]
+    "handle-callback-err": ["error", "^(err|error)$"],
+    "no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": false }]
   },
   "plugins": ["jest"]
 }

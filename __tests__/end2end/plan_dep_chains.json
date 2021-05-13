@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.1/plan.json",
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.2/plan.json",
   "chains": [
     {
       "id": "CHAIN_1",
@@ -240,7 +240,7 @@
           "depends_process": ["C3_P1"],
           "exec": {
             "id": "wait_default",
-            "time": "10ms",
+            "time": "500ms",
             "output": "@GV(VAL_A)"
           }
         }

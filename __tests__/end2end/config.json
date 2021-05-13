@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.1/config.json",
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.2/config.json",
   "general": {
     "planFilePath": "plan.json",
     "runnerty.io": {

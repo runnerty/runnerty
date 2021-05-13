@@ -8,7 +8,8 @@ LICENSE
 *.png
 *.txt
 TODO
-docs/functions.md
-*.md
 test.log
 .DS_Store
+.npmignore
+lib/cli/base-migration/gitignore
+lib/cli/base/gitignore

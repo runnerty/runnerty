@@ -1,5 +1,72 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "notifications_chain": {
+      "type": "object",
+      "properties": {
+        "on_start": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "on_end": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "on_fail": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "on_retry": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "on_waiting_dependencies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "type": "object",
   "required": ["id", "name", "processes"],
   "properties": {
@@ -98,71 +165,7 @@
         }
       ]
     },
-    "notifications": {
-      "type": "object",
-      "properties": {
-        "on_start": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["id"],
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "on_end": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["id"],
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "on_fail": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["id"],
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "on_retry": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["id"],
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "on_waiting_dependencies": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "required": ["id"],
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    },
+    "notifications": { "$ref": "#/definitions/notifications_chain" },
     "defaults_processes": {
       "type": "object",
       "properties": {
