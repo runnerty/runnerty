@@ -1,0 +1,113 @@
+{
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.2/config.json",
+  "general": {
+    "planFilePath": "plan.json",
+    "runnerty.io": {
+      "host": "https://ws.runnerty.io",
+      "apikey": "YOUR_APIKEY_PROJECT",
+      "healthChecker": true,
+      "remoteControl": true,
+      "debug": false,
+      "disable": true,
+      "waitForConnection": true,
+      "connectionTimeout": 5000
+    },
+    "queues": {
+      "refreshInterval": 100
+    }
+  },
+  "triggers": [
+    {
+      "id": "schedule_default",
+      "type": "@runnerty-trigger-schedule"
+    },
+    {
+      "id": "immediate",
+      "type": "@runnerty-trigger-immediate"
+    }
+  ],
+  "executors": [
+    {
+      "id": "iterable_default",
+      "type": "@runnerty-executor-iterable"
+    },
+    {
+      "id": "shell_default",
+      "type": "@runnerty-executor-shell"
+    },
+    {
+      "id": "wait_default",
+      "type": "@runnerty-executor-wait",
+      "time": "60s"
+    }
+  ],
+  "notifiers": [
+    {
+      "id": "console_default",
+      "type": "@runnerty-notifier-console"
+    }
+  ],
+  "defaults": {
+    "chain": {
+      "notifications": {
+        "on_start": [
+          {
+            "id": "console_default",
+            "message": "CDC - START OF THE CHAIN: @GV(CHAIN_ID)"
+          }
+        ],
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "CDC - END OF THE CHAIN: @GV(CHAIN_ID)"
+          }
+        ],
+        "on_fail": [
+          {
+            "id": "console_default",
+            "message": "CDC - FAIL OF THE CHAIN: @GV(CHAIN_ID)",
+            "mode": "error"
+          }
+        ]
+      }
+    },
+    "process": {
+      "notifications": {
+        "on_start": [
+          {
+            "id": "console_default",
+            "message": "CDP - START: PROCESS @GV(PROCESS_ID)"
+          }
+        ],
+        "on_fail": [
+          {
+            "id": "console_default",
+            "message": "CDP - ERROR: PROCESS @GV(PROCESS_ID): @GV(PROCESS_EXEC_ERR_OUTPUT)",
+            "mode": "error"
+          }
+        ],
+        "on_end": [
+          {
+            "id": "console_default",
+            "message": "CDP - END: PROCESS @GV(PROCESS_ID): @GV(PROCESS_EXEC_MSG_OUTPUT)"
+          }
+        ]
+      },
+      "output": [
+        {
+          "file_name": "./@GETVALUE(PROCESS_ID).log",
+          "write": ["CDO - EXECUTION @GV(PROCESS_ID) - @GV(PROCESS_EXEC_ERR_OUTPUT) @GV(PROCESS_EXEC_MSG_OUTPUT)"],
+          "concat": true,
+          "maxsize": "1mb"
+        }
+      ]
+    }
+  },
+  "global_values": [
+    {
+      "myparams": {
+        "sample": "sample_value"
+      }
+    }
+  ]
+}

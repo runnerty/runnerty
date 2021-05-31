@@ -1,12 +1,24 @@
 # Runnerty ChangeLog
 
+<a name="3.2.2"></a>
+
+# [3.2.2](31/05/2021)
+
+### Bug Fixes
+
+- **common:** correction in the loading of default configuration values from config.json file
+
+### Tests
+
+- **common:** specific test for load testing and overwriting of default values
+
 <a name="3.2.1"></a>
 
 # [3.2.1](21/05/2021)
+
 ### Bug Fixes
 
 - **common:** downgrade of the ajv dependency due to compatibility issues with "better-ajv-errors", caused error when trying to display a clearer description of schema compliance errors
-
 
 <a name="3.2.0"></a>
 

@@ -809,3 +809,62 @@ describe('PlanForcedProcForcedfdfpfpd', () => {
     );
   });
 });
+
+describe('TestDefaultsConfigIterableChain', () => {
+  const successOutput = `info: CN - START OF THE CHAIN: CHAIN-LAUNCHER
+  info: CHDP - START: PROCESS PROCESS-LAUNCHER
+  info: CDP - END: PROCESS PROCESS-LAUNCHER: 
+  info: CDC - START OF THE CHAIN: CHAIN-ITERABLE
+  info: CDP - START: PROCESS PROCESS-ITER-ONE
+  info: CDP - END: PROCESS PROCESS-ITER-ONE: PROCESS-ITER-ONE
+  info: CDP - START: PROCESS PROCESS-ITER-TWO
+  info: PN - END: PROCESS PROCESS-ITER-TWO: PROCESS-LAUNCHER_1
+  info: CDC - END OF THE CHAIN: CHAIN-ITERABLE
+  info: CDC - START OF THE CHAIN: CHAIN-ITERABLE
+  info: CDP - START: PROCESS PROCESS-ITER-ONE
+  info: CDP - END: PROCESS PROCESS-ITER-ONE: PROCESS-ITER-ONE
+  info: CDP - START: PROCESS PROCESS-ITER-TWO
+  info: PN - END: PROCESS PROCESS-ITER-TWO: PROCESS-LAUNCHER_2
+  info: CDC - END OF THE CHAIN: CHAIN-ITERABLE
+  info: CDC - START OF THE CHAIN: CHAIN-ITERABLE
+  info: CDP - START: PROCESS PROCESS-ITER-ONE
+  info: CDP - END: PROCESS PROCESS-ITER-ONE: PROCESS-ITER-ONE
+  info: CDP - START: PROCESS PROCESS-ITER-TWO
+  info: PN - END: PROCESS PROCESS-ITER-TWO: PROCESS-LAUNCHER_3
+  info: CDC - END OF THE CHAIN: CHAIN-ITERABLE
+  info: CDC - START OF THE CHAIN: CHAIN-ITERABLE
+  info: CDP - START: PROCESS PROCESS-ITER-ONE
+  info: CDP - END: PROCESS PROCESS-ITER-ONE: PROCESS-ITER-ONE
+  info: CDP - START: PROCESS PROCESS-ITER-TWO
+  info: PN - END: PROCESS PROCESS-ITER-TWO: PROCESS-LAUNCHER_4
+  info: CDC - END OF THE CHAIN: CHAIN-ITERABLE
+  info: CDC - START OF THE CHAIN: CHAIN-ITERABLE
+  info: CDP - START: PROCESS PROCESS-ITER-ONE
+  info: CDP - END: PROCESS PROCESS-ITER-ONE: PROCESS-ITER-ONE
+  info: CDP - START: PROCESS PROCESS-ITER-TWO
+  info: PN - END: PROCESS PROCESS-ITER-TWO: PROCESS-LAUNCHER_5
+  info: CDC - END OF THE CHAIN: CHAIN-ITERABLE
+  info: CDC - END OF THE CHAIN: CHAIN-LAUNCHER`;
+
+  test('Execution End2End: PlanForcedProcForcedfdfpfpd', done => {
+    exec(
+      'node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config_defaults.json',
+        '-p',
+        './__tests__/end2end/plan_simple_iter_config_defaults.json',
+        '-f',
+        'CHAIN-LAUNCHER',
+        '-fd',
+        '--end'
+      ],
+      3000,
+      res => {
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        done();
+      }
+    );
+  });
+});
