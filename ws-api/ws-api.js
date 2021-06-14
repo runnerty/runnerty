@@ -256,6 +256,7 @@ module.exports = () => {
       req.body.custom_values,
       req.body.processId
     );
+    res.send();
   });
 
   /**
