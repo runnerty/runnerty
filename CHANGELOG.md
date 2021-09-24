@@ -1,5 +1,13 @@
 # Runnerty ChangeLog
 
+<a name="3.2.4"></a>
+
+# [3.2.4](25/09/2021)
+
+### Features
+
+- **dependencies:** minor dependency updates
+
 <a name="3.2.3"></a>
 
 # [3.2.3](14/06/2021)
@@ -7,7 +15,6 @@
 ### Bug Fixes
 
 - **api:** the force execution api did not send a response
-
 
 <a name="3.2.2"></a>
 
