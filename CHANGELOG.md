@@ -4,6 +4,10 @@
 
 # [3.2.4](25/09/2021)
 
+### Bug Fixes
+
+- **common:** correction in loading the default configuration values of chais notifications from the config.json file
+
 ### Features
 
 - **dependencies:** minor dependency updates
