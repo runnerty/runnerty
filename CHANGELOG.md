@@ -7,6 +7,7 @@
 ### Bug Fixes
 
 - **common:** correction in loading the default configuration values of chais notifications from the config.json file
+- **common:** correction of a problem that could cause a chain to never finish when retries are used (module-core upgrade)
 
 ### Features
 
