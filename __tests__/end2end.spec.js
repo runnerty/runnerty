@@ -846,7 +846,7 @@ describe('TestDefaultsConfigIterableChain', () => {
   info: CDC - END OF THE CHAIN: CHAIN-ITERABLE
   info: CDC - END OF THE CHAIN: CHAIN-LAUNCHER`;
 
-  test('Execution End2End: PlanForcedProcForcedfdfpfpd', done => {
+  test('Execution End2End: PlanForcedProcIterForcedfdfpfpd', done => {
     exec(
       'node',
       [

@@ -4,5 +4,6 @@ node_modules
 samples
 *.md
 *.json
+*.log
 .DS_Store
 LICENSE

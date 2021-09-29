@@ -7,8 +7,8 @@ samples
 LICENSE
 *.png
 *.txt
+*.log
 TODO
-test.log
 .DS_Store
 .npmignore
 lib/cli/base-migration/gitignore

@@ -3,10 +3,16 @@
 const spawn = require('child_process').spawn;
 
 function _exec(cmd, args, timeOut, callback) {
-  let shell = {};
   let stdout = '';
 
-  shell = spawn(cmd, args, { shell: true });
+  const shell = spawn(cmd, args, { shell: true });
+
+  if (timeOut) {
+    setTimeout(() => {
+      shell.kill();
+      callback(stdout.toString());
+    }, timeOut);
+  }
 
   shell.stdout.on('data', chunk => {
     stdout += chunk;
@@ -15,12 +21,6 @@ function _exec(cmd, args, timeOut, callback) {
   shell.on('close', (code, signal) => {
     callback(stdout.toString());
   });
-
-  if (timeOut) {
-    setTimeout(() => {
-      callback(stdout.toString());
-    }, timeOut);
-  }
 }
 
 module.exports = _exec;

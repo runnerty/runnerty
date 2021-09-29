@@ -1,5 +1,19 @@
 # Runnerty ChangeLog
 
+<a name="3.2.4"></a>
+
+# [3.2.4](25/09/2021)
+
+### Bug Fixes
+
+- **common:** correction in loading the default configuration values of chais notifications from the config.json file
+- **common:** correction of a problem that could cause a chain to never finish when retries are used (module-core upgrade)
+- **common:** improved module loading error control
+
+### Features
+
+- **dependencies:** minor dependency updates
+
 <a name="3.2.3"></a>
 
 # [3.2.3](14/06/2021)
@@ -7,7 +21,6 @@
 ### Bug Fixes
 
 - **api:** the force execution api did not send a response
-
 
 <a name="3.2.2"></a>
 
