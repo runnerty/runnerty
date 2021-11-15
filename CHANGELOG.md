@@ -1,5 +1,17 @@
 # Runnerty ChangeLog
 
+<a name="3.2.5"></a>
+
+# [3.2.5](15/11/2021)
+
+### Bug Fixes
+
+- **common:** force refresh of custom_values on each execution of a chain
+
+### Features
+
+- **dependencies:** minor dependency updates
+
 <a name="3.2.4"></a>
 
 # [3.2.4](04/10/2021)
