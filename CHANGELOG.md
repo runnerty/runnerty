@@ -7,6 +7,7 @@
 ### Bug Fixes
 
 - **common:** force refresh of custom_values on each execution of a chain
+- **interpreter:** problems with the replacement of environment variables
 
 ### Features
 
