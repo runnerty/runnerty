@@ -2,11 +2,12 @@
 
 <a name="3.2.5"></a>
 
-# [3.2.5](15/11/2021)
+# [3.2.5](31/12/2021)
 
 ### Bug Fixes
 
 - **common:** force refresh of custom_values on each execution of a chain
+- **interpreter:** problems with the replacement of environment variables
 
 ### Features
 
