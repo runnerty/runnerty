@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "3.2.5",
+  "version": "3.2.6-rc",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -26,10 +26,10 @@
     "lint": "eslint '**/*.js' && prettier --check '**'"
   },
   "dependencies": {
-    "@runnerty/interpreter-core": "~3.0.2",
-    "@runnerty/trigger-server": "~3.0.7",
+    "@runnerty/interpreter-core": "~3.0.3",
+    "@runnerty/trigger-server": "~3.0.8",
     "ajv": "~8.8.2",
-    "axios": "~0.24.0",
+    "axios": "~0.25.0",
     "better-ajv-errors": "~1.1.2",
     "body-parser": "~1.19.1",
     "boxen": "~5.1.2",
@@ -56,11 +56,11 @@
     "npm-package-arg": "^8.1.5",
     "object-sizeof": "~1.6.1",
     "redis": "~3.1.2",
-    "resolve": "^1.20.0",
+    "resolve": "^1.21.0",
     "semver": "~7.3.5",
-    "socket.io-client": "~4.4.0",
+    "socket.io-client": "~4.4.1",
     "update-notifier": "~5.1.0",
-    "winston": "~3.3.3"
+    "winston": "~3.4.0"
   },
   "keywords": [
     "runnerty",
@@ -96,12 +96,12 @@
   "devDependencies": {
     "@babel/core": "^7.16.7",
     "@babel/eslint-parser": "^7.16.5",
-    "eslint": "^8.5.0",
+    "eslint": "^8.7.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-jest": "^25.3.3",
+    "eslint-plugin-jest": "^25.7.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "jest": "^27.4.5",
-    "jest-cli": "^27.4.5",
+    "jest": "^27.4.7",
+    "jest-cli": "^27.4.7",
     "prettier": "^2.5.1",
     "runnerty-tests-modules": "file:__tests__/end2end"
   },
