@@ -1,5 +1,12 @@
 # Runnerty ChangeLog
 
+<a name="3.2.7"></a>
+
+# [3.2.7](3/2/2022)
+### Bug Fixes
+
+- **common:** fixed empty values comparison in process dependencies (depends_process)
+
 <a name="3.2.6"></a>
 
 # [3.2.6](31/12/2021)
