@@ -1,5 +1,14 @@
 # Runnerty ChangeLog
 
+<a name="3.3.0"></a>
+
+# [3.3.0](3/2/2022)
+### Features
+
+- **common:** by default the environment variables will be read from the `.env` file in the root directory if it exists or from the file specified by cli in env-file
+- **cli:** new option --env-file, for reading environment variables from the path of the specified file
+- **interpreter:** new @GENV and @ENV functions for reading environment variables
+
 <a name="3.2.7"></a>
 
 # [3.2.7](3/2/2022)
