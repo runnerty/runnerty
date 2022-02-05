@@ -873,9 +873,8 @@ describe('ENVFunction', () => {
   const successOutput = `info: res CONFIG_vtest vtest`;
   test('Execution End2End: ENVFunction', done => {
     exec(
-      'node',
+      'env_test=vtest node',
       [
-        'env_test=vtest',
         'index.js',
         '-c',
         './__tests__/end2end/config.json',
