@@ -3,6 +3,7 @@
 <a name="3.3.0"></a>
 
 # [3.3.0](3/2/2022)
+
 ### Features
 
 - **common:** by default the environment variables will be read from the `.env` file in the root directory if it exists or from the file specified by cli in env-file
@@ -12,6 +13,7 @@
 <a name="3.2.7"></a>
 
 # [3.2.7](3/2/2022)
+
 ### Bug Fixes
 
 - **common:** fixed empty values comparison in process dependencies (depends_process)
@@ -19,6 +21,7 @@
 <a name="3.2.6"></a>
 
 # [3.2.6](31/12/2021)
+
 ### Features
 
 - **dependencies:** minor dependency updates

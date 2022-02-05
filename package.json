@@ -1,7 +1,7 @@
 {
   "name": "runnerty",
   "description": "Process orchestrator",
-  "version": "3.3.0-rc",
+  "version": "3.3.0-rc1",
   "preferGlobal": true,
   "main": "index.js",
   "license": "MIT",
@@ -27,8 +27,8 @@
   },
   "dependencies": {
     "@runnerty/interpreter-core": "~3.1.0",
-    "@runnerty/trigger-server": "~3.0.8",
-    "ajv": "~8.9.0",
+    "@runnerty/trigger-server": "~3.1.0",
+    "ajv": "~8.10.0",
     "axios": "~0.25.0",
     "better-ajv-errors": "~1.1.2",
     "body-parser": "~1.19.1",
@@ -95,14 +95,14 @@
     "node": ">=14.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.7",
-    "@babel/eslint-parser": "^7.16.5",
-    "eslint": "^8.7.0",
+    "@babel/core": "^7.17.0",
+    "@babel/eslint-parser": "^7.17.0",
+    "eslint": "^8.8.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-jest": "^26.0.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "jest": "^27.4.7",
-    "jest-cli": "^27.4.7",
+    "jest": "^27.5.0",
+    "jest-cli": "^27.5.0",
     "prettier": "^2.5.1",
     "runnerty-tests-modules": "file:__tests__/end2end"
   },

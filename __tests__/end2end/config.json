@@ -50,7 +50,8 @@
   "global_values": [
     {
       "myparams": {
-        "sample": "sample_value"
+        "sample": "sample_value",
+        "env_test": "CONFIG_@ENV(env_test)"
       }
     }
   ]
