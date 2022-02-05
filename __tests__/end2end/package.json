@@ -3,11 +3,11 @@
   "version": "0.0.1",
   "private": false,
   "dependencies": {
-    "@runnerty/executor-shell": "^3.1.4",
-    "@runnerty/executor-wait": "^3.0.7",
-    "@runnerty/executor-iterable": "^3.1.2",
-    "@runnerty/notifier-console": "^3.0.6",
-    "@runnerty/trigger-schedule": "^3.0.6",
-    "@runnerty/trigger-immediate": "^3.0.7"
+    "@runnerty/executor-shell": "^3.2.0",
+    "@runnerty/executor-wait": "^3.1.0",
+    "@runnerty/executor-iterable": "^3.2.0",
+    "@runnerty/notifier-console": "^3.1.0",
+    "@runnerty/trigger-schedule": "^3.1.0",
+    "@runnerty/trigger-immediate": "^3.1.0"
   }
 }

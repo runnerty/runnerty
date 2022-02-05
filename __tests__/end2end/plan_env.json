@@ -1,0 +1,27 @@
+{
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.2/plan.json",
+  "chains": [
+    {
+      "id": "CHAIN_ONE",
+      "name": "CHAIN_ONE",
+      "processes": [
+        {
+          "id": "PROCESS_ONE",
+          "name": "PROCESS_ONE",
+          "exec": {
+            "id": "shell_default",
+            "command": "echo 'res @GV(myparams_env_test) @GENV(env_test)'"
+          },
+          "notifications": {
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "@GV(PROCESS_EXEC_MSG_OUTPUT)"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

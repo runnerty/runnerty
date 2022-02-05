@@ -868,3 +868,27 @@ describe('TestDefaultsConfigIterableChain', () => {
     );
   });
 });
+
+describe('ENVFunction', () => {
+  const successOutput = `info: res CONFIG_vtest vtest`;
+  test('Execution End2End: ENVFunction', done => {
+    exec(
+      'env_test=vtest node',
+      [
+        'index.js',
+        '-c',
+        './__tests__/end2end/config.json',
+        '-p',
+        './__tests__/end2end/plan_env.json',
+        '-f',
+        'CHAIN_ONE',
+        '--end'
+      ],
+      3000,
+      res => {
+        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+        done();
+      }
+    );
+  });
+});
