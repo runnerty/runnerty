@@ -1,5 +1,17 @@
 # Runnerty ChangeLog
 
+<a name="3.3.4"></a>
+
+# [3.3.4](28/11/2022)
+
+### Features
+
+- **dependencies:** minor dependency updates
+
+### Bug Fixes
+
+- **common:** in iterable chains only the first value of the input was accessible
+
 <a name="3.3.3"></a>
 
 # [3.3.3](28/06/2022)
