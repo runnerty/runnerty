@@ -149,7 +149,7 @@ module.exports = () => {
       });
     } else if (user) {
       if (config.api.users.findIndex(checkAcces) !== -1) {
-        const token = jwt.sign(user, config.api.secret);
+        const token = jwt.sign(user, config.api.secret, { algorithm: 'RS256', allowInsecureKeySizes: true });
 
         res.json({
           success: true,

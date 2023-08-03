@@ -1,5 +1,13 @@
 # Runnerty ChangeLog
 
+<a name="3.3.5"></a>
+
+# [3.3.5](02/08/2022)
+
+### Features
+
+- **dependencies:** minor dependency updates
+
 <a name="3.3.4"></a>
 
 # [3.3.4](28/11/2022)

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.2/config.json",
+  "general": {
+    "planFilePath": "plan.json",
+    "runnerty.io": {
+      "host": "http://localhost",
+      "apikey": "ey...",
+      "healthChecker": true,
+      "remoteControl": true,
+      "debug": false,
+      "disable": false,
+      "waitForConnection": true,
+      "connectionTimeout": 5000
+    },
+    "queues": {
+      "refreshInterval": 100
+    }
+  },
+  "triggers": [
+    {
+      "id": "schedule_default",
+      "type": "@runnerty-trigger-schedule"
+    },
+    {
+      "id": "immediate",
+      "type": "@runnerty-trigger-immediate"
+    }
+  ],
+  "executors": [
+    {
+      "id": "iterable_default",
+      "type": "@runnerty-executor-iterable"
+    },
+    {
+      "id": "shell_default",
+      "type": "@runnerty-executor-shell"
+    },
+    {
+      "id": "wait_default",
+      "type": "@runnerty-executor-wait",
+      "time": "60s"
+    }
+  ],
+  "notifiers": [
+    {
+      "id": "console_default",
+      "type": "@runnerty-notifier-console"
+    }
+  ],
+  "global_values": [
+    {
+      "myparams": {
+        "sample": "sample_value",
+        "env_test": "CONFIG_@ENV(env_test)"
+      }
+    }
+  ]
+}
