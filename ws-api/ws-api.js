@@ -5,7 +5,7 @@ const cors = require('cors');
 const router = express.Router();
 const morgan = require('morgan');
 const jwt = require('jsonwebtoken');
-const expressJwt = require('express-jwt');
+const { expressjwt: ejwt } = require('express-jwt');
 const app = express();
 const http = require('http');
 const https = require('https');
@@ -96,7 +96,7 @@ module.exports = () => {
   }
 
   app.use(
-    expressJwt({
+    ejwt({
       secret: config.api.secret,
       algorithms: ['HS256'],
       getToken: req => {
@@ -149,7 +149,7 @@ module.exports = () => {
       });
     } else if (user) {
       if (config.api.users.findIndex(checkAcces) !== -1) {
-        const token = jwt.sign(user, config.api.secret, { algorithm: 'RS256', allowInsecureKeySizes: true });
+        const token = jwt.sign({ user: user }, config.api.secret);
 
         res.json({
           success: true,

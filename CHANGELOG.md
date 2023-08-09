@@ -1,5 +1,17 @@
 # Runnerty ChangeLog
 
+<a name="3.3.6"></a>
+
+# [3.3.6](09/08/2022)
+
+### Bug Fixes
+
+- **api:** problems with jwt session generation
+
+### Features
+
+- **dependencies:** minor dependency updates
+
 <a name="3.3.5"></a>
 
 # [3.3.5](02/08/2022)
