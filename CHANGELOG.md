@@ -1,8 +1,17 @@
 # Runnerty ChangeLog
 
+<a name="3.4.0"></a>
+
+# [3.4.0](06/09/2023)
+
+### Features
+
+- **api:** access to health api allowed without authentication
+- **dependencies:** minor dependency updates
+
 <a name="3.3.6"></a>
 
-# [3.3.6](09/08/2022)
+# [3.3.6](09/08/2023)
 
 ### Bug Fixes
 
@@ -14,7 +23,7 @@
 
 <a name="3.3.5"></a>
 
-# [3.3.5](02/08/2022)
+# [3.3.5](02/08/2023)
 
 ### Features
 
