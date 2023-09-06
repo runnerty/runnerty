@@ -1,5 +1,13 @@
 # Runnerty ChangeLog
 
+<a name="3.4.1"></a>
+
+# [3.4.1](06/09/2023)
+
+### Bug Fixes
+
+- **api:** health api typo
+
 <a name="3.4.0"></a>
 
 # [3.4.0](06/09/2023)
