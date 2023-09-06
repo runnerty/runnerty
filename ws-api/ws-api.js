@@ -109,7 +109,7 @@ module.exports = () => {
         return null;
       }
     }).unless({
-      path: ['/auth']
+      path: ['/auth', '/health']
     })
   );
 
@@ -171,7 +171,7 @@ module.exports = () => {
    * Output: object
    */
   router.get('/health', (req, res) => {
-    res.status(200).send('Your runnerty instance is ok!');
+    res.status(200);
   });
 
   /**
