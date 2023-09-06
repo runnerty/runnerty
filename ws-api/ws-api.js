@@ -171,7 +171,7 @@ module.exports = () => {
    * Output: object
    */
   router.get('/health', (req, res) => {
-    res.status(200);
+    res.end();
   });
 
   /**
