@@ -1,23 +1,18 @@
 # Runnerty ChangeLog
 
-<a name="3.4.1"></a>
+# [3.4.2](07/09/2023)
+
+### Features
+
+- **api:** allowed to include a general base path to the endpoint
+- **api:** silent mode is included in the API log
+<a name="3.4.2"></a>
 
 # [3.4.1](06/09/2023)
 
 ### Bug Fixes
 
 - **api:** health api typo
-
-<a name="3.4.0"></a>
-
-# [3.4.0](06/09/2023)
-
-### Features
-
-- **api:** access to health api allowed without authentication
-- **dependencies:** minor dependency updates
-
-<a name="3.4.0"></a>
 
 # [3.4.0](06/09/2023)
 

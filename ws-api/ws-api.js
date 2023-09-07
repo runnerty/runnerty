@@ -36,17 +36,29 @@ module.exports = () => {
       );
       port = config.api.port;
 
-      logger.info('Starting [HTTPS] private API on port ' + port);
+      logger.info(
+        'Starting [HTTPS] private API on port ' +
+          port +
+          (config.api.basePath ? ` (base path: ${config.api.basePath})` : '')
+      );
       break;
     case !!config.api.unix_socket:
       server = http.createServer(app);
       port = config.api.unix_socket;
-      logger.info('Starting [UNIX SOCKET] private API on ' + port);
+      logger.info(
+        'Starting [UNIX SOCKET] private API on ' +
+          port +
+          (config.api.basePath ? ` (base path: ${config.api.basePath})` : '')
+      );
       break;
     case !!config.api.port:
       server = http.createServer(app);
       port = config.api.port;
-      logger.info('Starting [HTTP] private API on port ' + port);
+      logger.info(
+        'Starting [HTTP] private API on port ' +
+          port +
+          (config.api.basePath ? ` (base path: ${config.api.basePath})` : '')
+      );
       break;
     default:
       server = null;
@@ -91,7 +103,7 @@ module.exports = () => {
   // ================================================
 
   // = API ==========================================
-  if (config.api.log_display_level) {
+  if (config.api.log_display_level && config.api.log_display_level !== 'silent') {
     app.use(morgan(config.api.log_display_level));
   }
 
@@ -109,7 +121,7 @@ module.exports = () => {
         return null;
       }
     }).unless({
-      path: ['/auth', '/health']
+      path: ['/runnerty/auth', '/runnerty/health']
     })
   );
 
@@ -123,7 +135,8 @@ module.exports = () => {
     }
   });
 
-  app.use('/', router);
+  // = ROUTES =======================================
+  app.use(config.api.basePath ? config.api.basePath : '/', router);
 
   /**
    * [POST] Auth. Generates JWT token.
@@ -134,6 +147,7 @@ module.exports = () => {
    *
    * Output: object
    */
+
   router.post('/auth', (req, res) => {
     const user = req.body.user;
     const password = req.body.password;
@@ -150,7 +164,6 @@ module.exports = () => {
     } else if (user) {
       if (config.api.users.findIndex(checkAcces) !== -1) {
         const token = jwt.sign({ user: user }, config.api.secret);
-
         res.json({
           success: true,
           message: 'Run your token!',
@@ -162,6 +175,11 @@ module.exports = () => {
           message: 'Authentication failed.'
         });
       }
+    } else {
+      res.json({
+        success: false,
+        message: 'Authentication failed. User not found.'
+      });
     }
   });
 
