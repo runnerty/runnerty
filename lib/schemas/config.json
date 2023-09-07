@@ -74,6 +74,9 @@
                     "secret": {
                       "type": "string"
                     },
+                    "basePath": {
+                      "type": "string"
+                    },
                     "limit_req": {
                       "type": "string"
                     },
@@ -82,7 +85,7 @@
                     },
                     "log_display_level": {
                       "type": "string",
-                      "pattern": "(combined|common|dev|short|tiny)"
+                      "pattern": "(combined|common|dev|short|tiny|silent)"
                     },
                     "chainsFieldsResponse": {
                       "type": "array"
@@ -144,6 +147,9 @@
                     "secret": {
                       "type": "string"
                     },
+                    "basePath": {
+                      "type": "string"
+                    },
                     "limit_req": {
                       "type": "string"
                     },
@@ -152,7 +158,7 @@
                     },
                     "log_display_level": {
                       "type": "string",
-                      "pattern": "(combined|common|dev|short|tiny)"
+                      "pattern": "(combined|common|dev|short|tiny|silent)"
                     },
                     "chainsFieldsResponse": {
                       "type": "array"
@@ -212,6 +218,9 @@
                     "secret": {
                       "type": "string"
                     },
+                    "basePath": {
+                      "type": "string"
+                    },
                     "limit_req": {
                       "type": "string"
                     },
@@ -220,7 +229,7 @@
                     },
                     "log_display_level": {
                       "type": "string",
-                      "pattern": "(combined|common|dev|short|tiny)"
+                      "pattern": "(combined|common|dev|short|tiny|silent)"
                     },
                     "chainsFieldsResponse": {
                       "type": "array"
@@ -300,7 +309,7 @@
                       },
                       "log_display_level": {
                         "type": "string",
-                        "pattern": "(combined|common|dev|short|tiny)"
+                        "pattern": "(combined|common|dev|short|tiny|silent)"
                       }
                     }
                   },
@@ -338,7 +347,7 @@
                       },
                       "log_display_level": {
                         "type": "string",
-                        "pattern": "(combined|common|dev|short|tiny)"
+                        "pattern": "(combined|common|dev|short|tiny|silent)"
                       }
                     }
                   },
@@ -385,7 +394,7 @@
                       },
                       "log_display_level": {
                         "type": "string",
-                        "pattern": "(combined|common|dev|short|tiny)"
+                        "pattern": "(combined|common|dev|short|tiny|silent)"
                       }
                     }
                   }
