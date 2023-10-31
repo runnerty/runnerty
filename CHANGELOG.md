@@ -1,5 +1,13 @@
 # Runnerty ChangeLog
 
+# [3.4.3](31/10/2023)
+
+### Features
+
+- **common:** return shared output data on error
+- **dependencies:** minor dependency updates
+<a name="3.4.3"></a>
+
 # [3.4.2](07/09/2023)
 
 ### Features
