@@ -26,7 +26,7 @@
     "lint": "eslint '**/*.js' && prettier --check '**'"
   },
   "dependencies": {
-    "@runnerty/interpreter-core": "~3.1.1",
+    "@runnerty/interpreter-core": "~3.1.2",
     "@runnerty/trigger-server": "~3.1.1",
     "ajv": "~8.12.0",
     "axios": "~1.6.0",
