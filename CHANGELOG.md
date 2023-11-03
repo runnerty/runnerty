@@ -1,11 +1,20 @@
 # Runnerty ChangeLog
 
+# [3.4.4](03/11/2023)
+
+### Features
+
+- **dependencies:** upgrade interpreter-core
+
+<a name="3.4.4"></a>
+
 # [3.4.3](31/10/2023)
 
 ### Features
 
 - **common:** return shared output data on error
 - **dependencies:** minor dependency updates
+
 <a name="3.4.3"></a>
 
 # [3.4.2](07/09/2023)
@@ -14,6 +23,7 @@
 
 - **api:** allowed to include a general base path to the endpoint
 - **api:** silent mode is included in the API log
+
 <a name="3.4.2"></a>
 
 # [3.4.1](06/09/2023)
