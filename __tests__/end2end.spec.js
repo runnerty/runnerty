@@ -455,23 +455,23 @@ describe('RetryProcess', () => {
 });
 
 describe('RetryProcessCAOF', () => {
-  const successOutput = `info: CHAIN CHAIN_ONE START 
+  const successOutput = `info: CHAIN CHAIN_ONE START 0
   info: [[DP]]! PROCESS PROCESS_ONE START - TS:
   info: [[DP]]! PROCESS PROCESS_ONE END - TS:
-  info: [[DP]]! PROCESS PROCESS_TWO START - TS:
+  info: [[DP]]! PROCESS PROCESS_TWO START - TS:0
   info: [[DP]]! ERR! PROCESS PROCESS_TWO FAIL
   info: CHAIN CHAIN_ONE RETRY
   info: CHAIN CHAIN_ONE END
-  info: CHAIN CHAIN_ONE START 
-  info: [[DP]]! PROCESS PROCESS_ONE START - TS:
-  info: [[DP]]! PROCESS PROCESS_ONE END - TS:
-  info: [[DP]]! PROCESS PROCESS_TWO START - TS:
+  info: CHAIN CHAIN_ONE START 0
+  info: [[DP]]! PROCESS PROCESS_ONE START - TS:0
+  info: [[DP]]! PROCESS PROCESS_ONE END - TS:0
+  info: [[DP]]! PROCESS PROCESS_TWO START - TS:0
   info: [[DP]]! ERR! PROCESS PROCESS_TWO FAIL
   info: CHAIN CHAIN_ONE RETRY
   info: CHAIN CHAIN_ONE END
   info: CHAIN CHAIN_ONE START 1
-  info: [[DP]]! PROCESS PROCESS_ONE START - TS:
-  info: [[DP]]! PROCESS PROCESS_ONE END - TS:
+  info: [[DP]]! PROCESS PROCESS_ONE START - TS:0
+  info: [[DP]]! PROCESS PROCESS_ONE END - TS:0
   info: [[DP]]! PROCESS PROCESS_TWO START - TS:1
   info: [[DP]]! PROCESS PROCESS_TWO END - TS:1
   info: CHAIN CHAIN_ONE END`;
