@@ -1,5 +1,13 @@
 # Runnerty ChangeLog
 
+# [3.5.0](08/10/2024)
+
+### Features
+
+- **depends-process** new process status conditions
+
+<a name="3.5.0"></a>
+
 # [3.4.4](03/11/2023)
 
 ### Features
