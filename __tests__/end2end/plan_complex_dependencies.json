@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.2/plan.json",
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.5/plan.json",
   "chains": [
     {
       "id": "CHAIN_ONE",
@@ -158,7 +158,7 @@
         },
         {
           "id": "PROCESS_FOUR",
-          "name": "only if the value from process one is greater equal to A. This process also fails",
+          "name": "only if PROCESS_THREE fails",
           "depends_process": {
             "$fail": "PROCESS_THREE"
           },
@@ -189,7 +189,7 @@
         },
         {
           "id": "PROCESS_FIVE",
-          "name": "only if the value from process one is greater equal to A. This process also fails",
+          "name": "nested operators and multiple conditions",
           "depends_process": {
             "$or": [
               {
@@ -226,7 +226,129 @@
           },
           "exec": {
             "id": "shell_default",
-            "command": "echo four"
+            "command": "echo five"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) START"
+              }
+            ],
+            "on_fail": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) FAILS"
+              }
+            ],
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) END"
+              }
+            ]
+          }
+        },
+        {
+          "id": "PROCESS_SIX",
+          "name": "ignored process",
+          "depends_process": {
+            "$end": "PROCESS_THREE"
+          },
+          "exec": {
+            "id": "shell_default",
+            "command": "echo six"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) START"
+              }
+            ],
+            "on_fail": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) FAILS"
+              }
+            ],
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) END"
+              }
+            ]
+          }
+        },
+        {
+          "id": "PROCESS_SEVEN",
+          "name": "test ignored condition",
+          "depends_process": {
+            "$and": [
+              {
+                "$end": "PROCESS_ONE"
+              },
+              {
+                "$end": "PROCESS_TWO"
+              },
+              {
+                "$fail": "PROCESS_THREE"
+              },
+              {
+                "$end": "PROCESS_FOUR"
+              },
+              {
+                "$end": "PROCESS_FIVE"
+              },
+              {
+                "$ignored": "PROCESS_SIX"
+              }
+            ]
+          },
+          "exec": {
+            "id": "shell_default",
+            "command": "echo seven"
+          },
+          "notifications": {
+            "on_start": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) START"
+              }
+            ],
+            "on_fail": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) FAILS"
+              }
+            ],
+            "on_end": [
+              {
+                "id": "console_default",
+                "message": "PROCESS @GV(PROCESS_ID) END"
+              }
+            ]
+          }
+        },
+        {
+          "id": "PROCESS_EIGHT",
+          "name": "test finished condition",
+          "depends_process": {
+            "$and": [
+              {
+                "$finalized": "PROCESS_THREE"
+              },
+              {
+                "$finalized": "PROCESS_SIX"
+              },
+              {
+                "$finalized": "PROCESS_SEVEN"
+              }
+            ]
+          },
+          "exec": {
+            "id": "shell_default",
+            "command": "echo seven"
           },
           "notifications": {
             "on_start": [

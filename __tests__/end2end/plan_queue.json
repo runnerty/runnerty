@@ -1,5 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.2/plan.json",
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.5/plan.json",
   "chains": [
     {
       "id": "CHAIN_ONE",
@@ -8,14 +8,7 @@
       "priority": 10,
       "retries": 1,
       "retry_delay": 2000,
-      "__custom_values": {
-        "KEY_VAL_CHAIN_ONE": "1",
-        "KEY_VAL_CHAIN_TWO": "2",
-        "KEY_VAL_CHAIN_THREE": "3"
-      },
       "execId": "@GV(CHAIN_ID)_@GV(KEY)_@GV(VALUE)",
-      "triggers": [],
-      "_depends_chains": {},
       "notifications": {
         "on_start": [
           {
@@ -105,7 +98,6 @@
       "name": "CHAIN_TWO",
       "queue": "TEST_TWO",
       "priority": 10,
-      "_depends_chains": [],
       "triggers": [],
       "notifications": {
         "on_start": [
@@ -177,7 +169,6 @@
       "name": "CHAIN_THREE",
       "queue": "TEST_TWO",
       "priority": 5,
-      "_depends_chains": [],
       "triggers": [],
       "notifications": {
         "on_start": [
