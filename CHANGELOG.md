@@ -5,6 +5,7 @@
 ### Features
 
 - **depends-process** new process status conditions
+- **dependencies:** minor dependency updates
 
 <a name="3.5.0"></a>
 
