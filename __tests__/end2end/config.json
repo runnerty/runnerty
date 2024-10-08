@@ -1,17 +1,7 @@
 {
-  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.2/config.json",
+  "$schema": "https://raw.githubusercontent.com/runnerty/schemas/master/schemas/3.5/config.json",
   "general": {
     "planFilePath": "plan.json",
-    "runnerty.io": {
-      "host": "https://ws.runnerty.io",
-      "apikey": "YOUR_APIKEY_PROJECT",
-      "healthChecker": true,
-      "remoteControl": true,
-      "debug": false,
-      "disable": true,
-      "waitForConnection": true,
-      "connectionTimeout": 5000
-    },
     "queues": {
       "refreshInterval": 100
     }

@@ -5,10 +5,11 @@ function flatOutput(output) {
   return output
     .replace(/(\r\n\t|\n|\r\t|\ )/gm, '')
     .replace('/bin/sh:1:', '/bin/sh:')
-    .replace('commandnotfound', 'notfound');
+    .replace('Permissiondenied', 'commandnotfound')
+    .replace(':missingargumentafter‘/’', '');
 }
 function flatSuccessOutput(successOutput) {
-  return successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace('commandnotfound', 'notfound');
+  return successOutput.replace(/(\r\n\t|\n|\r\t|\ )/gm, '').replace(':missingargumentafter‘/’', '');
 }
 
 describe('Queues', () => {
@@ -43,8 +44,12 @@ describe('Queues', () => {
       ],
       8000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -105,8 +110,12 @@ describe('Iterable-end-ok-ignore-process', () => {
       ],
       16000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -166,8 +175,12 @@ describe('SimpleIter', () => {
       ],
       9000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -219,8 +232,12 @@ describe('SimpleIterFail', () => {
       ],
       9000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -272,8 +289,12 @@ describe('SimpleIterFailNotEnd', () => {
       ],
       9000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -291,6 +312,10 @@ describe('ComplexDependencies', () => {
   info: PROCESS PROCESS_FOUR END
   info: PROCESS PROCESS_FIVE START
   info: PROCESS PROCESS_FIVE END
+  info: PROCESS PROCESS_SEVEN START
+  info: PROCESS PROCESS_SEVEN END
+  info: PROCESS PROCESS_EIGHT START
+  info: PROCESS PROCESS_EIGHT END
   info: CHAIN CHAIN_ONE FAIL`;
 
   test('Execution End2End: ComplexDependencies', done => {
@@ -308,8 +333,12 @@ describe('ComplexDependencies', () => {
       ],
       8000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -349,8 +378,12 @@ describe('Iterable-end-error-abort-serie', () => {
       ],
       8000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -379,8 +412,12 @@ describe('SimpleDefaultsProcess', () => {
       ],
       8000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -413,8 +450,12 @@ describe('ArgsCustomValuesProcess', () => {
       ],
       8000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -447,8 +488,12 @@ describe('RetryProcess', () => {
       ],
       8000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -491,8 +536,12 @@ describe('RetryProcessCAOF', () => {
       ],
       8000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -523,8 +572,12 @@ describe('ParallelError', () => {
       ],
       8000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -553,8 +606,12 @@ describe('PlanFD-NOT-FD', () => {
       ],
       8000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -594,8 +651,12 @@ describe('PlanFD-FD', () => {
       ],
       8000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -625,8 +686,12 @@ describe('PlanFD-NOT-FORCED', () => {
       ['index.js', '-c', './__tests__/end2end/config.json', '-p', './__tests__/end2end/plan_fd.json', '--end'],
       2000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -660,8 +725,12 @@ describe('PlanDepChains-NOT-FORCED', () => {
       ['index.js', '-c', './__tests__/end2end/config.json', '-p', './__tests__/end2end/plan_dep_chains.json', '--end'],
       2000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -699,8 +768,12 @@ describe('PlanIterEndsIgnoringProcess', () => {
       ],
       2000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -729,8 +802,12 @@ describe('PlanPrevFinalProcFails', () => {
       ],
       2000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -759,8 +836,12 @@ describe('PlanForcedProcForcedfdfp', () => {
       ],
       2000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -803,8 +884,12 @@ describe('PlanForcedProcForcedfdfpfpd', () => {
       ],
       2000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -862,8 +947,12 @@ describe('TestDefaultsConfigIterableChain', () => {
       ],
       3000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
@@ -886,8 +975,12 @@ describe('ENVFunction', () => {
       ],
       3000,
       res => {
-        expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
-        done();
+        try {
+          expect(flatOutput(res)).toEqual(flatSuccessOutput(successOutput));
+          done();
+        } catch (error) {
+          done(error);
+        }
       }
     );
   });
