@@ -15,6 +15,7 @@ const runtime = require('../lib/classes/runtime');
 const logger = require('../lib/logger.js');
 const config = runtime.config.general;
 const stringify = require('json-stringify-safe');
+const xssFilters = require('xss-filters'); // Added for XSS protection
 
 const apiPlan = runtime.plan;
 
@@ -52,10 +53,10 @@ module.exports = () => {
       );
       break;
     case !!config.api.port:
-      server = http.createServer(app);
+      server = https.createServer(app); // Changed from http to https
       port = config.api.port;
       logger.info(
-        'Starting [HTTP] private API on port ' +
+        'Starting [HTTPS] private API on port ' + // Updated log message
           port +
           (config.api.basePath ? ` (base path: ${config.api.basePath})` : '')
       );
@@ -212,7 +213,7 @@ module.exports = () => {
    * - chains array (JSON)
    */
   router.get('/chains/status/:status', (req, res) => {
-    const status = req.params.status;
+    const status = xssFilters.inHTMLData(req.params.status); // Sanitize input
 
     if (status) {
       const output = apiPlan.getChainsByStatus(status, config.api.chainsFieldsResponse);
@@ -231,8 +232,8 @@ module.exports = () => {
    * Output: chain (JSON)
    */
   router.get('/chain/:chainId/:uniqueId', (req, res) => {
-    const chainId = req.params.chainId;
-    const uniqueId = req.params.uniqueId || req.params.chainId + '_main';
+    const chainId = xssFilters.inHTMLData(req.params.chainId); // Sanitize input
+    const uniqueId = xssFilters.inHTMLData(req.params.uniqueId || req.params.chainId + '_main'); // Sanitize input
     const chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
@@ -253,7 +254,7 @@ module.exports = () => {
    * - custom_values (JSON) custom values to replace in chain processes
    */
   router.post('/chain/forceStart/:chainId', (req, res) => {
-    const chainId = req.params.chainId;
+    const chainId = xssFilters.inHTMLData(req.params.chainId); // Sanitize input
     let custom_values_str;
     let input_str;
     try {
@@ -286,8 +287,8 @@ module.exports = () => {
    * Output: processes (objects array)
    */
   router.get('/processes/:chainId/:uniqueId', (req, res) => {
-    const chainId = req.params.chainId;
-    const uniqueId = req.params.uniqueId || req.params.chainId + '_main';
+    const chainId = xssFilters.inHTMLData(req.params.chainId); // Sanitize input
+    const uniqueId = xssFilters.inHTMLData(req.params.uniqueId || req.params.chainId + '_main'); // Sanitize input
     const chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
     if (chain) {
@@ -304,15 +305,15 @@ module.exports = () => {
    * - chainId (string)
    */
   router.post('/chain/stop/:chainId/:uniqueId', (req, res) => {
-    const chainId = req.params.chainId;
-    const uniqueId = req.params.uniqueId || req.params.chainId + '_main';
+    const chainId = xssFilters.inHTMLData(req.params.chainId); // Sanitize input
+    const uniqueId = xssFilters.inHTMLData(req.params.uniqueId || req.params.chainId + '_main'); // Sanitize input
 
     try {
       apiPlan.stopChain(chainId, uniqueId);
       logger.info(`Chain "${chainId}" killed by ${req.user}`);
       res.json('');
     } catch (err) {
-      res.status(404).send(err);
+      res.status(404).send('An error occurred while stopping the chain'); // Avoid leaking error details
       logger.error('loadChainToPlan scheduleChain', err);
     }
   });
@@ -327,9 +328,9 @@ module.exports = () => {
    * Output: process (object)
    */
   router.get('/process/:chainId/:uniqueId/:processId', (req, res) => {
-    const chainId = req.params.chainId;
-    const uniqueId = req.params.uniqueId || req.params.chainId + '_main';
-    const processId = req.params.processId;
+    const chainId = xssFilters.inHTMLData(req.params.chainId); // Sanitize input
+    const uniqueId = xssFilters.inHTMLData(req.params.uniqueId || req.params.chainId + '_main'); // Sanitize input
+    const processId = xssFilters.inHTMLData(req.params.processId); // Sanitize input
 
     const chain = apiPlan.getChainById(chainId, uniqueId, config.api.chainsFieldsResponse);
 
@@ -354,9 +355,9 @@ module.exports = () => {
    *   false for preconfigured retries
    */
   router.post('/process/retry', (req, res) => {
-    const chainId = req.body.chainId;
-    const uniqueId = req.body.uniqueId || req.params.chainId + '_main';
-    const processId = req.body.processId;
+    const chainId = xssFilters.inHTMLData(req.body.chainId); // Sanitize input
+    const uniqueId = xssFilters.inHTMLData(req.body.uniqueId || req.params.chainId + '_main'); // Sanitize input
+    const processId = xssFilters.inHTMLData(req.body.processId); // Sanitize input
     const once = req.body.once || false;
 
     logger.info(`Retrying process "${processId}" from chain "${chainId}" by ${req.user}`);
@@ -394,9 +395,9 @@ module.exports = () => {
    *   execution processes, false to stop chain execution.
    */
   router.post('/process/end', (req, res) => {
-    const chainId = req.body.chainId;
-    const uniqueId = req.body.uniqueId || req.params.chainId + '_main';
-    const processId = req.body.processId;
+    const chainId = xssFilters.inHTMLData(req.body.chainId); // Sanitize input
+    const uniqueId = xssFilters.inHTMLData(req.body.uniqueId || req.params.chainId + '_main'); // Sanitize input
+    const processId = xssFilters.inHTMLData(req.body.processId); // Sanitize input
     const continueChain = req.body.continueChain || false;
 
     logger.info(`Setting process "${processId}" to end, from chain "${chainId}" by ${req.user}`);
@@ -446,9 +447,9 @@ module.exports = () => {
    * - processId (string) process identificator
    */
   router.post('/process/kill', (req, res) => {
-    const chainId = req.body.chainId;
-    const uniqueId = req.body.uniqueId || req.params.chainId + '_main';
-    const processId = req.body.processId;
+    const chainId = xssFilters.inHTMLData(req.body.chainId); // Sanitize input
+    const uniqueId = xssFilters.inHTMLData(req.body.uniqueId || req.params.chainId + '_main'); // Sanitize input
+    const processId = xssFilters.inHTMLData(req.body.processId); // Sanitize input
 
     logger.info(`Killing process "${processId}" from chain "${chainId}" by ${req.user}`);
 
