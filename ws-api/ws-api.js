@@ -312,7 +312,7 @@ module.exports = () => {
       logger.info(`Chain "${chainId}" killed by ${req.user}`);
       res.json('');
     } catch (err) {
-      res.status(404).send(err);
+      res.status(404).send('An error occurred while stopping the chain.');
       logger.error('loadChainToPlan scheduleChain', err);
     }
   });
