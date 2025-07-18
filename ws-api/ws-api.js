@@ -238,7 +238,7 @@ module.exports = () => {
     if (chain) {
       res.send(stringify(chain));
     } else {
-      res.status(404).send(`Chain "${chainId}" not found`);
+      res.status(404).json({ error: `Chain "${chainId}" not found` });
     }
   });
 
@@ -293,7 +293,7 @@ module.exports = () => {
     if (chain) {
       res.json(chain.processes || {});
     } else {
-      res.status(404).send(`Chain "${chainId}" not found`);
+      res.status(404).json({ error: `Chain "${chainId}" not found` });
     }
   });
 
@@ -338,10 +338,10 @@ module.exports = () => {
       if (process) {
         res.json(process);
       } else {
-        res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
+        res.status(404).json({ error: `Process "${processId}" not found in chain "${chainId}"` });
       }
     } else {
-      res.status(404).send(`Chain "${chainId}" not found`);
+      res.status(404).json({ error: `Chain "${chainId}" not found` });
     }
   });
 
