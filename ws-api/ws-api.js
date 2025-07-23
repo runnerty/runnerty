@@ -43,7 +43,7 @@ module.exports = () => {
       );
       break;
     case !!config.api.unix_socket:
-      server = http.createServer(app);
+      server = https.createServer(app);  // Changed to use HTTPS
       port = config.api.unix_socket;
       logger.info(
         'Starting [UNIX SOCKET] private API on ' +
@@ -52,10 +52,10 @@ module.exports = () => {
       );
       break;
     case !!config.api.port:
-      server = http.createServer(app);
+      server = https.createServer(app);  // Changed to use HTTPS
       port = config.api.port;
       logger.info(
-        'Starting [HTTP] private API on port ' +
+        'Starting [HTTPS] private API on port ' +
           port +
           (config.api.basePath ? ` (base path: ${config.api.basePath})` : '')
       );
@@ -312,7 +312,7 @@ module.exports = () => {
       logger.info(`Chain "${chainId}" killed by ${req.user}`);
       res.json('');
     } catch (err) {
-      res.status(404).send(err);
+      res.status(404).send('Chain not found or could not be stopped');  // Avoid sending raw error
       logger.error('loadChainToPlan scheduleChain', err);
     }
   });
