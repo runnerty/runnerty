@@ -238,7 +238,7 @@ module.exports = () => {
     if (chain) {
       res.send(stringify(chain));
     } else {
-      res.status(404).send(`Chain "${chainId}" not found`);
+      res.status(404).send(`Chain "${encodeURIComponent(chainId)}" not found`);
     }
   });
 
@@ -265,7 +265,7 @@ module.exports = () => {
     } catch (err) {}
 
     logger.info(
-      `API - CHAIN START FORCED: chainId:${chainId}, process:${req.body.processId}, custom_values:${custom_values_str}, input:${input_str}`
+      `API - CHAIN START FORCED: chainId:${encodeURIComponent(chainId)}, process:${encodeURIComponent(req.body.processId)}, custom_values:${custom_values_str}, input:${input_str}`
     );
     runtime.plan.forceQueueChain(
       chainId,
@@ -293,7 +293,7 @@ module.exports = () => {
     if (chain) {
       res.json(chain.processes || {});
     } else {
-      res.status(404).send(`Chain "${chainId}" not found`);
+      res.status(404).send(`Chain "${encodeURIComponent(chainId)}" not found`);
     }
   });
 
@@ -309,10 +309,10 @@ module.exports = () => {
 
     try {
       apiPlan.stopChain(chainId, uniqueId);
-      logger.info(`Chain "${chainId}" killed by ${req.user}`);
+      logger.info(`Chain "${encodeURIComponent(chainId)}" killed by ${encodeURIComponent(req.user)}`);
       res.json('');
     } catch (err) {
-      res.status(404).send(err);
+      res.status(404).send('An error occurred while stopping the chain.');
       logger.error('loadChainToPlan scheduleChain', err);
     }
   });
@@ -338,10 +338,10 @@ module.exports = () => {
       if (process) {
         res.json(process);
       } else {
-        res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
+        res.status(404).send(`Process "${encodeURIComponent(processId)}" not found in chain "${encodeURIComponent(chainId)}"`);
       }
     } else {
-      res.status(404).send(`Chain "${chainId}" not found`);
+      res.status(404).send(`Chain "${encodeURIComponent(chainId)}" not found`);
     }
   });
 
@@ -359,7 +359,7 @@ module.exports = () => {
     const processId = req.body.processId;
     const once = req.body.once || false;
 
-    logger.info(`Retrying process "${processId}" from chain "${chainId}" by ${req.user}`);
+    logger.info(`Retrying process "${encodeURIComponent(processId)}" from chain "${encodeURIComponent(chainId)}" by ${encodeURIComponent(req.user)}`);
 
     const chain = apiPlan.getChainById(chainId, uniqueId);
 
@@ -375,13 +375,13 @@ module.exports = () => {
               logger.error('Retrying process:' + err);
             });
         } else {
-          res.status(423).send(`Process "${processId}" from chain "${chainId}" is not in errored status`);
+          res.status(423).send(`Process "${encodeURIComponent(processId)}" from chain "${encodeURIComponent(chainId)}" is not in errored status`);
         }
       } else {
-        res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
+        res.status(404).send(`Process "${encodeURIComponent(processId)}" not found in chain "${encodeURIComponent(chainId)}"`);
       }
     } else {
-      res.status(404).send(`Chain "${chainId}" not found`);
+      res.status(404).send(`Chain "${encodeURIComponent(chainId)}" not found`);
     }
   });
 
@@ -399,7 +399,7 @@ module.exports = () => {
     const processId = req.body.processId;
     const continueChain = req.body.continueChain || false;
 
-    logger.info(`Setting process "${processId}" to end, from chain "${chainId}" by ${req.user}`);
+    logger.info(`Setting process "${encodeURIComponent(processId)}" to end, from chain "${encodeURIComponent(chainId)}" by ${encodeURIComponent(req.user)}`);
 
     const chain = apiPlan.getChainById(chainId, uniqueId);
 
@@ -419,7 +419,7 @@ module.exports = () => {
               .then({})
               .catch(err => {
                 logger.error(
-                  `Error in startProcesses next to set end process "${processId}" from chain "${chainId}" by ${req.user}:` +
+                  `Error in startProcesses next to set end process "${encodeURIComponent(processId)}" from chain "${encodeURIComponent(chainId)}" by ${encodeURIComponent(req.user)}:` +
                     err
                 );
               });
@@ -428,14 +428,14 @@ module.exports = () => {
           res
             .status(423)
             .send(
-              `It's not possible to set process "${processId}" from chain "${chainId}" to end because it's ${process.status}`
+              `It's not possible to set process "${encodeURIComponent(processId)}" from chain "${encodeURIComponent(chainId)}" to end because it's ${process.status}`
             );
         }
       } else {
-        res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
+        res.status(404).send(`Process "${encodeURIComponent(processId)}" not found in chain "${encodeURIComponent(chainId)}"`);
       }
     } else {
-      res.status(404).send(`Chain "${chainId}" not found`);
+      res.status(404).send(`Chain "${encodeURIComponent(chainId)}" not found`);
     }
   });
 
@@ -450,7 +450,7 @@ module.exports = () => {
     const uniqueId = req.body.uniqueId || req.params.chainId + '_main';
     const processId = req.body.processId;
 
-    logger.info(`Killing process "${processId}" from chain "${chainId}" by ${req.user}`);
+    logger.info(`Killing process "${encodeURIComponent(processId)}" from chain "${encodeURIComponent(chainId)}" by ${encodeURIComponent(req.user)}`);
 
     const chain = apiPlan.getChainById(chainId, uniqueId);
 
@@ -459,19 +459,19 @@ module.exports = () => {
       if (process) {
         if (process.isRunning()) {
           res.send();
-          process.stop(req.user + ' REQUEST KILL PROCESS ' + processId + ' FROM CHAIN ' + chainId);
+          process.stop(encodeURIComponent(req.user) + ' REQUEST KILL PROCESS ' + encodeURIComponent(processId) + ' FROM CHAIN ' + encodeURIComponent(chainId));
         } else {
           res
             .status(423)
             .send(
-              `Is not posible kill process "${processId}" from chain "${chainId}" to end because is ${process.status}`
+              `Is not posible kill process "${encodeURIComponent(processId)}" from chain "${encodeURIComponent(chainId)}" to end because is ${process.status}`
             );
         }
       } else {
-        res.status(404).send(`Process "${processId}" not found in chain "${chainId}"`);
+        res.status(404).send(`Process "${encodeURIComponent(processId)}" not found in chain "${encodeURIComponent(chainId)}"`);
       }
     } else {
-      res.status(404).send(`Chain "${chainId}" not found`);
+      res.status(404).send(`Chain "${encodeURIComponent(chainId)}" not found`);
     }
   });
 };
